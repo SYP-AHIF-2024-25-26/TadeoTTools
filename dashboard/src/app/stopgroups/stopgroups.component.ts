@@ -1,29 +1,27 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
-import {Division, Info, Stop, StopGroupWithStops} from "../types";
-import {StopGroupService} from "../stopgroup.service";
-import {StopService} from "../stop.service";
+import {Component, inject, signal} from '@angular/core';
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {RouterLink} from "@angular/router";
+import {StopGroupService} from "../stopgroup.service";
+import {StopService} from "../stop.service";
 import {DivisionService} from "../division.service";
-import {NgStyle} from "@angular/common";
+import {Division, Info, Stop, StopGroup} from "../types";
 import {InfoPopupComponent} from "../info-popup/info-popup.component";
 
 @Component({
   selector: 'app-stopgroups',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, RouterLink, NgStyle, InfoPopupComponent],
+  imports: [CdkDropList, CdkDrag, RouterLink, InfoPopupComponent],
   templateUrl: './stopgroups.component.html',
   styleUrl: './stopgroups.component.css'
 })
-export class StopGroupsComponent implements OnInit {
+export class StopGroupsComponent {
   stopGroupFetcher = inject(StopGroupService);
   stopFetcher = inject(StopService);
   divisionFetcher = inject(DivisionService);
   hasChanged = signal<boolean>(false);
 
-  stopGroups = signal<StopGroupWithStops[]>([]);
-  privateStops = signal<Stop[]>([]);
-  stopsToUpdate = signal<Stop[]>([]);
+  stopGroups = signal<StopGroup[]>([]);
+  stops = signal<Stop[]>([]);
   divisions = signal<Division[]>([]);
   infos = signal<Info[]>([]);
 
@@ -35,18 +33,16 @@ export class StopGroupsComponent implements OnInit {
   async initialiseData() {
     await this.getDivisions();
     await this.getStopGroups();
-    await this.getPrivateStops();
+    await this.getStops();
     this.hasChanged.set(false);
   }
 
-  // Fetching Functions for StopGroups and PrivateStops
   async getStopGroups() {
     this.stopGroups.set(await this.stopGroupFetcher.getStopGroups());
   }
 
-  async getPrivateStops() {
-    const stops = await this.stopFetcher.getPrivateStops();
-    this.privateStops.set(stops);
+  async getStops() {
+    this.stops.set(await this.stopFetcher.getStops());
   }
 
   async getDivisions() {
@@ -54,7 +50,9 @@ export class StopGroupsComponent implements OnInit {
     this.divisions.set(divisions);
   }
 
-  // Drag and Drop Function for Groups
+
+  /*
+
   dropGroup(event: CdkDragDrop<any[]>) {
     moveItemInArray(this.stopGroups(), event.previousIndex, event.currentIndex);
     this.hasChanged.set(true);
@@ -129,7 +127,7 @@ export class StopGroupsComponent implements OnInit {
     this.stopGroupFetcher.updateStopGroupOrder(stopGroupOrder);
 
     this.hasChanged.set(false);
-  }
+  }*/
 
   addInfo(type: string, message: string): void {
     const maxId = this.infos().reduce((max, item) => (item.id > max ? item.id : max), 0);
@@ -146,16 +144,41 @@ export class StopGroupsComponent implements OnInit {
     this.infos.update(infos => infos.filter((info) => info.id !== index));
   }
 
+  /*
   getGroupIdFromEvent(event: CdkDragDrop<any[]>): number | null {
     const groupIdString = event.container.id.split('-')[1];
     return groupIdString === null ? null : parseInt(groupIdString);
-  }
+  }*/
 
   getDropGroups(): string[] {
-    return [...this.stopGroups().map(group => 'group-' + group.stopGroupID), 'group-0'];
+    return this.stopGroups().map(group => 'group-' + group.id);
   }
 
-  getColorCodeByStopId(divisionId: number): string {
-    return this.divisions().find(division => division.divisionID === divisionId)!.color;
+  getStopByStopId(stopId: number): Stop | undefined {
+    return this.stops().find(stop => stop.id === stopId);
+  }
+
+  dropStop(event: CdkDragDrop<any, any>) {
+    if (event.previousContainer.id === 'all-stops') {
+      const stopId = this.stops()[event.previousIndex].id;
+      if (!event.container.data.includes(stopId)) {
+        event.container.data.splice(event.currentIndex, 0, stopId);
+      } else {
+        console.log("already exists in this stopGroup")
+      }
+    } else if (event.container === event.previousContainer) {
+      moveItemInArray(event.previousContainer.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+    }
+    this.hasChanged.set(true);
+  }
+
+  dropGroup(event: CdkDragDrop<any, any>) {
+    moveItemInArray(this.stopGroups(), event.previousIndex, event.currentIndex);
+  }
+
+  saveChanges() {
+
   }
 }
