@@ -1,0 +1,74 @@
+<div class="flex overflow-x-hidden flex-col justify-start bg-gray-50">
+
+  <app-header [showWelcomeText]="false" />
+
+  <div class="flex flex-1 flex-col mb-32 bg-gray-50 overflow-y-scroll overflow-x-hidden">
+    <img src="https://www.htl-leonding.at/wp-content/uploads/2022/10/htllogo_2022_black_v2-1536x347.png" alt="HTL Leonding" class="mb-4 h-12 w-auto self-center" />
+
+    @for (member of members; track $index) {
+        <app-about-card [member]="member" class="mb-4 mx-4"/>
+    }
+
+    <div class="w-full max-w-md mx-auto mt-8">
+      <div class="flex border-b">
+        <button
+          class="flex-1 py-2 text-center text-gray-600 hover:text-gray-800 focus:outline-none"
+          [class.border-b-2]="selectedTab() === 'about'"
+          [class.border-blue-500]="selectedTab() === 'about'"
+          (click)="selectTab('about')"
+        >
+      <span class="inline-flex items-center text-xl">
+        About
+      </span>
+        </button>
+        <button
+          class="flex-1 py-2 text-center text-gray-600 hover:text-gray-800 focus:outline-none"
+          [class.border-b-2]="selectedTab() === 'manual'"
+          [class.border-blue-500]="selectedTab() === 'manual'"
+          (click)="selectTab('manual')"
+        >
+      <span class="inline-flex items-center text-xl">
+        Benutzerhandbuch
+      </span>
+        </button>
+      </div>
+
+      <div class="mt-4 bg-white border rounded-lg mx-4">
+        @if(selectedTab() === 'about') {
+        <div class="p-4">
+          <h2 class="text-2xl font-bold mb-4 px-4 pt-4">About</h2>
+          <p class="text-gray-600 text-xl font-normal text-wrap px-4">
+            Diese App vereinfacht die Koordination durch
+            den Tag der offenen Tür der HTL Leonding
+            und schafft einen guten Überblick über die Stationen,
+            welche behandelt werden können.
+            Die App wurde im Rahmen des
+            Systemplanung und Projektentwicklungs - Projekts
+            entwickelt.
+          </p>
+        </div>
+        }
+        @if(selectedTab() === 'manual') {
+        <div class="p-8">
+          <h2 class="text-2xl font-bold mb-4">Benutzerhandbuch</h2>
+          <div>
+            <h3 class="text-xl font-semibold mb-4">Funktionen</h3>
+            <ul class="list-disc list-inside text-gray-600 text-xl mb-4">
+              <li class="mb-4"><strong>Leitfaden-Seite</strong>: <br> Hier finden Sie einen Leitfaden, der als Orientation für den Tag der offenen Tür dient. Sie können jeden Abschnitt des Leitfadens abhaken um den Fortschritt zu sehen.</li>
+              <li class="mb-4"><strong>Tour-Seite</strong>: Hierhin gelangen Sie, wenn Sie einen Tour Abschnitt auf der Leitfaden-Seite anklicken. Hier können Sie, speziell wenn Sie einer Tour folgen nacheinander abhaken, was Sie gesehen haben. Wenn Sie alle Station der Tour erledigt und abgehakt haben, wird der Abschnitt im Leitfaden automatisch abgehakt.</li>
+              <li class="mb-4"><strong>Stationbeschreibungs-Seite</strong>: Hierhin gelangen Sie, wenn Sie auf der Tour-Seite eine Station anklicken. Hier können Sie alle Details einer Station sehen und haben die Option sich diese auf der Karte anzeigen zu lassen. Wenn Sie auf die Karte wechseln gibt es auch einen zurück Knopf um wieder auf die Stationbeschreibungs-Seite zu gelangen.</li>
+              <li class="mb-4"><strong>Karten-Seite</strong>: Zeigt eine Karte der Schule mit verschiedenen Stockwerken und Räumen. Benutzer können zwischen den Stockwerken navigieren und spezifische Räume anzeigen.</li>
+              <li class="mb-4"><strong>Navbar</strong>: Eine feste Navigationsleiste am unteren Bildschirmrand ermöglicht den schnellen Zugriff auf die Hauptbereiche der App.</li>
+            </ul>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <div class="fixed bottom-8 left-0 right-0 mx-4">
+    <app-navbar [mode]="'about'" />
+  </div>
+</div>
