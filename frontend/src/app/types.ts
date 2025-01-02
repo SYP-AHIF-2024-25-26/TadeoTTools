@@ -18,3 +18,9 @@ export type Division = {
   name: string;
   color: string;
 };
+
+export type TeamMember = {
+  name: string;
+  class: string;
+  schoolYear: string;
+}
