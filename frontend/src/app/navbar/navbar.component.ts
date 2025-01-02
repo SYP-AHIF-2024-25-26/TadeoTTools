@@ -10,5 +10,5 @@ import { Router } from '@angular/router';
 })
 export class NavbarComponent {
   protected router = inject(Router);
-  @Input({ required: true }) isStationMode!: boolean;
+  @Input({ required: true }) mode!: string;
 }
