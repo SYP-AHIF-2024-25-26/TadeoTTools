@@ -66,13 +66,16 @@
     }
   </div>
   <div class="w-1/3">
+    <div>
+      <app-filter [elements]="divisions()" (filter)="divisionFilter.set($event)"></app-filter>
+    </div>
     <div
       cdkDropList
       [cdkDropListConnectedTo]="getDropGroups()"
       class="bg-gray-200 p-5 m-10 rounded-xl"
       id='all-stops'>
       <p>Unassigned Stops</p>
-      @for (stop of stops(); track stop.id) {
+      @for (stop of filteredStops(); track stop.id) {
         <div class="mb-1 p-3 rounded-l cursor-grab flex items-center justify-between"
              cdkDrag
         >
