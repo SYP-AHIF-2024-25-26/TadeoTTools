@@ -26,7 +26,6 @@ export class MainPageComponent {
 
   async onLoad() {
     this.groups.set((await this.apiFetchService.getStopGroups()).sort((a, b) => a.rank - b.rank));
-    console.log(this.groups());
   }
 
   async openStopPage(stopGroup: StopGroup) {
