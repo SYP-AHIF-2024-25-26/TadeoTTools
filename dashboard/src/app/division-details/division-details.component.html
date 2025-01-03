@@ -4,13 +4,23 @@
   <h4 class="text-2xl">Division ID: {{ divisionId() }}</h4>
   } @else {
   <h4 class="text-2xl">New Division</h4>
-  }
-
+  } @if(filePreview != null) {
+  <div class="mt-4">
+    <p>File Preview:</p>
+    <img
+      class="w-32 h-32 object-cover"
+      [src]="filePreview"
+      alt="File preview"
+    />
+  </div>
+  } @else {
   <img
     class="w-32 h-32 object-cover"
     [src]="baseUrl + '/divisions/' + divisionId() + '/image'"
     alt="Division Picture will load here"
   />
+  }
+
   <form (submit)="submitDivisionDetail()" class="mt-4">
     <div>
       <label for="name" class="mr-4">Name</label>
@@ -48,19 +58,18 @@
       <p class="text-red-700">{{ errorMessage() }}</p>
       }
     </div>
-    <button type="submit" class="bg-htl-orange p-2 rounded text-white">
+      <div>
+    <button type="submit" class="bg-htl-orange p-2 mr-4 rounded text-white">
       Submit
     </button>
-  </form>
-  <div>
     <button
       [routerLink]="['/divisions']"
       class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
     >
-      Go Back (without submit)
+      Cancel
     </button>
     @if (divisionId() != -1) {
-      <button
+    <button
       (click)="deleteAndGoBack()"
       class="bg-htl-orange p-2 rounded text-white"
     >
@@ -68,4 +77,5 @@
     </button>
     }
   </div>
+  </form>
 </div>

@@ -27,6 +27,7 @@ export class DivisionDetailsComponent {
 
   errorMessage = signal<string | null>(null);
   selectedFile: File | null = null;
+  filePreview: string | ArrayBuffer | null = null;
 
   async ngOnInit() {
     const params = await firstValueFrom(this.route.queryParams);
@@ -42,7 +43,7 @@ export class DivisionDetailsComponent {
     this.errorMessage.set(null);
 
     if (file) {
-      const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg', 'svg']; // add svg
+      const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/svg+xml'];
       if (!validFileTypes.includes(file.type)) {
         this.errorMessage.set(
           'Invalid file type. Please upload a JPG, JPEG, or PNG file.'
@@ -51,6 +52,9 @@ export class DivisionDetailsComponent {
         return;
       }
       this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => (this.filePreview = reader.result);
+      reader.readAsDataURL(this.selectedFile);
     }
   }
 
@@ -76,15 +80,20 @@ export class DivisionDetailsComponent {
         color: this.color(),
       });
     } else {
-      await this.service.updateDivision({
-        divisionID: this.divisionId(),
-        name: this.name(),
-        color: this.color(),
-      });
+      await this.service.updateDivision(
+        this.divisionId(),
+        this.name(),
+        this.color(),
+        this.selectedFile !== null,
+        this.selectedFile!,
+      );
     }
+    this.selectedFile = null;
+    this.filePreview = null;
+    /*
     if (this.selectedFile) {
       await this.service.updateDivisionImg(this.divisionId(), this.selectedFile);
-    }
+    }*/
     this.router.navigate(['/divisions']);
   }
 
