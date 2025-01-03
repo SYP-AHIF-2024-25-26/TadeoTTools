@@ -43,12 +43,14 @@ export class StopDetailsComponent {
     this.stopGroups.set(await this.stopGroupService.getStopGroups());
     const params = await firstValueFrom(this.route.queryParams);
 
+    console.log(params);
+
     this.stopId.set(params['id'] || -1);
     this.name.set(params['name'] || '');
     this.description.set(params['description'] || '');
     this.roomNr.set(params['roomNr'] || '');
-    this.stopGroupIds = params['stopGroupIDs'] || null;
-    this.divisionIds.set(params['divisionIDs']);
+    this.stopGroupIds = params['stopGroupIds'].map((x: string) => parseInt(x)) || null;
+    this.divisionIds.set(params['divisionIds'].map((x: string) => parseInt(x)) || []);
   }
 
   isInputValid() {
@@ -60,8 +62,8 @@ export class StopDetailsComponent {
       this.errorMessage.set('Description must be between 1 and 255 characters');
       return false;
     }
-    if (!isValid(this.roomNr(), 5)) {
-      this.errorMessage.set('Room number must be between 1 and 5 characters');
+    if (!isValid(this.roomNr(), 50)) {
+      this.errorMessage.set('Room number must be between 1 and 50 characters');
       return false;
     }
     return true;
@@ -84,7 +86,7 @@ export class StopDetailsComponent {
         name: this.name(),
         description: this.description(),
         roomNr: this.roomNr(),
-        stopGroupIDs: this.stopGroupIds,
+        stopGroupIds: this.stopGroupIds,
         divisionIds: this.divisionIds(),
       });
     }

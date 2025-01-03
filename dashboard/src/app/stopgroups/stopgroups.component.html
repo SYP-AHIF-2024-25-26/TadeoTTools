@@ -56,7 +56,7 @@
               <button
                 class="text-white p-1 my-1 bg-gray-700 appearance-none border rounded border-transparent"
                 [routerLink]="['/stop']"
-                [queryParams]="{ id: getStopByStopId(stopId)?.id, name: getStopByStopId(stopId)?.name, description: getStopByStopId(stopId)?.description, roomNr: getStopByStopId(stopId)?.roomNr, stopGroupID: group.id, divisionID: 1 }">
+                [queryParams]="{ id: getStopByStopId(stopId)?.id, name: getStopByStopId(stopId)?.name, description: getStopByStopId(stopId)?.description, roomNr: getStopByStopId(stopId)?.roomNr, stopGroupIds: getStopByStopId(stopId)?.stopGroupIds, divisionIds: getStopByStopId(stopId)?.divisionIds }">
                 Details
               </button>
             </div>
@@ -83,7 +83,7 @@
           <button
             class="text-white p-1.5 my-1 bg-gray-700 appearance-none border rounded border-transparent"
             [routerLink]="['/stop']"
-            [queryParams]="{ id: stop.id, name: stop.name, description: stop.description, roomNr: stop.roomNr, stopGroupID: 1 }">
+            [queryParams]="{ id: stop.id, name: stop.name, description: stop.description, roomNr: stop.roomNr, stopGroupIds: stop.stopGroupIds, divisionIds: stop.divisionIds }">
             Details
           </button>
         </div>

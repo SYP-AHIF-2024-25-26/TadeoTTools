@@ -88,7 +88,7 @@ export class StopService {
 
     async updateStop(stop: Stop) {
         await firstValueFrom(
-            this.httpClient.put(this.baseUrl + `/api/stops/${stop.id}`, stop, {
+            this.httpClient.put(this.baseUrl + `/api/stops`, stop, {
                 headers: {
                     'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
                 },

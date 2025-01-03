@@ -42,6 +42,9 @@
         id="roomNr"
       />
       @for (sg of stopGroups(); track $index) {
+        {{ stopGroupIds }}
+        {{ sg.id }}
+        {{ stopGroupIds.includes(sg.id) }}
         @if(stopGroupIds.includes(sg.id)) {
           <p class="text-green-700">{{ sg.name }}</p>
         }

@@ -48,6 +48,7 @@ export class StopGroupsComponent {
 
   async getStops() {
     this.stops.set(await this.stopFetcher.getStops());
+    console.log(this.stops().map(stop => stop.divisionIds));
   }
 
   async getDivisions() {
