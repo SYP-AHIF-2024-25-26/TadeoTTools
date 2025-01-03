@@ -85,7 +85,7 @@ export class StopDetailsComponent {
         description: this.description(),
         roomNr: this.roomNr(),
         stopGroupIDs: this.stopGroupIds,
-        divisionIDs: this.divisionIds(),
+        divisionIds: this.divisionIds(),
       });
     }
     this.router.navigate(['/stopgroups']);
