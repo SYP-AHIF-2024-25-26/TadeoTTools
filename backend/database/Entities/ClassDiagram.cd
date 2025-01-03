@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Core.Entities.Division">
+    <Position X="9.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAAAAAAAAAAAAAAQAAAAAABAAAAAAgAAAAAA=</HashCode>
+      <FileName>Entities\Division.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Stops" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Core.Entities.Stop">
+    <Position X="7.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAgAAAEAAAEAAQAABAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Stop.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Divisions" />
+      <Property Name="StopGroupAssignments" />
+      <Property Name="Statistics" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Core.Entities.StopGroup">
+    <Position X="0.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAAAgAAAAAAAAAAQAACAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Entities\StopGroup.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="StopAssignments" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Core.Entities.StopStatistic">
+    <Position X="4" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACACAAAAAAAAAAAAAAAAAAAAAEAAAAIAAAAAAAAQA=</HashCode>
+      <FileName>Entities\StopStatistics.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Stop" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Core.Entities.StopGroupAssignment">
+    <Position X="3.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>CAECAQAAAAAAAAAAAAAAAAAAAAAEAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Entities\StopGroupAssignment.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Stop" />
+      <Property Name="StopGroup" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

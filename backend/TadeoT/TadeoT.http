@@ -1,6 +1,0 @@
-@TadeoT_HostAddress = http://localhost:5208
-
-GET {{TadeoT_HostAddress}}/REPLACEME_api_url_string_/
-Accept: application/json
-
-###

@@ -1,7 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using TadeoT.Database;
-using TadeoT.Database.Functions;
-
 namespace API.Endpoints;
 
 public class StopStatisticEndpoints {

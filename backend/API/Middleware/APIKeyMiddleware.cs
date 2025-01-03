@@ -1,25 +1,18 @@
 using System.Security.Cryptography;
 using System.Text;
-using TadeoT.Database;
-using TadeoT.Database.Functions;
+using Database.Repository.Functions;
 
 namespace API.Middleware;
 
-public class ApiKeyMiddleware
+public class ApiKeyMiddleware(RequestDelegate next)
 {
     private const string ApiKeyHeaderName = "X-Api-Key";
-    private readonly RequestDelegate _next;
-    private APIKeyFunctions _apiKeyRepository;
-
-    public ApiKeyMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
+    private readonly RequestDelegate _next = next;
+    private APIKeyFunctions apiKeyRepository;
 
     public async Task InvokeAsync(HttpContext context)
     {
-        this._apiKeyRepository = context.RequestServices.GetRequiredService<APIKeyFunctions>();
+        this.apiKeyRepository = context.RequestServices.GetRequiredService<APIKeyFunctions>();
         if (context.Request.Method == HttpMethods.Options)
         {
             context.Response.StatusCode = StatusCodes.Status204NoContent;
@@ -49,7 +42,7 @@ public class ApiKeyMiddleware
     private async Task<bool> IsValidApiKey(string userApiKey)
     {
         // Fetch and store system API keys in a HashSet for faster lookups
-        HashSet<string> systemApiKeys = (await _apiKeyRepository.GetAllAPIKeys())
+        HashSet<string> systemApiKeys = (await apiKeyRepository.GetAllAPIKeys())
             .Select(ak => ak.APIKeyValue)
             .ToHashSet();
 
@@ -67,5 +60,4 @@ public class ApiKeyMiddleware
 
         return false;
     }
-
 }

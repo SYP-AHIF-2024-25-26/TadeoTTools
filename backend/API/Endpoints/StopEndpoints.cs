@@ -1,10 +1,8 @@
-using API.Dtos.RequestDtos;
-using API.Dtos.ResponseDtos;
-using API.RequestDto;
+using Database.Entities;
+using Database.Repository;
+using Database.Repository.Functions;
 using Microsoft.AspNetCore.Mvc;
-using TadeoT.Database;
-using TadeoT.Database.Functions;
-using TadeoT.Database.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints;
 
@@ -14,227 +12,137 @@ public static class StopEndpoints
     {
         var group = app.MapGroup("v1");
         group.MapGet("api/stops", GetAllStops);
-        group.MapGet("api/stops/private", GetPrivateStops);
-        group.MapGet("api/stops/{stopId}", GetStopById);
         group.MapPost("api/stops", CreateStop);
-        group.MapPut("api/stops/{stopId}", UpdateStop);
+        group.MapPut("api/stops", UpdateStop);
         group.MapDelete("api/stops/{stopId}", DeleteStop);
-        group.MapGet("stops/groups/{groupId}", GetStopsByGroupId);
-        group.MapPut("api/stops/order", UpdateOrder);
     }
 
-    private static async Task<IResult> GetAllStops(
-        StopFunctions stops
-    )
+    private static async Task<IResult> GetAllStops(TadeoTDbContext context)
     {
-        var allStops = await stops.GetAllStops();
-        List<ResponseStopDto> responseStops = new();
-        allStops.ForEach(stop => { responseStops.Add(ResponseStopDto.FromStop(stop)); });
-        return Results.Ok(responseStops);
+        return Results.Ok(await StopFunctions.GetAllStopsAsync(context));
     }
 
-    private static async Task<IResult> GetPrivateStops(
-        StopFunctions stops
-    )
+    private static async Task<IResult> CreateStop(TadeoTDbContext context, CreateStopRequestDto createStopDto)
     {
-        var allStops = await stops.GetAllStops();
-        List<ResponseStopDto> responseStops = new();
-        allStops
-            .Where(stop => stop.StopGroupID == null).ToList()
-            .ForEach(stop => { responseStops.Add(ResponseStopDto.FromStop(stop)); });
-        return Results.Ok(responseStops);
+        foreach (var divisionId in createStopDto.DivisionIds)
+        {
+            var division = await context.Divisions.FindAsync(divisionId);
+            if (division == null)
+            {
+                return Results.NotFound($"Division with ID {divisionId} not found");
+            }
+        }
+
+        var stop = new Stop()
+        {
+            Name = createStopDto.Name,
+            Description = createStopDto.Description,
+            RoomNr = createStopDto.RoomNr,
+            Divisions = context.Divisions
+                .Where(d => createStopDto.DivisionIds.Contains(d.Id))
+                .ToList(),
+        };
+        context.Stops.Add(stop);
+
+        var groupAssignments = createStopDto.StopGroupIds
+            .Select(g =>
+                new StopGroupAssignment()
+                {
+                    StopGroupId = g,
+                    StopGroup = context.StopGroups.Find(g),
+                    StopId = stop.Id,
+                    Stop = stop,
+                    Order = 0
+                })
+            .Where(g => g.StopGroup != null)
+            .ToList();
+        if (groupAssignments.Count != createStopDto.StopGroupIds.Length)
+        {
+            return Results.NotFound("StopGroupId not found");
+        }
+
+        stop.StopGroupAssignments = groupAssignments;
+
+        await context.SaveChangesAsync();
+        return Results.Ok(new StopResponseDto(stop.Id, stop.Name, stop.Description, stop.RoomNr,
+            createStopDto.DivisionIds, createStopDto.StopGroupIds));
     }
 
-    [HttpGet("api/stops/{stopId}")]
-    private static async Task<IResult> GetStopById(
-        int stopId,
-        StopFunctions stops
-    )
+    private static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto)
     {
-        try
+        if (updateStopDto.Name.Length == 50)
         {
-            var stop = await stops.GetStopById(stopId);
-            return Results.Ok(ResponseStopDto.FromStop(stop));
+            return Results.BadRequest("Name must be 50 characters or less.");
         }
-        catch (TadeoTNotFoundException)
+
+        if (updateStopDto.Description.Length == 255)
         {
-            return Results.NotFound("Stop not found");
+            return Results.BadRequest("Description must be 255 characters or less.");
         }
+
+        if (updateStopDto.RoomNr.Length == 50)
+        {
+            return Results.BadRequest("RoomNr must be 50 characters or less.");
+        }
+
+        var newDivisions = context.Divisions.Where(di => updateStopDto.DivisionIds.Contains(di.Id)).ToList();
+
+        var stop = await context.Stops
+            .Include(stop => stop.Divisions)
+            .SingleOrDefaultAsync(stop => stop.Id == updateStopDto.Id);
+
+        if (stop == null)
+        {
+            return Results.NotFound($"Stop with ID {updateStopDto.Id} not found");
+        }
+
+        stop.Divisions.Clear();
+        stop.Divisions.AddRange(newDivisions);
+
+        stop.Name = updateStopDto.Name;
+        stop.Description = updateStopDto.Description;
+        stop.RoomNr = updateStopDto.RoomNr;
+
+        await context.SaveChangesAsync();
+        return Results.Ok();
     }
 
-    private static async Task<IResult> CreateStop(
-        [FromBody] RequestStopDto stop,
-        StopFunctions stops,
-        StopGroupFunctions stopGroups,
-        DivisionFunctions divisions
-    )
+    private static async Task<IResult> DeleteStop(TadeoTDbContext context, [FromRoute] int stopId)
     {
-        try
+        var stop = await context.Stops.FindAsync(stopId);
+        if (stop == null)
         {
-            if (stop.Name.Length > 50)
-            {
-                return Results.BadRequest("Invalid Name");
-            }
-
-            if (stop.Description.Length > 255)
-            {
-                return Results.BadRequest("Invalid Description");
-            }
-
-            if (stop.RoomNr.Length > 5)
-            {
-                return Results.BadRequest("Invalid Room Number");
-            }
-
-            var stopToAdd = new Stop
-            {
-                Name = stop.Name,
-                Description = stop.Description,
-                RoomNr = stop.RoomNr,
-                DivisionID = stop.DivisionID,
-                StopGroupID = stop.StopGroupID,
-            };
-
-            stopToAdd.StopID = await stops.AddStop(stopToAdd);
-
-            return Results.Ok(ResponseStopDto.FromStop(stopToAdd));
+            return Results.NotFound($"Stop with ID {stopId} not found");
         }
-        catch (TadeoTNotFoundException)
-        {
-            return Results.NotFound("Division not found");
-        }
-        catch (TadeoTDatabaseException)
-        {
-            return Results.StatusCode(500);
-        }
+
+        context.Stops.Remove(stop);
+        await context.SaveChangesAsync();
+        return Results.Ok();
     }
 
-    private static async Task<IResult> UpdateStop(
-        int stopId,
-        [FromBody] RequestStopDto stop,
-        StopGroupFunctions stopGroups,
-        DivisionFunctions divisions,
-        StopFunctions stops
-    )
-    {
-        try
-        {
-            try
-            {
-                await divisions.GetDivisionById(stop.DivisionID);
-            }
-            catch (TadeoTNotFoundException)
-            {
-                return Results.NotFound("Division not found");
-            }
+    public record UpdateStopRequestDto(
+        int Id,
+        string Name,
+        string Description,
+        string RoomNr,
+        int[] DivisionIds,
+        int[] StopGroupIds
+    );
 
-            if (stop.Name.Length > 50)
-            {
-                return Results.BadRequest("Invalid Name");
-            }
+    public record CreateStopRequestDto(
+        string Name,
+        string Description,
+        string RoomNr,
+        int[] DivisionIds,
+        int[] StopGroupIds
+    );
 
-            if (stop.Description.Length > 255)
-            {
-                return Results.BadRequest("Invalid Description");
-            }
-
-            if (stop.RoomNr.Length > 5)
-            {
-                return Results.BadRequest("Invalid RoomNr");
-            }
-
-            var oldStop = await stops.GetStopById(stopId);
-
-            await stops.UpdateStop(new Stop
-            {
-                StopID = stopId,
-                Name = stop.Name,
-                Description = stop.Description,
-                RoomNr = stop.RoomNr,
-                StopGroupID = stop.StopGroupID,
-                DivisionID = stop.DivisionID,
-                StopOrder = oldStop.StopOrder
-            });
-            return Results.Ok(stop.StopGroupID);
-        }
-        catch (TadeoTNotFoundException)
-        {
-            return Results.NotFound("Stop not found");
-        }
-        catch (TadeoTDatabaseException)
-        {
-            return Results.StatusCode(500);
-        }
-    }
-
-    private static async Task<IResult> DeleteStop(
-        int stopId,
-        StopFunctions stops
-    )
-    {
-        try
-        {
-            await stops.GetStopById(stopId);
-            await stops.DeleteStopById(stopId);
-            return Results.Ok();
-        }
-        catch (TadeoTNotFoundException)
-        {
-            return Results.NotFound("Stop not found");
-        }
-        catch (TadeoTDatabaseException)
-        {
-            return Results.StatusCode(500);
-        }
-    }
-
-    private static async Task<IResult> GetStopsByGroupId(
-        int groupId,
-        StopFunctions stops,
-        StopGroupFunctions stopGroups
-    )
-    {
-        try
-        {
-            await stopGroups.GetStopGroupById(groupId);
-            List<ResponseStopDto> responseStops = new();
-            var stopsByGroup = await stopGroups.GetStopsOfStopGroup(groupId);
-            stopsByGroup.ForEach(stop => { responseStops.Add(ResponseStopDto.FromStop(stop)); });
-            return Results.Ok(responseStops);
-        }
-        catch (TadeoTNotFoundException)
-        {
-            return Results.NotFound("StopGroup not found");
-        }
-        catch (TadeoTDatabaseException)
-        {
-            return Results.StatusCode(500);
-        }
-    }
-
-    private static async Task<IResult> UpdateOrder(
-        RequestOrderDto order,
-        StopFunctions stops
-    )
-    {
-        try
-        {
-            for (var i = 0; i < order.Order.Length; i++)
-            {
-                var stop = await stops.GetStopById(order.Order[i]);
-                stop.StopOrder = i;
-                await stops.UpdateStop(stop);
-            }
-
-            return Results.Ok();
-        }
-        catch (TadeoTNotFoundException)
-        {
-            return Results.NotFound();
-        }
-        catch (TadeoTDatabaseException)
-        {
-            return Results.StatusCode(500);
-        }
-    }
+    public record StopResponseDto(
+        int StopId,
+        string Name,
+        string Description,
+        string RoomNr,
+        int[] DivisionIds,
+        int[] StopGroupIds
+    );
 }

@@ -1,10 +1,8 @@
-using System.Text.RegularExpressions;
-using API.Dtos.RequestDtos;
-using API.Dtos.ResponseDtos;
+using Database.Entities;
+using Database.Repository;
+using Database.Repository.Functions;
 using Microsoft.AspNetCore.Mvc;
-using TadeoT.Database;
-using TadeoT.Database.Functions;
-using TadeoT.Database.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints;
 
@@ -16,173 +14,100 @@ public static class StopGroupEndpoints
         group.MapGet("groups", GetGroups);
         group.MapGet("api/groups", GetGroupsApi);
         group.MapPost("api/groups", CreateGroup);
-        group.MapPut("api/groups/{groupId}", UpdateGroup);
+        group.MapPut("api/groups", UpdateGroup);
         group.MapDelete("api/groups/{groupId}", DeleteGroup);
         group.MapPut("api/groups/order", UpdateOrder);
     }
 
-    public static async Task<IResult> GetGroups(
-        StopGroupFunctions stopGroups
-    )
+    public record GetGroupsResponse(int Id, string Name, string Description, int Rank, int[] StopIds);
+
+    public static async Task<IResult> GetGroups(TadeoTDbContext context)
     {
-        try
-        {
-            var allStopGroups = await stopGroups.GetAllStopGroups();
-            return Results.Ok(allStopGroups
-                .Where(stopGroup => stopGroup.IsPublic)
-                .Select(stopGroup => new ResponseStopGroupDto()
-                {
-                    StopGroupID = stopGroup.StopGroupID,
-                    Name = stopGroup.Name,
-                    Description = stopGroup.Description,
-                })
-                .ToList());
-        }
-        catch (TadeoTDatabaseException)
-        {
-            return Results.StatusCode(500);
-        }
+        return Results.Ok(await StopGroupFunctions.GetPublicStopGroupsAsync(context));
     }
 
-    public static async Task<IResult> GetGroupsApi(
-        StopGroupFunctions stopGroups
-    )
+    public static async Task<IResult> GetGroupsApi(TadeoTDbContext context)
     {
-        try
-        {
-            var allStopGroups = await stopGroups.GetAllStopGroups();
-            return Results.Ok(allStopGroups.Select(stopGroup => new ResponseApiStopGroupDto()
-            {
-                StopGroupID = stopGroup.StopGroupID,
-                Name = stopGroup.Name,
-                Description = stopGroup.Description,
-                IsPublic = stopGroup.IsPublic
-            }));
-        }
-        catch (TadeoTDatabaseException)
-        {
-            return Results.StatusCode(500);
-        }
+        return Results.Ok(await StopGroupFunctions.GetAllStopGroupsAsync(context));
     }
 
-    public static async Task<IResult> CreateGroup(
-        [FromBody] RequestStopGroupDto group,
-        StopGroupFunctions stopGroups
-    )
+    public record CreateGroupRequestDto(string Name, string Description, bool IsPublic);
+    
+    public static async Task<IResult> CreateGroup(TadeoTDbContext context, CreateGroupRequestDto dto)
     {
-        try
+        var group = new StopGroup()
         {
-            if (group.Name.Length > 50)
-            {
-                return Results.BadRequest("Invalid Name");
-            }
+            Name = dto.Name,
+            Description = dto.Description,
+            IsPublic = dto.IsPublic,
+        };
 
-            if (group.Description.Length > 255)
-            {
-                return Results.BadRequest("Invalid Description");
-            }
-
-            var stopGroupToAdd = new StopGroup
-            {
-                Name = group.Name,
-                Description = group.Description,
-                IsPublic = group.IsPublic
-            };
-            var stopGroupId = await stopGroups.AddStopGroup(stopGroupToAdd);
-            stopGroupToAdd.StopGroupID = stopGroupId;
-            return Results.Ok(stopGroupToAdd);
-        }
-        catch (TadeoTDatabaseException)
-        {
-            return Results.StatusCode(500);
-        }
+        context.StopGroups.Add(group);
+        await context.SaveChangesAsync();
+        
+        return Results.Ok(group);
     }
 
-    public static async Task<IResult> UpdateGroup(
-        int groupId,
-        [FromBody] RequestStopGroupDto group,
-        StopGroupFunctions stopGroups
-    )
+    
+    public record UpdateGroupRequestDto(int Id, string Name, string Description, bool IsPublic, int[] StopIds);
+    private static async Task<IResult> UpdateGroup(TadeoTDbContext context, UpdateGroupRequestDto dto)
     {
-        try
+        var group = await context.StopGroups
+            .Include(g => g.StopAssignments)
+            .FirstOrDefaultAsync(g => g.Id == dto.Id);
+        if (group == null)
         {
-            var oldStopGroup = await stopGroups.GetStopGroupById(groupId);
-            if (group.Name.Length > 50)
-            {
-                return Results.BadRequest("Invalid Name");
-            }
-
-            if (group.Description.Length > 255)
-            {
-                return Results.BadRequest("Invalid Description");
-            }
-
-            var stopGroup = new StopGroup
-            {
-                StopGroupID = groupId,
-                Name = group.Name,
-                Description = group.Description,
-                IsPublic = group.IsPublic,
-                StopGroupOrder = oldStopGroup.StopGroupOrder
-            };
-
-            await stopGroups.UpdateStopGroup(stopGroup);
-            return Results.Ok();
+            return Results.NotFound("Group not found");
         }
-        catch (TadeoTNotFoundException)
+        
+        group.Name = dto.Name;
+        group.Description = dto.Description;
+        group.IsPublic = dto.IsPublic;
+
+        var assignments = dto.StopIds.Select((id, index) => new StopGroupAssignment()
         {
-            return Results.NotFound("StopGroup not found!");
-        }
-        catch (TadeoTDatabaseException)
-        {
-            return Results.StatusCode(500);
-        }
+            StopGroupId = group.Id,
+            StopGroup = group,
+            StopId = id,
+            Stop = context.Stops.Find(id),
+            Order = index
+        });
+        group.StopAssignments.Clear();
+        group.StopAssignments.AddRange(assignments);
+        
+        await context.SaveChangesAsync();
+
+        return Results.Ok();
     }
 
-    public static async Task<IResult> DeleteGroup(
-        int groupId,
-        StopGroupFunctions stopGroups
-    )
+    public static async Task<IResult> DeleteGroup(TadeoTDbContext context, StopGroupFunctions groups, [FromRoute] int groupId)
     {
-        try
+        var group = await context.StopGroups.FindAsync(groupId);
+        if (group == null)
         {
-            await stopGroups.GetStopGroupById(groupId);
-            await stopGroups.DeleteStopGroupById(groupId);
-            return Results.Ok();
+            return Results.NotFound($"StopGroup with ID {groupId} not found");
         }
-        catch (TadeoTNotFoundException)
-        {
-            return Results.NotFound("StopGroup not found!");
-        }
-        catch (TadeoTDatabaseException)
-        {
-            return Results.StatusCode(500);
-        }
+
+        context.StopGroups.Remove(group);
+        await context.SaveChangesAsync();
+        return Results.Ok();
     }
 
-    public static async Task<IResult> UpdateOrder(
-        RequestOrderDto order,
-        StopGroupFunctions stopGroups
-    )
+    public static async Task<IResult> UpdateOrder(TadeoTDbContext context, StopGroupFunctions groups, [FromBody] int[] order)
     {
-        try
+        for (var index = 0; index < order.Length; index++)
         {
-            for (var i = 0; i < order.Order.Length; i++)
+            var groupId = order[index];
+            var stopGroup = await context.StopGroups.FindAsync(groupId);
+            if (stopGroup == null)
             {
-                var stopGroup = await stopGroups.GetStopGroupById(order.Order[i]);
-                stopGroup.StopGroupOrder = i;
-                await stopGroups.UpdateStopGroup(stopGroup);
+                return Results.NotFound($"StopGroup {groupId} not found");
             }
+            stopGroup.Rank = index;
+        }
 
-            return Results.Ok();
-        }
-        catch (TadeoTNotFoundException)
-        {
-            return Results.NotFound();
-        }
-        catch (TadeoTDatabaseException)
-        {
-            return Results.StatusCode(500);
-        }
+        await context.SaveChangesAsync();
+        
+        return Results.Ok();
     }
 }

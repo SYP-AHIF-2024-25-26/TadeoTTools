@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using TadeoT.Database.Functions;
 using TadeoT.Database;
-using TadeoT.Database.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Core.Entities;
 
 [assembly: NonParallelizable]
 

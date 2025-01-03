@@ -1,0 +1,47 @@
+﻿Abt.;id;Stock;Bezeichung;Verantwortlich;Ort;StopGroup;Stop;Beschreibungstext für Guide-App;Club of Excellence
+;j;EG;Empfang;Schröder/Kern;E02;;;;
+;j;EG;Jobbörse;Tumfart Hannes;E02;;;;
+;j;EG;Informationen zu Schülerheimen;Reisinger Hannes;vor Bibliothek;;;;
+Buffet;j;1.Stock;Buffet im 1.Stock ;Schröder/Meszaros/Lehenbauer;101 (Aula);;;;
+;j;EG;"Kurzpräsentation ""HTL im Überblick""";Pachschwöll/Kern;E22/E23/E26;1;;Eine 10-minütige Einführung in das Bildungsangebot der HTL Leonding. Danach gehts gleich weiter in eine geführte Tour durch die Informatik- und Medientechnik, oder durch die Elektonik und Medizintechnik.;
+;j;EG;Guide-Tour Informatik & Medientechnik;Pachschwöll;vor E26;2;;Guides begleiten Kleingruppen durch die Informatik- und Medientechnik-Abteilung.;
+;j;EG;Guide-Tour Elektronik & Medizintechnik;Kern;vor E26;3;;Guides begleiten Kleingruppen durch die Elektronik- und Medizintechnik-Abteilung.;
+;;EG;Elternvorträge;Reisinger/Pachschwöll/Schröder/Kern;E59-1/E59-2;4;;Während die Kids bei einer geführten Tour durch die Abteilungen mitmachen, haben wir für ihre Begleitung Fachvorträge zu verschiedenen Themen vorbereitet.;
+;;;Clubs (Program of Excellence);;;5;;In diesem Programm haben Schülerinnen und Schüler die Möglichkeit, sich über den Regelunterricht hinaus zu vertiefen oder gemeinsamen Interessen nachzugehen.;
+;j;EG;Beratungszentrum;Reiter Riccarda;Aula E30;6;;Lehrerinnen und Lehrer beraten zu den einzelnen Lehrplänen und Ausbildungsschwerpunkten.;
+;j;EG;Voranmeldung;Dumfart;Aula E30;7;;Hier kannst Du Dich für das kommende Schuljahr 2024/25 bereits voranmelden und erfährst, wie es danach mit Deiner Schulbewerbung weitergeht.;
+;;1.Stock;Lernbüro;Schmid Silke;Gang bis 143;;2,3;;
+;j;1.Stock;Mathematik anwenden und begreifen;Rumetshofer;119;;2,3;;
+;;1.Stock;Highlight: Leo Green (School-IoT, DrivingEfficiencyTracker, …);Dilly / Stütz;101 (Aula);;2;Umweltschutzbezogene Vorzeigeprojekte;
+HITM;;1.Stock;Streaming- und Regieraum;Erich Baar;101 (Aula);;2,5;;x
+HITM;;1.Stock;Highlight: Beam-VR / Gaming Development;Haslinger Markus;101 (Aula);;2,5;Mit BeamVR kannst Du auf einem Holzbalken balancieren und wirst in eine atemberaubende Dschungelwelt vesetzt. ;x
+HIF;j;1.Stock;Advanced Algorithms / IOI / Coder Dojo;Rainer Stropek;101 (Aula);;2,5;;x
+HIF,HEL;j;1.Stock;Embedded Systems Club;Stefan Schraml/ Robert Raschhofer;101 (Aula);;2,3,5;;x
+INF;j;1.Stock;Highlight: Naos, Pepper, Lego-Roboter;Steiner Dietmar/Auernig Franz;101 (Aula);;2,5;;x
+EL;j;1.Stock;ESA Raumfahrt / Amateurfunk;Wagner/Gallistl;101 (Aula);;3;;x
+INF/MDT;j;1.Stock;Best of Projects (INF+MDT);Schröder/Kern;120;;2;Die besten Apps aus den Abschlussjahrgängen der Informatik und Medientechnik;
+INF/MDT;j;1.Stock;Schnupperprogrammieren;Kaser;123 EDV5 / 122 EDV4;;2;;
+INF;j;1.Stock;Roboterführerschein;Aitenbichler;109a/EDV1;;2;;
+INF;j;1.Stock;Informatik-Experimente (Bananenklavier etc.);Stütz;105;;2;;
+INF;j;1.Stock;Künstliche Intelligenz (aktuelle Diplomarbeiten/Projekte);Karpowicz/Kornfellner;106;;2;;
+INF;j;1.Stock;English class goes web / CSI;Klewein/Schraml;104;;2;;x
+;j;1.Stock;Cambridge BE;Wellisch Alexandra;104;;2,3,5;;x
+;j;1.Stock;Freigegenstand Spanisch;Florea Petre/Mader Conny;104;;2,3,5;;x
+INF;j;1. Stock;Cloud Computing / Hacken & Forensik;Aberger/Unterrainer/Braun;108/EDV2;;2,5;;x
+MedienT;j;EG;Gaming Garden;Rammelmüller Natascha;E24;;2;;
+MedienT;j;EG;Medientechnik Cinema, Video- und Animationsprojekte;Engleitner Patricia;E71;;2;;
+MedienT;j;EG;Web Garden, Webanwendungen Webprojekte;Huemer Martin;E72;;2;;
+MedienT;j;EG;Practice Garden, Videoschnitt, Effect-Editing und 3D-Design;Engleitner Patricia;E73/EDV7;;2;;
+MedienT;j;UG;Sound Garden, Tonstudio;Baar Erich;U37;;2;;
+MedienT;j;UG;Video Garden,Videostudio;Baar Erich;U34;;2;;
+EL;;1. Stock;Schnupperprogrammieren / Elektronik;Lüftner;143;;3;;
+EL;;UG;Best of Projects (EL);Mistelberger;Pausenbereich UG;;3;;
+EL;;UG;Experimentelle Elektronik;Kurz / Raschhofer;Pausenbereich UG;;3;;
+EL;;UG;Fachschule / Robodog;Wagner ;Pausenbereich UG;;3;;
+EL;;UG;Labor Diplomarbeiten Elektronik;??;??;;3;;
+Werkstätte;;UG;Vorsicht schnittig (Lasercut);Kaiser;U86;;3;;
+Werkstätte;;UG;Let`s do it! (Löt-Workshop);Oswald;U82;;3;;
+Werkstätte;;UG;Robotik / Kuka / Industrierobotik;Wenigwieser;U85;;3;;
+MedizinT;;UG;Medizintechnik / Ultraschall / EKG..;Moser;U04a;;3;;
+MedizinT;;UG;check your health / Biomedizin-Labor;Knogler / Povcaz;U04b;;3;;
+ ;; ;;;;;;;
