@@ -42,9 +42,6 @@
         id="roomNr"
       />
       @for (sg of stopGroups(); track $index) {
-        {{ stopGroupIds }}
-        {{ sg.id }}
-        {{ stopGroupIds.includes(sg.id) }}
         @if(stopGroupIds.includes(sg.id)) {
           <p class="text-green-700">{{ sg.name }}</p>
         }
@@ -52,7 +49,7 @@
     </div>
 
     <div>
-      <label for="division" class="mr-4">Division</label>
+      <label for="division" class="mr-4">Divisions</label>
       <!-- Chiplist für Divisions TODO
       <select id="division" [(ngModel)]="divisionId" name="division">
         @for (division of divisions(); track $index) {

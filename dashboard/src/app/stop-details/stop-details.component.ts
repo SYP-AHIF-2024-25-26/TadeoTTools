@@ -42,9 +42,6 @@ export class StopDetailsComponent {
     this.divisions.set(await this.divisionService.getDivisions());
     this.stopGroups.set(await this.stopGroupService.getStopGroups());
     const params = await firstValueFrom(this.route.queryParams);
-
-    console.log(params);
-
     this.stopId.set(params['id'] || -1);
     this.name.set(params['name'] || '');
     this.description.set(params['description'] || '');
