@@ -17,7 +17,7 @@
         <button
           class="flex-1 py-2 text-center text-gray-600 hover:text-gray-800 focus:outline-none"
           [class.border-b-2]="selectedTab() === 'about'"
-          [class.border-blue-500]="selectedTab() === 'about'"
+          [class.border-orange-500]="selectedTab() === 'about'"
           (click)="selectTab('about')"
         >
           <span class="inline-flex items-center text-xl"> About </span>
@@ -25,7 +25,7 @@
         <button
           class="flex-1 py-2 text-center text-gray-600 hover:text-gray-800 focus:outline-none"
           [class.border-b-2]="selectedTab() === 'manual'"
-          [class.border-blue-500]="selectedTab() === 'manual'"
+          [class.border-orange-500]="selectedTab() === 'manual'"
           (click)="selectTab('manual')"
         >
           <span class="inline-flex items-center text-xl"> Benutzerhandbuch </span>

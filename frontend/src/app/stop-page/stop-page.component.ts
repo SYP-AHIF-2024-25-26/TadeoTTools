@@ -44,6 +44,7 @@ export class StopPageComponent {
   }
 
   getColorOfStop(stop: Stop) {
+    stop.divisionIds.push(5);
     return this.divisions()
       .filter((division) => stop.divisionIds.includes(division.id))
       .map((d) => d.color);
