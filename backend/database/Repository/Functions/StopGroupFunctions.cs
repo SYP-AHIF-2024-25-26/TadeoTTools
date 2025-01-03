@@ -4,8 +4,9 @@ namespace Database.Repository.Functions;
 
 public class StopGroupFunctions
 {
-    public record StopGroupWithStops(int Id, string Name, string Description, int Rank, int[] StopIds);
-    
+    public record StopGroupWithStops(int Id, string Name, string Description, int Rank, bool IsPublic, int[] StopIds);
+    public record StopGroupWithStopsPublic(int Id, string Name, string Description, int Rank, int[] StopIds);
+
     public record GetGroupsResponse(int Id, string Name, string Description, int Rank, int[] StopIds);
 
     public static async Task<StopGroupWithStops[]> GetAllStopGroupsAsync(TadeoTDbContext context)
@@ -16,6 +17,7 @@ public class StopGroupFunctions
                g.Name,
                g.Description,
                g.Rank,
+               g.IsPublic,
                context.StopGroupAssignments
                    .Where(a => a.StopGroupId == g.Id)
                    .OrderBy(a => a.Order)
@@ -24,11 +26,11 @@ public class StopGroupFunctions
            )).ToArrayAsync();
     }
 
-    public static async Task<StopGroupWithStops[]> GetPublicStopGroupsAsync(TadeoTDbContext context)
+    public static async Task<StopGroupWithStopsPublic[]> GetPublicStopGroupsAsync(TadeoTDbContext context)
     {
         return await context.StopGroups
            .Where(g => g.IsPublic)
-           .Select(g => new StopGroupWithStops(
+           .Select(g => new StopGroupWithStopsPublic(
                g.Id,
                g.Name,
                g.Description,
