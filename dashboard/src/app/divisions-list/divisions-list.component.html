@@ -1,5 +1,6 @@
 <div class="bg-gray-50 w-full h-screen">
-  <div class="flex justify-start gap-4 flex-wrap">
+  <div class="flex gap-4 flex-wrap mx-10">
+
     @for (division of divisions(); track $index) {
       <div
         class="w-64 p-6 border rounded-lg m-2 text-black bg-white flex flex-wrap flex-col justify-between"
@@ -27,7 +28,7 @@
 
   </div>
   <button
-    class="text-white p-1.5 m-4 bg-gray-700 border rounded border-transparent"
+    class="text-white p-1.5 m-4 bg-gray-700 border rounded border-transparent ml-12 mt-8"
     [routerLink]="['/division']"
   >
     New Division
