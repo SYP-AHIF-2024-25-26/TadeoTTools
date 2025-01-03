@@ -18,7 +18,9 @@
       />
     </div>
     <div class="mb-4">
-      <label for="description" class="block mb-2 text-gray-700">Description</label>
+      <label for="description" class="block mb-2 text-gray-700"
+        >Description</label
+      >
       <textarea
         class="border rounded px-4 py-2 text-gray-700 w-full"
         [value]="description()"
@@ -42,26 +44,26 @@
     @if (errorMessage() != null) {
     <p class="text-red-700">{{ errorMessage() }}</p>
     }
+    <div>
+      <button type="submit" class="bg-htl-orange p-2 rounded text-white">
+        Submit
+      </button>
+
+      <button
+        [routerLink]="['/stopgroups']"
+        class="bg-htl-orange ml-4 p-2 rounded text-white"
+      >
+        Cancel
+      </button>
+
+      @if (stopGroupId() != -1) {
+      <button
+        (click)="deleteAndGoBack()"
+        class="mt-4 ml-4 bg-htl-orange p-2 rounded text-white"
+      >
+        Delete
+      </button>
+      }
+    </div>
   </form>
-  <div>
-    <button type="submit" class="bg-htl-orange p-2 rounded text-white">
-      Submit
-    </button>
-
-    <button
-      [routerLink]="['/stopgroups']"
-      class="bg-htl-orange ml-4 p-2 rounded text-white"
-    >
-      Cancel
-    </button>
-
-    @if (stopGroupId() != -1) {
-    <button
-      (click)="deleteAndGoBack()"
-      class="mt-4 ml-4 bg-htl-orange p-2 rounded text-white"
-    >
-      Delete and go back
-    </button>
-    }
-  </div>
 </div>

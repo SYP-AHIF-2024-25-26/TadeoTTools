@@ -68,13 +68,14 @@ export class StopService {
                 }
             )
         );
-    }
+    }*/
 
     async addStop(stop: {
         name: string;
         description: string;
         roomNr: string;
-        id: number;
+        divisionIDs: number[];
+        stopGroupIDs: number[];
     }) {
         await firstValueFrom(
             this.httpClient.post(this.baseUrl + '/api/stops', stop, {
@@ -103,5 +104,5 @@ export class StopService {
                 },
             })
         );
-    }*/
+    }
 }

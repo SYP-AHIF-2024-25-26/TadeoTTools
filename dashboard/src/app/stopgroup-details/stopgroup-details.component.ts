@@ -54,10 +54,11 @@ export class StopgroupDetailsComponent implements OnInit {
       });
     } else {
       await this.service.updateStopGroup({
-        stopGroupID: this.stopGroupId(),
+        id: this.stopGroupId(),
         name: this.name(),
         description: this.description(),
         isPublic: this.isPublic(),
+        stopIds: [],
       });
     }
     this.router.navigate(['/stopgroups']);
