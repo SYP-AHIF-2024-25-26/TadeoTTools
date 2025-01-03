@@ -14,6 +14,14 @@ export class StopService {
     constructor() {
     }
 
+    public async getStops(): Promise<Stop[]> {
+      return firstValueFrom(this.httpClient.get<Stop[]>(this.baseUrl + '/api/stops', {
+        headers: {
+          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
+        }
+      }))
+    }
+/*
     public async getPrivateStops() {
         return firstValueFrom(
             this.httpClient.get<Stop[]>(this.baseUrl + '/api/stops/private', {
@@ -24,9 +32,9 @@ export class StopService {
         );
     }
 
-    async getStopsByStopGroupID(stopGroupID: number): Promise<Stop[]> {
+    async getStopsByid(id: number): Promise<Stop[]> {
         return firstValueFrom(
-            this.httpClient.get<Stop[]>(this.baseUrl + `/stops/groups/${stopGroupID}`)
+            this.httpClient.get<Stop[]>(this.baseUrl + `/stops/groups/${id}`)
         );
     }
 
@@ -42,16 +50,16 @@ export class StopService {
         );
     }
 
-    async updateStopStopGroupId(stop: Stop) {
+    async updateStopid(stop: Stop) {
         return await firstValueFrom(
             this.httpClient.put(
-                this.baseUrl + `/api/stops/` + stop.stopID,
+                this.baseUrl + `/api/stops/` + stop.id,
                 {
                     name: stop.name,
                     description: stop.description,
                     roomNr: stop.roomNr,
-                    stopGroupId: stop.stopGroupID,
-                    divisionId: stop.divisionID,
+                    id: stop.id,
+                    id: stop.id,
                 },
                 {
                     headers: {
@@ -66,7 +74,7 @@ export class StopService {
         name: string;
         description: string;
         roomNr: string;
-        divisionID: number;
+        id: number;
     }) {
         await firstValueFrom(
             this.httpClient.post(this.baseUrl + '/api/stops', stop, {
@@ -79,7 +87,7 @@ export class StopService {
 
     async updateStop(stop: Stop) {
         await firstValueFrom(
-            this.httpClient.put(this.baseUrl + `/api/stops/${stop.stopID}`, stop, {
+            this.httpClient.put(this.baseUrl + `/api/stops/${stop.id}`, stop, {
                 headers: {
                     'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
                 },
@@ -87,13 +95,13 @@ export class StopService {
         );
     }
 
-    async deleteStop(stopId: number) {
+    async deleteStop(id: number) {
         await firstValueFrom(
-            this.httpClient.delete(this.baseUrl + `/api/stops/${stopId}`, {
+            this.httpClient.delete(this.baseUrl + `/api/stops/${id}`, {
                 headers: {
                     'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
                 },
             })
         );
-    }
+    }*/
 }
