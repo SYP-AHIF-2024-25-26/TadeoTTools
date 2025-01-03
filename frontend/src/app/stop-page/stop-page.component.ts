@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input, signal, ViewChildren, WritableSignal } from '@angular/core';
+import { Component, computed, inject, Input, Signal, signal, ViewChildren, WritableSignal } from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
@@ -8,7 +8,12 @@ import { StopCardComponent } from '../stop-card/stop-card.component';
 import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { DescriptionContainerComponent } from '../description-container/description-container.component';
-import { CURRENT_STOP_GROUP_PREFIX, CURRENT_STOP_PREFIX, STOP_GROUP_PROGRESS_PREFIX, STOPS_COUNT_PREFIX } from '../constants';
+import {
+  CURRENT_STOP_GROUP_PREFIX,
+  CURRENT_STOP_PREFIX,
+  STOP_GROUP_PROGRESS_PREFIX,
+  STOPS_COUNT_PREFIX,
+} from '../constants';
 
 @Component({
   selector: 'app-stop-page',
@@ -25,7 +30,12 @@ export class StopPageComponent {
   parentStopGroup: WritableSignal<StopGroup> = signal({} as StopGroup);
   stops: WritableSignal<Stop[]> = signal([]);
   divisions: WritableSignal<Division[]> = signal([]);
-  divisionIds = computed(() => Array.from(new Set(this.stops().map((stop) => stop.divisionID))).sort((a, b) => a - b));
+  divisionIds: Signal<number[]> = computed(() =>
+    Array.from(
+      new Set(...this.stops()
+        .map((stop) => stop.divisionIds)))
+      .sort((a, b) => a - b)
+  );
 
   async ngOnInit() {
     if (this.stopGroupId === undefined) {
@@ -44,17 +54,17 @@ export class StopPageComponent {
   }
 
   getColorOfStop(stop: Stop) {
-    return this.divisions().find((division) => division.divisionID === stop.divisionID)?.color;
+    return this.divisions().filter((division) => stop.divisionIds.includes(division.id)).map((d) => d.color);
   }
 
   async openStopDescriptionPage(stop: Stop) {
     sessionStorage.setItem(CURRENT_STOP_PREFIX, JSON.stringify(stop));
-    await this.router.navigate(['/tour', this.parentStopGroup().stopGroupID, 'stop', stop.stopID]);
+    await this.router.navigate(['/tour', this.parentStopGroup().id, 'stop', stop.id]);
   }
 
   setProgress() {
     const progress = this.stopCards.filter((stopCard) => stopCard.isChecked()).length;
-    sessionStorage.setItem(STOP_GROUP_PROGRESS_PREFIX + this.parentStopGroup().stopGroupID, progress.toString());
-    sessionStorage.setItem(STOPS_COUNT_PREFIX + this.parentStopGroup().stopGroupID, this.stops().length.toString());
+    sessionStorage.setItem(STOP_GROUP_PROGRESS_PREFIX + this.parentStopGroup().id, progress.toString());
+    sessionStorage.setItem(STOPS_COUNT_PREFIX + this.parentStopGroup().id, this.stops().length.toString());
   }
 }
