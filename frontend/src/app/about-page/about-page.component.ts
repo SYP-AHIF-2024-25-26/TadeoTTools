@@ -7,13 +7,9 @@ import { AboutCardComponent } from '../about-card/about-card.component';
 @Component({
   selector: 'app-about-page',
   standalone: true,
-  imports: [
-    NavbarComponent,
-    HeaderComponent,
-    AboutCardComponent,
-  ],
+  imports: [NavbarComponent, HeaderComponent, AboutCardComponent],
   templateUrl: './about-page.component.html',
-  styleUrl: './about-page.component.css'
+  styleUrl: './about-page.component.css',
 })
 export class AboutPageComponent {
   members: TeamMember[] = [
@@ -31,8 +27,8 @@ export class AboutPageComponent {
       name: 'Andreas Huber',
       class: '4AHIF',
       schoolYear: '4. Klasse Informatik',
-    }
-    ];
+    },
+  ];
 
   selectedTab: WritableSignal<string> = signal('about');
 

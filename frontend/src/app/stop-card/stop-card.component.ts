@@ -25,5 +25,4 @@ export class StopCardComponent {
   protected generateGradient(colors: string[]): string {
     return `linear-gradient(to right, ${colors.join(', ')})`;
   }
-
 }

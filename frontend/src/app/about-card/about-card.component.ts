@@ -6,8 +6,8 @@ import { TeamMember } from '../types';
   standalone: true,
   imports: [],
   templateUrl: './about-card.component.html',
-  styleUrl: './about-card.component.css'
+  styleUrl: './about-card.component.css',
 })
 export class AboutCardComponent {
-  @Input({required: true}) member!: TeamMember;
+  @Input({ required: true }) member!: TeamMember;
 }

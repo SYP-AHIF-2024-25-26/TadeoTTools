@@ -25,4 +25,4 @@ export type TeamMember = {
   name: string;
   class: string;
   schoolYear: string;
-}
+};

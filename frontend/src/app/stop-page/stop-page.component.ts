@@ -8,12 +8,7 @@ import { StopCardComponent } from '../stop-card/stop-card.component';
 import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { DescriptionContainerComponent } from '../description-container/description-container.component';
-import {
-  CURRENT_STOP_GROUP_PREFIX,
-  CURRENT_STOP_PREFIX,
-  STOP_GROUP_PROGRESS_PREFIX,
-  STOPS_COUNT_PREFIX,
-} from '../constants';
+import { CURRENT_STOP_GROUP_PREFIX, CURRENT_STOP_PREFIX, STOP_GROUP_PROGRESS_PREFIX, STOPS_COUNT_PREFIX } from '../constants';
 
 @Component({
   selector: 'app-stop-page',
@@ -30,12 +25,7 @@ export class StopPageComponent {
   parentStopGroup: WritableSignal<StopGroup> = signal({} as StopGroup);
   stops: WritableSignal<Stop[]> = signal([]);
   divisions: WritableSignal<Division[]> = signal([]);
-  divisionIds: Signal<number[]> = computed(() =>
-    Array.from(
-      new Set(...this.stops()
-        .map((stop) => stop.divisionIds)))
-      .sort((a, b) => a - b)
-  );
+  divisionIds: Signal<number[]> = computed(() => Array.from(new Set(...this.stops().map((stop) => stop.divisionIds))).sort((a, b) => a - b));
 
   async ngOnInit() {
     if (this.stopGroupId === undefined) {
@@ -54,7 +44,9 @@ export class StopPageComponent {
   }
 
   getColorOfStop(stop: Stop) {
-    return this.divisions().filter((division) => stop.divisionIds.includes(division.id)).map((d) => d.color);
+    return this.divisions()
+      .filter((division) => stop.divisionIds.includes(division.id))
+      .map((d) => d.color);
   }
 
   async openStopDescriptionPage(stop: Stop) {
