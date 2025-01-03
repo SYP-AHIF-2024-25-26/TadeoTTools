@@ -1,20 +1,22 @@
 export type Stop = {
-  stopID: number;
+  id: number;
   name: string;
   description: string;
   roomNr: string;
-  stopGroupID: number;
-  divisionID: number;
+  stopGroupIds: number[];
+  divisionIds: number[];
 };
 
 export type StopGroup = {
-  stopGroupID: number;
+  id: number;
   name: string;
   description: string;
+  rank: number;
+  stopIds: number[];
 };
 
 export type Division = {
-  divisionID: number;
+  id: number;
   name: string;
   color: string;
 };
