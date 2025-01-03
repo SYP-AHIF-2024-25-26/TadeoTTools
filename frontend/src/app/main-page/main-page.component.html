@@ -3,11 +3,11 @@
     <app-header></app-header>
   </div>
   <div class="flex flex-col justify-center">
-    @for (group of groups(); track group.stopGroupID) {
+    @for (group of groups(); track group.id) {
       <app-guide-card
         class="mt-6"
         [stopGroup]="group"
-        [id]="group.stopGroupID.toString()"
+        [id]="group.id.toString()"
         [ngClass]="{ 'mb-28': groups().indexOf(group) === groups().length - 1 }"
         (openStopPage)="openStopPage(group)"
       >
