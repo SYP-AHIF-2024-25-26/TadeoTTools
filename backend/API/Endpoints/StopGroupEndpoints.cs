@@ -82,13 +82,12 @@ public static class StopGroupEndpoints
 
     public static async Task<IResult> DeleteGroup(TadeoTDbContext context, StopGroupFunctions groups, [FromRoute] int groupId)
     {
-        var group = await context.StopGroups.FindAsync(groupId);
-        if (group == null)
+        if (!await groups.DoesStopGroupExistAsync(context, groupId))
         {
-            return Results.NotFound($"StopGroup with ID {groupId} not found");
+            return Results.NotFound();
         }
-
-        context.StopGroups.Remove(group);
+        var group = await context.StopGroups.FindAsync(groupId);
+        context.StopGroups.Remove(group!);
         await context.SaveChangesAsync();
         return Results.Ok();
     }

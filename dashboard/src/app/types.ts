@@ -1,29 +1,28 @@
 export type Stop = {
-  stopID: number;
+  id: number;
   name: string;
-  description: string;
   roomNr: string;
-  divisionID: number;
-  stopGroupID: number | null;
+  description: string;
+  divisionIDs: number[];
+  stopGroupIDs: number[];
 };
 
 export type StopGroup = {
-  stopGroupID: number;
+  id: number;
   name: string;
   description: string;
   isPublic: boolean;
-};
-
-export type StopGroupWithStops = {
-  stopGroupID: number;
-  name: string;
-  description: string;
-  isPublic: boolean;
-  stops: Stop[];
+  stopIds: number[];
 };
 
 export type Division = {
-  divisionID: number;
+  id: number;
   name: string;
   color: string;
 };
+
+export type Info = {
+  id: number;
+  type: 'info' | 'error';
+  message: string;
+}

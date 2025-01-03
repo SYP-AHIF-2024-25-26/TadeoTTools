@@ -17,16 +17,18 @@
         id="name"
       />
     </div>
-    <div>
-      <label for="description" class="mr-4">Description</label>
-      <input
-        class="mb-4 border rounded px-4 py-2 text-gray-700"
-        type="text"
+    <div class="mb-4">
+      <label for="description" class="block mb-2 text-gray-700"
+        >Description</label
+      >
+      <textarea
+        class="border rounded px-4 py-2 text-gray-700 w-full"
         [value]="description()"
         [(ngModel)]="description"
         name="description"
         id="description"
-      />
+        rows="4"
+      ></textarea>
     </div>
     <div>
       <label for="isPublic" class="mr-4">Is public?</label>
@@ -42,24 +44,26 @@
     @if (errorMessage() != null) {
     <p class="text-red-700">{{ errorMessage() }}</p>
     }
-    <button type="submit" class="bg-htl-orange p-2 rounded text-white">
-      Submit
-    </button>
+    <div>
+      <button type="submit" class="bg-htl-orange p-2 rounded text-white">
+        Submit
+      </button>
+
+      <button
+        [routerLink]="['/stopgroups']"
+        class="bg-htl-orange ml-4 p-2 rounded text-white"
+      >
+        Cancel
+      </button>
+
+      @if (stopGroupId() != -1) {
+      <button
+        (click)="deleteAndGoBack()"
+        class="mt-4 ml-4 bg-htl-orange p-2 rounded text-white"
+      >
+        Delete
+      </button>
+      }
+    </div>
   </form>
-  <div>
-    <button
-      [routerLink]="['/stopgroups']"
-      class="bg-htl-orange p-2 rounded text-white"
-    >
-      Go Back (without submit)
-    </button>
-    @if (stopGroupId() != -1) {
-    <button
-      (click)="deleteAndGoBack()"
-      class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
-    >
-      Delete and go back
-    </button>
-    }
-  </div>
 </div>

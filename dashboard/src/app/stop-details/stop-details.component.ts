@@ -4,10 +4,11 @@ import { BASE_URL } from '../app.config';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Division } from '../types';
+import { Division, StopGroup } from '../types';
 import { DivisionService } from '../division.service';
 import { isValid } from '../utilfunctions';
 import { firstValueFrom } from 'rxjs';
+import { StopGroupService } from '../stopgroup.service';
 
 @Component({
   selector: 'app-stop-details',
@@ -19,6 +20,7 @@ import { firstValueFrom } from 'rxjs';
 export class StopDetailsComponent {
   private service: StopService = inject(StopService);
   private divisionService: DivisionService = inject(DivisionService);
+  private stopGroupService: StopGroupService = inject(StopGroupService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private router: Router = inject(Router);
 
@@ -28,23 +30,25 @@ export class StopDetailsComponent {
   name = signal<string>('');
   description = signal<string>('');
   roomNr = signal<string>('');
-  stopGroupId = signal<number | null>(null);
-  divisionId = signal<number>(5); // general as default
+  stopGroupIds: number[] = [];
+  divisionIds = signal<number[]>([]);
 
   divisions = signal<Division[]>([]);
+  stopGroups = signal<StopGroup[]>([]);
 
   errorMessage = signal<string | null>(null);
 
   async ngOnInit() {
     this.divisions.set(await this.divisionService.getDivisions());
+    this.stopGroups.set(await this.stopGroupService.getStopGroups());
     const params = await firstValueFrom(this.route.queryParams);
 
     this.stopId.set(params['id'] || -1);
     this.name.set(params['name'] || '');
     this.description.set(params['description'] || '');
     this.roomNr.set(params['roomNr'] || '');
-    this.stopGroupId.set(params['stopGroupID'] || null);
-    this.divisionId.set(params['divisionID']);
+    this.stopGroupIds = params['stopGroupIDs'] || null;
+    this.divisionIds.set(params['divisionIDs']);
   }
 
   isInputValid() {
@@ -71,16 +75,17 @@ export class StopDetailsComponent {
         name: this.name(),
         description: this.description(),
         roomNr: this.roomNr(),
-        divisionID: this.divisionId(),
+        divisionIDs: this.divisionIds(),
+        stopGroupIDs: this.stopGroupIds,
       });
     } else {
       await this.service.updateStop({
-        stopID: this.stopId(),
+        id: this.stopId(),
         name: this.name(),
         description: this.description(),
         roomNr: this.roomNr(),
-        stopGroupID: this.stopGroupId() === -1 ? null : this.stopGroupId(),
-        divisionID: this.divisionId(),
+        stopGroupIDs: this.stopGroupIds,
+        divisionIDs: this.divisionIds(),
       });
     }
     this.router.navigate(['/stopgroups']);
