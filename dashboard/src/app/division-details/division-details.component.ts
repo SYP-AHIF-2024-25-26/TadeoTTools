@@ -101,4 +101,10 @@ export class DivisionDetailsComponent {
     await this.service.deleteDivision(this.divisionId());
     this.router.navigate(['/divisions']);
   }
+
+  deleteImage() {
+    this.selectedFile = null;
+    this.filePreview = null;
+    // TODO: delete image from server
+  }
 }
