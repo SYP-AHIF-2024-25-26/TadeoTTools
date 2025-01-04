@@ -2,19 +2,19 @@
   <div>
     <app-header [showWelcomeText]="false"></app-header>
   </div>
-  <app-breadcrumb [name]="parentStopGroup().name" [stopGroupId]="parentStopGroup().stopGroupID" />
+  <app-breadcrumb [name]="parentStopGroup().name" [stopGroupId]="parentStopGroup().id" />
 
   <div class="flex flex-col justify-center">
     @if (stops().length > 1) {
       <app-description-container [title]="parentStopGroup().name" [description]="parentStopGroup().description" [divisionIds]="divisionIds()" />
-      @for (stop of stops(); track stop.stopID) {
+      @for (stop of stops(); track stop.id) {
         <app-stop-card
           (onChange)="setProgress()"
           (openStopDescriptionPage)="openStopDescriptionPage(stop)"
           [stop]="stop"
           class="mt-4"
-          [id]="stop.stopID.toString()"
-          [color]="getColorOfStop(stop)"
+          [id]="stop.id.toString()"
+          [colors]="getColorOfStop(stop)"
           [ngClass]="{ 'mb-28': stops().indexOf(stop) === stops().length - 1 }"
         ></app-stop-card>
       }
@@ -25,6 +25,6 @@
     }
   </div>
   <div class="fixed bottom-8 left-0 right-0 mx-4">
-    <app-navbar [isStationMode]="true" />
+    <app-navbar [mode]="'station'" />
   </div>
 </div>

@@ -25,11 +25,11 @@ export class MainPageComponent {
   }
 
   async onLoad() {
-    this.groups.set(await this.apiFetchService.getStopGroups());
+    this.groups.set((await this.apiFetchService.getStopGroups()).sort((a, b) => a.rank - b.rank));
   }
 
   async openStopPage(stopGroup: StopGroup) {
     sessionStorage.setItem(CURRENT_STOP_GROUP_PREFIX, JSON.stringify(stopGroup));
-    await this.router.navigate(['/tour', stopGroup.stopGroupID]);
+    await this.router.navigate(['/tour', stopGroup.id]);
   }
 }

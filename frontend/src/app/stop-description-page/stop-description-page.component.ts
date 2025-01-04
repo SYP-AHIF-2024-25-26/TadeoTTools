@@ -21,6 +21,7 @@ export class StopDescriptionPageComponent {
   @Input({ required: true }) stopId!: string;
   stop = signal({} as Stop);
   currentStopGroup = signal({} as StopGroup);
+
   async ngOnInit() {
     if (sessionStorage.getItem(CURRENT_STOP_PREFIX) === null || sessionStorage.getItem(CURRENT_STOP_GROUP_PREFIX) === null) {
       await this.router.navigate(['/']);

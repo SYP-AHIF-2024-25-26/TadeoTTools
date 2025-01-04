@@ -48,6 +48,7 @@ app.UseCors("default");
 app.MapStopGroupEndpoints();
 app.MapStopEndpoints();
 app.MapDivisionEndpoints();
+app.MapSettingsEndpoints();
 
 var basePath = "";
 if (app.Environment.IsProduction())

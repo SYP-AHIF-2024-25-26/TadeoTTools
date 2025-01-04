@@ -1,6 +1,8 @@
 <div class="flex justify-between mr-10 ml-10 mt-5">
   <div>
-    <button (click)="updateOrder()" [disabled]="!hasChanged()" class="bg-blue-600 h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Save Changes</button>
+    <button (click)="saveChanges()" [disabled]="!hasChanged()"
+            class="bg-blue-600 h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Save Changes
+    </button>
     <button (click)="initialiseData()" [disabled]="!hasChanged()"
             class="bg-blue-600 h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Cancel
     </button>
@@ -22,8 +24,9 @@
 </div>
 
 <div class="flex">
-  <div (cdkDropListDropped)="dropGroup($event)"
-       cdkDropList class="w-2/3">
+  <div
+    cdkDropList
+    (cdkDropListDropped)="dropGroup($event)" class="w-2/3">
     @for (group of stopGroups(); track group) {
       <div class="bg-gray-200 p-5 m-10 rounded-xl" cdkDrag>
         <p class="font-bold">{{ group.name }}</p>
@@ -33,28 +36,27 @@
 
             class="text-white p-1.5 my-1 bg-gray-700 appearance-none border rounded border-transparent"
             [routerLink]="['/stopgroup']"
-            [queryParams]="{ id: group.stopGroupID, name: group.name, description: group.description, isPublic: group.isPublic }">
+            [queryParams]="{ id: group.id, name: group.name, description: group.description, isPublic: group.isPublic }">
             Details
           </button>
         </div>
         <div class="flex flex-col m-5"
              cdkDropList
-             [cdkDropListData]="group.stops"
              [cdkDropListConnectedTo]="getDropGroups()"
+             [cdkDropListData]="group.stopIds"
              (cdkDropListDropped)="dropStop($event)"
-             id="{{ 'group-' + group.stopGroupID }}"
+             id="{{ 'group-' + group.id }}"
         >
           <p>Stops</p>
-          @for (stop of group.stops; track stop.stopID) {
+          @for (stopId of group.stopIds; track stopId) {
             <div class="mb-1 p-3 rounded-l flex justify-between items-center cursor-grab"
-                 [ngStyle]="{ 'background-color': getColorCodeByStopId(stop.divisionID) }"
                  cdkDrag
             >
-              <p class="ml-5">{{ stop.name }}</p>
+              <p class="ml-5">{{ getStopByStopId(stopId)?.name }}</p>
               <button
                 class="text-white p-1 my-1 bg-gray-700 appearance-none border rounded border-transparent"
                 [routerLink]="['/stop']"
-                [queryParams]="{ id: stop.stopID, name: stop.name, description: stop.description, roomNr: stop.roomNr, stopGroupID: group.stopGroupID, divisionID: stop.divisionID }">
+                [queryParams]="{ id: getStopByStopId(stopId)?.id, name: getStopByStopId(stopId)?.name, description: getStopByStopId(stopId)?.description, roomNr: getStopByStopId(stopId)?.roomNr, stopGroupIds: getStopByStopId(stopId)?.stopGroupIds, divisionIds: getStopByStopId(stopId)?.divisionIds }">
                 Details
               </button>
             </div>
@@ -64,28 +66,33 @@
     }
   </div>
   <div class="w-1/3">
-    <div (cdkDropListDropped)="dropStop($event)"
-         [cdkDropListConnectedTo]="getDropGroups()"
-         [cdkDropListData]="privateStops()"
-         cdkDropList
-         class="bg-gray-200 p-5 m-10 rounded-xl"
-         id='group-0'>
+    <div>
+      <app-filter [elements]="divisions()" (filter)="divisionFilter.set($event)"></app-filter>
+    </div>
+    <div
+      cdkDropList
+      [cdkDropListConnectedTo]="getDropGroups()"
+      class="bg-gray-200 p-5 m-10 rounded-xl"
+      id='all-stops'>
       <p>Unassigned Stops</p>
-      @for (stop of privateStops(); track stop.stopID) {
+      @for (stop of filteredStops(); track stop.id) {
         <div class="mb-1 p-3 rounded-l cursor-grab flex items-center justify-between"
-             [ngStyle]="{ 'background-color': getColorCodeByStopId(stop.divisionID) }"
              cdkDrag
         >
           <p>{{ stop.name }}</p>
           <button
             class="text-white p-1.5 my-1 bg-gray-700 appearance-none border rounded border-transparent"
             [routerLink]="['/stop']"
-            [queryParams]="{ id: stop.stopID, name: stop.name, description: stop.description, roomNr: stop.roomNr, stopGroupID: stop.stopGroupID }">
+            [queryParams]="{ id: stop.id, name: stop.name, description: stop.description, roomNr: stop.roomNr, stopGroupIds: stop.stopGroupIds, divisionIds: stop.divisionIds }">
             Details
           </button>
         </div>
       }
     </div>
   </div>
+  <div class="fixed bottom-4 right-4 w-96">
+    @for (info of infos(); track info) {
+      <app-info-popup (deleted)="deleteInfo($event)" [info]="info"></app-info-popup>
+    }
+  </div>
 </div>
-

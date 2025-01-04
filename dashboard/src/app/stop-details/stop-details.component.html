@@ -17,16 +17,18 @@
         id="name"
       />
     </div>
-    <div>
-      <label for="description" class="mr-4">Description</label>
-      <input
-        class="mb-4 border rounded px-4 py-2 text-gray-700"
-        type="text"
+    <div class="mb-4">
+      <label for="description" class="block mb-2 text-gray-700"
+        >Description</label
+      >
+      <textarea
+        class="border rounded px-4 py-2 text-gray-700 w-full"
         [value]="description()"
         [(ngModel)]="description"
         name="description"
         id="description"
-      />
+        rows="4"
+      ></textarea>
     </div>
 
     <div>
@@ -39,41 +41,45 @@
         name="roomNr"
         id="roomNr"
       />
-      @if (stopGroupId() != null) {
-      <p>StopGroup ID: {{ stopGroupId() }}</p>
+      @for (sg of stopGroups(); track $index) {
+        @if(stopGroupIds.includes(sg.id)) {
+          <p class="text-green-700">{{ sg.name }}</p>
+        }
       }
     </div>
 
     <div>
-      <label for="division" class="mr-4">Division</label>
+      <label for="division" class="mr-4">Divisions</label>
+      <!-- Chiplist für Divisions TODO
       <select id="division" [(ngModel)]="divisionId" name="division">
         @for (division of divisions(); track $index) {
-        <option [value]="division.divisionID">{{ division.name }}</option>
+        <option [value]="division.id">{{ division.name }}</option>
         }
-      </select>
+      </select>-->
     </div>
 
     @if (errorMessage() != null) {
     <p class="text-red-700">{{ errorMessage() }}</p>
     }
-    <button type="submit" class="bg-htl-orange p-2 rounded text-white">
-      Submit
-    </button>
+    <div>
+      <button type="submit" class="bg-htl-orange mr-4 p-2 rounded text-white">
+        Submit
+      </button>
+
+      <button
+        [routerLink]="['/stopgroups']"
+        class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
+      >
+        Cancel
+      </button>
+      @if (stopId() != -1) {
+      <button
+        (click)="deleteAndGoBack()"
+        class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
+      >
+        Delete
+      </button>
+      }
+    </div>
   </form>
-  <div>
-    <button
-      [routerLink]="['/stopgroups']"
-      class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
-    >
-      Go Back (without submit)
-    </button>
-    @if (stopId() != -1) {
-    <button
-      (click)="deleteAndGoBack()"
-      class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
-    >
-      Delete and go back
-    </button>
-    }
-  </div>
 </div>

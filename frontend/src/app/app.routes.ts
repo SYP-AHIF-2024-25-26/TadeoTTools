@@ -3,6 +3,7 @@ import { MainPageComponent } from './main-page/main-page.component';
 import { StopDescriptionPageComponent } from './stop-description-page/stop-description-page.component';
 import { MapComponent } from './map/map.component';
 import { StopPageComponent } from './stop-page/stop-page.component';
+import { AboutPageComponent } from './about-page/about-page.component';
 
 export const routes: Routes = [
   { path: 'main', component: MainPageComponent },
@@ -10,5 +11,6 @@ export const routes: Routes = [
   { path: 'tour/:stopGroupId/stop/:stopId', component: StopDescriptionPageComponent },
   { path: 'map', component: MapComponent },
   { path: 'map/:roomNr', component: MapComponent },
+  { path: 'about', component: AboutPageComponent },
   { path: '', redirectTo: '/main', pathMatch: 'full' },
 ];
