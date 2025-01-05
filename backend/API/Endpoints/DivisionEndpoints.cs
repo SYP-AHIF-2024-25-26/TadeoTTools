@@ -15,6 +15,7 @@ public static class DivisionEndpoints
         group.MapDelete("api/divisions/{divisionId}", DeleteDivisionById);
         group.MapPut("api/divisions", UpdateDivision).DisableAntiforgery();
         group.MapGet("divisions/{divisionId}/image", GetImageByDivisionId).DisableAntiforgery();
+        group.MapGet("api/divisions/{divisionId}/image", DeleteImage);
     }
 
     public static async Task<IResult> GetDivisions(TadeoTDbContext context)
@@ -111,6 +112,17 @@ public static class DivisionEndpoints
         }
 
         return Results.NotFound();
-
+    }
+    
+    public static async Task<IResult> DeleteImage(TadeoTDbContext context, int divisionId)
+    {
+        var division = await context.Divisions.FindAsync(divisionId);
+        if (!await DivisionFunctions.DoesDivisionExistAsync(context, divisionId))
+        {
+            return Results.NotFound();
+        }
+        division!.Image = null;
+        await context.SaveChangesAsync();
+        return Results.Ok();
     }
 }
