@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input, signal, ViewChildren, WritableSignal } from '@angular/core';
+import { Component, computed, inject, Input, Signal, signal, ViewChildren, WritableSignal } from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
@@ -25,7 +25,7 @@ export class StopPageComponent {
   parentStopGroup: WritableSignal<StopGroup> = signal({} as StopGroup);
   stops: WritableSignal<Stop[]> = signal([]);
   divisions: WritableSignal<Division[]> = signal([]);
-  divisionIds = computed(() => Array.from(new Set(this.stops().map((stop) => stop.divisionID))).sort((a, b) => a - b));
+  divisionIds: Signal<number[]> = computed(() => Array.from(new Set(...this.stops().map((stop) => stop.divisionIds))).sort((a, b) => a - b));
 
   async ngOnInit() {
     if (this.stopGroupId === undefined) {
@@ -44,17 +44,20 @@ export class StopPageComponent {
   }
 
   getColorOfStop(stop: Stop) {
-    return this.divisions().find((division) => division.divisionID === stop.divisionID)?.color;
+    stop.divisionIds.push(5);
+    return this.divisions()
+      .filter((division) => stop.divisionIds.includes(division.id))
+      .map((d) => d.color);
   }
 
   async openStopDescriptionPage(stop: Stop) {
     sessionStorage.setItem(CURRENT_STOP_PREFIX, JSON.stringify(stop));
-    await this.router.navigate(['/tour', this.parentStopGroup().stopGroupID, 'stop', stop.stopID]);
+    await this.router.navigate(['/tour', this.parentStopGroup().id, 'stop', stop.id]);
   }
 
   setProgress() {
     const progress = this.stopCards.filter((stopCard) => stopCard.isChecked()).length;
-    sessionStorage.setItem(STOP_GROUP_PROGRESS_PREFIX + this.parentStopGroup().stopGroupID, progress.toString());
-    sessionStorage.setItem(STOPS_COUNT_PREFIX + this.parentStopGroup().stopGroupID, this.stops().length.toString());
+    sessionStorage.setItem(STOP_GROUP_PROGRESS_PREFIX + this.parentStopGroup().id, progress.toString());
+    sessionStorage.setItem(STOPS_COUNT_PREFIX + this.parentStopGroup().id, this.stops().length.toString());
   }
 }
