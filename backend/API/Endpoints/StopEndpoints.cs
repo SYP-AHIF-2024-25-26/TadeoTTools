@@ -12,6 +12,7 @@ public static class StopEndpoints
     {
         var group = app.MapGroup("v1");
         group.MapGet("api/stops", GetAllStops);
+        group.MapGet("stops/groups/{groupId}", GetStopsByGroupId);
         group.MapPost("api/stops", CreateStop);
         group.MapPut("api/stops", UpdateStop);
         group.MapDelete("api/stops/{stopId}", DeleteStop);
@@ -21,6 +22,18 @@ public static class StopEndpoints
     {
         return Results.Ok(await StopFunctions.GetAllStopsAsync(context));
     }
+
+    private static async Task<IResult> GetStopsByGroupId(TadeoTDbContext context, int groupId)
+    {
+        var group = await context.StopGroups.FindAsync(groupId);
+        Console.WriteLine(group);
+        if (group is null)
+        {
+            return Results.NotFound();
+        }
+        return Results.Ok(context.StopGroupAssignments.Where(a => a.StopGroupId == groupId).Select(a => a.Stop).ToList());
+    }
+
 
     private static async Task<IResult> CreateStop(TadeoTDbContext context, CreateStopRequestDto createStopDto)
     {
