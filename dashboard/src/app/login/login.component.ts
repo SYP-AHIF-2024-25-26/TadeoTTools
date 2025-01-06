@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,10 +7,10 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  apiKey = signal<string>("");
+  apiKey = signal<string>('');
   constructor(private router: Router) {
     this.apiKey.set(localStorage.getItem('API_KEY') || '');
   }
