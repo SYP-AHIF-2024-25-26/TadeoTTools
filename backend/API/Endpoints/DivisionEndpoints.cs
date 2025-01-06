@@ -19,7 +19,7 @@ public static class DivisionEndpoints
         group.MapGet("divisions/{divisionId}/image", GetImageByDivisionId).DisableAntiforgery();
         group.MapGet("api/divisions/{divisionId}/image", DeleteImage);
     }
-    
+
     public static async Task<IResult> GetDivisions(TadeoTDbContext context)
     {
         return Results.Ok(await DivisionFunctions.GetAllDivisionsWithoutImageAsync(context));
@@ -27,10 +27,9 @@ public static class DivisionEndpoints
 
     public record CreateDivisionDto(string Name, string Color, IFormFile Image);
 
-    public static async Task<IResult> CreateDivision(TadeoTDbContext context, [FromForm] string Name, [FromForm] string Color, [FromForm] IFormFile? Image)
+    public static async Task<IResult> CreateDivision(TadeoTDbContext context, [FromForm] string Name,
+        [FromForm] string Color, [FromForm] IFormFile? Image)
     {
-       
-        
         if (Name.Length > 255)
         {
             return Results.BadRequest("Division name must be less than 255 characters.");
@@ -40,30 +39,32 @@ public static class DivisionEndpoints
         {
             return Results.BadRequest("Color must be less than 8 characters.");
         }
+
         if (context.Divisions.Any(d => d.Name == Name))
         {
             return Results.BadRequest("Divisionname already exists.");
         }
-        
+
         var division = new Division()
         {
             Name = Name,
             Color = Color,
         };
-        
+
         if (Image is not null)
         {
             using var memoryStream = new MemoryStream();
             await Image.CopyToAsync(memoryStream);
             division.Image = memoryStream.ToArray();
         }
+
         context.Divisions.Add(division);
         await context.SaveChangesAsync();
         return Results.Ok(division);
     }
 
     public record UpdateDivisionDto(int Id, string Name, string Color);
-    
+
     public static async Task<IResult> UpdateDivision(TadeoTDbContext context, UpdateDivisionDto dto)
     {
         if (dto.Name.Length > 255)
@@ -75,17 +76,20 @@ public static class DivisionEndpoints
         {
             return Results.BadRequest("Color must be less than 8 characters.");
         }
-        if (context.Divisions.Any(d => d.Name == dto.Name))
-        {
-            return Results.BadRequest("Divisionname already exists.");
-        }
-
-
+        
         var division = await context.Divisions.FindAsync(dto.Id);
         if (division == null)
         {
             return Results.NotFound();
         }
+
+        if (division.Name != dto.Name && context.Divisions.Any(d => d.Name == dto.Name))
+        {
+            return Results.BadRequest("Divisionname already exists.");
+        }
+
+
+
 
         division.Name = dto.Name;
         division.Color = dto.Color;
@@ -95,8 +99,9 @@ public static class DivisionEndpoints
     }
 
     public record UpdateDivisionImageDto(int Id, IFormFile Image);
-    
-    public static async Task<IResult> UpdateDivisionImage(TadeoTDbContext context, [FromForm] UpdateDivisionImageDto dto)
+
+    public static async Task<IResult> UpdateDivisionImage(TadeoTDbContext context,
+        [FromForm] UpdateDivisionImageDto dto)
     {
         var division = await context.Divisions.FindAsync(dto.Id);
         if (division == null)
@@ -107,7 +112,7 @@ public static class DivisionEndpoints
         using var memoryStream = new MemoryStream();
         await dto.Image!.CopyToAsync(memoryStream);
         division.Image = memoryStream.ToArray();
-        
+
         await context.SaveChangesAsync();
         return Results.Ok();
     }
@@ -124,7 +129,7 @@ public static class DivisionEndpoints
         await context.SaveChangesAsync();
         return Results.Ok();
     }
-    
+
     private static async Task<IResult> DeleteDivisionImage(TadeoTDbContext context, int divisionId)
     {
         var division = await context.Divisions.FindAsync(divisionId);
@@ -132,7 +137,7 @@ public static class DivisionEndpoints
         {
             return Results.NotFound();
         }
-        
+
         division.Image = null;
         await context.SaveChangesAsync();
         return Results.Ok();
