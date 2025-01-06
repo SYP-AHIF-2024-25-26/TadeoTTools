@@ -1,4 +1,4 @@
-<div class="flex justify-between mr-10 ml-10 mt-5">
+<div class="bg-white flex justify-between pr-10 pl-10 pt-2 sticky top-10">
   <div>
     <button (click)="saveChanges()" [disabled]="!hasChanged()"
             class="bg-blue-600 h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Save Changes
@@ -110,6 +110,9 @@
     }
   </div>
 </div>
-@if (showRemovePopup()) {
-  <app-delete-popup [title]="'Remove Stop'" [message]="'Are you sure you want to remove this stop from the stop group?'" (cancel)="showRemovePopup.set(false)" (removeConfirmed)="removeStop()"/>
+@if (showRemoveStopPopup()) {
+  <app-delete-popup [title]="'Remove Stop'" [message]="'Are you sure you want to remove this stop from the stop group?'" (cancel)="showRemoveStopPopup.set(false)" (removeConfirmed)="removeStop()"/>
+}
+@if (showRemoveGroupPopup()) {
+  <app-delete-popup [title]="'Delete StopGroup'" [message]="'Are you sure you want to delete this stopGroup?'" (cancel)="showRemoveGroupPopup.set(false)" (removeConfirmed)="deleteGroup()"/>
 }

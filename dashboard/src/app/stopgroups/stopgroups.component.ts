@@ -31,7 +31,8 @@ export class StopGroupsComponent {
   stopGroupToRemoveFrom: StopGroup | undefined = undefined;
 
   showStops = signal<boolean>(true);
-  showRemovePopup = signal<boolean>(false);
+  showRemoveStopPopup = signal<boolean>(false);
+  showRemoveGroupPopup = signal<boolean>(false);
 
   divisionFilter = signal<number>(0);
 
@@ -211,14 +212,18 @@ export class StopGroupsComponent {
   selectStopToRemove(stopId: number, group: StopGroup) {
     this.stopIdToRemove = stopId;
     this.stopGroupToRemoveFrom = group;
-    this.showRemovePopup.set(true);
+    this.showRemoveStopPopup.set(true);
   }
 
   removeStop() {
     if (this.stopGroupToRemoveFrom !== undefined) {
       this.stopGroupToRemoveFrom.stopIds = this.stopGroupToRemoveFrom.stopIds.filter(sId => sId !== this.stopIdToRemove);
-      this.showRemovePopup.set(false);
+      this.showRemoveStopPopup.set(false);
       this.hasChanged.set(true);
     }
+  }
+
+  deleteGroup() {
+
   }
 }
