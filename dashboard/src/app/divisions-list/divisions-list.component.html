@@ -1,4 +1,10 @@
 <div class="w-full h-screen">
+  <button
+    class="text-white p-1.5 mb-2 bg-htl-orange border rounded border-transparent ml-12"
+    [routerLink]="['/division']"
+  >
+    New Division
+  </button>
   <div class="flex gap-4 flex-wrap mx-10">
     @for (division of divisions(); track $index) {
     <div
@@ -20,7 +26,7 @@
       />
       <div class="flex">
         <button
-          class="text-white shadow-lg mt-4 p-1.5 my-1 bg-blue-500 border rounded border-transparent"
+          class="text-white shadow-lg mt-4 p-1.5 my-1 bg-htl-orange border rounded border-transparent"
           [routerLink]="['/division']"
           [queryParams]="{
             id: division.id,
@@ -34,10 +40,4 @@
     </div>
     }
   </div>
-  <button
-    class="text-white p-1.5 m-4 bg-gray-700 border rounded border-transparent ml-12 mt-8"
-    [routerLink]="['/division']"
-  >
-    New Division
-  </button>
 </div>
