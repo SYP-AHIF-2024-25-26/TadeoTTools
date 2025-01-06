@@ -55,7 +55,7 @@ export class StopGroupService {
     console.log(typeof(stopGroup.isPublic));
     await firstValueFrom(
       this.httpClient.put(
-        this.baseUrl + `/api/groups/`,
+        this.baseUrl + `/api/groups`,
         stopGroup,
         {
           headers: {

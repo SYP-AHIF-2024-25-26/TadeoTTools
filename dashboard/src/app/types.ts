@@ -3,8 +3,8 @@ export type Stop = {
   name: string;
   roomNr: string;
   description: string;
-  divisionIDs: number[];
-  stopGroupIDs: number[];
+  divisionIds: number[];
+  stopGroupIds: number[];
 };
 
 export type StopGroup = {

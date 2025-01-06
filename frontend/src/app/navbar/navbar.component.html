@@ -1,8 +1,11 @@
 <nav class="flex h-14 w-full items-center justify-evenly rounded-lg bg-white shadow-2xl">
   <div>
-    <button (click)="router.navigate(['main'])" class="text-xl" [ngClass]="!isStationMode ? 'text-black' : 'text-orange-500'">Station</button>
+    <button (click)="router.navigate(['main'])" class="text-xl" [ngClass]="mode == 'station' ? 'text-orange-500' : 'text-black'">Station</button>
   </div>
   <div>
-    <button (click)="router.navigate(['map'])" class="text-xl" [ngClass]="[isStationMode ? 'text-black' : 'text-orange-500']">Karte</button>
+    <button (click)="router.navigate(['map'])" class="text-xl" [ngClass]="[mode == 'map' ? 'text-orange-500' : 'text-black']">Karte</button>
+  </div>
+  <div>
+    <button (click)="router.navigate(['about'])" class="text-xl" [ngClass]="[mode == 'about' ? 'text-orange-500' : 'text-black']">About</button>
   </div>
 </nav>

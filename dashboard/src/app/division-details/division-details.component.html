@@ -6,11 +6,23 @@
   <h4 class="text-2xl">New Division</h4>
   }
 
+  @if(filePreview != null) {
+  <div class="mt-4">
+    <p>File Preview</p>
+    <img
+      class="w-32 h-32 object-cover"
+      [src]="filePreview"
+      alt="File preview"
+    />
+  </div>
+  } @else {
   <img
     class="w-32 h-32 object-cover"
     [src]="baseUrl + '/divisions/' + divisionId() + '/image'"
     alt="Division Picture will load here"
   />
+  }
+
   <form (submit)="submitDivisionDetail()" class="mt-4">
     <div>
       <label for="name" class="mr-4">Name</label>
@@ -35,7 +47,7 @@
     />
     <div class="w-100 h-100" [style.backgroundColor]="color()"></div>
     <div>
-      <label for="file" class="mr-4">Upload File</label>
+      <label for="file" class="mr-4">Upload Image</label>
       <input
         class="mb-4 border rounded px-4 py-2 text-gray-700"
         type="file"
@@ -48,24 +60,30 @@
       <p class="text-red-700">{{ errorMessage() }}</p>
       }
     </div>
-    <button type="submit" class="bg-htl-orange p-2 rounded text-white">
-      Submit
-    </button>
-  </form>
-  <div>
-    <button
-      [routerLink]="['/divisions']"
-      class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
-    >
-      Go Back (without submit)
-    </button>
-    @if (divisionId() != -1) {
+    <div>
+      <button type="submit" class="bg-htl-orange p-2 mr-4 rounded text-white">
+        Submit
+      </button>
       <button
-      (click)="deleteAndGoBack()"
-      class="bg-htl-orange p-2 rounded text-white"
-    >
-      Delete
-    </button>
-    }
-  </div>
+        [routerLink]="['/divisions']"
+        class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
+      >
+        Cancel
+      </button>
+      @if (divisionId() != -1) {
+      <button
+        (click)="deleteAndGoBack()"
+        class="bg-htl-orange mr-4 p-2 rounded text-white"
+      >
+        Delete
+      </button>
+      <button
+        (click)="deleteImage()"
+        class="bg-htl-orange mt-4 p-2 rounded text-white"
+      >
+        Delete Image
+      </button>
+      }
+    </div>
+  </form>
 </div>

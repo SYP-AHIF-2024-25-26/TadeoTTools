@@ -55,12 +55,12 @@ export class GuideCardComponent {
   }
 
   private getProgress(): number | null {
-    const progress = sessionStorage.getItem(STOP_GROUP_PROGRESS_PREFIX + this.stopGroup.stopGroupID);
+    const progress = sessionStorage.getItem(STOP_GROUP_PROGRESS_PREFIX + this.stopGroup.id);
     return progress !== null ? Number(progress) : null;
   }
 
   private getStopsCount(): number | null {
-    const count = sessionStorage.getItem(STOPS_COUNT_PREFIX + this.stopGroup.stopGroupID);
+    const count = sessionStorage.getItem(STOPS_COUNT_PREFIX + this.stopGroup.id);
     return count !== null ? Number(count) : null;
   }
 }

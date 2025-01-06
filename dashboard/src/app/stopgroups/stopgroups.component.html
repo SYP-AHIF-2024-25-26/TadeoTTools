@@ -56,7 +56,7 @@
               <button
                 class="text-white p-1 my-1 bg-gray-700 appearance-none border rounded border-transparent"
                 [routerLink]="['/stop']"
-                [queryParams]="{ id: getStopByStopId(stopId)?.id, name: getStopByStopId(stopId)?.name, description: getStopByStopId(stopId)?.description, roomNr: getStopByStopId(stopId)?.roomNr, stopGroupID: group.id, divisionID: 1 }">
+                [queryParams]="{ id: getStopByStopId(stopId)?.id, name: getStopByStopId(stopId)?.name, description: getStopByStopId(stopId)?.description, roomNr: getStopByStopId(stopId)?.roomNr, stopGroupIds: getStopByStopId(stopId)?.stopGroupIds, divisionIds: getStopByStopId(stopId)?.divisionIds }">
                 Details
               </button>
             </div>
@@ -66,13 +66,16 @@
     }
   </div>
   <div class="w-1/3">
+    <div>
+      <app-filter [elements]="divisions()" (filter)="divisionFilter.set($event)"></app-filter>
+    </div>
     <div
       cdkDropList
       [cdkDropListConnectedTo]="getDropGroups()"
       class="bg-gray-200 p-5 m-10 rounded-xl"
       id='all-stops'>
       <p>Unassigned Stops</p>
-      @for (stop of stops(); track stop.id) {
+      @for (stop of filteredStops(); track stop.id) {
         <div class="mb-1 p-3 rounded-l cursor-grab flex items-center justify-between"
              cdkDrag
         >
@@ -80,7 +83,7 @@
           <button
             class="text-white p-1.5 my-1 bg-gray-700 appearance-none border rounded border-transparent"
             [routerLink]="['/stop']"
-            [queryParams]="{ id: stop.id, name: stop.name, description: stop.description, roomNr: stop.roomNr, stopGroupID: 1 }">
+            [queryParams]="{ id: stop.id, name: stop.name, description: stop.description, roomNr: stop.roomNr, stopGroupIds: stop.stopGroupIds, divisionIds: stop.divisionIds }">
             Details
           </button>
         </div>

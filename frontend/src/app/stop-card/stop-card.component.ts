@@ -14,11 +14,15 @@ export class StopCardComponent {
   @Input() stop!: Stop;
   @Input() id!: string;
   @ViewChild(CheckboxComponent) checkbox!: CheckboxComponent;
-  @Input() color!: string | undefined;
+  @Input() colors!: string[];
   @Output() openStopDescriptionPage = new EventEmitter<void>();
   @Output() onChange = new EventEmitter<void>();
 
   public isChecked() {
     return this.checkbox?.isChecked() ?? false;
+  }
+
+  protected generateGradient(colors: string[]): string {
+    return `linear-gradient(to right, ${colors.join(', ')})`;
   }
 }

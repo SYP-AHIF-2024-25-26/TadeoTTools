@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {RouterLink} from "@angular/router";
 import {StopGroupService} from "../stopgroup.service";
@@ -6,12 +6,12 @@ import {StopService} from "../stop.service";
 import {DivisionService} from "../division.service";
 import {Division, Info, Stop, StopGroup} from "../types";
 import {InfoPopupComponent} from "../info-popup/info-popup.component";
-import {group} from "@angular/animations";
+import {FilterComponent} from "../filter/filter.component";
 
 @Component({
   selector: 'app-stopgroups',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, RouterLink, InfoPopupComponent],
+  imports: [CdkDropList, CdkDrag, RouterLink, InfoPopupComponent, FilterComponent],
   templateUrl: './stopgroups.component.html',
   styleUrl: './stopgroups.component.css'
 })
@@ -25,6 +25,10 @@ export class StopGroupsComponent {
   stops = signal<Stop[]>([]);
   divisions = signal<Division[]>([]);
   infos = signal<Info[]>([]);
+
+  divisionFilter = signal<number>(0);
+
+  filteredStops = computed(() => this.filterStopsByDivisionId(this.divisionFilter()));
 
   async ngOnInit() {
     this.addInfo('info', 'Retrieving Data');
@@ -165,7 +169,7 @@ export class StopGroupsComponent {
       if (!event.container.data.includes(stopId)) {
         event.container.data.splice(event.currentIndex, 0, stopId);
       } else {
-        console.log("already exists in this stopGroup");
+        console.log("already exists in this stopGroup")
       }
     } else if (event.container === event.previousContainer) {
       moveItemInArray(event.previousContainer.data, event.previousIndex, event.currentIndex);
@@ -178,6 +182,15 @@ export class StopGroupsComponent {
   dropGroup(event: CdkDragDrop<any, any>) {
     moveItemInArray(this.stopGroups(), event.previousIndex, event.currentIndex);
     this.hasChanged.set(true);
+  }
+
+  filterStopsByDivisionId(divisionId: number): Stop[] {
+    if (divisionId === 0) {
+      return this.stops();
+    }
+    this.stops().forEach(stop => console.log(stop));
+    console.log("Filtering stops by divisionId: " + divisionId);
+    return this.stops().filter(stop => Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId));
   }
 
   saveChanges() {

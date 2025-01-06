@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Database.Repository;
 using Database.Repository.Functions;
 
-ImportConsoleApp.Program.Main(["isAPI"]);
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<TadeoTDbContext>(options =>
@@ -43,6 +41,7 @@ app.UseCors("default");
 app.MapStopGroupEndpoints();
 app.MapStopEndpoints();
 app.MapDivisionEndpoints();
+app.MapSettingsEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
@@ -54,7 +53,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-/* Comment next line for No API-Key-Validation*/
-//app.UseMiddleware<ApiKeyMiddleware>();
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.Run();

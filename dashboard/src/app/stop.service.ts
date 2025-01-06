@@ -68,13 +68,14 @@ export class StopService {
                 }
             )
         );
-    }
+    }*/
 
     async addStop(stop: {
         name: string;
         description: string;
         roomNr: string;
-        id: number;
+        divisionIDs: number[];
+        stopGroupIDs: number[];
     }) {
         await firstValueFrom(
             this.httpClient.post(this.baseUrl + '/api/stops', stop, {
@@ -87,7 +88,7 @@ export class StopService {
 
     async updateStop(stop: Stop) {
         await firstValueFrom(
-            this.httpClient.put(this.baseUrl + `/api/stops/${stop.id}`, stop, {
+            this.httpClient.put(this.baseUrl + `/api/stops`, stop, {
                 headers: {
                     'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
                 },
@@ -103,5 +104,5 @@ export class StopService {
                 },
             })
         );
-    }*/
+    }
 }
