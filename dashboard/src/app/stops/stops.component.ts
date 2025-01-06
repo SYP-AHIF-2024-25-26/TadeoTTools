@@ -27,6 +27,7 @@ export class StopsComponent implements OnInit {
   showRemoveStopgroupPopup = signal<boolean>(false);
 
   stopGroupIdToRemove: number = -1;
+  stopIdFromRemove: number = -1;
 
   filteredStops = computed(() =>
     this.filterStopsByDivisionId(this.divisionFilter())
@@ -60,11 +61,15 @@ export class StopsComponent implements OnInit {
   }
 
   async selectStopgroupToRemove(stopId: number, sgId: number) {
-    this.stops.set(await this.service.getStops());
+    this.stopGroupIdToRemove = sgId;
+    this.stopIdFromRemove = stopId;
+    this.showRemoveStopgroupPopup.set(true);
   }
 
   async removeStopgroup() {
     //await this.service.updateStop({id: this.})
+    this.showRemoveStopgroupPopup.set(false);
+    this.stops.set(await this.service.getStops());
     this.stopGroups.set(await this.groupService.getStopGroups());
   }
 }
