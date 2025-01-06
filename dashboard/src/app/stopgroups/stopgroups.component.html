@@ -111,5 +111,5 @@
   </div>
 </div>
 @if (showRemovePopup()) {
-  <app-delete-popup (cancel)="showRemovePopup.set(false)" (removeConfirmed)="removeStop()"/>
+  <app-delete-popup [title]="'Remove Stop'" [message]="'Are you sure you want to remove this stop from the stop group?'" (cancel)="showRemovePopup.set(false)" (removeConfirmed)="removeStop()"/>
 }
