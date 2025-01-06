@@ -1,4 +1,4 @@
-<div class="bg-gray-50 w-full h-screen">
+<div class="w-full h-screen">
   <div class="flex gap-4 flex-wrap mx-10">
 
     @for (division of divisions(); track $index) {
@@ -14,7 +14,11 @@
             [style.background-color]="division.color"
           ></div>
         </div>
-
+        <img
+          class="w-32 h-32 object-cover"
+          [src]="baseUrl + '/divisions/' + division.id + '/image'"
+          (error)="hideImage($event)"
+        />
         <div class="flex">
           <button
             class="text-white shadow-lg mt-4 p-1.5 my-1 bg-blue-500 border rounded border-transparent"

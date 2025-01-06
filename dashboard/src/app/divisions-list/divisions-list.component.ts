@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { DivisionService } from '../division.service';
 import { Division } from '../types';
 import { RouterModule } from '@angular/router';
+import { BASE_URL } from '../app.config';
 
 @Component({
   selector: 'app-divisions-list',
@@ -14,6 +15,8 @@ export class DivisionsListComponent implements OnInit {
   private service: DivisionService = inject(DivisionService);
   divisions = signal<Division[]>([]);
 
+  baseUrl = inject(BASE_URL);
+
   async ngOnInit() {
     this.divisions.set(await this.service.getDivisions());
   }
@@ -21,5 +24,10 @@ export class DivisionsListComponent implements OnInit {
   async deleteDivision(divisionId: number) {
     await this.service.deleteDivision(divisionId);
     this.divisions.set(await this.service.getDivisions());
+  }
+
+  hideImage(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.style.display = 'none';
   }
 }

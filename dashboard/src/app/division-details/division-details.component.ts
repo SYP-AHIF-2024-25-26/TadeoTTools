@@ -86,12 +86,11 @@ export class DivisionDetailsComponent {
         color: this.color(),
       });
     }
-    this.selectedFile = null;
-    this.filePreview = null;
-
     if (this.selectedFile) {
       await this.service.updateDivisionImg(this.divisionId(), this.selectedFile);
     }
+    this.selectedFile = null;
+    this.filePreview = null;
     this.router.navigate(['/divisions']);
   }
 
