@@ -6,6 +6,10 @@
     <button (click)="initialiseData()" [disabled]="!hasChanged()"
             class="bg-blue-600 h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Cancel
     </button>
+
+    <button (click)="showStops.set(!showStops())"
+            class="bg-blue-600 h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Show Stops
+    </button>
   </div>
 
   <div>
@@ -25,53 +29,63 @@
 
 <div class="flex">
   <div
-    cdkDropList
-    (cdkDropListDropped)="dropGroup($event)" class="w-2/3">
+    (cdkDropListDropped)="dropGroup($event)"
+    cdkDropList class="w-2/3">
     @for (group of stopGroups(); track group) {
       <div class="bg-gray-200 p-5 m-10 rounded-xl" cdkDrag>
-        <p class="font-bold">{{ group.name }}</p>
         <div class="flex justify-between">
-          <p>{{ group.description }}</p>
+          <div>
+            <p class="font-bold">{{ group.name }}</p>
+            <p>{{ group.description }}</p>
+          </div>
           <button
 
-            class="text-white p-1.5 my-1 bg-gray-700 appearance-none border rounded border-transparent"
+            class="text-white p-1.5 my-1 bg-gray-700 appearance-none border rounded border-transparent h-12"
             [routerLink]="['/stopgroup']"
             [queryParams]="{ id: group.id, name: group.name, description: group.description, isPublic: group.isPublic }">
             Details
           </button>
         </div>
-        <div class="flex flex-col m-5"
-             cdkDropList
-             [cdkDropListConnectedTo]="getDropGroups()"
-             [cdkDropListData]="group.stopIds"
-             (cdkDropListDropped)="dropStop($event)"
-             id="{{ 'group-' + group.id }}"
-        >
-          <p>Stops</p>
-          @for (stopId of group.stopIds; track stopId) {
-            <div class="mb-1 p-3 rounded-l flex justify-between items-center cursor-grab"
-                 cdkDrag
-            >
-              <p class="ml-5">{{ getStopByStopId(stopId)?.name }}</p>
-              <button
-                class="text-white p-1 my-1 bg-gray-700 appearance-none border rounded border-transparent"
-                [routerLink]="['/stop']"
-                [queryParams]="{ id: getStopByStopId(stopId)?.id, name: getStopByStopId(stopId)?.name, description: getStopByStopId(stopId)?.description, roomNr: getStopByStopId(stopId)?.roomNr, stopGroupIds: getStopByStopId(stopId)?.stopGroupIds, divisionIds: getStopByStopId(stopId)?.divisionIds }">
-                Details
-              </button>
-            </div>
-          }
-        </div>
+        @if (showStops()) {
+          <div class="flex flex-col m-5"
+               cdkDropList
+               [cdkDropListConnectedTo]="getDropGroups()"
+               [cdkDropListData]="group.stopIds"
+               (cdkDropListDropped)="dropStop($event)"
+               id="{{ 'group-' + group.id }}"
+          >
+            <p>Stops</p>
+            @for (stopId of group.stopIds; track stopId) {
+              <div class="mb-1 p-3 rounded-l flex justify-between items-center cursor-grab"
+                   cdkDrag
+              >
+                <p class="ml-5">{{ getStopByStopId(stopId)?.name }}</p>
+                <div>
+                  <button class="text-white p-1 my-1 bg-gray-700 appearance-none border rounded border-transparent m-5"
+                          (click)="selectStopToRemove(stopId, group)">
+                    Remove
+                  </button>
+                  <button
+                    class="text-white p-1 my-1 bg-gray-700 appearance-none border rounded border-transparent"
+                    [routerLink]="['/stop']"
+                    [queryParams]="{ id: getStopByStopId(stopId)?.id, name: getStopByStopId(stopId)?.name, description: getStopByStopId(stopId)?.description, roomNr: getStopByStopId(stopId)?.roomNr, stopGroupIds: getStopByStopId(stopId)?.stopGroupIds, divisionIds: getStopByStopId(stopId)?.divisionIds }">
+                    Details
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
       </div>
     }
   </div>
   <div class="w-1/3">
     <div>
-      <app-filter [elements]="divisions()" (filter)="divisionFilter.set($event)"></app-filter>
+      <app-filter (filter)="divisionFilter.set($event)" [elements]="divisions()"></app-filter>
     </div>
     <div
-      cdkDropList
       [cdkDropListConnectedTo]="getDropGroups()"
+      cdkDropList
       class="bg-gray-200 p-5 m-10 rounded-xl"
       id='all-stops'>
       <p>Unassigned Stops</p>
@@ -96,3 +110,6 @@
     }
   </div>
 </div>
+@if (showRemovePopup()) {
+  <app-delete-popup [title]="'Remove Stop'" [message]="'Are you sure you want to remove this stop from the stop group?'" (cancel)="showRemovePopup.set(false)" (removeConfirmed)="removeStop()"/>
+}
