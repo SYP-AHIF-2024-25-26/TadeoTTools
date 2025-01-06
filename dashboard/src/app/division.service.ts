@@ -36,12 +36,13 @@ export class DivisionService {
     );
   }
 
-  async updateDivisionImg(divisionID: number, image: File): Promise<void> {
+  async updateDivisionImg(id: number, image: File): Promise<void> {
     const formData = new FormData();
+    formData.append('id', id.toString());
     formData.append('image', image);
     await firstValueFrom(
       this.httpClient.put(
-        `${this.baseUrl}/api/divisions/${divisionID}/image`,
+        `${this.baseUrl}/api/divisions/image`,
         formData,
         {
           headers: {
@@ -52,26 +53,9 @@ export class DivisionService {
     );
   }
 
-  async updateDivision(
-    id: number,
-    name: string,
-    color: string,
-    updateImage: boolean,
-    image: File | null
-  ): Promise<void> {
-    console.log(name);
-    console.log(updateImage);
-    console.log(image);
-    const formData = new FormData();
-    formData.append('Id', id.toString());
-    formData.append('Name', name);
-    formData.append('Color', color);
-    formData.append('UpdateImage', updateImage.toString());
-    formData.append('Image', image || '');
-
-    console.log(formData);
+  async updateDivision(division: Division): Promise<void> {
     await firstValueFrom(
-      this.httpClient.put(`${this.baseUrl}/api/divisions`, formData, {
+      this.httpClient.put(`${this.baseUrl}/api/divisions`, division, {
         headers: {
           'X-Api-Key': localStorage.getItem('API_KEY') || '',
         },
@@ -82,6 +66,15 @@ export class DivisionService {
   async deleteDivision(divisionId: number): Promise<void> {
     await firstValueFrom(
       this.httpClient.delete(`${this.baseUrl}/api/divisions/${divisionId}`, {
+        headers: {
+          'X-Api-Key': localStorage.getItem('API_KEY') || '',
+        },
+      })
+    );
+  }
+  async deleteDivisionImg(divisionId: number): Promise<void> {
+    await firstValueFrom(
+      this.httpClient.delete(`${this.baseUrl}/api/divisions/${divisionId}/image`, {
         headers: {
           'X-Api-Key': localStorage.getItem('API_KEY') || '',
         },

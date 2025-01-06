@@ -80,20 +80,18 @@ export class DivisionDetailsComponent {
         color: this.color(),
       });
     } else {
-      await this.service.updateDivision(
-        this.divisionId(),
-        this.name(),
-        this.color(),
-        this.selectedFile !== null,
-        this.selectedFile!,
-      );
+      await this.service.updateDivision({
+        id: this.divisionId(),
+        name: this.name(),
+        color: this.color(),
+      });
     }
     this.selectedFile = null;
     this.filePreview = null;
-    /*
+
     if (this.selectedFile) {
       await this.service.updateDivisionImg(this.divisionId(), this.selectedFile);
-    }*/
+    }
     this.router.navigate(['/divisions']);
   }
 
@@ -102,9 +100,9 @@ export class DivisionDetailsComponent {
     this.router.navigate(['/divisions']);
   }
 
-  deleteImage() {
+  async deleteImage() {
     this.selectedFile = null;
     this.filePreview = null;
-    // TODO: delete image from server
+    await this.service.deleteDivisionImg(this.divisionId());
   }
 }

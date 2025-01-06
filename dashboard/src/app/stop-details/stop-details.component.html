@@ -45,7 +45,7 @@
       <h1 class="font-medium text-lg my-2">StopGroups</h1>
       @for (sg of stopGroups(); track $index) {
         @if(stopGroupIds.includes(sg.id)) {
-          <p class="text-green-700">{{ sg.name }}</p>
+          <p>{{ sg.name }}</p>
         }
       }
     </div>
@@ -55,7 +55,7 @@
         <h1 class="font-medium text-lg my-2">Divisions</h1>
 
         <form class="ml-10">
-          <label for="divisions" class="block mb-2 text-sm font-medium text-gray-900 "></label>
+          <label for="divisions" class="block text-sm font-medium text-gray-900 "></label>
           <select id="divisions" (change)="onDivisionSelect($event)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
             <option value="0" selected>Add Division</option>
             @for(division of inactiveDivisions(); track division.id) {
