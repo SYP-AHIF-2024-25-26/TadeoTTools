@@ -27,6 +27,12 @@
       <div class="flex">
         <button
           class="text-white shadow-lg mt-4 p-1.5 my-1 bg-htl-orange border rounded border-transparent"
+          (click)="deleteDivision(division.id)"
+        >
+          Delete
+        </button>
+        <button
+          class="text-white shadow-lg ml-4 mt-4 p-1.5 my-1 bg-htl-orange border rounded border-transparent"
           [routerLink]="['/division']"
           [queryParams]="{
             id: division.id,
