@@ -1,25 +1,23 @@
-<div class="w-full h-screen">
-  <div>
-    <button
-      [routerLink]="['/stopgroup']"
-      class="text-white p-1.5 m-1.5 bg-htl-orange appearance-none border rounded border-transparent"
-    >
-      Add StopGroup
-    </button>
-
-    <button
-      [routerLink]="['/stop']"
-      class="text-white p-1.5 m-1.5 bg-htl-orange appearance-none border rounded border-transparent"
-    >
-      Add Stop
-    </button>
-  </div>
-  <div>
-    <app-filter
-      [elements]="divisions()"
-      (filter)="divisionFilter.set($event)"
-    ></app-filter>
-  </div>
+<div class="bg-white flex justify-between pr-10 pl-10 pt-2 sticky top-10">
+  <button
+    [routerLink]="['/stopgroup']"
+    class="text-white p-1.5 m-1.5 bg-htl-orange appearance-none border rounded border-transparent"
+  >
+    Add StopGroup
+  </button>
+  <button
+    [routerLink]="['/stop']"
+    class="text-white p-1.5 m-1.5 bg-htl-orange appearance-none border rounded border-transparent"
+  >
+    Add Stop
+  </button>
+  <app-filter
+    [elements]="divisions()"
+    (filter)="divisionFilter.set($event)"
+    class="mr-10"
+  ></app-filter>
+</div>
+<div>
   <div class="p-5 m-5">
     @for (stop of filteredStops(); track $index) {
     <div
