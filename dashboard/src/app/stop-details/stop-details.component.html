@@ -41,6 +41,8 @@
         name="roomNr"
         id="roomNr"
       />
+
+      <h1 class="font-medium text-lg my-2">StopGroups</h1>
       @for (sg of stopGroups(); track $index) {
         @if(stopGroupIds.includes(sg.id)) {
           <p class="text-green-700">{{ sg.name }}</p>
@@ -49,13 +51,26 @@
     </div>
 
     <div>
-      <label for="division" class="mr-4">Divisions</label>
-      <!-- Chiplist für Divisions TODO
-      <select id="division" [(ngModel)]="divisionId" name="division">
-        @for (division of divisions(); track $index) {
-        <option [value]="division.id">{{ division.name }}</option>
+      <div class="flex items-baseline mt-4 mb-6">
+        <h1 class="font-medium text-lg my-2">Divisions</h1>
+
+        <form class="ml-10">
+          <label for="divisions" class="block mb-2 text-sm font-medium text-gray-900 "></label>
+          <select id="divisions" (change)="onDivisionSelect($event)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+            <option value="0" selected>Add Division</option>
+            @for(division of inactiveDivisions(); track division.id) {
+              <option value="{{division.id}}">{{division.name}}</option>
+            }
+          </select>
+        </form>
+      </div>
+
+      <div class="flex flex-wrap">
+        @for(id of divisionIds(); track $index) {
+          <app-chip class="mr-2" [division]="getDivisionById(id)!" (remove)="onDivisionRemove($event)"></app-chip>
         }
-      </select>-->
+      </div>
+
     </div>
 
     @if (errorMessage() != null) {
