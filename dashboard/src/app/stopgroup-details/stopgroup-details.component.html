@@ -50,7 +50,8 @@
       </button>
 
       <button
-        [routerLink]="['/stopgroups']"
+        (click)="goBack()"
+        type="button"
         class="bg-htl-orange ml-4 p-2 rounded text-white"
       >
         Cancel
@@ -59,6 +60,7 @@
       @if (stopGroupId() != -1) {
       <button
         (click)="deleteAndGoBack()"
+        type="button"
         class="mt-4 ml-4 bg-htl-orange p-2 rounded text-white"
       >
         Delete

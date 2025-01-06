@@ -10,6 +10,7 @@ import { isValid } from '../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { StopGroupService } from '../stopgroup.service';
 import { ChipComponent } from '../chip/chip.component';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-stop-details',
@@ -23,7 +24,7 @@ export class StopDetailsComponent {
   private divisionService: DivisionService = inject(DivisionService);
   private stopGroupService: StopGroupService = inject(StopGroupService);
   private route: ActivatedRoute = inject(ActivatedRoute);
-  private router: Router = inject(Router);
+  private location: Location = inject(Location);
 
   baseUrl = inject(BASE_URL);
 
@@ -96,12 +97,16 @@ export class StopDetailsComponent {
         divisionIds: this.divisionIds(),
       });
     }
-    this.router.navigate(['/stopgroups']);
+    this.location.back();
   }
 
   async deleteAndGoBack() {
     await this.service.deleteStop(this.stopId());
-    this.router.navigate(['/stopgroups']);
+    this.location.back();
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   onDivisionSelect($event: Event) {

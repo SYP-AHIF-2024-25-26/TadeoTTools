@@ -44,10 +44,9 @@
 
       <h1 class="font-medium text-lg my-2">StopGroups</h1>
       @for (sg of stopGroups(); track $index) {
-        @if(stopGroupIds.includes(sg.id)) {
-          <p>{{ sg.name }}</p>
-        }
-      }
+      @if(stopGroupIds.includes(sg.id)) {
+      <p>{{ sg.name }}</p>
+      } }
     </div>
 
     <div>
@@ -55,11 +54,18 @@
         <h1 class="font-medium text-lg my-2">Divisions</h1>
 
         <form class="ml-10">
-          <label for="divisions" class="block text-sm font-medium text-gray-900 "></label>
-          <select id="divisions" (change)="onDivisionSelect($event)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+          <label
+            for="divisions"
+            class="block text-sm font-medium text-gray-900"
+          ></label>
+          <select
+            id="divisions"
+            (change)="onDivisionSelect($event)"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          >
             <option value="0" selected>Add Division</option>
             @for(division of inactiveDivisions(); track division.id) {
-              <option value="{{division.id}}">{{division.name}}</option>
+            <option value="{{ division.id }}">{{ division.name }}</option>
             }
           </select>
         </form>
@@ -67,10 +73,13 @@
 
       <div class="flex flex-wrap">
         @for(id of divisionIds(); track $index) {
-          <app-chip class="mr-2" [division]="getDivisionById(id)!" (remove)="onDivisionRemove($event)"></app-chip>
+        <app-chip
+          class="mr-2"
+          [division]="getDivisionById(id)!"
+          (remove)="onDivisionRemove($event)"
+        ></app-chip>
         }
       </div>
-
     </div>
 
     @if (errorMessage() != null) {
@@ -82,7 +91,8 @@
       </button>
 
       <button
-        [routerLink]="['/stopgroups']"
+        (click)="goBack()"
+        type="button"
         class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
       >
         Cancel
@@ -90,6 +100,7 @@
       @if (stopId() != -1) {
       <button
         (click)="deleteAndGoBack()"
+        type="button"
         class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
       >
         Delete
