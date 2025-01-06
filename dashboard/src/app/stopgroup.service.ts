@@ -27,10 +27,7 @@ export class StopGroupService {
   updateStopGroupOrder(stopGroups: number[]) {
     firstValueFrom(
       this.httpClient.put(
-        this.baseUrl + `/api/groups/order`,
-        {
-          order: stopGroups,
-        },
+        this.baseUrl + `/api/groups/order`, stopGroups,
         {
           headers: {
             'X-Api-Key': localStorage.getItem('API_KEY') ?? '',

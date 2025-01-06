@@ -1,4 +1,4 @@
-import {Component, computed, inject, signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {RouterLink} from "@angular/router";
 import {StopGroupService} from "../stopgroup.service";
@@ -48,7 +48,6 @@ export class StopGroupsComponent {
 
   async getStops() {
     this.stops.set(await this.stopFetcher.getStops());
-    console.log(this.stops().map(stop => stop.divisionIds));
   }
 
   async getDivisions() {
@@ -182,6 +181,7 @@ export class StopGroupsComponent {
 
   dropGroup(event: CdkDragDrop<any, any>) {
     moveItemInArray(this.stopGroups(), event.previousIndex, event.currentIndex);
+    this.hasChanged.set(true);
   }
 
   filterStopsByDivisionId(divisionId: number): Stop[] {
@@ -194,6 +194,10 @@ export class StopGroupsComponent {
   }
 
   saveChanges() {
-
+    this.stopGroupFetcher.updateStopGroupOrder(this.stopGroups().map(group => group.id));
+    this.stopGroups().forEach(async (group) => {
+      await this.stopGroupFetcher.updateStopGroup(group)
+    })
+    this.hasChanged.set(false);
   }
 }
