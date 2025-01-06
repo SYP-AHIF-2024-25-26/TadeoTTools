@@ -28,7 +28,6 @@ export class StopsComponent implements OnInit {
 
   stopGroupIdToRemove: number = -1;
 
-
   filteredStops = computed(() =>
     this.filterStopsByDivisionId(this.divisionFilter())
   );

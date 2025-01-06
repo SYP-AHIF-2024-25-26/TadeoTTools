@@ -30,8 +30,8 @@ export class StopgroupDetailsComponent implements OnInit {
     this.name.set(params['name'] || '');
     this.description.set(params['description'] || '');
 
-    let isPublic = params['isPublic'] || "";
-    this.isPublic.set(isPublic !== "" && isPublic === "true");
+    let isPublic = params['isPublic'] || '';
+    this.isPublic.set(isPublic !== '' && isPublic === 'true');
   }
 
   isInputValid(): boolean {
@@ -40,7 +40,9 @@ export class StopgroupDetailsComponent implements OnInit {
       return false;
     }
     if (!isValid(this.description(), 255)) {
-      this.errorMessage.set('Description is invalid, must be less than 255 characters');
+      this.errorMessage.set(
+        'Description is invalid, must be less than 255 characters'
+      );
       return false;
     }
     return true;

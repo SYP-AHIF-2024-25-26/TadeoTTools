@@ -10,10 +10,10 @@ import { StopsComponent } from './stops/stops.component';
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'stopgroups', component: StopGroupsComponent },
-  { path: 'stops', component: StopsComponent},
+  { path: 'stops', component: StopsComponent },
   { path: 'divisions', component: DivisionsListComponent },
   { path: 'division', component: DivisionDetailsComponent },
-  { path: 'stopgroup', component: StopgroupDetailsComponent},
-  { path: 'stop', component: StopDetailsComponent},
+  { path: 'stopgroup', component: StopgroupDetailsComponent },
+  { path: 'stop', component: StopDetailsComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

@@ -76,7 +76,11 @@
   </div>
 </div>
 
-
 @if (showRemoveStopgroupPopup()) {
-  <app-delete-popup [title]="'Remove Stopgroup'" [message]="'Are you sure you want to remove this stop from the stop group?'" (cancel)="showRemoveStopgroupPopup.set(false)" (removeConfirmed)="removeStopgroup()"/>
+<app-delete-popup
+  [title]="'Remove Stopgroup'"
+  [message]="'Are you sure you want to remove this stop from the stop group?'"
+  (cancel)="showRemoveStopgroupPopup.set(false)"
+  (removeConfirmed)="removeStopgroup()"
+/>
 }

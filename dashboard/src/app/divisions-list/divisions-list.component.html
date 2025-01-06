@@ -49,5 +49,10 @@
 </div>
 
 @if (showRemoveDivisionPopup()) {
-  <app-delete-popup [title]="'Delete Division'" [message]="'Are you sure you want to delete this division?'" (cancel)="showRemoveDivisionPopup.set(false)" (removeConfirmed)="deleteDivision()"/>
+<app-delete-popup
+  [title]="'Delete Division'"
+  [message]="'Are you sure you want to delete this division?'"
+  (cancel)="showRemoveDivisionPopup.set(false)"
+  (removeConfirmed)="deleteDivision()"
+/>
 }

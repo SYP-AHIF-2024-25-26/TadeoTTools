@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-delete-popup',
   standalone: true,
   imports: [],
   templateUrl: './delete-popup.component.html',
-  styleUrl: './delete-popup.component.css'
+  styleUrl: './delete-popup.component.css',
 })
 export class DeletePopupComponent {
   @Input() title: string = 'Default Title';

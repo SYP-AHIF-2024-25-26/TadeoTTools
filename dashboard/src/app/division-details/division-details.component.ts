@@ -43,7 +43,12 @@ export class DivisionDetailsComponent {
     this.errorMessage.set(null);
 
     if (file) {
-      const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/svg+xml'];
+      const validFileTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/jpg',
+        'image/svg+xml',
+      ];
       if (!validFileTypes.includes(file.type)) {
         this.errorMessage.set(
           'Invalid file type. Please upload a JPG, JPEG, or PNG file.'
@@ -87,7 +92,10 @@ export class DivisionDetailsComponent {
       });
     }
     if (this.selectedFile) {
-      await this.service.updateDivisionImg(this.divisionId(), this.selectedFile);
+      await this.service.updateDivisionImg(
+        this.divisionId(),
+        this.selectedFile
+      );
     }
     this.selectedFile = null;
     this.filePreview = null;
