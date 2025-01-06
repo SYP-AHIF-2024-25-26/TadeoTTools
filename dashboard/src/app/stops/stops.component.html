@@ -1,4 +1,4 @@
-<div class="bg-white flex justify-between pr-10 pl-10 pt-2 sticky top-10">
+<div class="bg-white flex pr-10 pl-10 pt-2 sticky top-10">
   <button
     [routerLink]="['/stopgroup']"
     class="text-white p-1.5 m-1.5 bg-htl-orange appearance-none border rounded border-transparent"
@@ -25,7 +25,6 @@
     >
       <div class="flex flex-nowrap justify-between">
         <p>{{ stop.name }}</p>
-
         <button
           class="text-white shadow-lg p-1.5 mr-5 bg-htl-orange border rounded border-transparent"
           [routerLink]="['/stop']"
@@ -48,18 +47,26 @@
         {
         <div class="flex flex-nowrap justify-between">
           <p>{{ getGroupById(sgId)?.name }}</p>
-          <button
-            class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent"
-            [routerLink]="['/stopgroup']"
-            [queryParams]="{
-              id: getGroupById(sgId)?.id,
-              name: getGroupById(sgId)?.name,
-              description: getGroupById(sgId)?.description,
-              isPublic: getGroupById(sgId)?.isPublic
-            }"
-          >
-            Details
-          </button>
+          <div>
+            <button
+              class="text-white shadow-lg p-1.5 mr-5 bg-htl-orange border rounded border-transparent"
+              (click)="selectStopgroupToRemove(stop.id, sgId)"
+            >
+              Remove
+            </button>
+            <button
+              class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent"
+              [routerLink]="['/stopgroup']"
+              [queryParams]="{
+                id: getGroupById(sgId)?.id,
+                name: getGroupById(sgId)?.name,
+                description: getGroupById(sgId)?.description,
+                isPublic: getGroupById(sgId)?.isPublic
+              }"
+            >
+              Details
+            </button>
+          </div>
         </div>
         } }
       </div>
@@ -68,3 +75,8 @@
     }
   </div>
 </div>
+
+
+@if (showRemoveStopgroupPopup()) {
+  <app-delete-popup [title]="'Remove Stopgroup'" [message]="'Are you sure you want to remove this stop from the stop group?'" (cancel)="showRemoveStopgroupPopup.set(false)" (removeConfirmed)="removeStopgroup()"/>
+}

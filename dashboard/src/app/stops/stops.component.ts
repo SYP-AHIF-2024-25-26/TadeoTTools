@@ -5,11 +5,12 @@ import { RouterModule } from '@angular/router';
 import { StopGroupService } from '../stopgroup.service';
 import { DivisionService } from '../division.service';
 import { FilterComponent } from '../filter/filter.component';
+import { DeletePopupComponent } from '../delete-popup/delete-popup.component';
 
 @Component({
   selector: 'app-stops',
   standalone: true,
-  imports: [RouterModule, FilterComponent],
+  imports: [RouterModule, FilterComponent, DeletePopupComponent],
   templateUrl: './stops.component.html',
   styleUrl: './stops.component.css',
 })
@@ -23,8 +24,14 @@ export class StopsComponent implements OnInit {
   divisions = signal<Division[]>([]);
 
   divisionFilter = signal<number>(0);
+  showRemoveStopgroupPopup = signal<boolean>(false);
 
-  filteredStops = computed(() => this.filterStopsByDivisionId(this.divisionFilter()));
+  stopGroupIdToRemove: number = -1;
+
+
+  filteredStops = computed(() =>
+    this.filterStopsByDivisionId(this.divisionFilter())
+  );
 
   async ngOnInit() {
     this.stops.set(await this.service.getStops());
@@ -41,12 +48,24 @@ export class StopsComponent implements OnInit {
     if (divisionId === 0) {
       return this.stops();
     }
-    this.stops().forEach(stop => console.log(stop));
-    console.log("Filtering stops by divisionId: " + divisionId);
-    return this.stops().filter(stop => Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId));
+    this.stops().forEach((stop) => console.log(stop));
+    console.log('Filtering stops by divisionId: ' + divisionId);
+    return this.stops().filter(
+      (stop) =>
+        Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId)
+    );
   }
 
   getGroupById(sgId: number): StopGroup | null {
-    return this.stopGroups().find(sg => sg.id === sgId) || null;
+    return this.stopGroups().find((sg) => sg.id === sgId) || null;
+  }
+
+  async selectStopgroupToRemove(stopId: number, sgId: number) {
+    this.stops.set(await this.service.getStops());
+  }
+
+  async removeStopgroup() {
+    //await this.service.updateStop({id: this.})
+    this.stopGroups.set(await this.groupService.getStopGroups());
   }
 }
