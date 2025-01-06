@@ -6,6 +6,7 @@ import {StopService} from "../stop.service";
 import {DivisionService} from "../division.service";
 import {Division, Info, Stop, StopGroup} from "../types";
 import {InfoPopupComponent} from "../info-popup/info-popup.component";
+import {group} from "@angular/animations";
 
 @Component({
   selector: 'app-stopgroups',
@@ -164,7 +165,7 @@ export class StopGroupsComponent {
       if (!event.container.data.includes(stopId)) {
         event.container.data.splice(event.currentIndex, 0, stopId);
       } else {
-        console.log("already exists in this stopGroup")
+        console.log("already exists in this stopGroup");
       }
     } else if (event.container === event.previousContainer) {
       moveItemInArray(event.previousContainer.data, event.previousIndex, event.currentIndex);
@@ -176,9 +177,14 @@ export class StopGroupsComponent {
 
   dropGroup(event: CdkDragDrop<any, any>) {
     moveItemInArray(this.stopGroups(), event.previousIndex, event.currentIndex);
+    this.hasChanged.set(true);
   }
 
   saveChanges() {
-
+    this.stopGroupFetcher.updateStopGroupOrder(this.stopGroups().map(group => group.id));
+    this.stopGroups().forEach(async (group) => {
+      await this.stopGroupFetcher.updateStopGroup(group)
+    })
+    this.hasChanged.set(false);
   }
 }
