@@ -7,11 +7,12 @@ import {DivisionService} from "../division.service";
 import {Division, Info, Stop, StopGroup} from "../types";
 import {InfoPopupComponent} from "../info-popup/info-popup.component";
 import {FilterComponent} from "../filter/filter.component";
+import {DeletePopupComponent} from "../delete-popup/delete-popup.component";
 
 @Component({
   selector: 'app-stopgroups',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, RouterLink, InfoPopupComponent, FilterComponent],
+  imports: [CdkDropList, CdkDrag, RouterLink, InfoPopupComponent, FilterComponent, DeletePopupComponent],
   templateUrl: './stopgroups.component.html',
   styleUrl: './stopgroups.component.css'
 })
@@ -25,6 +26,12 @@ export class StopGroupsComponent {
   stops = signal<Stop[]>([]);
   divisions = signal<Division[]>([]);
   infos = signal<Info[]>([]);
+
+  stopIdToRemove: number = -1;
+  stopGroupToRemoveFrom: StopGroup | undefined = undefined;
+
+  showStops = signal<boolean>(true);
+  showRemovePopup = signal<boolean>(false);
 
   divisionFilter = signal<number>(0);
 
@@ -199,5 +206,19 @@ export class StopGroupsComponent {
       await this.stopGroupFetcher.updateStopGroup(group)
     })
     this.hasChanged.set(false);
+  }
+
+  selectStopToRemove(stopId: number, group: StopGroup) {
+    this.stopIdToRemove = stopId;
+    this.stopGroupToRemoveFrom = group;
+    this.showRemovePopup.set(true);
+  }
+
+  removeStop() {
+    if (this.stopGroupToRemoveFrom !== undefined) {
+      this.stopGroupToRemoveFrom.stopIds = this.stopGroupToRemoveFrom.stopIds.filter(sId => sId !== this.stopIdToRemove);
+      this.showRemovePopup.set(false);
+      this.hasChanged.set(true);
+    }
   }
 }
