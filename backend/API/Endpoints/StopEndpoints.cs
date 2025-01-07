@@ -12,7 +12,6 @@ public static class StopEndpoints
     {
         var group = app.MapGroup("v1");
         group.MapGet("api/stops", GetAllStops);
-        group.MapGet("stops/groups/{groupId}", GetStopsByGroupId);
         group.MapPost("api/stops", CreateStop);
         group.MapPut("api/stops", UpdateStop);
         group.MapDelete("api/stops/{stopId}", DeleteStop);
@@ -23,17 +22,10 @@ public static class StopEndpoints
         return Results.Ok(await StopFunctions.GetAllStopsAsync(context));
     }
 
-    private static async Task<IResult> GetStopsByGroupId(TadeoTDbContext context, int groupId)
+    private static async Task<IResult> GetPublicStops(TadeoTDbContext context)
     {
-        var group = await context.StopGroups.FindAsync(groupId);
-        Console.WriteLine(group);
-        if (group is null)
-        {
-            return Results.NotFound();
-        }
-        return Results.Ok(context.StopGroupAssignments.Where(a => a.StopGroupId == groupId).Select(a => a.Stop).ToList());
+        return Results.Ok(await StopFunctions.GetAllStopsAsync(context));
     }
-
 
     private static async Task<IResult> CreateStop(TadeoTDbContext context, CreateStopRequestDto createStopDto)
     {
@@ -102,12 +94,25 @@ public static class StopEndpoints
 
         var stop = await context.Stops
             .Include(stop => stop.Divisions)
+            .Include(stop => stop.StopGroupAssignments)
             .SingleOrDefaultAsync(stop => stop.Id == updateStopDto.Id);
-
+        
         if (stop == null)
         {
             return Results.NotFound($"Stop with ID {updateStopDto.Id} not found");
         }
+        
+        var assignments = updateStopDto.StopGroupIds.Select((id, index) => new StopGroupAssignment()
+        {
+            StopGroupId = id,
+            StopGroup = context.StopGroups.Find(id),
+            StopId = stop.Id,
+            Stop = stop,
+            Order = index
+        }).ToArray();
+        
+        stop.StopGroupAssignments.Clear();
+        stop.StopGroupAssignments.AddRange(assignments);
 
         stop.Divisions.Clear();
         stop.Divisions.AddRange(newDivisions);
@@ -157,5 +162,13 @@ public static class StopEndpoints
         string RoomNr,
         int[] DivisionIds,
         int[] StopGroupIds
+    );
+
+    public record StopWithDivisionsDto(
+        int StopId,
+        string Name,
+        string Description,
+        string RoomNr,
+        int[] DivisionIds
     );
 }
