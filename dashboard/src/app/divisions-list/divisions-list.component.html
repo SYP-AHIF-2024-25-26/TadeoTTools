@@ -21,7 +21,7 @@
       </div>
       <img
         class="w-32 h-32 object-cover"
-        [src]="baseUrl + '/divisions/' + division.id + '/image'"
+        [src]="baseUrl + '/divisions/' + division.id + '/image?timestamp=1234567890'"
         (error)="hideImage($event)"
       />
       <div class="flex">

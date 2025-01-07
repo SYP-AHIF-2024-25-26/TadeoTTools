@@ -1,27 +1,27 @@
 <div class="bg-white flex justify-between pr-10 pl-10 pt-2 sticky top-10">
   <div>
     <button (click)="saveChanges()" [disabled]="!hasChanged()"
-            class="bg-blue-600 h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Save Changes
+            class="bg-htl-orange h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Save Changes
     </button>
     <button (click)="initialiseData()" [disabled]="!hasChanged()"
-            class="bg-blue-600 h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Cancel
+            class="bg-htl-orange h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Cancel
     </button>
 
     <button (click)="showStops.set(!showStops())"
-            class="bg-blue-600 h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Show Stops
+            class="bg-htl-orange h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400">Show Stops
     </button>
   </div>
 
   <div>
     <button
       [routerLink]="['/stopgroup']"
-      class="text-white p-1.5 m-1.5 bg-gray-700 appearance-none border rounded border-transparent">
+      class="text-white p-1.5 m-1.5 bg-htl-orange appearance-none border rounded border-transparent">
       Add StopGroup
     </button>
 
     <button
       [routerLink]="['/stop']"
-      class="text-white p-1.5 m-1.5 bg-gray-700 appearance-none border rounded border-transparent">
+      class="text-white p-1.5 m-1.5 bg-htl-orange appearance-none border rounded border-transparent">
       Add Stop
     </button>
   </div>
@@ -32,7 +32,7 @@
     (cdkDropListDropped)="dropGroup($event)"
     cdkDropList class="w-2/3">
     @for (group of stopGroups(); track group) {
-      <div class="bg-gray-200 p-5 m-10 rounded-xl" cdkDrag>
+      <div class="bg-gray-100 p-5 m-10 rounded-xl" cdkDrag>
         <div class="flex justify-between">
           <div>
             <p class="font-bold">{{ group.name }}</p>
@@ -40,14 +40,14 @@
           </div>
           <button
 
-            class="text-white p-1.5 my-1 bg-gray-700 appearance-none border rounded border-transparent h-12"
+            class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent h-12"
             [routerLink]="['/stopgroup']"
             [queryParams]="{ id: group.id, name: group.name, description: group.description, isPublic: group.isPublic }">
             Details
           </button>
         </div>
         @if (showStops()) {
-          <div class="flex flex-col m-5"
+          <div class="flex flex-col m-5 bg-gray-50 p-4 rounded-xl"
                cdkDropList
                [cdkDropListConnectedTo]="getDropGroups()"
                [cdkDropListData]="group.stopIds"
@@ -61,12 +61,12 @@
               >
                 <p class="ml-5">{{ getStopByStopId(stopId)?.name }}</p>
                 <div>
-                  <button class="text-white p-1 my-1 bg-gray-700 appearance-none border rounded border-transparent m-5"
+                  <button class="text-white p-1 my-1 bg-htl-orange appearance-none border rounded border-transparent m-5"
                           (click)="selectStopToRemove(stopId, group)">
                     Remove
                   </button>
                   <button
-                    class="text-white p-1 my-1 bg-gray-700 appearance-none border rounded border-transparent"
+                    class="text-white p-1 my-1 bg-htl-orange appearance-none border rounded border-transparent"
                     [routerLink]="['/stop']"
                     [queryParams]="{ id: getStopByStopId(stopId)?.id, name: getStopByStopId(stopId)?.name, description: getStopByStopId(stopId)?.description, roomNr: getStopByStopId(stopId)?.roomNr, stopGroupIds: getStopByStopId(stopId)?.stopGroupIds, divisionIds: getStopByStopId(stopId)?.divisionIds }">
                     Details
@@ -86,7 +86,7 @@
     <div
       [cdkDropListConnectedTo]="getDropGroups()"
       cdkDropList
-      class="bg-gray-200 p-5 m-10 rounded-xl"
+      class="bg-gray-100 p-5 m-10 rounded-xl"
       id='all-stops'>
       <p>Unassigned Stops</p>
       @for (stop of filteredStops(); track stop.id) {
@@ -95,7 +95,7 @@
         >
           <p>{{ stop.name }}</p>
           <button
-            class="text-white p-1.5 my-1 bg-gray-700 appearance-none border rounded border-transparent"
+            class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent"
             [routerLink]="['/stop']"
             [queryParams]="{ id: stop.id, name: stop.name, description: stop.description, roomNr: stop.roomNr, stopGroupIds: stop.stopGroupIds, divisionIds: stop.divisionIds }">
             Details
