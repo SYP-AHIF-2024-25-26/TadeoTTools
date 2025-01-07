@@ -26,8 +26,8 @@ public class StopFunctions
         return stops.Select(stop => new StopWithAssignmentsAndDivisionsDto(
             stop.Id,
             stop.Name,
-            stop.Description,
             stop.RoomNr,
+            stop.Description,
             stop.Divisions.Select(d => d.Id).ToArray(),
             stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray()
         )).ToList();

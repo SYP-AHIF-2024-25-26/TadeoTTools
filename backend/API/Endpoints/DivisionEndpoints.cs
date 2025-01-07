@@ -27,34 +27,34 @@ public static class DivisionEndpoints
 
     public record CreateDivisionDto(string Name, string Color, IFormFile Image);
 
-    public static async Task<IResult> CreateDivision(TadeoTDbContext context, [FromForm] string Name,
-        [FromForm] string Color, [FromForm] IFormFile? Image)
+    public static async Task<IResult> CreateDivision(TadeoTDbContext context, [FromForm] string name,
+        [FromForm] string color, IFormFile? image)
     {
-        if (Name.Length > 255)
+        if (name.Length > 255)
         {
             return Results.BadRequest("Division name must be less than 255 characters.");
         }
 
-        if (Color.Length > 7)
+        if (color.Length > 7)
         {
             return Results.BadRequest("Color must be less than 8 characters.");
         }
 
-        if (context.Divisions.Any(d => d.Name == Name))
+        if (context.Divisions.Any(d => d.Name == name))
         {
             return Results.BadRequest("Divisionname already exists.");
         }
 
         var division = new Division()
         {
-            Name = Name,
-            Color = Color,
+            Name = name,
+            Color = color,
         };
 
-        if (Image is not null)
+        if (image is not null)
         {
             using var memoryStream = new MemoryStream();
-            await Image.CopyToAsync(memoryStream);
+            await image.CopyToAsync(memoryStream);
             division.Image = memoryStream.ToArray();
         }
 

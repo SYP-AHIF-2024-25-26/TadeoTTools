@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { StopService } from '../stop.service';
 import { BASE_URL } from '../app.config';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,11 +9,13 @@ import { DivisionService } from '../division.service';
 import { isValid } from '../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { StopGroupService } from '../stopgroup.service';
+import { ChipComponent } from '../chip/chip.component';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-stop-details',
   standalone: true,
-  imports: [FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule, ChipComponent],
   templateUrl: './stop-details.component.html',
   styleUrl: './stop-details.component.css',
 })
@@ -22,7 +24,7 @@ export class StopDetailsComponent {
   private divisionService: DivisionService = inject(DivisionService);
   private stopGroupService: StopGroupService = inject(StopGroupService);
   private route: ActivatedRoute = inject(ActivatedRoute);
-  private router: Router = inject(Router);
+  private location: Location = inject(Location);
 
   baseUrl = inject(BASE_URL);
 
@@ -32,6 +34,9 @@ export class StopDetailsComponent {
   roomNr = signal<string>('');
   stopGroupIds: number[] = [];
   divisionIds = signal<number[]>([]);
+  inactiveDivisions = computed(() =>
+    this.divisions().filter((d) => !this.divisionIds().includes(d.id))
+  );
 
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
@@ -46,8 +51,13 @@ export class StopDetailsComponent {
     this.name.set(params['name'] || '');
     this.description.set(params['description'] || '');
     this.roomNr.set(params['roomNr'] || '');
-    this.stopGroupIds = params['stopGroupIds'].map((x: string) => parseInt(x)) || null;
-    this.divisionIds.set(params['divisionIds'].map((x: string) => parseInt(x)) || []);
+    this.stopGroupIds =
+      params['stopGroupIds'].map((x: string) => parseInt(x)) || null;
+    this.divisionIds.set(
+      Array.from<string>(params['divisionIds']).map((x: string) =>
+        parseInt(x)
+      ) || []
+    );
   }
 
   isInputValid() {
@@ -87,11 +97,34 @@ export class StopDetailsComponent {
         divisionIds: this.divisionIds(),
       });
     }
-    this.router.navigate(['/stopgroups']);
+    this.location.back();
   }
 
   async deleteAndGoBack() {
     await this.service.deleteStop(this.stopId());
-    this.router.navigate(['/stopgroups']);
+    this.location.back();
+  }
+
+  goBack() {
+    this.location.back();
+  }
+
+  onDivisionSelect($event: Event) {
+    const target = $event.target as HTMLSelectElement;
+    const divisionId = parseInt(target.value);
+    if (
+      !this.divisionIds().includes(divisionId) &&
+      this.divisions().find((d) => d.id === divisionId)
+    ) {
+      this.divisionIds.update((ids) => [...ids, divisionId]);
+    }
+  }
+
+  onDivisionRemove(divisionId: number) {
+    this.divisionIds.update((ids) => ids.filter((id) => id !== divisionId));
+  }
+
+  getDivisionById(id: number) {
+    return this.divisions().find((division) => division.id === id);
   }
 }

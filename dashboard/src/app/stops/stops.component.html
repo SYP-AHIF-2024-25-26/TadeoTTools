@@ -1,0 +1,86 @@
+<div class="bg-white flex pr-10 pl-10 pt-2 sticky top-10">
+  <button
+    [routerLink]="['/stopgroup']"
+    class="text-white p-1.5 m-1.5 bg-htl-orange appearance-none border rounded border-transparent"
+  >
+    Add StopGroup
+  </button>
+  <button
+    [routerLink]="['/stop']"
+    class="text-white p-1.5 m-1.5 bg-htl-orange appearance-none border rounded border-transparent"
+  >
+    Add Stop
+  </button>
+  <app-filter
+    [elements]="divisions()"
+    (filter)="divisionFilter.set($event)"
+    class="mr-10"
+  ></app-filter>
+</div>
+<div>
+  <div class="p-5 m-5">
+    @for (stop of filteredStops(); track $index) {
+    <div
+      class="w-100 p-6 border rounded-lg m-2 text-black bg-white justify-between"
+    >
+      <div class="flex flex-nowrap justify-between">
+        <p>{{ stop.name }}</p>
+        <button
+          class="text-white shadow-lg p-1.5 mr-5 bg-htl-orange border rounded border-transparent"
+          [routerLink]="['/stop']"
+          [queryParams]="{
+            id: stop.id,
+            name: stop.name,
+            description: stop.description,
+            roomNr: stop.roomNr,
+            stopGroupIds: stop.stopGroupIds,
+            divisionIds: stop.divisionIds
+          }"
+        >
+          Details
+        </button>
+      </div>
+      @if(stop.stopGroupIds.length > 0) {
+      <div class="bg-gray-100 mt-5 p-5 rounded-lg">
+        <p>Stopgroups</p>
+        @for(sgId of stop.stopGroupIds; track $index) { @if(getGroupById(sgId))
+        {
+        <div class="flex flex-nowrap justify-between">
+          <p>{{ getGroupById(sgId)?.name }}</p>
+          <div>
+            <button
+              class="text-white shadow-lg p-1.5 mr-5 bg-htl-orange border rounded border-transparent"
+              (click)="selectStopgroupToRemove(stop.id, sgId)"
+            >
+              Remove
+            </button>
+            <button
+              class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent"
+              [routerLink]="['/stopgroup']"
+              [queryParams]="{
+                id: getGroupById(sgId)?.id,
+                name: getGroupById(sgId)?.name,
+                description: getGroupById(sgId)?.description,
+                isPublic: getGroupById(sgId)?.isPublic
+              }"
+            >
+              Details
+            </button>
+          </div>
+        </div>
+        } }
+      </div>
+      }
+    </div>
+    }
+  </div>
+</div>
+
+@if (showRemoveStopgroupPopup()) {
+<app-delete-popup
+  [title]="'Remove Stopgroup'"
+  [message]="'Are you sure you want to remove this stop from the stop group?'"
+  (cancel)="showRemoveStopgroupPopup.set(false)"
+  (removeConfirmed)="removeStopgroup()"
+/>
+}

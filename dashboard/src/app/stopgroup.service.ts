@@ -1,10 +1,9 @@
-import {inject, Injectable} from '@angular/core';
-import {Stop, StopGroup} from './types';
-import {StopService} from './stop.service';
-import {HttpClient} from '@angular/common/http';
-import {firstValueFrom, map} from 'rxjs';
-import {BASE_URL} from './app.config';
-import {StopGroupsComponent} from "./stopgroups/stopgroups.component";
+import { inject, Injectable } from '@angular/core';
+import { StopGroup } from './types';
+import { StopService } from './stop.service';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom, map } from 'rxjs';
+import { BASE_URL } from './app.config';
 
 @Injectable({
   providedIn: 'root',
@@ -26,17 +25,11 @@ export class StopGroupService {
 
   updateStopGroupOrder(stopGroups: number[]) {
     firstValueFrom(
-      this.httpClient.put(
-        this.baseUrl + `/api/groups/order`,
-        {
-          order: stopGroups,
+      this.httpClient.put(this.baseUrl + `/api/groups/order`, stopGroups, {
+        headers: {
+          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
         },
-        {
-          headers: {
-            'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-          },
-        }
-      )
+      })
     );
   }
 
@@ -55,17 +48,13 @@ export class StopGroupService {
   }
 
   async updateStopGroup(stopGroup: StopGroup) {
-    console.log(typeof(stopGroup.isPublic));
+    console.log(typeof stopGroup.isPublic);
     await firstValueFrom(
-      this.httpClient.put(
-        this.baseUrl + `/api/groups`,
-        stopGroup,
-        {
-          headers: {
-            'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-          },
-        }
-      )
+      this.httpClient.put(this.baseUrl + `/api/groups`, stopGroup, {
+        headers: {
+          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
+        },
+      })
     );
   }
 

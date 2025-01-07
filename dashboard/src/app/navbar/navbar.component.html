@@ -1,8 +1,13 @@
-<div>
-  <nav class="bg-htl-orange text-white p-2 flex space-x-10">
-    <div class="text-lg">Admin Dashboard</div>
-    <button [routerLink]="['/stopgroups']">StopGroups</button>
-    <button [routerLink]="['/stopgroups']">Stops</button>
-    <button [routerLink]="['/divisions']">Divisions</button>
+<div class="mb-14 sticky top-0">
+  <nav class="bg-htl-orange text-white p-2 flex items-center space-x-10">
+    <div class="flex space-x-10">
+      <div class="text-lg mr-auto">Admin Dashboard</div>
+      <button [routerLink]="['/stopgroups']">StopGroups</button>
+      <button [routerLink]="['/stops']">Stops</button>
+      <button [routerLink]="['/divisions']">Divisions</button>
+    </div>
+    <button (click)="logout()" [routerLink]="['/login']" class="ml-auto">
+      Logout
+    </button>
   </nav>
 </div>

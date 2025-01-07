@@ -4,11 +4,9 @@
   <h4 class="text-2xl">Division ID: {{ divisionId() }}</h4>
   } @else {
   <h4 class="text-2xl">New Division</h4>
-  }
-
-  @if(filePreview != null) {
+  } @if(filePreview != null) {
   <div class="mt-4">
-    <p>File Preview:</p>
+    <p>File Preview</p>
     <img
       class="w-32 h-32 object-cover"
       [src]="filePreview"
@@ -18,7 +16,7 @@
   } @else {
   <img
     class="w-32 h-32 object-cover"
-    [src]="baseUrl + '/divisions/' + divisionId() + '/image'"
+    [src]="baseUrl + '/divisions/' + divisionId() + '/image?timestamp=1234567890'"
     alt="Division Picture will load here"
   />
   }

@@ -1,9 +1,16 @@
 <form class="max-w-sm mx-auto">
-  <label for="divisions" class="block mb-2 text-sm font-medium text-gray-900 "></label>
-  <select id="divisions" (change)="onFilterChange($event)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+  <label
+    for="divisions"
+    class="block mb-2 text-sm font-medium text-gray-900"
+  ></label>
+  <select
+    id="divisions"
+    (change)="onFilterChange($event)"
+    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+  >
     <option value="0" selected>Filter by Division</option>
     @for(element of elements; track element.id) {
-      <option value="{{element.id}}">{{element.name}}</option>
+    <option value="{{ element.id }}">{{ element.name }}</option>
     }
   </select>
 </form>

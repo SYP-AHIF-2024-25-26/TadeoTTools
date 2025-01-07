@@ -25,4 +25,4 @@ export type Info = {
   id: number;
   type: 'info' | 'error';
   message: string;
-}
+};
