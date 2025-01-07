@@ -1,7 +1,7 @@
 ﻿using Database.Entities;
 using Database.Repository;
 
-namespace ImportConsoleApp;
+namespace Database;
 
 public class CsvImporter
 {
@@ -37,6 +37,8 @@ public class CsvImporter
             .Select(r => r.Division)
             .Distinct()
             .Where(name => !string.IsNullOrEmpty(name))
+            .SelectMany(name => name.Split(','))
+            .Distinct()
             .Select(r => new Division
             {
                 Name = r,

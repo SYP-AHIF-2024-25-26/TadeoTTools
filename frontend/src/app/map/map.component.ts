@@ -12,7 +12,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
 export class MapComponent {
   @Input() roomNr: string | undefined;
 
-  images = ['/assets/stockwerk-U.png', '/assets/stockwerk-E.png', '/assets/stockwerk-1.png', '/assets/stockwerk-2.png'];
+  images = ['assets/stockwerk-U.png', 'assets/stockwerk-E.png', 'assets/stockwerk-1.png', 'assets/stockwerk-2.png'];
 
   currentFloor = signal(1);
   currentFloorSymbol = computed(() => {

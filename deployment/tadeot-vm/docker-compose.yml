@@ -1,0 +1,69 @@
+services:
+
+  tadeot-guide-app:
+    image: birgitschroeder/tadeot-guide-app
+    container_name: tadeot-guide-app
+    networks:
+      - tadeotnet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.guide-app.rule=Host(`tadeot.htl-leonding.ac.at`) && PathPrefix(`/guide-app`)"
+      - "traefik.http.services.guide-app.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.guide-app-strip-prefix.stripprefix.prefixes=/guide-app"
+      - "traefik.http.routers.guide-app.middlewares=guide-app-strip-prefix"
+
+  tadeot-tools-dashboard:
+    image: birgitschroeder/tadeot-tools-dashboard
+    container_name: tadeot-tools-dashboard
+    networks:
+      - tadeotnet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`tadeot.htl-leonding.ac.at`) && PathPrefix(`/dashboard`)"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.dashboard-strip-prefix.stripprefix.prefixes=/dashboard"
+      - "traefik.http.routers.dashboard.middlewares=dashboard-strip-prefix"
+
+  tadeot-tools-backend:
+    container_name: tadeot-tools-backend
+    image: birgitschroeder/tadeot-tools-api:latest
+    restart: always
+    links:
+      - tadeot-my-sql
+    depends_on:
+      tadeot-my-sql:
+        condition: service_healthy
+    networks:
+      - tadeotnet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tadeot-tools-backend.rule=Host(`tadeot.htl-leonding.ac.at`) && PathPrefix(`/tadeot-tools-backend`)"
+      - "traefik.http.services.tadeot-tools-backend.loadbalancer.server.port=8080"
+
+  tadeot-my-sql:
+    image: mysql:latest
+    container_name: tadeot-mysql
+    restart: always
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 20s
+      timeout: 20s
+      retries: 5
+      start_period: 5s
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: tadeot
+      MYSQL_USER: user
+      MYSQL_PASSWORD: test
+    volumes:
+      - tadeot-tools-data:/var/lib/mysql
+    networks:
+      - tadeotnet
+
+volumes:
+  tadeot-tools-data:
+
+networks:
+  tadeotnet:
+    external: true
+    name: tadeotnet
