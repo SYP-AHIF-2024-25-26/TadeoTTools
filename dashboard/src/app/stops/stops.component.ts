@@ -67,7 +67,9 @@ export class StopsComponent implements OnInit {
   }
 
   async removeStopgroup() {
-    //await this.service.updateStop({id: this.})
+    const stopToUpdate: Stop = this.stops().find((s) => s.id === this.stopIdFromRemove)!;
+    stopToUpdate.stopGroupIds = stopToUpdate.stopGroupIds.filter((sgId) => sgId !== this.stopGroupIdToRemove);
+    await this.service.updateStop(stopToUpdate);
     this.showRemoveStopgroupPopup.set(false);
     this.stops.set(await this.service.getStops());
     this.stopGroups.set(await this.groupService.getStopGroups());
