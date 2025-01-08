@@ -1,5 +1,7 @@
 using API.Endpoints;
+using API.Middleware;
 using Database;
+using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +32,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "default",
         policyBuilder =>
         {
-            policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:4300");
+            policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:4300", "http://localhost:51566");
             policyBuilder.AllowAnyHeader();
             policyBuilder.AllowAnyMethod();
             policyBuilder.AllowCredentials();
@@ -83,10 +85,23 @@ app.UseSwaggerUI(c =>
 /* Comment next line for No API-Key-Validation*/
 app.UseMiddleware<ApiKeyMiddleware>();
 
-// wait for 5 seconds to ensure that the database is up and running
-// TODO: Find a better solution to ensure that the database is up and running
-Thread.Sleep(5000);
 var scope = app.Services.CreateScope();
+
+var apiKeyFunctions = scope.ServiceProvider.GetService<APIKeyFunctions>();
+if (apiKeyFunctions is null)
+{
+    app.Logger.LogError("APIKeyFunctions is null");
+}
+else
+{
+    if ((await apiKeyFunctions.GetAllAPIKeys()).Count <= 0)
+    {
+        app.Logger.LogInformation("No API key found in database - generating a new one.");
+        var key = new APIKey { APIKeyValue = APIKeyGenerator.GenerateApiKey() };
+        await apiKeyFunctions.AddAPIKey(key);
+        app.Logger.LogInformation("Generated API key: {Key}", key.APIKeyValue);
+    }
+}
 var context = scope.ServiceProvider.GetService<TadeoTDbContext>();
 try
 {
