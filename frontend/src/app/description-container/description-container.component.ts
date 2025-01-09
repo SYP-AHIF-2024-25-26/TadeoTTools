@@ -18,4 +18,9 @@ export class DescriptionContainerComponent {
   protected baseUrl = inject(BASE_URL);
 
   protected router = inject(Router);
+
+  hideImage(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.style.display = 'none';
+  }
 }
