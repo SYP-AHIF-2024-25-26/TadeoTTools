@@ -21,7 +21,11 @@
       @if (divisionIds !== undefined) {
         <div class="mx-2 flex max-w-10 flex-col">
           @for (divisionId of divisionIds; track $index) {
-            <img class="mb-2 object-cover" [src]="baseUrl + '/v1/divisions/' + divisionId + '/image'" alt="Division Picture will load here" />
+            <img
+              class="w-32 h-32 object-cover"
+              [src]="baseUrl + '/v1/divisions/' + divisionId + '/image'"
+              (error)="hideImage($event)"
+            />
           }
         </div>
       }

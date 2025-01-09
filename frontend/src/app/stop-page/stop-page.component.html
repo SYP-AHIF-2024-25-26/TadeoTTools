@@ -7,14 +7,14 @@
   <div class="flex flex-col justify-center">
     @if (stops().length > 1) {
       <app-description-container [title]="parentStopGroup().name" [description]="parentStopGroup().description" [divisionIds]="divisionIds()" />
-      @for (stop of stops(); track stop.id) {
+      @for (stop of getSortedStops(); track stop.id) {
         <app-stop-card
           (onChange)="setProgress()"
           (openStopDescriptionPage)="openStopDescriptionPage(stop)"
           [stop]="stop"
           class="mt-4"
           [id]="stop.id.toString()"
-          [colors]="getColorOfStop(stop)"
+          [colors]="getColorsOfStop(stop)"
           [ngClass]="{ 'mb-28': stops().indexOf(stop) === stops().length - 1 }"
         ></app-stop-card>
       }

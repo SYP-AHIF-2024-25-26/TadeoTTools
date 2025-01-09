@@ -5,6 +5,7 @@ export type Stop = {
   roomNr: string;
   stopGroupIds: number[];
   divisionIds: number[];
+  order: number[];
 };
 
 export type StopGroup = {

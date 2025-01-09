@@ -43,8 +43,7 @@ export class StopPageComponent {
     this.divisions.set(await this.apiFetchService.getDivisions());
   }
 
-  getColorOfStop(stop: Stop) {
-    stop.divisionIds.push(5);
+  getColorsOfStop(stop: Stop) {
     return this.divisions()
       .filter((division) => stop.divisionIds.includes(division.id))
       .map((d) => d.color);
@@ -59,5 +58,13 @@ export class StopPageComponent {
     const progress = this.stopCards.filter((stopCard) => stopCard.isChecked()).length;
     sessionStorage.setItem(STOP_GROUP_PROGRESS_PREFIX + this.parentStopGroup().id, progress.toString());
     sessionStorage.setItem(STOPS_COUNT_PREFIX + this.parentStopGroup().id, this.stops().length.toString());
+  }
+
+  getSortedStops() {
+    return this.stops()
+      .sort((a, b) =>
+        a.order.at(a.stopGroupIds.indexOf(this.parentStopGroup().id))! -
+        b.order.at(b.stopGroupIds.indexOf(this.parentStopGroup().id))!
+      );
   }
 }
