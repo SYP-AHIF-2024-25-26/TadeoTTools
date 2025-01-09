@@ -38,7 +38,7 @@ public static class StopEndpoints
             stop.RoomNr,
             stop.Divisions.Select(d => d.Id).ToArray(),
             stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
-            Order: stop.StopGroupAssignments.Select(a => a.Order).ToArray()
+            stop.StopGroupAssignments.Select(a => a.Order).ToArray()
         )).ToList());
     }
 

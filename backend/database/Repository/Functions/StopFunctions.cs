@@ -11,7 +11,7 @@ public record StopWithAssignmentsAndDivisionsDto(
     string Description,
     int[] DivisionIds,
     int[] StopGroupIds,
-    int[] Order
+    int[] Orders
 );
 
 public class StopFunctions

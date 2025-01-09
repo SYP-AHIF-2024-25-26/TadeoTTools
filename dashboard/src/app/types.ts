@@ -5,6 +5,7 @@ export type Stop = {
   description: string;
   divisionIds: number[];
   stopGroupIds: number[];
+  orders: number[];
 };
 
 export type StopGroup = {
