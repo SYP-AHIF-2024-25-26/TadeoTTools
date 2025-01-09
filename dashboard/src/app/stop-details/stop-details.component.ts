@@ -95,6 +95,7 @@ export class StopDetailsComponent {
         roomNr: this.roomNr(),
         stopGroupIds: this.stopGroupIds,
         divisionIds: this.divisionIds(),
+
       });
     }
     this.location.back();

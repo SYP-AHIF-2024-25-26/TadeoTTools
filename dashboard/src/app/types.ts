@@ -8,6 +8,15 @@ export type Stop = {
   orders: number[];
 };
 
+export type StopWithoutOrders = {
+  id: number;
+  name: string;
+  roomNr: string;
+  description: string;
+  divisionIds: number[];
+  stopGroupIds: number[];
+};
+
 export type StopGroup = {
   id: number;
   name: string;

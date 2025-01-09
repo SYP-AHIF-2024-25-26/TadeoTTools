@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Stop } from './types';
+import { Stop, StopWithoutOrders } from './types';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from './app.config';
@@ -87,7 +87,7 @@ export class StopService {
     );
   }
 
-  async updateStop(stop: Stop) {
+  async updateStop(stop: StopWithoutOrders) {
     await firstValueFrom(
       this.httpClient.put(this.baseUrl + `/api/stops`, stop, {
         headers: {
