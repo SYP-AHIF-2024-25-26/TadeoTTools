@@ -88,14 +88,13 @@ export class StopDetailsComponent {
         stopGroupIDs: this.stopGroupIds,
       });
     } else {
-      await this.service.updateStop({
+      await this.service.updateStopWithoutOrder({
         id: this.stopId(),
         name: this.name(),
         description: this.description(),
         roomNr: this.roomNr(),
         stopGroupIds: this.stopGroupIds,
         divisionIds: this.divisionIds(),
-
       });
     }
     this.location.back();

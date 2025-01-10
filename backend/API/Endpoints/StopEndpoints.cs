@@ -88,7 +88,7 @@ public static class StopEndpoints
             createStopDto.DivisionIds, createStopDto.StopGroupIds));
     }
 
-    private static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto)
+    private static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto, bool? updateOrder = true)
     {
         if (updateStopDto.Name.Length == 50)
         {
@@ -111,23 +111,26 @@ public static class StopEndpoints
             .Include(stop => stop.Divisions)
             .Include(stop => stop.StopGroupAssignments)
             .SingleOrDefaultAsync(stop => stop.Id == updateStopDto.Id);
-        
+
         if (stop == null)
         {
             return Results.NotFound($"Stop with ID {updateStopDto.Id} not found");
         }
-        
-        var assignments = updateStopDto.StopGroupIds.Select((id, index) => new StopGroupAssignment()
+
+        if (updateOrder == null || updateOrder == true)
         {
-            StopGroupId = id,
-            StopGroup = context.StopGroups.Find(id),
-            StopId = stop.Id,
-            Stop = stop,
-            Order = index
-        }).ToArray();
-        
-        stop.StopGroupAssignments.Clear();
-        stop.StopGroupAssignments.AddRange(assignments);
+            var assignments = updateStopDto.StopGroupIds.Select((id, index) => new StopGroupAssignment()
+            {
+                StopGroupId = id,
+                StopGroup = context.StopGroups.Find(id),
+                StopId = stop.Id,
+                Stop = stop,
+                Order = index
+            }).ToArray();
+
+            stop.StopGroupAssignments.Clear();
+            stop.StopGroupAssignments.AddRange(assignments);
+        }
 
         stop.Divisions.Clear();
         stop.Divisions.AddRange(newDivisions);
@@ -139,6 +142,7 @@ public static class StopEndpoints
         await context.SaveChangesAsync();
         return Results.Ok();
     }
+
 
     private static async Task<IResult> DeleteStop(TadeoTDbContext context, [FromRoute] int stopId)
     {
