@@ -9,4 +9,5 @@ import { Component, Input } from '@angular/core';
 })
 export class HeaderComponent {
   @Input() showWelcomeText: boolean = true;
+  protected readonly currentHour = new Date().getHours();
 }
