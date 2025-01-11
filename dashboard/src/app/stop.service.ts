@@ -96,6 +96,15 @@ export class StopService {
       })
     );
   }
+  async updateStopWithoutOrder(stop: StopWithoutOrders) {
+    await firstValueFrom(
+      this.httpClient.put(this.baseUrl + `/api/stops?updateOrder=false`, stop, {
+        headers: {
+          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
+        }
+      })
+    );
+  }
 
   async deleteStop(id: number) {
     await firstValueFrom(
