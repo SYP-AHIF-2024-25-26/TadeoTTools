@@ -9,11 +9,4 @@ import { HeaderComponent } from '../header/header.component';
   templateUrl: './about-page.component.html',
   styleUrl: './about-page.component.css',
 })
-export class AboutPageComponent {
-
-  selectedTab: WritableSignal<string> = signal('about');
-
-  selectTab(tab: string): void {
-    this.selectedTab.set(tab);
-  }
-}
+export class AboutPageComponent {}

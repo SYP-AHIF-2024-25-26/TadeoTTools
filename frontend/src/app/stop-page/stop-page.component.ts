@@ -61,10 +61,8 @@ export class StopPageComponent {
   }
 
   getSortedStops() {
-    return this.stops()
-      .sort((a, b) =>
-        a.orders[a.stopGroupIds.indexOf(this.parentStopGroup().id)]! -
-        b.orders[b.stopGroupIds.indexOf(this.parentStopGroup().id)]!
-      );
+    return this.stops().sort(
+      (a, b) => a.orders[a.stopGroupIds.indexOf(this.parentStopGroup().id)]! - b.orders[b.stopGroupIds.indexOf(this.parentStopGroup().id)]!
+    );
   }
 }

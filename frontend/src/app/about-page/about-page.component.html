@@ -2,93 +2,40 @@
   <app-header [showWelcomeText]="false" />
 
   <div class="mb-32 flex flex-1 flex-col overflow-x-hidden overflow-y-scroll bg-gray-50">
-    <img
-      src="./assets/team.png"
-      alt="HTL Leonding"
-      class="mb-4 h-auto w-1/3 self-center"
-    />
+    <img src="./assets/team.png" alt="HTL Leonding" class="mb-4 h-auto w-1/3 self-center" />
 
-      <div class="min-w-fit rounded-lg bg-white shadow-md mx-4">
-        <div class="p-4">
-          <div class="flex">
-            <div class="flex w-4/5 flex-col">
-              <div class="text-xl font-semibold">
-                Luca Haas, Melanie Dohr und Andreas Huber
-              </div>
-              <div class="text-lg font-medium">
-                4AHIF
-              </div>
-              <div class="mt-4 text-base font-medium">
-                4. Klasse Informatik
-              </div>
-            </div>
+    <div class="mx-4 min-w-fit rounded-lg bg-white shadow-md">
+      <div class="p-4">
+        <div class="flex">
+          <div class="flex w-4/5 flex-col">
+            <div class="text-xl font-semibold">Luca Haas, Melanie Dohr und Andreas Huber</div>
+            <div class="text-lg font-medium">4AHIF</div>
+            <div class="mt-4 text-base font-medium">4. Klasse Informatik</div>
           </div>
         </div>
       </div>
+    </div>
 
-    <div class="mx-auto mt-8 w-full max-w-md">
-      <div class="flex border-b">
-        <button
-          class="flex-1 py-2 text-center text-gray-600 hover:text-gray-800 focus:outline-none"
-          [class.border-b-2]="selectedTab() === 'about'"
-          [class.border-orange-500]="selectedTab() === 'about'"
-          (click)="selectTab('about')"
-        >
-          <span class="inline-flex items-center text-xl"> About </span>
-        </button>
-        <button
-          class="flex-1 py-2 text-center text-gray-600 hover:text-gray-800 focus:outline-none"
-          [class.border-b-2]="selectedTab() === 'manual'"
-          [class.border-orange-500]="selectedTab() === 'manual'"
-          (click)="selectTab('manual')"
-        >
-          <span class="inline-flex items-center text-xl"> Benutzerhandbuch </span>
-        </button>
-      </div>
+    <div class="mx-4 mt-4 rounded-lg border bg-white">
+      <div class="p-4">
+        <h2 class="mb-4 px-4 pt-4 text-2xl font-bold">About</h2>
+        <p class="mb-4 text-wrap px-4 text-xl font-normal text-gray-600">
+          Diese App vereinfacht die Koordination durch den Tag der offenen Tür der HTL Leonding und schafft einen guten Überblick über die Stationen,
+          welche behandelt werden können. Die App wurde im Rahmen des Systemplanung und Projektentwicklungs - Projekts entwickelt.
+        </p>
 
-      <div class="mx-4 mt-4 rounded-lg border bg-white">
-        @if (selectedTab() === 'about') {
-          <div class="p-4">
-            <h2 class="mb-4 px-4 pt-4 text-2xl font-bold">About</h2>
-            <p class="text-wrap px-4 text-xl font-normal text-gray-600">
-              Diese App vereinfacht die Koordination durch den Tag der offenen Tür der HTL Leonding und schafft einen guten Überblick über die
-              Stationen, welche behandelt werden können. Die App wurde im Rahmen des Systemplanung und Projektentwicklungs - Projekts entwickelt.
-            </p>
-          </div>
-        }
-        @if (selectedTab() === 'manual') {
-          <div class="p-8">
-            <h2 class="mb-4 text-2xl font-bold">Benutzerhandbuch</h2>
-            <div>
-              <h3 class="mb-4 text-xl font-semibold">Funktionen</h3>
-              <ul class="mb-4 list-inside list-disc text-xl text-gray-600">
-                <li class="mb-4">
-                  <strong>Leitfaden-Seite</strong>: <br />
-                  Hier finden Sie einen Leitfaden, der als Orientation für den Tag der offenen Tür dient. Sie können jeden Abschnitt des Leitfadens
-                  abhaken um den Fortschritt zu sehen.
-                </li>
-                <li class="mb-4">
-                  <strong>Tour-Seite</strong>: Hierhin gelangen Sie, wenn Sie einen Tour Abschnitt auf der Leitfaden-Seite anklicken. Hier können Sie,
-                  speziell wenn Sie einer Tour folgen nacheinander abhaken, was Sie gesehen haben. Wenn Sie alle Station der Tour erledigt und
-                  abgehakt haben, wird der Abschnitt im Leitfaden automatisch abgehakt.
-                </li>
-                <li class="mb-4">
-                  <strong>Stationbeschreibungs-Seite</strong>: Hierhin gelangen Sie, wenn Sie auf der Tour-Seite eine Station anklicken. Hier können
-                  Sie alle Details einer Station sehen und haben die Option sich diese auf der Karte anzeigen zu lassen. Wenn Sie auf die Karte
-                  wechseln gibt es auch einen zurück Knopf um wieder auf die Stationbeschreibungs-Seite zu gelangen.
-                </li>
-                <li class="mb-4">
-                  <strong>Karten-Seite</strong>: Zeigt eine Karte der Schule mit verschiedenen Stockwerken und Räumen. Benutzer können zwischen den
-                  Stockwerken navigieren und spezifische Räume anzeigen.
-                </li>
-                <li class="mb-4">
-                  <strong>Navbar</strong>: Eine feste Navigationsleiste am unteren Bildschirmrand ermöglicht den schnellen Zugriff auf die
-                  Hauptbereiche der App.
-                </li>
-              </ul>
-            </div>
-          </div>
-        }
+        <h2 class="mb-4 px-4 text-2xl font-bold">Benutzerhandbuch</h2>
+
+        <p class="text-wrap px-4 text-xl font-normal text-gray-600">
+          Auf der <strong>Leitfaden-Seite</strong> starten Sie Ihren Aufenthalt und behalten den Überblick über den Tag der offenen Tür, indem Sie
+          Erledigtes abhaken. <br /><br />
+          Die <strong>Tour-Seite</strong> erreichen Sie, wenn Sie im Leitfaden eine Tour auswählen. Hier können Sie Stationen Schritt für Schritt
+          abhaken, und der Leitfaden aktualisiert sich automatisch. <br /><br />
+          Von der <strong>Stations-Seite</strong>, die Sie über die Tour-Seite aufrufen, indem Sie eine Station anklicken, erhalten Sie detaillierte
+          Informationen zu einer Station und können diese auf der Karte finden. <br /><br />
+          Die <strong>Karten-Seite</strong>, erreichbar über die Navigationsleiste, zeigt Ihnen die Schule mit allen Stockwerken und Räumen zur
+          Orientierung.
+        </p>
       </div>
     </div>
   </div>
