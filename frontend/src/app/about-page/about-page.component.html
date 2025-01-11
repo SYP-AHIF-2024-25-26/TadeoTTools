@@ -8,9 +8,23 @@
       class="mb-4 h-auto w-1/3 self-center"
     />
 
-    @for (member of members; track $index) {
-      <app-about-card [member]="member" class="mx-4 mb-4" />
-    }
+      <div class="min-w-fit rounded-lg bg-white shadow-md mx-4">
+        <div class="p-4">
+          <div class="flex">
+            <div class="flex w-4/5 flex-col">
+              <div class="text-xl font-semibold">
+                Luca Haas, Melanie Dohr und Andreas Huber
+              </div>
+              <div class="text-lg font-medium">
+                4AHIF
+              </div>
+              <div class="mt-4 text-base font-medium">
+                4. Klasse Informatik
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     <div class="mx-auto mt-8 w-full max-w-md">
       <div class="flex border-b">
