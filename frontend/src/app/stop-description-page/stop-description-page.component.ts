@@ -23,7 +23,7 @@ export class StopDescriptionPageComponent {
   currentStopGroup = signal({} as StopGroup);
 
   async ngOnInit() {
-    if (sessionStorage.getItem(CURRENT_STOP_PREFIX) === null || sessionStorage.getItem(CURRENT_STOP_GROUP_PREFIX) === null) {
+    if (localStorage.getItem(CURRENT_STOP_PREFIX) === null || localStorage.getItem(CURRENT_STOP_GROUP_PREFIX) === null) {
       await this.router.navigate(['/']);
     } else {
       this.onLoad();
@@ -31,7 +31,7 @@ export class StopDescriptionPageComponent {
   }
 
   onLoad() {
-    this.stop.set(JSON.parse(sessionStorage.getItem(CURRENT_STOP_PREFIX)!) as Stop);
-    this.currentStopGroup.set(JSON.parse(sessionStorage.getItem(CURRENT_STOP_GROUP_PREFIX)!) as StopGroup);
+    this.stop.set(JSON.parse(localStorage.getItem(CURRENT_STOP_PREFIX)!) as Stop);
+    this.currentStopGroup.set(JSON.parse(localStorage.getItem(CURRENT_STOP_GROUP_PREFIX)!) as StopGroup);
   }
 }
