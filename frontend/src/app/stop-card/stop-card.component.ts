@@ -4,11 +4,10 @@ import { NgClass, NgStyle } from '@angular/common';
 import { Stop } from '../types';
 
 @Component({
-  selector: 'app-stop-card',
-  standalone: true,
-  imports: [CheckboxComponent, NgClass, NgStyle],
-  templateUrl: './stop-card.component.html',
-  styleUrl: './stop-card.component.css',
+    selector: 'app-stop-card',
+    imports: [CheckboxComponent, NgClass, NgStyle],
+    templateUrl: './stop-card.component.html',
+    styleUrl: './stop-card.component.css'
 })
 export class StopCardComponent {
   @Input() stop!: Stop;

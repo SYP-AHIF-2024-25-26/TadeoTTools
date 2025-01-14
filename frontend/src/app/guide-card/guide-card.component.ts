@@ -6,11 +6,10 @@ import { Router } from '@angular/router';
 import { GUIDE_CARD_PREFIX, MANUAL_CHECK_PREFIX, STOP_GROUP_PROGRESS_PREFIX, STOPS_COUNT_PREFIX } from '../constants';
 
 @Component({
-  selector: 'app-guide-card',
-  standalone: true,
-  imports: [CheckboxComponent, CommonModule],
-  templateUrl: './guide-card.component.html',
-  styleUrl: './guide-card.component.css',
+    selector: 'app-guide-card',
+    imports: [CheckboxComponent, CommonModule],
+    templateUrl: './guide-card.component.html',
+    styleUrl: './guide-card.component.css'
 })
 export class GuideCardComponent {
   @Input() stopGroup!: StopGroup;
