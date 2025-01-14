@@ -1,4 +1,5 @@
-﻿using Database.Entities;
+﻿using Database;
+using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
 
@@ -6,7 +7,7 @@ namespace ImportConsoleApp;
 
 public class Program
 {
-    private static async void InitDb(string? path)
+    private static async Task InitDb(string? path)
     {
         Console.WriteLine("Recreate database ...");
         using var context = TadeoTDbContextFactory.CreateDbContext();
@@ -32,7 +33,7 @@ public class Program
         Console.WriteLine("Imported " + context.StopGroupAssignments.Count() + " stop group assignments");
     }
 
-    public static void Main(string?[] args)
+    public async static Task Main(string?[] args)
     {
         if (args.Length > 0)
         {
@@ -42,11 +43,11 @@ public class Program
             {
                 string importCsvPath = Path.Combine(parentPath, "ImportConsoleApp");
                 string csvFilePath = Path.Combine(importCsvPath, "TdoT_Stationsplanung_2025.csv");
-                Task.Run(() => InitDb(csvFilePath));
+                await InitDb(csvFilePath);
             }
         } else
         {
-            Task.Run(() => InitDb(null));
+            await InitDb(null);
         }
     }
 }

@@ -1,0 +1,43 @@
+entryPoints:
+
+  web:
+    address: ":80"
+    forwardedHeaders:
+      insecure: true
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+
+  websecure:
+    address: ":443"
+    forwardedHeaders:
+      insecure: true
+    http:
+      tls:
+        certresolver: tadeotresolver
+
+api:
+  insecure: false
+  dashboard: false
+
+log:
+  level: "DEBUG"
+
+providers:
+  docker:
+    exposedByDefault: false
+    watch: true
+
+  file:
+    directory: /etc/traefik/custom/
+    watch: true
+
+certificatesResolvers:
+  tadeotresolver:
+    acme:
+      email: "b.schroeder@htl-leonding.ac.at"
+      storage: "/letsencrypt/acme.json"
+      httpChallenge:
+        entryPoint: web

@@ -13,15 +13,17 @@
           <p class="mb-4 self-start text-lg font-normal text-gray-600">
             {{ description }}
           </p>
-          <button class="mb-2 h-10 w-32 rounded-2xl bg-orange-500 text-white shadow-md" (click)="router.navigate(['map', roomNr])">
-            Auf der Karte
-          </button>
+          @if (roomNr.length > 0 && matchRoomNr(roomNr) !== null) {
+            <button class="mb-2 h-10 w-32 rounded-2xl bg-orange-500 text-white shadow-md" (click)="router.navigate(['map', matchRoomNr(roomNr)])">
+              Auf der Karte
+            </button>
+          }
         }
       </div>
       @if (divisionIds !== undefined) {
         <div class="mx-2 flex max-w-10 flex-col">
           @for (divisionId of divisionIds; track $index) {
-            <img class="mb-2 object-cover" [src]="baseUrl + '/v1/divisions/' + divisionId + '/image'" alt="Division Picture will load here" />
+            <img class="h-32 w-32 object-cover" [src]="baseUrl + '/v1/divisions/' + divisionId + '/image'" (error)="hideImage($event)" />
           }
         </div>
       }

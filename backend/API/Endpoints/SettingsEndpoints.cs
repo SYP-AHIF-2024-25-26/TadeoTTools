@@ -1,3 +1,7 @@
+using Database;
+using Database.Repository;
+using System.IO;
+
 namespace API.Endpoints;
 
 public static class SettingsEndpoints
@@ -8,9 +12,9 @@ public static class SettingsEndpoints
         group.MapGet("resetDB", ResetDataBase);
     }
 
-    public static void ResetDataBase()
+    public static async Task ResetDataBase(TadeoTDbContext context)
     {
-        ImportConsoleApp.Program.Main(["isAPI"]);
+        new BadHttpRequestException("Not implemented yet");
     }
     
     
