@@ -36,28 +36,33 @@ export class StopPageComponent {
   }
 
   async onLoad() {
-    if (sessionStorage.getItem(CURRENT_STOP_GROUP_PREFIX) !== null) {
-      this.parentStopGroup.set(JSON.parse(sessionStorage.getItem(CURRENT_STOP_GROUP_PREFIX)!) as StopGroup);
+    if (localStorage.getItem(CURRENT_STOP_GROUP_PREFIX) !== null) {
+      this.parentStopGroup.set(JSON.parse(localStorage.getItem(CURRENT_STOP_GROUP_PREFIX)!) as StopGroup);
     }
     this.stops.set(await this.apiFetchService.getStopsOfGroup(Number(this.stopGroupId)!));
     this.divisions.set(await this.apiFetchService.getDivisions());
   }
 
-  getColorOfStop(stop: Stop) {
-    stop.divisionIds.push(5);
+  getColorsOfStop(stop: Stop) {
     return this.divisions()
       .filter((division) => stop.divisionIds.includes(division.id))
       .map((d) => d.color);
   }
 
   async openStopDescriptionPage(stop: Stop) {
-    sessionStorage.setItem(CURRENT_STOP_PREFIX, JSON.stringify(stop));
+    localStorage.setItem(CURRENT_STOP_PREFIX, JSON.stringify(stop));
     await this.router.navigate(['/tour', this.parentStopGroup().id, 'stop', stop.id]);
   }
 
   setProgress() {
     const progress = this.stopCards.filter((stopCard) => stopCard.isChecked()).length;
-    sessionStorage.setItem(STOP_GROUP_PROGRESS_PREFIX + this.parentStopGroup().id, progress.toString());
-    sessionStorage.setItem(STOPS_COUNT_PREFIX + this.parentStopGroup().id, this.stops().length.toString());
+    localStorage.setItem(STOP_GROUP_PROGRESS_PREFIX + this.parentStopGroup().id, progress.toString());
+    localStorage.setItem(STOPS_COUNT_PREFIX + this.parentStopGroup().id, this.stops().length.toString());
+  }
+
+  getSortedStops() {
+    return this.stops().sort(
+      (a, b) => a.orders[a.stopGroupIds.indexOf(this.parentStopGroup().id)]! - b.orders[b.stopGroupIds.indexOf(this.parentStopGroup().id)]!
+    );
   }
 }

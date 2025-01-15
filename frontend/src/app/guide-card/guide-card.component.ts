@@ -36,31 +36,31 @@ export class GuideCardComponent {
   }
 
   private checkManualCheck() {
-    const manualCheck = sessionStorage.getItem(MANUAL_CHECK_PREFIX + this.id);
+    const manualCheck = localStorage.getItem(MANUAL_CHECK_PREFIX + this.id);
     if (manualCheck !== null) {
       this.checkbox.isChecked.set(manualCheck === 'true');
     }
-    this.updateSessionStorage();
+    this.updateLocalStorage();
   }
 
-  private updateSessionStorage() {
+  private updateLocalStorage() {
     if (this.progress() !== null && this.stopsCount() !== null) {
       if (this.progress() === this.stopsCount()) {
-        sessionStorage.setItem(GUIDE_CARD_PREFIX + this.id, 'true');
-        sessionStorage.removeItem(MANUAL_CHECK_PREFIX + this.id);
-      } else if (sessionStorage.getItem(MANUAL_CHECK_PREFIX + this.id) !== 'true') {
-        sessionStorage.setItem(GUIDE_CARD_PREFIX + this.id, 'false');
+        localStorage.setItem(GUIDE_CARD_PREFIX + this.id, 'true');
+        localStorage.removeItem(MANUAL_CHECK_PREFIX + this.id);
+      } else if (localStorage.getItem(MANUAL_CHECK_PREFIX + this.id) !== 'true') {
+        localStorage.setItem(GUIDE_CARD_PREFIX + this.id, 'false');
       }
     }
   }
 
   private getProgress(): number | null {
-    const progress = sessionStorage.getItem(STOP_GROUP_PROGRESS_PREFIX + this.stopGroup.id);
+    const progress = localStorage.getItem(STOP_GROUP_PROGRESS_PREFIX + this.stopGroup.id);
     return progress !== null ? Number(progress) : null;
   }
 
   private getStopsCount(): number | null {
-    const count = sessionStorage.getItem(STOPS_COUNT_PREFIX + this.stopGroup.id);
+    const count = localStorage.getItem(STOPS_COUNT_PREFIX + this.stopGroup.id);
     return count !== null ? Number(count) : null;
   }
 }

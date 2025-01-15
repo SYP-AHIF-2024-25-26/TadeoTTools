@@ -88,21 +88,8 @@ app.UseMiddleware<ApiKeyMiddleware>();
 var scope = app.Services.CreateScope();
 
 var apiKeyFunctions = scope.ServiceProvider.GetService<APIKeyFunctions>();
-if (apiKeyFunctions is null)
-{
-    app.Logger.LogError("APIKeyFunctions is null");
-}
-else
-{
-    if ((await apiKeyFunctions.GetAllAPIKeys()).Count <= 0)
-    {
-        app.Logger.LogInformation("No API key found in database - generating a new one.");
-        var key = new APIKey { APIKeyValue = APIKeyGenerator.GenerateApiKey() };
-        await apiKeyFunctions.AddAPIKey(key);
-        app.Logger.LogInformation("Generated API key: {Key}", key.APIKeyValue);
-    }
-}
 var context = scope.ServiceProvider.GetService<TadeoTDbContext>();
+
 try
 {
     app.Logger.LogInformation("Ensure database is created...");
@@ -122,5 +109,21 @@ catch (Exception e)
 {
     app.Logger.LogError(e.Message);
 }
+
+if (apiKeyFunctions is null)
+{
+    app.Logger.LogError("APIKeyFunctions is null");
+}
+else
+{
+    if ((await apiKeyFunctions.GetAllAPIKeys()).Count <= 0)
+    {
+        app.Logger.LogInformation("No API key found in database - generating a new one.");
+        var key = new APIKey { APIKeyValue = APIKeyGenerator.GenerateApiKey() };
+        await apiKeyFunctions.AddAPIKey(key);
+        app.Logger.LogInformation("Generated API key: {Key}", key.APIKeyValue);
+    }
+}
+
 
 app.Run();

@@ -29,7 +29,7 @@ export class MainPageComponent {
   }
 
   async openStopPage(stopGroup: StopGroup) {
-    sessionStorage.setItem(CURRENT_STOP_GROUP_PREFIX, JSON.stringify(stopGroup));
+    localStorage.setItem(CURRENT_STOP_GROUP_PREFIX, JSON.stringify(stopGroup));
     await this.router.navigate(['/tour', stopGroup.id]);
   }
 }

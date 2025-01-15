@@ -18,4 +18,13 @@ export class DescriptionContainerComponent {
   protected baseUrl = inject(BASE_URL);
 
   protected router = inject(Router);
+
+  hideImage(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.style.display = 'none';
+  }
+
+  matchRoomNr(roomNr: string): string | null {
+    return roomNr.match('\\b\\d{1,3}\\b|U\\d{2}|E\\d{2}|EG|UG')?.[0] ?? null;
+  }
 }
