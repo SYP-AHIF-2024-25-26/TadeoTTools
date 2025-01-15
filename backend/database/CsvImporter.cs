@@ -23,7 +23,7 @@ public class CsvImporter
                 Divisions = columns[0].Contains(",") ? columns[0].Split(",") : [columns[0]],
                 Level = columns[1],
                 Name = columns[2],
-                Location = columns[3],
+                Location = columns[4],
                 StopGroupRank = columns[5],
                 StopRanks = columns[6].Split(',').Select(c => c.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList(),
                 Description = columns[7]
