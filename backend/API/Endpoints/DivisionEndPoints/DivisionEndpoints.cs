@@ -10,11 +10,41 @@ public static class DivisionEndpoints
     public static void MapDivisionEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("v1");
-        group.MapGet("divisions", GetDivisions);
-        group.MapPost("api/divisions", CreateDivision).DisableAntiforgery();
-        group.MapDelete("api/divisions/{divisionId}", DeleteDivisionById);
-        group.MapPut("api/divisions", UpdateDivision);
-        group.MapPut("api/divisions/image", UpdateDivisionImage).DisableAntiforgery();
+        group.MapGet("divisions", GetDivisions)
+            .WithName(nameof(GetDivisions))
+            .WithDescription("Get all divisions without images")
+            .Produces<List<DivisionFunctions.DivisionWithoutImageDto>>(StatusCodes.Status200OK);
+        
+        group.MapPost("api/divisions", CreateDivision)
+            .AddEndpointFilter(DivisionEndpointsValidations.CreateDivisionValidationAsync)
+            .WithName(nameof(CreateDivision))
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces<Division>(StatusCodes.Status200OK)
+            .DisableAntiforgery();
+
+        group.MapDelete("api/divisions/{divisionId}", DeleteDivisionById)
+            .AddEndpointFilter(DivisionEndpointsValidations.DeleteDivisionByIdValidationAsync)
+            .WithName(nameof(DeleteDivisionById))
+            .WithDescription("Delete a Division by its id")
+            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK);
+        
+        group.MapPut("api/divisions", UpdateDivision)
+            .AddEndpointFilter(DivisionEndpointsValidations.UpdateDivisionValidationAsync)
+            .WithName(nameof(UpdateDivision))
+            .WithDescription("Update a division entity")
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK);
+        
+        group.MapPut("api/divisions/image", UpdateDivisionImage)
+            .AddEndpointFilter(DivisionEndpointsValidations.UpdateDivisionImageValidationAsync)
+            .WithName(nameof(UpdateDivisionImage))
+            .WithDescription("Update the image of an division")
+            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK)
+            .DisableAntiforgery();
+
         group.MapDelete("api/divisions/{divisionId}/image", DeleteDivisionImage);
         group.MapGet("divisions/{divisionId}/image", GetImageByDivisionId).DisableAntiforgery();
         group.MapGet("api/divisions/{divisionId}/image", DeleteImage);
@@ -29,21 +59,6 @@ public static class DivisionEndpoints
     public static async Task<IResult> CreateDivision(TadeoTDbContext context, [FromForm] string name,
         [FromForm] string color, IFormFile? image)
     {
-        if (name.Length > 255)
-        {
-            return Results.BadRequest("Division name must be less than 255 characters.");
-        }
-
-        if (color.Length > 7)
-        {
-            return Results.BadRequest("Color must be less than 8 characters.");
-        }
-
-        if (context.Divisions.Any(d => d.Name == name))
-        {
-            return Results.BadRequest("Divisionname already exists.");
-        }
-
         var division = new Division()
         {
             Name = name,
@@ -66,29 +81,7 @@ public static class DivisionEndpoints
 
     public static async Task<IResult> UpdateDivision(TadeoTDbContext context, UpdateDivisionDto dto)
     {
-        if (dto.Name.Length > 255)
-        {
-            return Results.BadRequest("Division name must be less than 255 characters.");
-        }
-
-        if (dto.Color.Length > 7)
-        {
-            return Results.BadRequest("Color must be less than 8 characters.");
-        }
-        
         var division = await context.Divisions.FindAsync(dto.Id);
-        if (division == null)
-        {
-            return Results.NotFound();
-        }
-
-        if (division.Name != dto.Name && context.Divisions.Any(d => d.Name == dto.Name))
-        {
-            return Results.BadRequest("Divisionname already exists.");
-        }
-
-
-
 
         division.Name = dto.Name;
         division.Color = dto.Color;
@@ -103,14 +96,10 @@ public static class DivisionEndpoints
         [FromForm] UpdateDivisionImageDto dto)
     {
         var division = await context.Divisions.FindAsync(dto.Id);
-        if (division == null)
-        {
-            return Results.NotFound();
-        }
-
+        
         using var memoryStream = new MemoryStream();
         await dto.Image.CopyToAsync(memoryStream);
-        division.Image = memoryStream.ToArray();
+        division!.Image = memoryStream.ToArray();
 
         await context.SaveChangesAsync();
         return Results.Ok();
@@ -119,11 +108,7 @@ public static class DivisionEndpoints
     public static async Task<IResult> DeleteDivisionById(TadeoTDbContext context, int divisionId)
     {
         var division = await context.Divisions.FindAsync(divisionId);
-        if (division == null)
-        {
-            return Results.NotFound();
-        }
-
+        
         context.Divisions.Remove(division);
         await context.SaveChangesAsync();
         return Results.Ok();
