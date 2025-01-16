@@ -1,5 +1,5 @@
 services:
-  my-sql:
+  tadeot-my-sql:
     image: mysql:latest
     container_name: tadeot-mysql
     restart: always
@@ -27,7 +27,7 @@ services:
     ports:
       - 8080:8080
     links:
-      - my-sql
+      - tadeot-my-sql
     networks:
       - tadeot-tools-network
 
@@ -35,9 +35,9 @@ services:
     container_name: tadeot-tools-api
     restart: always
     links:
-      - my-sql
+      - tadeot-my-sql
     depends_on:
-      - my-sql
+      - tadeot-my-sql
     image: birgitschroeder/tadeot-tools-api:latest
     build:
       context: .
