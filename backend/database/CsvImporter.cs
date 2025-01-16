@@ -6,20 +6,27 @@ namespace Database;
 public class CsvImporter
 {
 
+    public static List<Division> StaticDivisions { get; set; } = [
+        new Division { Name = "HIF", Color = "#004f9f" },
+        new Division { Name = "HITM", Color = "#6cb6dd" },
+        new Division { Name = "HEL", Color = "#be1522" },
+        new Division { Name = "HBG", Color = "#f18800" },
+        new Division { Name = "ALL", Color = "#7ebf74" },
+        ];
     public static async Task ImportCsvFileAsync(string path, TadeoTDbContext context)
     {
         var lines = await File.ReadAllLinesAsync(path);
+
         var allRecords = lines.Skip(1).Select(l => l.Split(';'))
             .Select(columns => new
             {
-                Division = columns[0],
-                Level = columns[2],
-                Name = columns[3],
-                Location = columns[5],
-                StopGroupRank = columns[6],
-                StopRanks = columns[7].Split(',').Select(c => c.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList(),
-                Description = columns[8],
-                Club = columns[9]
+                Divisions = columns[0].Contains(",") ? columns[0].Split(",") : [columns[0]],
+                Level = columns[1],
+                Name = columns[2],
+                Location = columns[4],
+                StopGroupRank = columns[5],
+                StopRanks = columns[6].Split(',').Select(c => c.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList(),
+                Description = columns[7]
             }).ToList();
         var records = allRecords.Where(r => !string.IsNullOrEmpty(r.Name))
             .Where(r => !string.IsNullOrEmpty(r.StopGroupRank) || !string.IsNullOrEmpty(r.StopRanks.FirstOrDefault()))
@@ -33,17 +40,7 @@ public class CsvImporter
                 Rank = int.Parse(r.StopGroupRank),
                 IsPublic = true
             }).ToList();
-        var divisions = records
-            .Select(r => r.Division)
-            .Distinct()
-            .Where(name => !string.IsNullOrEmpty(name))
-            .SelectMany(name => name.Split(','))
-            .Distinct()
-            .Select(r => new Division
-            {
-                Name = r,
-                Color = "#" + Guid.NewGuid().ToString().Substring(0, 6)
-            }).ToList();
+
         var stops = records
             .Where(r => r.StopRanks.Any())
             .Select(r =>
@@ -59,9 +56,14 @@ public class CsvImporter
                         {
                             StopGroup = stopGroups.Single(sg => sg.Rank == rank),
                         }).ToList(),
-                    Divisions = divisions.Where(d => r.Division == d.Name).ToList()
+                    Divisions = r.Divisions
+                        .SelectMany(d => StaticDivisions.Where(sd => sd.Name == d))
+                        .ToList()
                 };
-                stop.StopGroupAssignments.ForEach(sga => sga.Stop = stop);
+                stop.StopGroupAssignments.ForEach(sga => {
+                    sga.Stop = stop;
+                    sga.StopGroup!.StopAssignments.Add(sga);
+                });
                 return stop;
             }).ToList();
         stopGroups.ForEach(sg =>
@@ -75,7 +77,6 @@ public class CsvImporter
                 sa.Order = rank++;
             });
         });
-        await context.Divisions.AddRangeAsync(divisions);
         await context.StopGroups.AddRangeAsync(stopGroups);
         await context.Stops.AddRangeAsync(stops);
         await context.SaveChangesAsync();
