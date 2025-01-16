@@ -24,8 +24,7 @@ public static class DivisionEndpoints
     {
         return Results.Ok(await DivisionFunctions.GetAllDivisionsWithoutImageAsync(context));
     }
-
-
+    
     public static async Task<IResult> CreateDivision(TadeoTDbContext context, [FromForm] string name,
         [FromForm] string color, IFormFile? image)
     {
@@ -109,7 +108,7 @@ public static class DivisionEndpoints
         }
 
         using var memoryStream = new MemoryStream();
-        await dto.Image.CopyToAsync(memoryStream);
+        await dto.Image!.CopyToAsync(memoryStream);
         division.Image = memoryStream.ToArray();
 
         await context.SaveChangesAsync();

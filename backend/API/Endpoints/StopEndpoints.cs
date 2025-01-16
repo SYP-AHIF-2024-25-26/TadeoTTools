@@ -25,21 +25,20 @@ public static class StopEndpoints
 
     private static async Task<IResult> GetPublicStops(TadeoTDbContext context)
     {
-        var stops = await context.Stops
+        return Results.Ok(await context.Stops
             .Include(stop => stop.Divisions)
             .Include(stop => stop.StopGroupAssignments)
             .Where(stop => stop.StopGroupAssignments.Any(a => a.StopGroup!.IsPublic))
-            .ToListAsync();
-        
-        return Results.Ok(stops.Select(stop => new StopWithAssignmentsAndDivisionsDto(
-            stop.Id,
-            stop.Name,
-            stop.RoomNr,
-            stop.Description,
-            stop.Divisions.Select(d => d.Id).ToArray(),
-            stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
-            stop.StopGroupAssignments.Select(a => a.Order).ToArray()
-        )).ToList());
+            .Select(stop => new StopWithAssignmentsAndDivisionsDto(
+                stop.Id,
+                stop.Name,
+                stop.RoomNr,
+                stop.Description,
+                stop.Divisions.Select(d => d.Id).ToArray(),
+                stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
+                stop.StopGroupAssignments.Select(a => a.Order).ToArray()
+            ))
+            .ToListAsync());
     }
 
     private static async Task<IResult> CreateStop(TadeoTDbContext context, CreateStopRequestDto createStopDto)
@@ -88,7 +87,8 @@ public static class StopEndpoints
             createStopDto.DivisionIds, createStopDto.StopGroupIds));
     }
 
-    private static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto, bool? updateOrder = true)
+    private static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto,
+        bool? updateOrder = true)
     {
         if (updateStopDto.Name.Length == 50)
         {
