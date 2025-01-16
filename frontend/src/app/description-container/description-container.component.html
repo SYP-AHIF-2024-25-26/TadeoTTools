@@ -23,7 +23,7 @@
       @if (divisionIds !== undefined) {
         <div class="mx-2 flex max-w-12 flex-col">
           @for (divisionId of divisionIds; track $index) {
-            <img class=" w-12 h-12 max-h-12 max-w-12 object-cover" [src]="baseUrl + '/v1/divisions/' + divisionId + '/image'" (error)="hideImage($event)" />
+            <img class="mb-3 w-12 h-12 max-h-12 max-w-12 object-cover" [src]="baseUrl + '/v1/divisions/' + divisionId + '/image'" (error)="hideImage($event)" />
           }
         </div>
       }
