@@ -25,7 +25,7 @@ export class StopPageComponent {
   parentStopGroup: WritableSignal<StopGroup> = signal({} as StopGroup);
   stops: WritableSignal<Stop[]> = signal([]);
   divisions: WritableSignal<Division[]> = signal([]);
-  divisionIds: Signal<number[]> = computed(() => Array.from(new Set(...this.stops().map((stop) => stop.divisionIds))).sort((a, b) => a - b));
+  divisionIds: Signal<number[]> = computed(() => Array.from(new Set(this.stops().flatMap((stop) => stop.divisionIds).sort((a, b) => a - b))));
 
   async ngOnInit() {
     if (this.stopGroupId === undefined) {

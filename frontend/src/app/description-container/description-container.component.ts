@@ -19,6 +19,10 @@ export class DescriptionContainerComponent {
 
   protected router = inject(Router);
 
+  ngAfterViewInit() {
+    console.log(this.divisionIds, this.title);
+  }
+
   hideImage(event: Event): void {
     const imgElement = event.target as HTMLImageElement;
     imgElement.style.display = 'none';
