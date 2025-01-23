@@ -18,3 +18,8 @@
   background-size: 200% 200%;
   animation: gradientMove 8s infinite linear;
 }
+
+
+html{
+  background-color: white;
+}
