@@ -15,21 +15,21 @@ public static class DivisionManagementApi
             .Produces<List<DivisionFunctions.DivisionWithoutImageDto>>();
         
         group.MapPost("api/divisions", DivisionManagementEndpoints.CreateDivision)
-            .AddEndpointFilter(DivisionManagementEndpointsValidations.CreateDivisionValidationAsync)
+            .AddEndpointFilter(DivisionManagementValidations.CreateDivisionValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.CreateDivision))
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces<Division>()
             .DisableAntiforgery();
 
         group.MapDelete("api/divisions/{divisionId}", DivisionManagementEndpoints.DeleteDivisionById)
-            .AddEndpointFilter(DivisionManagementEndpointsValidations.DoesDivisionExistValidationAsync)
+            .AddEndpointFilter(DivisionManagementValidations.DoesDivisionExistValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.DeleteDivisionById))
             .WithDescription("Delete a Division by its id")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK);
         
         group.MapPut("api/divisions", DivisionManagementEndpoints.UpdateDivision)
-            .AddEndpointFilter(DivisionManagementEndpointsValidations.UpdateDivisionValidationAsync)
+            .AddEndpointFilter(DivisionManagementValidations.UpdateDivisionValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.UpdateDivision))
             .WithDescription("Update a division entity")
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
@@ -37,7 +37,7 @@ public static class DivisionManagementApi
             .Produces(StatusCodes.Status200OK);
         
         group.MapPut("api/divisions/image", DivisionManagementEndpoints.UpdateDivisionImage)
-            .AddEndpointFilter(DivisionManagementEndpointsValidations.UpdateDivisionImageValidationAsync)
+            .AddEndpointFilter(DivisionManagementValidations.UpdateDivisionImageValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.UpdateDivisionImage))
             .WithDescription("Update the image of a division")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
@@ -51,7 +51,7 @@ public static class DivisionManagementApi
             .Produces(StatusCodes.Status200OK);
         
         group.MapGet("divisions/{divisionId}/image", DivisionManagementEndpoints.GetImageByDivisionId)
-            .AddEndpointFilter(DivisionManagementEndpointsValidations.DoesDivisionExistValidationAsync)
+            .AddEndpointFilter(DivisionManagementValidations.DoesDivisionExistValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.GetImageByDivisionId))
             .WithDescription("Get Image by its division id")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
@@ -60,7 +60,7 @@ public static class DivisionManagementApi
             .DisableAntiforgery();
 
         group.MapDelete("api/divisions/{divisionId}/image", DivisionManagementEndpoints.DeleteImage)
-            .AddEndpointFilter(DivisionManagementEndpointsValidations.DoesDivisionExistValidationAsync)
+            .AddEndpointFilter(DivisionManagementValidations.DoesDivisionExistValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.DeleteImage))
             .WithDescription("Delete an Image of an division")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
