@@ -1,9 +1,9 @@
 using Database.Entities;
-using Microsoft.AspNetCore.Mvc;
 using Database.Repository;
 using Database.Repository.Functions;
+using Microsoft.AspNetCore.Mvc;
 
-namespace API.Endpoints;
+namespace API.Endpoints.DivisionEndPoints;
 
 public static class DivisionEndpoints
 {
@@ -13,17 +13,17 @@ public static class DivisionEndpoints
         group.MapGet("divisions", GetDivisions)
             .WithName(nameof(GetDivisions))
             .WithDescription("Get all divisions without images")
-            .Produces<List<DivisionFunctions.DivisionWithoutImageDto>>(StatusCodes.Status200OK);
+            .Produces<List<DivisionFunctions.DivisionWithoutImageDto>>();
         
         group.MapPost("api/divisions", CreateDivision)
             .AddEndpointFilter(DivisionEndpointsValidations.CreateDivisionValidationAsync)
             .WithName(nameof(CreateDivision))
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces<Division>(StatusCodes.Status200OK)
+            .Produces<Division>()
             .DisableAntiforgery();
 
         group.MapDelete("api/divisions/{divisionId}", DeleteDivisionById)
-            .AddEndpointFilter(DivisionEndpointsValidations.DeleteDivisionByIdValidationAsync)
+            .AddEndpointFilter(DivisionEndpointsValidations.DoesDivisionExistValidationAsync)
             .WithName(nameof(DeleteDivisionById))
             .WithDescription("Delete a Division by its id")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
@@ -40,14 +40,32 @@ public static class DivisionEndpoints
         group.MapPut("api/divisions/image", UpdateDivisionImage)
             .AddEndpointFilter(DivisionEndpointsValidations.UpdateDivisionImageValidationAsync)
             .WithName(nameof(UpdateDivisionImage))
-            .WithDescription("Update the image of an division")
+            .WithDescription("Update the image of a division")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .DisableAntiforgery();
 
-        group.MapDelete("api/divisions/{divisionId}/image", DeleteDivisionImage);
-        group.MapGet("divisions/{divisionId}/image", GetImageByDivisionId).DisableAntiforgery();
-        group.MapGet("api/divisions/{divisionId}/image", DeleteImage);
+        group.MapDelete("api/divisions/{divisionId}/image", DeleteDivisionImage)
+            .WithName(nameof(DeleteDivisionImage))
+            .WithDescription("Delete the image of a division")
+            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK);
+        
+        group.MapGet("divisions/{divisionId}/image", GetImageByDivisionId)
+            .AddEndpointFilter(DivisionEndpointsValidations.DoesDivisionExistValidationAsync)
+            .WithName(nameof(GetImageByDivisionId))
+            .WithDescription("Get Image by its division id")
+            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces<ProblemDetails>(StatusCodes.Status416RangeNotSatisfiable)
+            .Produces<byte[]>(StatusCodes.Status206PartialContent)
+            .DisableAntiforgery();
+
+        group.MapDelete("api/divisions/{divisionId}/image", DeleteImage)
+            .AddEndpointFilter(DivisionEndpointsValidations.DoesDivisionExistValidationAsync)
+            .WithName(nameof(DeleteImage))
+            .WithDescription("Delete an Image of an division")
+            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK);
     }
 
     public static async Task<IResult> GetDivisions(TadeoTDbContext context)
@@ -83,7 +101,7 @@ public static class DivisionEndpoints
     {
         var division = await context.Divisions.FindAsync(dto.Id);
 
-        division.Name = dto.Name;
+        division!.Name = dto.Name;
         division.Color = dto.Color;
 
         await context.SaveChangesAsync();
@@ -109,7 +127,7 @@ public static class DivisionEndpoints
     {
         var division = await context.Divisions.FindAsync(divisionId);
         
-        context.Divisions.Remove(division);
+        context.Divisions.Remove(division!);
         await context.SaveChangesAsync();
         return Results.Ok();
     }
@@ -129,11 +147,6 @@ public static class DivisionEndpoints
 
     public static async Task<IResult> GetImageByDivisionId(TadeoTDbContext context, int divisionId)
     {
-        if (!await DivisionFunctions.DoesDivisionExistAsync(context, divisionId))
-        {
-            return Results.NotFound();
-        }
-
         var image = await DivisionFunctions.GetImageOfDivision(context, divisionId);
         if (image != null)
         {
@@ -146,10 +159,6 @@ public static class DivisionEndpoints
     public static async Task<IResult> DeleteImage(TadeoTDbContext context, int divisionId)
     {
         var division = await context.Divisions.FindAsync(divisionId);
-        if (!await DivisionFunctions.DoesDivisionExistAsync(context, divisionId))
-        {
-            return Results.NotFound();
-        }
 
         division!.Image = null;
         await context.SaveChangesAsync();

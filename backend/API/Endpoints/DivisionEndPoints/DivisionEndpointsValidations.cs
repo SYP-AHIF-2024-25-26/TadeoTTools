@@ -1,7 +1,7 @@
 using Database.Repository;
 using Database.Repository.Functions;
 
-namespace API.Endpoints;
+namespace API.Endpoints.DivisionEndPoints;
 
 public static class DivisionEndpointsValidations
 {
@@ -74,12 +74,12 @@ public static class DivisionEndpointsValidations
 
         return await next(context);
     }
-    
-    public static async ValueTask<object?> DeleteDivisionByIdValidationAsync(EndpointFilterInvocationContext context,
+
+    public static async ValueTask<object?> DoesDivisionExistValidationAsync(EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
-        var divisionId  = context.GetArgument<int>(1);
+        var divisionId = context.GetArgument<int>(1);
         
         if (!await DivisionFunctions.DoesDivisionExistAsync(dbContext, divisionId))
         {
@@ -89,5 +89,4 @@ public static class DivisionEndpointsValidations
         return await next(context);
     }
     
-
 }
