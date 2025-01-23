@@ -3,7 +3,7 @@ using Database.Repository.Functions;
 
 namespace API.Endpoints.StopManagement;
 
-public class StopManagementEndpointsValidations
+public static class StopManagementValidations
 {
     public static async ValueTask<object?> CreateStopValidationAsync(EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)

@@ -4,23 +4,10 @@ using Database.Repository.Functions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Endpoints;
+namespace API.Endpoints.StopGroupManagement;
 
-public static class StopGroupEndpoints
+public static class StopGroupManagementEndpoints
 {
-    public static void MapStopGroupEndpoints(this IEndpointRouteBuilder app)
-    {
-        var group = app.MapGroup("v1");
-        group.MapGet("groups", GetGroups);
-        group.MapGet("api/groups", GetGroupsApi);
-        group.MapPost("api/groups", CreateGroup);
-        group.MapPut("api/groups", UpdateGroup);
-        group.MapDelete("api/groups/{groupId}", DeleteGroup);
-        group.MapPut("api/groups/order", UpdateOrder);
-    }
-
-    public record GetGroupsResponse(int Id, string Name, string Description, int Rank, int[] StopIds);
-
     public static async Task<IResult> GetGroups(TadeoTDbContext context)
     {
         return Results.Ok(await StopGroupFunctions.GetPublicStopGroupsAsync(context));
@@ -35,7 +22,7 @@ public static class StopGroupEndpoints
     
     public static async Task<IResult> CreateGroup(TadeoTDbContext context, CreateGroupRequestDto dto)
     {
-        var group = new StopGroup()
+        var group = new StopGroup
         {
             Name = dto.Name,
             Description = dto.Description,
@@ -47,10 +34,9 @@ public static class StopGroupEndpoints
         
         return Results.Ok(group);
     }
-
     
     public record UpdateGroupRequestDto(int Id, string Name, string Description, bool IsPublic, int[] StopIds);
-    private static async Task<IResult> UpdateGroup(TadeoTDbContext context, UpdateGroupRequestDto dto)
+    public static async Task<IResult> UpdateGroup(TadeoTDbContext context, UpdateGroupRequestDto dto)
     {
         var group = await context.StopGroups
             .Include(g => g.StopAssignments)
@@ -82,10 +68,6 @@ public static class StopGroupEndpoints
 
     public static async Task<IResult> DeleteGroup(TadeoTDbContext context, StopGroupFunctions groups, [FromRoute] int groupId)
     {
-        if (!await groups.DoesStopGroupExistAsync(context, groupId))
-        {
-            return Results.NotFound();
-        }
         var group = await context.StopGroups.FindAsync(groupId);
         context.StopGroups.Remove(group!);
         await context.SaveChangesAsync();

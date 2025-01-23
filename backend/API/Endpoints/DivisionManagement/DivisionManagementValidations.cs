@@ -3,7 +3,7 @@ using Database.Repository.Functions;
 
 namespace API.Endpoints.DivisionManagement;
 
-public static class DivisionManagementEndpointsValidations
+public static class DivisionManagementValidations
 {
     public static async ValueTask<object?> CreateDivisionValidationAsync(EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
@@ -88,5 +88,4 @@ public static class DivisionManagementEndpointsValidations
 
         return await next(context);
     }
-    
 }

@@ -19,14 +19,14 @@ public static class StopManagementApi
             .Produces <List<StopWithAssignmentsAndDivisionsDto>>();
 
         group.MapPost("api/stops", StopManagementEndpoints.CreateStop)
-            .AddEndpointFilter(StopManagementEndpointsValidations.CreateStopValidationAsync)
+            .AddEndpointFilter(StopManagementValidations.CreateStopValidationAsync)
             .WithName(nameof(StopManagementEndpoints.CreateStop))
             .WithDescription("Create a new stop")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
             .Produces<StopManagementEndpoints.StopResponseDto>();
 
         group.MapPut("api/stops", StopManagementEndpoints.UpdateStop)
-            .AddEndpointFilter(StopManagementEndpointsValidations.UpdateStopValidationAsync)
+            .AddEndpointFilter(StopManagementValidations.UpdateStopValidationAsync)
             .WithName(nameof(StopManagementEndpoints.UpdateStop))
             .WithDescription("Update a stop")
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
@@ -34,7 +34,7 @@ public static class StopManagementApi
             .Produces(StatusCodes.Status200OK);
         
         group.MapDelete("api/stops/{stopId}", StopManagementEndpoints.DeleteStop)
-            .AddEndpointFilter(StopManagementEndpointsValidations.DeleteStopValidationAsync)
+            .AddEndpointFilter(StopManagementValidations.DeleteStopValidationAsync)
             .WithName(nameof(StopManagementEndpoints.DeleteStop))
             .WithDescription("Delete a stop by its id")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)

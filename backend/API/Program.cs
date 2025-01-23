@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using API.Endpoints.DivisionManagement;
+using API.Endpoints.StopGroupManagement;
 using API.Endpoints.StopManagement;
 
 var builder = WebApplication.CreateBuilder(args);
