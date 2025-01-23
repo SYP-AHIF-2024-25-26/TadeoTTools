@@ -4,26 +4,16 @@ using Database.Repository.Functions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Endpoints;
+namespace API.Endpoints.StopManagement;
 
-public static class StopEndpoints
-{
-    public static void MapStopEndpoints(this IEndpointRouteBuilder app)
-    {
-        var group = app.MapGroup("v1");
-        group.MapGet("api/stops", GetAllStops);
-        group.MapGet("stops", GetPublicStops);
-        group.MapPost("api/stops", CreateStop);
-        group.MapPut("api/stops", UpdateStop);
-        group.MapDelete("api/stops/{stopId}", DeleteStop);
-    }
-
-    private static async Task<IResult> GetAllStops(TadeoTDbContext context)
+public static class StopManagementEndpoints
+{ 
+    public static async Task<IResult> GetAllStops(TadeoTDbContext context)
     {
         return Results.Ok(await StopFunctions.GetAllStopsAsync(context));
     }
 
-    private static async Task<IResult> GetPublicStops(TadeoTDbContext context)
+    public static async Task<IResult> GetPublicStops(TadeoTDbContext context)
     {
         var stops = await context.Stops
             .Include(stop => stop.Divisions)
@@ -42,18 +32,9 @@ public static class StopEndpoints
         )).ToList());
     }
 
-    private static async Task<IResult> CreateStop(TadeoTDbContext context, CreateStopRequestDto createStopDto)
+    public static async Task<IResult> CreateStop(TadeoTDbContext context, CreateStopRequestDto createStopDto)
     {
-        foreach (var divisionId in createStopDto.DivisionIds)
-        {
-            var division = await context.Divisions.FindAsync(divisionId);
-            if (division == null)
-            {
-                return Results.NotFound($"Division with ID {divisionId} not found");
-            }
-        }
-
-        var stop = new Stop()
+        var stop = new Stop
         {
             Name = createStopDto.Name,
             Description = createStopDto.Description,
@@ -88,22 +69,8 @@ public static class StopEndpoints
             createStopDto.DivisionIds, createStopDto.StopGroupIds));
     }
 
-    private static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto, bool? updateOrder = true)
+    public static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto, bool? updateOrder = true)
     {
-        if (updateStopDto.Name.Length == 50)
-        {
-            return Results.BadRequest("Name must be 50 characters or less.");
-        }
-
-        if (updateStopDto.Description.Length == 255)
-        {
-            return Results.BadRequest("Description must be 255 characters or less.");
-        }
-
-        if (updateStopDto.RoomNr.Length == 50)
-        {
-            return Results.BadRequest("RoomNr must be 50 characters or less.");
-        }
 
         var newDivisions = context.Divisions.Where(di => updateStopDto.DivisionIds.Contains(di.Id)).ToList();
 
@@ -144,15 +111,11 @@ public static class StopEndpoints
     }
 
 
-    private static async Task<IResult> DeleteStop(TadeoTDbContext context, [FromRoute] int stopId)
+    public static async Task<IResult> DeleteStop(TadeoTDbContext context, [FromRoute] int stopId)
     {
         var stop = await context.Stops.FindAsync(stopId);
-        if (stop == null)
-        {
-            return Results.NotFound($"Stop with ID {stopId} not found");
-        }
 
-        context.Stops.Remove(stop);
+        context.Stops.Remove(stop!);
         await context.SaveChangesAsync();
         return Results.Ok();
     }
@@ -181,13 +144,5 @@ public static class StopEndpoints
         string RoomNr,
         int[] DivisionIds,
         int[] StopGroupIds
-    );
-
-    public record StopWithDivisionsDto(
-        int StopId,
-        string Name,
-        string Description,
-        string RoomNr,
-        int[] DivisionIds
     );
 }
