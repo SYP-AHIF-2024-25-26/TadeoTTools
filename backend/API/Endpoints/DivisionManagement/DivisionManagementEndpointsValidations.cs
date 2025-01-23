@@ -1,9 +1,9 @@
 using Database.Repository;
 using Database.Repository.Functions;
 
-namespace API.Endpoints.DivisionEndPoints;
+namespace API.Endpoints.DivisionManagement;
 
-public static class DivisionEndpointsValidations
+public static class DivisionManagementEndpointsValidations
 {
     public static async ValueTask<object?> CreateDivisionValidationAsync(EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
@@ -34,7 +34,7 @@ public static class DivisionEndpointsValidations
         EndpointFilterDelegate next)
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
-        var dto = context.GetArgument<DivisionEndpoints.UpdateDivisionDto>(1);
+        var dto = context.GetArgument<DivisionManagementEndpoints.UpdateDivisionDto>(1);
         
         if (dto.Name.Length > 255)
         {
@@ -65,7 +65,7 @@ public static class DivisionEndpointsValidations
         EndpointFilterDelegate next)
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
-        var dto = context.GetArgument<DivisionEndpoints.UpdateDivisionImageDto>(1);
+        var dto = context.GetArgument<DivisionManagementEndpoints.UpdateDivisionImageDto>(1);
         
         if (!await DivisionFunctions.DoesDivisionExistAsync(dbContext, dto.Id))
         {

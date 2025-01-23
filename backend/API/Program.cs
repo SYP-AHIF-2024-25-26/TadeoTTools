@@ -7,7 +7,7 @@ using Database.Repository.Functions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
-using API.Endpoints.DivisionEndPoints;
+using API.Endpoints.DivisionManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders().AddConsole();
