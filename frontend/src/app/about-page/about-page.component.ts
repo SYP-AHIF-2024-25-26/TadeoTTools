@@ -1,11 +1,12 @@
 import { Component, signal, WritableSignal } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { HeaderComponent } from '../header/header.component';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-about-page',
   standalone: true,
-  imports: [NavbarComponent, HeaderComponent],
+  imports: [NavbarComponent, HeaderComponent, NgOptimizedImage],
   templateUrl: './about-page.component.html',
   styleUrl: './about-page.component.css',
 })
