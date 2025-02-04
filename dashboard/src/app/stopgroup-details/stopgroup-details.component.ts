@@ -23,12 +23,14 @@ export class StopgroupDetailsComponent implements OnInit {
   errorMessage = signal<string>('');
   description = signal<string>('');
   isPublic = signal<boolean>(false);
+  stopIds = signal<number[]>([]);
 
   async ngOnInit() {
     const params = await firstValueFrom(this.route.queryParams);
     this.stopGroupId.set(params['id'] || -1);
     this.name.set(params['name'] || '');
     this.description.set(params['description'] || '');
+    this.stopIds.set(params['stopIds'] || []);
 
     let isPublic = params['isPublic'] || '';
     this.isPublic.set(isPublic !== '' && isPublic === 'true');
@@ -61,7 +63,7 @@ export class StopgroupDetailsComponent implements OnInit {
         name: this.name(),
         description: this.description(),
         isPublic: this.isPublic(),
-        stopIds: [],
+        stopIds: this.stopIds(),
       });
     }
     this.location.back();
