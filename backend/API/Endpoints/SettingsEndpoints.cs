@@ -19,7 +19,7 @@ public static class SettingsEndpoints
 
     private static async Task<IResult> ApiKeyExists(TadeoTDbContext context, string key)
     {
-        var apiKey = await context.APIKeys.FirstOrDefaultAsync(x => x.APIKeyValue == key);
+        var apiKey = await context.ApiKeys.FirstOrDefaultAsync(x => x.APIKeyValue == key);
         
         return apiKey == null ? Results.NotFound($"Apikey not valid!") : Results.Ok();
     }

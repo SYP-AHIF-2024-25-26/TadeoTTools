@@ -4,11 +4,6 @@ namespace Database.Repository.Functions;
 
 public class StopGroupFunctions
 {
-    public record StopGroupWithStops(int Id, string Name, string Description, int Rank, bool IsPublic, int[] StopIds);
-    public record StopGroupWithStopsPublic(int Id, string Name, string Description, int Rank, int[] StopIds);
-
-    public record GetGroupsResponse(int Id, string Name, string Description, int Rank, int[] StopIds);
-
     public static async Task<StopGroupWithStops[]> GetAllStopGroupsAsync(TadeoTDbContext context)
     {
         return await context.StopGroups
@@ -46,4 +41,7 @@ public class StopGroupFunctions
     {
         return await context.StopGroups.SingleOrDefaultAsync(sg => sg.Id == id) != null;
     }
+    
+    public record StopGroupWithStops(int Id, string Name, string Description, int Rank, bool IsPublic, int[] StopIds);
+    public record StopGroupWithStopsPublic(int Id, string Name, string Description, int Rank, int[] StopIds);
 }

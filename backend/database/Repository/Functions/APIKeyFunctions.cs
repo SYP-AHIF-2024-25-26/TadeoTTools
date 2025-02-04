@@ -3,25 +3,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Database.Repository.Functions;
 
-public class APIKeyFunctions(TadeoTDbContext context)
+public class ApiKeyFunctions(TadeoTDbContext context)
 {
-    private readonly TadeoTDbContext context = context;
-
-    public async Task<List<APIKey>> GetAllAPIKeys()
+    public async Task<List<APIKey>> GetAllApiKeys()
     {
-        return await context.APIKeys.ToListAsync();
+        return await context.ApiKeys.ToListAsync();
     }
-
-    public async Task<APIKey> AddAPIKey(APIKey apiKey)
+    
+    public async Task<APIKey> AddApiKey(APIKey apiKey)
     {
-        context.APIKeys.Add(apiKey);
+        context.ApiKeys.Add(apiKey);
         await context.SaveChangesAsync();
         return apiKey;
     }
-
-    public async Task DeleteAPIKey(APIKey apiKey)
+    
+    public async Task DeleteApiKey(APIKey apiKey)
     {
-        context.APIKeys.Remove(apiKey);
+        context.ApiKeys.Remove(apiKey);
         await context.SaveChangesAsync();
     }
 }
