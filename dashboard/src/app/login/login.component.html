@@ -5,3 +5,19 @@
   <span>You are not logged in</span>
   <button mat-button (click)="login()">Login</button>
 }
+
+
+
+<div>
+  <button mat-raised-button (click)="getRole('at-least-student')" [disabled]="loading()"
+          color="primary">
+    Check if backend recognizes you as a student
+  </button>
+  <button mat-raised-button (click)="getRole('is-teacher')" [disabled]="loading()"
+          color="primary">
+    Check if backend recognizes you as a teacher
+  </button>
+  @if (showResponse()){
+    <p>{{ response() }}</p>
+  }
+</div>

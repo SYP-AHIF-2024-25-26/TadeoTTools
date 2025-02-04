@@ -6,7 +6,7 @@ import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class SettingsService {
+export class LoginService {
   httpClient = inject(HttpClient);
   baseUrl = inject(BASE_URL);
 

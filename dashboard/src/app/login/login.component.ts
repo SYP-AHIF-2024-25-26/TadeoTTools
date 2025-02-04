@@ -1,7 +1,6 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, Signal, computed, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { SettingsService } from '../settings.service';
+import { LoginService } from '../login.service';
 import Keycloak from "keycloak-js";
 
 @Component({
@@ -12,7 +11,10 @@ import Keycloak from "keycloak-js";
     styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  private service: SettingsService = inject(SettingsService);
+  public readonly response: WritableSignal<string | null> = signal(null);
+  public readonly loading: WritableSignal<boolean> = signal(false);
+  public readonly showResponse: Signal<boolean> = computed(() => this.showResponse() !== null);
+  private service: LoginService = inject(LoginService);
 
   private readonly keycloak = inject(Keycloak);
   protected isLoggedIn = this.keycloak.authenticated ?? false;
@@ -36,5 +38,9 @@ export class LoginComponent {
       return;
     }
     await this.keycloak.logout();
+  }
+
+  getRole(action: string): void {
+
   }
 }

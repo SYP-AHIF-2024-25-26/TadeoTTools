@@ -4,6 +4,7 @@ import { Division } from '../../types';
 
 @Component({
     selector: 'app-chip',
+    standalone: true,
     imports: [NgStyle],
     templateUrl: './chip.component.html',
     styleUrl: './chip.component.css'
