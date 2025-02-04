@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SettingsService } from '../settings.service';
+import Keycloak from "keycloak-js";
 
 @Component({
   selector: 'app-login',
@@ -13,20 +14,27 @@ import { SettingsService } from '../settings.service';
 export class LoginComponent {
   private service: SettingsService = inject(SettingsService);
 
-  apiKey = signal<string>('');
+  private readonly keycloak = inject(Keycloak);
+  protected isLoggedIn = this.keycloak.authenticated ?? false;
 
-  constructor(private router: Router) {
-    this.apiKey.set(localStorage.getItem('API_KEY') || '');
+  public ngOnInit(): void {
+    if (this.keycloak.token) {
+      console.log(this.keycloak.token);
+    }
   }
 
-  async saveApiKey() {
-    if (this.apiKey() !== '') {
-      localStorage.setItem('API_KEY', this.apiKey());
-      if (await this.service.checkApiKeyExists(this.apiKey())) {
-        this.router.navigate(['/stopgroups']);
-      } else {
-        alert('Invalid API key');
-      }
+  public async login(): Promise<void> {
+    if (this.isLoggedIn) {
+      return;
     }
+    await this.keycloak.login();
+
+  }
+
+  public async logout(): Promise<void> {
+    if (!this.isLoggedIn) {
+      return;
+    }
+    await this.keycloak.logout();
   }
 }
