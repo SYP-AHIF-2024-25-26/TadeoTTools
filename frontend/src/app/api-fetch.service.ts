@@ -20,6 +20,6 @@ export class ApiFetchService {
   }
 
   public async getStopsOfGroup(groupID: number): Promise<Stop[]> {
-    return (await firstValueFrom(this.http.get<Stop[]>(this.baseURL + `/v1/api/stops`))).filter((stop) => stop.stopGroupIds.includes(groupID));
+    return (await firstValueFrom(this.http.get<Stop[]>(this.baseURL + `/v1/stops`))).filter((stop) => stop.stopGroupIds.includes(groupID));
   }
 }

@@ -1,9 +1,10 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { StopGroupService } from '../stopgroup.service';
 import { isValid } from '../utilfunctions';
 import { firstValueFrom } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-stopgroup-details',
@@ -14,8 +15,8 @@ import { firstValueFrom } from 'rxjs';
 })
 export class StopgroupDetailsComponent implements OnInit {
   private service: StopGroupService = inject(StopGroupService);
-  private router: Router = inject(Router);
   private route: ActivatedRoute = inject(ActivatedRoute);
+  private location: Location = inject(Location);
 
   stopGroupId = signal<number>(-1);
   name = signal<string>('');
@@ -29,8 +30,8 @@ export class StopgroupDetailsComponent implements OnInit {
     this.name.set(params['name'] || '');
     this.description.set(params['description'] || '');
 
-    let isPublic = params['isPublic'] || "";
-    this.isPublic.set(isPublic !== "" && isPublic === "true");
+    let isPublic = params['isPublic'] || '';
+    this.isPublic.set(isPublic !== '' && isPublic === 'true');
   }
 
   isInputValid(): boolean {
@@ -39,7 +40,9 @@ export class StopgroupDetailsComponent implements OnInit {
       return false;
     }
     if (!isValid(this.description(), 255)) {
-      this.errorMessage.set('Description is invalid, must be less than 255 characters');
+      this.errorMessage.set(
+        'Description is invalid, must be less than 255 characters'
+      );
       return false;
     }
     return true;
@@ -61,11 +64,15 @@ export class StopgroupDetailsComponent implements OnInit {
         stopIds: [],
       });
     }
-    this.router.navigate(['/stopgroups']);
+    this.location.back();
   }
 
   deleteAndGoBack() {
     this.service.deleteStopGroup(this.stopGroupId());
-    this.router.navigate(['/stopgroups']);
+    this.location.back();
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

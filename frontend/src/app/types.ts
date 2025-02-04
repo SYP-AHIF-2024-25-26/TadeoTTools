@@ -5,6 +5,7 @@ export type Stop = {
   roomNr: string;
   stopGroupIds: number[];
   divisionIds: number[];
+  orders: number[];
 };
 
 export type StopGroup = {
@@ -19,10 +20,4 @@ export type Division = {
   id: number;
   name: string;
   color: string;
-};
-
-export type TeamMember = {
-  name: string;
-  class: string;
-  schoolYear: string;
 };

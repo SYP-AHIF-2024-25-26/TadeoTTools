@@ -41,15 +41,11 @@ export class DivisionService {
     formData.append('id', id.toString());
     formData.append('image', image);
     await firstValueFrom(
-      this.httpClient.put(
-        `${this.baseUrl}/api/divisions/image`,
-        formData,
-        {
-          headers: {
-            'X-Api-Key': localStorage.getItem('API_KEY') || '',
-          },
-        }
-      )
+      this.httpClient.put(`${this.baseUrl}/api/divisions/image`, formData, {
+        headers: {
+          'X-Api-Key': localStorage.getItem('API_KEY') || '',
+        },
+      })
     );
   }
 
@@ -74,11 +70,14 @@ export class DivisionService {
   }
   async deleteDivisionImg(divisionId: number): Promise<void> {
     await firstValueFrom(
-      this.httpClient.delete(`${this.baseUrl}/api/divisions/${divisionId}/image`, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') || '',
-        },
-      })
+      this.httpClient.delete(
+        `${this.baseUrl}/api/divisions/${divisionId}/image`,
+        {
+          headers: {
+            'X-Api-Key': localStorage.getItem('API_KEY') || '',
+          },
+        }
+      )
     );
   }
 }

@@ -18,6 +18,12 @@ public class TadeoTDbContextFactory
             .AddJsonFile("appsettings.json")
             .Build();
 
+        var connectionString = config["ConnectionStrings:DefaultConnection"];
+        if (!string.IsNullOrEmpty(connectionString))
+        {
+            return connectionString;
+        }
+
         var serverName = config["Database:ServerName"];
         var serverPort = config["Database:Port"];
         var databaseName = config["Database:Name"];

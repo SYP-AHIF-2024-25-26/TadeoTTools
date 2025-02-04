@@ -1,4 +1,4 @@
-import {Component, computed, inject, signal} from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import {
   CdkDrag,
   CdkDragDrop,
@@ -6,15 +6,14 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import {RouterLink} from '@angular/router';
-import {StopGroupService} from '../stopgroup.service';
-import {StopService} from '../stop.service';
-import {DivisionService} from '../division.service';
-import {Division, Info, Stop, StopGroup} from '../types';
-import {InfoPopupComponent} from '../info-popup/info-popup.component';
-import {FilterComponent} from '../filter/filter.component';
-import {DeletePopupComponent} from '../delete-popup/delete-popup.component';
-import {group} from "@angular/animations";
+import { RouterLink } from '@angular/router';
+import { StopGroupService } from '../stopgroup.service';
+import { StopService } from '../stop.service';
+import { DivisionService } from '../division.service';
+import { Division, Info, Stop, StopGroup } from '../types';
+import { InfoPopupComponent } from '../info-popup/info-popup.component';
+import { FilterComponent } from '../filter/filter.component';
+import { DeletePopupComponent } from '../delete-popup/delete-popup.component';
 
 @Component({
   selector: 'app-stopgroups',
@@ -40,8 +39,6 @@ export class StopGroupsComponent {
   stops = signal<Stop[]>([]);
   divisions = signal<Division[]>([]);
   infos = signal<Info[]>([]);
-
-  stopGroupVisibilitySettings = signal<{ stopGroupId: number, isVisible: boolean }[]>([]);
 
   stopIdToRemove: number = -1;
   stopGroupToRemoveFrom: StopGroup | undefined = undefined;
@@ -80,6 +77,84 @@ export class StopGroupsComponent {
     const divisions = await this.divisionFetcher.getDivisions();
     this.divisions.set(divisions);
   }
+
+  /*
+
+  dropGroup(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.stopGroups(), event.previousIndex, event.currentIndex);
+    this.hasChanged.set(true);
+  }
+
+  // Drag and Drop Function for Stops
+  dropStop(event: CdkDragDrop<any[]>) {
+    const previousGroupId = parseInt(event.previousContainer.id.split('-')[1]);
+    const currentGroupId = parseInt(event.container.id.split('-')[1]);
+
+    this.hasChanged.set(true);
+    if (previousGroupId === 0 && currentGroupId === 0) {
+      this.dropStopFromUnassignedToUnassigned(event);
+    } else if (currentGroupId === 0) {
+      this.dropStopFromAssignedToUnassigned(event);
+    } else if (previousGroupId !== 0) {
+      this.dropStopFromAssignedToAssigned(event);
+    } else {
+      this.dropStopFromUnassignedToAssigned(event);
+    }
+
+    this.addInfo('info', 'Updating Stop');
+  }
+
+  dropStopFromUnassignedToUnassigned(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.privateStops(), event.previousIndex, event.currentIndex);
+  }
+
+  dropStopFromUnassignedToAssigned(event: CdkDragDrop<any[]>) {
+    const stopGroupId = parseInt(event.container.id.split('-')[1]);
+
+    const stop = this.privateStops()[event.previousIndex];
+    stop.stopGroupID = stopGroupId;
+    this.stopsToUpdate.update(stops => [...stops, stop]);
+    transferArrayItem(this.privateStops(), this.stopGroups().find(group => group.stopGroupID === stopGroupId)!.stops, event.previousIndex, event.currentIndex);
+  }
+
+  dropStopFromAssignedToUnassigned(event: CdkDragDrop<any[]>) {
+    const stopGroupId = parseInt(event.previousContainer.id.split('-')[1]);
+    transferArrayItem(this.stopGroups().find(group => group.stopGroupID === stopGroupId)!.stops, this.privateStops(), event.previousIndex, event.currentIndex);
+    const stop = this.privateStops()[event.currentIndex];
+    stop.stopGroupID = null;
+    this.stopsToUpdate.update(stops => [...stops, stop]);
+  }
+
+  dropStopFromAssignedToAssigned(event: CdkDragDrop<any[]>) {
+    const previousGroupId = parseInt(event.previousContainer.id.split('-')[1]);
+    const currentGroupId = parseInt(event.container.id.split('-')[1]);
+
+    const previousStops = this.stopGroups().find(group => group.stopGroupID === previousGroupId)!.stops
+    const currentStops = this.stopGroups().find(group => group.stopGroupID === currentGroupId)!.stops
+    transferArrayItem(previousStops, currentStops, event.previousIndex, event.currentIndex);
+    const stop = currentStops[event.currentIndex];
+    stop.stopGroupID = currentGroupId;
+    this.stopsToUpdate.update(stops => [...stops, stop]);
+  }
+
+  updateOrder() {
+    // Update the order of the stops
+    const stopOrder = [this.stopGroups().map(group => group.stops).flat().map(stop => stop.stopID), this.privateStops().map(stop => stop.stopID)].flat();
+    this.stopFetcher.updateStopOrder(stopOrder);
+
+    // Update the stopGroupID of the stops
+    this.stopsToUpdate().forEach(stop => {
+      this.stopFetcher.updateStopStopGroupId(stop);
+      console.log("Updating stop with ID: " + stop.stopID + " to stopGroupID: " + stop.stopGroupID);
+    });
+    this.stopsToUpdate.set([]);
+
+    // Update the order of the stopGroups
+    const stopGroupOrder = this.stopGroups().map(group => group.stopGroupID);
+    this.stopGroupFetcher.updateStopGroupOrder(stopGroupOrder);
+
+    this.hasChanged.set(false);
+  }*/
 
   addInfo(type: string, message: string): void {
     const maxId = this.infos().reduce(
@@ -182,22 +257,5 @@ export class StopGroupsComponent {
     }
   }
 
-  deleteGroup() {
-    console.log("coming soon");
-  }
-
-  areStopsVisible(groupId: number) {
-    let setting = this.stopGroupVisibilitySettings().find(s => s.stopGroupId == groupId);
-    return setting !== null && setting?.isVisible;
-  }
-
-  changeVisibility(groupId: number) {
-    let setting = this.stopGroupVisibilitySettings().find(s => s.stopGroupId == groupId);
-    if (setting === undefined) {
-      console.log("added")
-      this.stopGroupVisibilitySettings.update(settings => [...settings, {stopGroupId: groupId, isVisible: true}]);
-    } else {
-      this.stopGroupVisibilitySettings.update(settings => [...settings.filter(s => s.stopGroupId !== groupId)]);
-    }
-  }
+  deleteGroup() {}
 }

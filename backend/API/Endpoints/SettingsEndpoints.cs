@@ -1,19 +1,26 @@
+using Database.Repository;
+using Microsoft.EntityFrameworkCore;
+
 namespace API.Endpoints;
 
 public static class SettingsEndpoints
 {
     public static void MapSettingsEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("v1/api");
-        group.MapGet("resetDB", ResetDataBase);
+        var group = app.MapGroup("v1");
+        group.MapGet("api/resetDB", ResetDataBase);
+        group.MapGet("keyExists", ApiKeyExists);
     }
 
-    public static void ResetDataBase()
+    private static Task ResetDataBase(TadeoTDbContext context)
     {
-        ImportConsoleApp.Program.Main(["isAPI"]);
+        throw new BadHttpRequestException("Not implemented yet");
     }
-    
-    
-    
-    
+
+    private static async Task<IResult> ApiKeyExists(TadeoTDbContext context, string key)
+    {
+        var apiKey = await context.APIKeys.FirstOrDefaultAsync(x => x.APIKeyValue == key);
+        
+        return apiKey == null ? Results.NotFound($"Apikey not valid!") : Results.Ok();
+    }
 }

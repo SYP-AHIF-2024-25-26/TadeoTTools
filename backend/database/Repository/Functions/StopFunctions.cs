@@ -10,7 +10,8 @@ public record StopWithAssignmentsAndDivisionsDto(
     string RoomNr,
     string Description,
     int[] DivisionIds,
-    int[] StopGroupIds
+    int[] StopGroupIds,
+    int[] Orders
 );
 
 public class StopFunctions
@@ -26,10 +27,11 @@ public class StopFunctions
         return stops.Select(stop => new StopWithAssignmentsAndDivisionsDto(
             stop.Id,
             stop.Name,
-            stop.Description,
             stop.RoomNr,
+            stop.Description,
             stop.Divisions.Select(d => d.Id).ToArray(),
-            stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray()
+            stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
+            stop.StopGroupAssignments.Select(a => a.Order).ToArray()
         )).ToList();
     }
 

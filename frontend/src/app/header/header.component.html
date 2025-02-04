@@ -4,7 +4,7 @@
     <div class="flex flex-col items-center">
       <!-- HTL Leonding Image -->
       <img
-        src="https://www.htl-leonding.at/wp-content/uploads/2022/10/htllogo_2022_black_v2-1536x347.png"
+        src="assets/logo.png"
         alt="HTL Leonding"
         class="mb-4 h-12 w-auto self-start"
       />
@@ -15,7 +15,12 @@
           <h1
             class="animate-gradient bg-gradient-to-r from-informatic-blue via-electronics-red to-medicin-technology-yellow bg-clip-text text-center text-3xl font-bold text-transparent"
           >
-            Willkommen am Tag der offenen Tür!
+            Willkommen am <br />
+            @if (currentHour < 17) {
+              Tag der offenen Tür!
+            } @else {
+              Abend der offenen Tür!
+            }
           </h1>
         </div>
       }

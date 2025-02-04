@@ -6,6 +6,7 @@
 3. Milestone 5. Dezember: Admin-Dashboard + Stationen separate View 
 4. Milestone 7. Jänner: Deployment, Authentication, Admin-Dashboard Anpassungen, 1:m bei Divisions, Init-Script automatisieren, About Page
 5. Milestone 23. und 24. Jänner: Datenbank mit Echtdaten befüllen, Bugfixes, Tag der offenen Tür, System muss funktionieren + ein QR Code für generelle Website, falls noch Zeit Feedback
+6. Milestone: 25. Februar: Keycloak mit Rollen und Db, EF Core Migrations, Backend refactor, Frontend und Dashboard Anpassungen
 
 Weitere Milestones werden nach Feedback hinzugefügt.
 
