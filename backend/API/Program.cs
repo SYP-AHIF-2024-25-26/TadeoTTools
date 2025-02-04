@@ -1,7 +1,5 @@
 using API.Endpoints;
-using API.Middleware;
 using Database;
-using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
 using Microsoft.EntityFrameworkCore;
