@@ -12,7 +12,6 @@ public static class StopManagementEndpoints
     {
         return Results.Ok(await StopFunctions.GetAllStopsAsync(context));
     }
-
     public static async Task<IResult> GetPublicStops(TadeoTDbContext context)
     {
         var stops = await context.Stops
@@ -31,7 +30,6 @@ public static class StopManagementEndpoints
             stop.StopGroupAssignments.Select(a => a.Order).ToArray()
         )).ToList());
     }
-
     public static async Task<IResult> CreateStop(TadeoTDbContext context, CreateStopRequestDto createStopDto)
     {
         var stop = new Stop
@@ -68,7 +66,6 @@ public static class StopManagementEndpoints
         return Results.Ok(new StopResponseDto(stop.Id, stop.Name, stop.Description, stop.RoomNr,
             createStopDto.DivisionIds, createStopDto.StopGroupIds));
     }
-
     public static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto, bool? updateOrder = true)
     {
 
@@ -109,8 +106,6 @@ public static class StopManagementEndpoints
         await context.SaveChangesAsync();
         return Results.Ok();
     }
-
-
     public static async Task<IResult> DeleteStop(TadeoTDbContext context, [FromRoute] int stopId)
     {
         var stop = await context.Stops.FindAsync(stopId);
@@ -128,7 +123,6 @@ public static class StopManagementEndpoints
         int[] DivisionIds,
         int[] StopGroupIds
     );
-
     public record CreateStopRequestDto(
         string Name,
         string Description,
@@ -136,7 +130,6 @@ public static class StopManagementEndpoints
         int[] DivisionIds,
         int[] StopGroupIds
     );
-
     public record StopResponseDto(
         int StopId,
         string Name,

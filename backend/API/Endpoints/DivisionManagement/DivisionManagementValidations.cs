@@ -24,7 +24,7 @@ public static class DivisionManagementValidations
 
         if (dbContext.Divisions.Any(d => d.Name == name))
         {
-            return Results.BadRequest("Divisionname already exists.");
+            return Results.BadRequest("Division name already exists.");
         }
 
         return await next(context);
@@ -55,7 +55,7 @@ public static class DivisionManagementValidations
 
         if (dbContext.Divisions.Any(d => d.Name == dto.Name))
         {
-            return Results.BadRequest("Divisionname already exists.");
+            return Results.BadRequest("Division name already exists.");
         }
 
         return await next(context);

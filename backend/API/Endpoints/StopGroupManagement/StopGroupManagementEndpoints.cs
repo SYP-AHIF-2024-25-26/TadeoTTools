@@ -12,14 +12,10 @@ public static class StopGroupManagementEndpoints
     {
         return Results.Ok(await StopGroupFunctions.GetPublicStopGroupsAsync(context));
     }
-
     public static async Task<IResult> GetGroupsApi(TadeoTDbContext context)
     {
         return Results.Ok(await StopGroupFunctions.GetAllStopGroupsAsync(context));
     }
-
-    public record CreateGroupRequestDto(string Name, string Description, bool IsPublic);
-    
     public static async Task<IResult> CreateGroup(TadeoTDbContext context, CreateGroupRequestDto dto)
     {
         var group = new StopGroup
@@ -34,8 +30,6 @@ public static class StopGroupManagementEndpoints
         
         return Results.Ok(group);
     }
-    
-    public record UpdateGroupRequestDto(int Id, string Name, string Description, bool IsPublic, int[] StopIds);
     public static async Task<IResult> UpdateGroup(TadeoTDbContext context, UpdateGroupRequestDto dto)
     {
         var group = await context.StopGroups
@@ -73,7 +67,6 @@ public static class StopGroupManagementEndpoints
         await context.SaveChangesAsync();
         return Results.Ok();
     }
-
     public static async Task<IResult> UpdateOrder(TadeoTDbContext context, StopGroupFunctions groups, [FromBody] int[] order)
     {
         for (var index = 0; index < order.Length; index++)
@@ -91,4 +84,6 @@ public static class StopGroupManagementEndpoints
         
         return Results.Ok();
     }
+    public record CreateGroupRequestDto(string Name, string Description, bool IsPublic);
+    public record UpdateGroupRequestDto(int Id, string Name, string Description, bool IsPublic, int[] StopIds);
 }
