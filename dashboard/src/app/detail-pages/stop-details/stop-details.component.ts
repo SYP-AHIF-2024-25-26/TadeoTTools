@@ -1,23 +1,23 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { StopService } from '../stop.service';
-import { BASE_URL } from '../app.config';
+import { StopService } from '../../stop.service';
+import { BASE_URL } from '../../app.config';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Division, StopGroup } from '../types';
-import { DivisionService } from '../division.service';
-import { isValid } from '../utilfunctions';
+import { Division, StopGroup } from '../../types';
+import { DivisionService } from '../../division.service';
+import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
-import { StopGroupService } from '../stopgroup.service';
-import { ChipComponent } from '../chip/chip.component';
+import { StopGroupService } from '../../stopgroup.service';
+import { ChipComponent } from '../../standard-components/chip/chip.component';
 import { Location } from '@angular/common';
 
 @Component({
-  selector: 'app-stop-details',
-  standalone: true,
-  imports: [FormsModule, RouterModule, ChipComponent],
-  templateUrl: './stop-details.component.html',
-  styleUrl: './stop-details.component.css',
+    selector: 'app-stop-details',
+    standalone: true,
+    imports: [FormsModule, RouterModule, ChipComponent],
+    templateUrl: './stop-details.component.html',
+    styleUrl: './stop-details.component.css'
 })
 export class StopDetailsComponent {
   private service: StopService = inject(StopService);

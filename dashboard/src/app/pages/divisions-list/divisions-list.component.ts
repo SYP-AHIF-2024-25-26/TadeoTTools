@@ -1,16 +1,16 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { DivisionService } from '../division.service';
-import { Division } from '../types';
+import { DivisionService } from '../../division.service';
+import { Division } from '../../types';
 import { RouterModule } from '@angular/router';
-import { BASE_URL } from '../app.config';
-import { DeletePopupComponent } from '../delete-popup/delete-popup.component';
+import { BASE_URL } from '../../app.config';
+import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
 
 @Component({
-  selector: 'app-divisions-list',
-  standalone: true,
-  imports: [RouterModule, DeletePopupComponent],
-  templateUrl: './divisions-list.component.html',
-  styleUrl: './divisions-list.component.css',
+    selector: 'app-divisions-list',
+    standalone: true,
+    imports: [RouterModule, DeletePopupComponent],
+    templateUrl: './divisions-list.component.html',
+    styleUrl: './divisions-list.component.css'
 })
 export class DivisionsListComponent implements OnInit {
   private service: DivisionService = inject(DivisionService);

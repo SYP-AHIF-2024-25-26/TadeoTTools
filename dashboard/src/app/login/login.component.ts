@@ -5,11 +5,11 @@ import { SettingsService } from '../settings.service';
 import Keycloak from "keycloak-js";
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [FormsModule],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+    selector: 'app-login',
+    standalone: true,
+    imports: [FormsModule],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.css'
 })
 export class LoginComponent {
   private service: SettingsService = inject(SettingsService);

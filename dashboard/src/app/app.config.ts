@@ -1,7 +1,7 @@
 import {
   ApplicationConfig,
   InjectionToken,
-  provideZoneChangeDetection,
+  provideExperimentalZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
@@ -43,7 +43,7 @@ const keycloakProvider = provideKeycloak({
 export const appConfig: ApplicationConfig = {
   providers: [
     keycloakProvider,
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideExperimentalZonelessChangeDetection(),
     { provide: BASE_URL, useValue: environment.apiBaseUrl },
     provideRouter(routes),
     provideHttpClient(withFetch(), withInterceptors([includeBearerTokenInterceptor])),

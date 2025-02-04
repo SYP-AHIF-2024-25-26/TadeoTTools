@@ -7,27 +7,27 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { RouterLink } from '@angular/router';
-import { StopGroupService } from '../stopgroup.service';
-import { StopService } from '../stop.service';
-import { DivisionService } from '../division.service';
-import { Division, Info, Stop, StopGroup } from '../types';
-import { InfoPopupComponent } from '../info-popup/info-popup.component';
-import { FilterComponent } from '../filter/filter.component';
-import { DeletePopupComponent } from '../delete-popup/delete-popup.component';
+import { StopGroupService } from '../../stopgroup.service';
+import { StopService } from '../../stop.service';
+import { DivisionService } from '../../division.service';
+import { Division, Info, Stop, StopGroup } from '../../types';
+import { InfoPopupComponent } from '../../popups/info-popup/info-popup.component';
+import { FilterComponent } from '../../standard-components/filter/filter.component';
+import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
 
 @Component({
-  selector: 'app-stopgroups',
-  standalone: true,
-  imports: [
-    CdkDropList,
-    CdkDrag,
-    RouterLink,
-    InfoPopupComponent,
-    FilterComponent,
-    DeletePopupComponent,
-  ],
-  templateUrl: './stopgroups.component.html',
-  styleUrl: './stopgroups.component.css',
+    selector: 'app-stopgroups',
+    standalone: true,
+    imports: [
+        CdkDropList,
+        CdkDrag,
+        RouterLink,
+        InfoPopupComponent,
+        FilterComponent,
+        DeletePopupComponent,
+    ],
+    templateUrl: './stopgroups.component.html',
+    styleUrl: './stopgroups.component.css'
 })
 export class StopGroupsComponent {
   stopGroupFetcher = inject(StopGroupService);

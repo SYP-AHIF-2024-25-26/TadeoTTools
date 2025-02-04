@@ -1,12 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Division } from '../types';
+import { Division } from '../../types';
 
 @Component({
-  selector: 'app-filter',
-  standalone: true,
-  imports: [],
-  templateUrl: './filter.component.html',
-  styleUrl: './filter.component.css',
+    selector: 'app-filter',
+    standalone: true,
+    templateUrl: './filter.component.html',
+    styleUrl: './filter.component.css'
 })
 export class FilterComponent {
   @Input() elements!: Division[];

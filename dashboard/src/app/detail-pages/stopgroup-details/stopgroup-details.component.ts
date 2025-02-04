@@ -1,17 +1,17 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { StopGroupService } from '../stopgroup.service';
-import { isValid } from '../utilfunctions';
+import { StopGroupService } from '../../stopgroup.service';
+import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location } from '@angular/common';
 
 @Component({
-  selector: 'app-stopgroup-details',
-  standalone: true,
-  imports: [FormsModule, RouterModule],
-  templateUrl: './stopgroup-details.component.html',
-  styleUrl: './stopgroup-details.component.css',
+    selector: 'app-stopgroup-details',
+    standalone: true,
+    imports: [FormsModule, RouterModule],
+    templateUrl: './stopgroup-details.component.html',
+    styleUrl: './stopgroup-details.component.css'
 })
 export class StopgroupDetailsComponent implements OnInit {
   private service: StopGroupService = inject(StopGroupService);

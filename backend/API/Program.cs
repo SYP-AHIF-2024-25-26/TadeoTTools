@@ -86,7 +86,7 @@ app.UseSwaggerUI(c =>
 });
 
 /* Comment next line for No API-Key-Validation*/
-app.UseMiddleware<ApiKeyMiddleware>();
+//app.UseMiddleware<ApiKeyMiddleware>();
 
 var scope = app.Services.CreateScope();
 

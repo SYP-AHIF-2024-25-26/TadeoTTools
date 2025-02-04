@@ -1,18 +1,18 @@
 import { Component, inject, Input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DivisionService } from '../division.service';
+import { DivisionService } from '../../division.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
-import { BASE_URL } from '../app.config';
-import { isValid } from '../utilfunctions';
+import { BASE_URL } from '../../app.config';
+import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
-  selector: 'app-division-details',
-  standalone: true,
-  imports: [FormsModule, RouterModule],
-  templateUrl: './division-details.component.html',
-  styleUrl: './division-details.component.css',
+    selector: 'app-division-details',
+    standalone: true,
+    imports: [FormsModule, RouterModule],
+    templateUrl: './division-details.component.html',
+    styleUrl: './division-details.component.css'
 })
 export class DivisionDetailsComponent {
   private service: DivisionService = inject(DivisionService);
