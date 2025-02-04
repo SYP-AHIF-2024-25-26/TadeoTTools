@@ -21,6 +21,13 @@
     >
       Show Stops
     </button>
+
+    <button
+      (click)="showPrivateStopGroups.set(!showPrivateStopGroups())"
+      class="bg-htl-orange h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400"
+    >
+      Private StopGroups
+    </button>
   </div>
 
   <div>
@@ -43,52 +50,53 @@
 <div class="flex">
   <div (cdkDropListDropped)="dropGroup($event)" cdkDropList class="w-2/3">
     @for (group of stopGroups(); track group) {
-    <div class="bg-gray-100 p-5 m-10 rounded-xl" cdkDrag>
-      <div class="flex justify-between">
-        <div>
-          <p class="font-bold">{{ group.name }}</p>
-          <p>{{ group.description }}</p>
-        </div>
-        <button
-          class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent h-12"
-          [routerLink]="['/stopgroup']"
-          [queryParams]="{
+      @if (group.isPublic || showPrivateStopGroups()) {
+        <div class="bg-gray-100 p-5 m-10 rounded-xl" cdkDrag>
+          <div class="flex justify-between">
+            <div>
+              <p class="font-bold">{{ group.name }}</p>
+              <p>{{ group.description }}</p>
+            </div>
+            <button
+              class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent h-12"
+              [routerLink]="['/stopgroup']"
+              [queryParams]="{
             id: group.id,
             name: group.name,
             description: group.description,
             isPublic: group.isPublic
           }"
-        >
-          Details
-        </button>
-      </div>
-      @if (showStops()) {
-      <div
-        class="flex flex-col m-5 bg-gray-50 p-4 rounded-xl"
-        cdkDropList
-        [cdkDropListConnectedTo]="getDropGroups()"
-        [cdkDropListData]="group.stopIds"
-        (cdkDropListDropped)="dropStop($event)"
-        id="{{ 'group-' + group.id }}"
-      >
-        <p>Stops</p>
-        @for (stopId of group.stopIds; track stopId) {
-        <div
-          class="mb-1 p-3 rounded-l flex justify-between items-center cursor-grab"
-          cdkDrag
-        >
-          <p class="ml-5">{{ getStopByStopId(stopId)?.name }}</p>
-          <div>
-            <button
-              class="text-white p-1 my-1 bg-htl-orange appearance-none border rounded border-transparent m-5"
-              (click)="selectStopToRemove(stopId, group)"
             >
-              Remove
+              Details
             </button>
-            <button
-              class="text-white p-1 my-1 bg-htl-orange appearance-none border rounded border-transparent"
-              [routerLink]="['/stop']"
-              [queryParams]="{
+          </div>
+          @if (showStops()) {
+            <div
+              class="flex flex-col m-5 bg-gray-50 p-4 rounded-xl"
+              cdkDropList
+              [cdkDropListConnectedTo]="getDropGroups()"
+              [cdkDropListData]="group.stopIds"
+              (cdkDropListDropped)="dropStop($event)"
+              id="{{ 'group-' + group.id }}"
+            >
+              <p>Stops</p>
+              @for (stopId of group.stopIds; track stopId) {
+                <div
+                  class="mb-1 p-3 rounded-l flex justify-between items-center cursor-grab"
+                  cdkDrag
+                >
+                  <p class="ml-5">{{ getStopByStopId(stopId)?.name }}</p>
+                  <div>
+                    <button
+                      class="text-white p-1 my-1 bg-htl-orange appearance-none border rounded border-transparent m-5"
+                      (click)="selectStopToRemove(stopId, group)"
+                    >
+                      Remove
+                    </button>
+                    <button
+                      class="text-white p-1 my-1 bg-htl-orange appearance-none border rounded border-transparent"
+                      [routerLink]="['/stop']"
+                      [queryParams]="{
                 id: getStopByStopId(stopId)?.id,
                 name: getStopByStopId(stopId)?.name,
                 description: getStopByStopId(stopId)?.description,
@@ -96,15 +104,16 @@
                 stopGroupIds: getStopByStopId(stopId)?.stopGroupIds,
                 divisionIds: getStopByStopId(stopId)?.divisionIds
               }"
-            >
-              Details
-            </button>
-          </div>
+                    >
+                      Details
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
         </div>
-        }
-      </div>
       }
-    </div>
     }
   </div>
   <div class="w-1/3">
@@ -122,15 +131,15 @@
     >
       <p>Unassigned Stops</p>
       @for (stop of filteredStops(); track stop.id) {
-      <div
-        class="mb-1 p-3 rounded-l cursor-grab flex items-center justify-between"
-        cdkDrag
-      >
-        <p>{{ stop.name }}</p>
-        <button
-          class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent"
-          [routerLink]="['/stop']"
-          [queryParams]="{
+        <div
+          class="mb-1 p-3 rounded-l cursor-grab flex items-center justify-between"
+          cdkDrag
+        >
+          <p>{{ stop.name }}</p>
+          <button
+            class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent"
+            [routerLink]="['/stop']"
+            [queryParams]="{
             id: stop.id,
             name: stop.name,
             description: stop.description,
@@ -138,34 +147,35 @@
             stopGroupIds: stop.stopGroupIds,
             divisionIds: stop.divisionIds
           }"
-        >
-          Details
-        </button>
-      </div>
+          >
+            Details
+          </button>
+        </div>
       }
     </div>
   </div>
   <div class="fixed bottom-4 right-4 w-96">
     @for (info of infos(); track info) {
-    <app-info-popup
-      (deleted)="deleteInfo($event)"
-      [info]="info"
-    ></app-info-popup>
+      <app-info-popup
+        (deleted)="deleteInfo($event)"
+        [info]="info"
+      ></app-info-popup>
     }
   </div>
 </div>
 @if (showRemoveStopPopup()) {
-<app-delete-popup
-  [title]="'Remove Stop'"
-  [message]="'Are you sure you want to remove this stop from the stop group?'"
-  (cancel)="showRemoveStopPopup.set(false)"
-  (removeConfirmed)="removeStop()"
-/>
-} @if (showRemoveGroupPopup()) {
-<app-delete-popup
-  [title]="'Delete StopGroup'"
-  [message]="'Are you sure you want to delete this stopGroup?'"
-  (cancel)="showRemoveGroupPopup.set(false)"
-  (removeConfirmed)="deleteGroup()"
-/>
+  <app-delete-popup
+    [title]="'Remove Stop'"
+    [message]="'Are you sure you want to remove this stop from the stop group?'"
+    (cancel)="showRemoveStopPopup.set(false)"
+    (removeConfirmed)="removeStop()"
+  />
+}
+@if (showRemoveGroupPopup()) {
+  <app-delete-popup
+    [title]="'Delete StopGroup'"
+    [message]="'Are you sure you want to delete this stopGroup?'"
+    (cancel)="showRemoveGroupPopup.set(false)"
+    (removeConfirmed)="deleteGroup()"
+  />
 }
