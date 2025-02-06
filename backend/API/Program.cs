@@ -73,9 +73,6 @@ if (app.Environment.IsProduction())
 
 app.UseCors(Setup.CorsPolicyName);
 
-// when not using a reverse proxy (e.g. nginx) - which you should - uncomment the following line
-// app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -99,6 +96,5 @@ try
 {
     app.Logger.LogError(e.Message);
 }
-
 
 app.Run();

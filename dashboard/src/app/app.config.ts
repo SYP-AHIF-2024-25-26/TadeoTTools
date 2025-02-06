@@ -31,7 +31,7 @@ const keycloakProvider = provideKeycloak({
     //enableLogging: true, // Enables logging
     // IMPORTANT: implicit flow is no longer recommended, but using standard flow leads to a 401 at the keycloak server
     // when retrieving the token with the access code - we leave it like this for the moment until a solution is found
-    flow: 'implicit' // maybe implicit
+    flow: 'standard' // maybe implicit
   },
   providers: [
     {

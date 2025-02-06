@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using static Database.Types;
 
 namespace Database.Entities;
 
 [Index(nameof(Id), IsUnique = true)]
-internal class User
+public class Admin
 {
     [Key]
-    public int Id { get; set; }
-    public Role Role { get; set; }
+    public required string Id { get; set; }
 }

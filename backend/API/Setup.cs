@@ -71,15 +71,11 @@ internal static class Setup
 
     public static void AddBasicLeoAuthorization(this IServiceCollection services)
     {
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy(nameof(LeoUserRole.Student),
-                              policy => policy.Requirements
-                                              .Add(new LeoAuthRequirement(LeoUserRole.Student, true)));
-            options.AddPolicy(nameof(LeoUserRole.Teacher),
-                              policy => policy.Requirements
+        services.AddAuthorizationBuilder()
+            .AddPolicy(nameof(LeoUserRole.Student), policy => policy.Requirements
+                                              .Add(new LeoAuthRequirement(LeoUserRole.Student, true)))
+            .AddPolicy(nameof(LeoUserRole.Teacher), policy => policy.Requirements
                                               .Add(new LeoAuthRequirement(LeoUserRole.Teacher, true)));
-        });
         services.AddSingleton<IAuthorizationHandler, LeoAuthorizationHandler>();
     }
 }
