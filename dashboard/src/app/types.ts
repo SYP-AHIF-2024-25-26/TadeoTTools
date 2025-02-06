@@ -36,3 +36,8 @@ export type Info = {
   type: 'info' | 'error';
   message: string;
 };
+
+export type StopsShownInStopGroup = {
+  stopGroupId: number,
+  isShown: boolean
+}
