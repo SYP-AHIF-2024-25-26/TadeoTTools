@@ -44,12 +44,6 @@ public static class DivisionManagementApi
             .Produces(StatusCodes.Status200OK)
             .DisableAntiforgery();
 
-        group.MapDelete("api/divisions/{divisionId}/image", DivisionManagementEndpoints.DeleteDivisionImage)
-            .WithName(nameof(DivisionManagementEndpoints.DeleteDivisionImage))
-            .WithDescription("Delete the image of a division")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status200OK);
-        
         group.MapGet("divisions/{divisionId}/image", DivisionManagementEndpoints.GetImageByDivisionId)
             .AddEndpointFilter(DivisionManagementValidations.DoesDivisionExistValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.GetImageByDivisionId))

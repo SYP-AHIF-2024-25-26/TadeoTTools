@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { BASE_URL } from './app.config';
-import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
+import { catchError, finalize, firstValueFrom, map, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -9,26 +9,27 @@ import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
 export class LoginService {
   httpClient = inject(HttpClient);
   baseUrl = inject(BASE_URL);
+  response = signal<string | null>(null);
+  loading = signal(false);
+  showResponse = computed(() => this.response() !== null);
 
   constructor() {}
-  public async checkApiKeyExists(key: string): Promise<boolean> {
-    const url = `${this.baseUrl}/keyExists`;
-    return firstValueFrom(
-      this.httpClient.get<any>(`${url}?key=${key}`,{ observe: 'response' }
-      ).pipe(
-        map((response: HttpResponse<any>) => {
-          //return response.status === 200;
-          console.log(response);
-          if (response.status === 200) {
-            return true;
-          }
-          return false;
-        }),
-        catchError((error: HttpErrorResponse) => {
-          console.error('API Key validation failed:', error.message);
-          return of(false);
-        })
-      )
-    );
+
+  public performCall(action: string): void {
+    const route = this.baseUrl + `/api/${action}`;
+
+    this.loading.set(true);
+
+    // bearer token is automatically added by the interceptor
+    this.httpClient.get(route, { responseType: "text" })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (res) => {
+          this.response.update(() => res);
+        },
+        error: err => {
+          this.response.update(() => `Backend says no: ${err.status}`);
+        }
+      });
   }
 }

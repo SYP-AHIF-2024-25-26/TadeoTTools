@@ -10,5 +10,4 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<Stop> Stops { get; set; }
     public DbSet<Division> Divisions { get; set; }
     public DbSet<StopStatistic> StopStatistics { get; set; }
-    public DbSet<APIKey> APIKeys { get; set; }
 }

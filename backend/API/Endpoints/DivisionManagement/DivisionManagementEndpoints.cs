@@ -61,18 +61,6 @@ public static class DivisionManagementEndpoints
         await context.SaveChangesAsync();
         return Results.Ok();
     }
-    public static async Task<IResult> DeleteDivisionImage(TadeoTDbContext context, int divisionId)
-    {
-        var division = await context.Divisions.FindAsync(divisionId);
-        if (division == null)
-        {
-            return Results.NotFound();
-        }
-
-        division.Image = null;
-        await context.SaveChangesAsync();
-        return Results.Ok();
-    }
     public static async Task<IResult> GetImageByDivisionId(TadeoTDbContext context, int divisionId)
     {
         var image = await DivisionFunctions.GetImageOfDivision(context, divisionId);

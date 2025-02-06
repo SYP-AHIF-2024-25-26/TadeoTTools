@@ -11,6 +11,7 @@ import Keycloak from "keycloak-js";
     styleUrl: './login.component.css'
 })
 export class LoginComponent {
+
   public readonly response: WritableSignal<string | null> = signal(null);
   public readonly loading: WritableSignal<boolean> = signal(false);
   public readonly showResponse: Signal<boolean> = computed(() => this.showResponse() !== null);
@@ -39,8 +40,7 @@ export class LoginComponent {
     }
     await this.keycloak.logout();
   }
-
-  getRole(action: string): void {
-
+  getRole(call: string) {
+    this.service.performCall(call);
   }
 }

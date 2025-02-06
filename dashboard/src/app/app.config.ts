@@ -7,6 +7,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
+
 export const BASE_URL = new InjectionToken<string>('BaseUrl');
 
 import {
@@ -17,7 +18,7 @@ import {
 } from "keycloak-angular";
 
 const authTokenCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
-  urlPattern: /^(http:\/\/localhost:5050)(\/.*)?$/i
+  urlPattern: /^(http:\/\/localhost:5000)(\/.*)?$/i
 });
 const keycloakProvider = provideKeycloak({
   config: {
@@ -30,7 +31,7 @@ const keycloakProvider = provideKeycloak({
     //enableLogging: true, // Enables logging
     // IMPORTANT: implicit flow is no longer recommended, but using standard flow leads to a 401 at the keycloak server
     // when retrieving the token with the access code - we leave it like this for the moment until a solution is found
-    flow: 'implicit'
+    flow: 'implicit' // maybe implicit
   },
   providers: [
     {
