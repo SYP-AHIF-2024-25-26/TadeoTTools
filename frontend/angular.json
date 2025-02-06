@@ -41,7 +41,12 @@
             "outputPath": "dist/tadeo-t",
             "index": "src/index.html",
             "browser": "src/main.ts",
+<<<<<<< Updated upstream
             "polyfills": ["zone.js"],
+=======
+            "polyfills": [
+            ],
+>>>>>>> Stashed changes
             "tsConfig": "tsconfig.app.json",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["src/styles.css"],
@@ -101,7 +106,12 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+<<<<<<< Updated upstream
             "polyfills": ["zone.js", "zone.js/testing"],
+=======
+            "polyfills": [
+            ],
+>>>>>>> Stashed changes
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               {
