@@ -7,12 +7,11 @@ namespace API.Middleware;
 public class ApiKeyMiddleware(RequestDelegate next)
 {
     private const string ApiKeyHeaderName = "X-Api-Key";
-    private readonly RequestDelegate _next = next;
-    private APIKeyFunctions apiKeyRepository;
+    private ApiKeyFunctions apiKeyRepository;
 
     public async Task InvokeAsync(HttpContext context)
     {
-        this.apiKeyRepository = context.RequestServices.GetRequiredService<APIKeyFunctions>();
+        apiKeyRepository = context.RequestServices.GetRequiredService<ApiKeyFunctions>();
         if (context.Request.Method == HttpMethods.Options)
         {
             context.Response.StatusCode = StatusCodes.Status204NoContent;
@@ -28,7 +27,7 @@ public class ApiKeyMiddleware(RequestDelegate next)
                 return;
             }
 
-            if (! await IsValidApiKey(extractedApiKey!))
+            if (!await IsValidApiKey(extractedApiKey!))
             {
                 context.Response.StatusCode = 403; // Forbidden
                 await context.Response.WriteAsync("Invalid API Key.");
@@ -36,28 +35,21 @@ public class ApiKeyMiddleware(RequestDelegate next)
             }
         }
 
-        await _next(context);
+        await next(context);
     }
 
     private async Task<bool> IsValidApiKey(string userApiKey)
     {
         // Fetch and store system API keys in a HashSet for faster lookups
-        HashSet<string> systemApiKeys = (await apiKeyRepository.GetAllAPIKeys())
+        var systemApiKeys = (await apiKeyRepository.GetAllApiKeys())
             .Select(ak => ak.APIKeyValue)
             .ToHashSet();
 
         // Compare using FixedTimeEquals for security
-        byte[] userApiKeyBytes = Encoding.UTF8.GetBytes(userApiKey);
+        var userApiKeyBytes = Encoding.UTF8.GetBytes(userApiKey);
 
-        foreach (var systemApiKey in systemApiKeys)
-        {
-            byte[] systemApiKeyBytes = Encoding.UTF8.GetBytes(systemApiKey);
-            if (CryptographicOperations.FixedTimeEquals(userApiKeyBytes, systemApiKeyBytes))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return systemApiKeys
+            .Select(systemApiKey => Encoding.UTF8.GetBytes(systemApiKey))
+            .Any(systemApiKeyBytes => CryptographicOperations.FixedTimeEquals(userApiKeyBytes, systemApiKeyBytes));
     }
 }

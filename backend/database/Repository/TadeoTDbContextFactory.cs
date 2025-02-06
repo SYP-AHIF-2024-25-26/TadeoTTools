@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Database.Repository;
 
-public class TadeoTDbContextFactory
+public static class TadeoTDbContextFactory
 {
     public static TadeoTDbContext CreateDbContext()
     {
@@ -12,7 +12,8 @@ public class TadeoTDbContextFactory
 
         return new TadeoTDbContext(optionsBuilder.Options);
     }
-    public static string GetConnectionString()
+
+    private static string GetConnectionString()
     {
         var config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")

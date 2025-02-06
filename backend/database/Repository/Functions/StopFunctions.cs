@@ -2,18 +2,6 @@
 
 namespace Database.Repository.Functions;
 
-public record DivisionDto(string Name, string Color);
-public record StopGroupDto(string Name, int Order);
-public record StopWithAssignmentsAndDivisionsDto(
-    int Id,
-    string Name,
-    string RoomNr,
-    string Description,
-    int[] DivisionIds,
-    int[] StopGroupIds,
-    int[] Orders
-);
-
 public class StopFunctions
 {
     public static async Task<List<StopWithAssignmentsAndDivisionsDto>> GetAllStopsAsync(TadeoTDbContext context)
@@ -40,3 +28,13 @@ public class StopFunctions
         return await context.Stops.SingleOrDefaultAsync(s => s.Id == id) != null;
     }
 }
+
+public record StopWithAssignmentsAndDivisionsDto(
+    int Id,
+    string Name,
+    string RoomNr,
+    string Description,
+    int[] DivisionIds,
+    int[] StopGroupIds,
+    int[] Orders
+);

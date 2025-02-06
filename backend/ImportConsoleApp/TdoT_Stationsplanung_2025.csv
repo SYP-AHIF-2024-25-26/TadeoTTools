@@ -1,47 +1,47 @@
-﻿Abt.;id;Stock;Bezeichung;Verantwortlich;Ort;StopGroup;Stop;Beschreibungstext für Guide-App;Club of Excellence
-;j;EG;Empfang;Schröder/Kern;E02;;;;
-;j;EG;Jobbörse;Tumfart Hannes;E02;;;;
-;j;EG;Informationen zu Schülerheimen;Reisinger Hannes;vor Bibliothek;;;;
-;j;1.Stock;Buffet im 1.Stock ;Schröder/Meszaros/Lehenbauer;101 (Aula);;;;
-;j;EG;"Kurzpräsentation ""HTL im Überblick""";Pachschwöll/Kern;E22/E23/E26;1;;Eine 10-minütige Einführung in das Bildungsangebot der HTL Leonding. Danach gehts gleich weiter in eine geführte Tour durch die Informatik- und Medientechnik, oder durch die Elektonik und Medizintechnik.;
-HIF,HITM;j;EG;Guide-Tour Informatik & Medientechnik;Pachschwöll;vor E26;2;;Guides begleiten Kleingruppen durch die Informatik- und Medientechnik-Abteilung.;
-HBG,HEL;j;EG;Guide-Tour Elektronik & Medizintechnik;Kern;vor E26;3;;Guides begleiten Kleingruppen durch die Elektronik- und Medizintechnik-Abteilung.;
-;;EG;Elternvorträge;Reisinger/Pachschwöll/Schröder/Kern;E59-1/E59-2;4;;Während die Kids bei einer geführten Tour durch die Abteilungen mitmachen, haben wir für ihre Begleitung Fachvorträge zu verschiedenen Themen vorbereitet.;
-;;;Clubs (Program of Excellence);;;5;;In diesem Programm haben Schülerinnen und Schüler die Möglichkeit, sich über den Regelunterricht hinaus zu vertiefen oder gemeinsamen Interessen nachzugehen.;
-;j;EG;Beratungszentrum;Reiter Riccarda;Aula E30;6;;Lehrerinnen und Lehrer beraten zu den einzelnen Lehrplänen und Ausbildungsschwerpunkten.;
-;j;EG;Voranmeldung;Dumfart;Aula E30;7;;Hier kannst Du Dich für das kommende Schuljahr 2024/25 bereits voranmelden und erfährst, wie es danach mit Deiner Schulbewerbung weitergeht.;
-;;1.Stock;Lernbüro;Schmid Silke;Gang bis 143;;2,3;Dieser Bereich ist genauso gestaltet wie das Lernbüro dann im Unterricht bei uns abläuft.;
-;j;1.Stock;Mathematik anwenden und begreifen;Rumetshofer;119;;2,3;;
-HIF,HITM;;1.Stock;Highlight: Leo Green (School-IoT, DrivingEfficiencyTracker, …);Dilly / Stütz;101 (Aula);;2;Umweltschutzbezogene Vorzeigeprojekte;
-HITM;;1.Stock;Streaming- und Regieraum;Erich Baar;101 (Aula);;2,5;;x
-HIF,HITM;;1.Stock;Highlight: Beam-VR / Gaming Development;Haslinger Markus;101 (Aula);;2,5;Mit BeamVR kannst Du auf einem Holzbalken balancieren und wirst in eine atemberaubende Dschungelwelt vesetzt. ;x
-HIF;j;1.Stock;Advanced Algorithms / IOI / Coder Dojo;Rainer Stropek;101 (Aula);;2,5;3,2,1 GO!! unsere OPEN LED Rennbahn;x
-HIF,HEL;j;1.Stock;Embedded Systems Club;Stefan Schraml/ Robert Raschhofer;101 (Aula);;2,3,5;;x
-HIF;j;1.Stock;Highlight: Naos, Pepper, Lego-Roboter;Steiner Dietmar/Auernig Franz;101 (Aula);;2,5;;x
-HEL;j;1.Stock;ESA Raumfahrt / Amateurfunk;Wagner/Gallistl;101 (Aula);;3;Alles zum Thema Raumfahrt, ESA und Amateurfunkt, findest zu hier;x
-HIF,HITM;j;1.Stock;Best of Projects (INF+MDT);Schröder/Kern;120;;2;Die besten Apps aus den Abschlussjahrgängen der Informatik und Medientechnik;
-HIF,HITM;j;1.Stock;Schnupperprogrammieren;Kaser;123 EDV5 / 122 EDV4;;2;;
-HIF;j;1.Stock;Roboterführerschein;Aitenbichler;109a/EDV1;;2;;
-HIF;j;1.Stock;Informatik-Experimente (Bananenklavier etc.);Stütz;105;;2;Informatik zum Angreifen;
-HIF;j;1.Stock;Künstliche Intelligenz (aktuelle Diplomarbeiten/Projekte);Karpowicz/Kornfellner;106;;2;Künstliche Intelligenz im Informatik-Unterricht;
-HIF;j;1.Stock;English class goes web / CSI;Klewein/Schraml;104;;2;Auch in der Informatik werden Webseiten gestaltet! Kombiniert mit Englisch-Unterricht. Außerdem erfährst Du hier alles über CSI - den englischsprachigen Zweig der Informatik.;x
-;j;1.Stock;Cambridge BE;Wellisch Alexandra;104;;2,3,5;;x
-;j;1.Stock;Freigegenstand Spanisch;Florea Petre/Mader Conny;104;;2,3,5;;x
-HIF;j;1. Stock;Cloud Computing / Hacken & Forensik;Aberger/Unterrainer/Braun;108/EDV2;;2,5;;x
-HITM;j;EG;Gaming Garden;Rammelmüller Natascha;E24;;2;;
-HITM;j;EG;Medientechnik Cinema, Video- und Animationsprojekte;Engleitner Patricia;E71;;2;Tolle Animationsprojekte aus der Medientechnik;
-HITM;j;EG;Web Garden, Webanwendungen Webprojekte;Huemer Martin;E72;;2;Webseiten, die im Medientechnik-Unterricht entwickelt werden;
-HITM;j;EG;Practice Garden, Videoschnitt, Effect-Editing und 3D-Design;Engleitner Patricia;E73/EDV7;;2;Graphik und Design-Tools aus dem Medientechnik-Unterricht;
-HITM;j;UG;Sound Garden, Tonstudio;Baar Erich;U37;;2;Das Medientechnik Tonstudio zum Ausprobieren;
-HITM;j;UG;Video Garden,Videostudio;Baar Erich;U34;;2;Die Video-Schnitt-Werkstätte für die Medientechnik;
-HEL;;1. Stock;Schnupperprogrammieren / Elektronik;Lüftner;143;;3;"Hier kann man selber Hand anlegen und die Tastatur ins Schwitzen bringen. Es wird programmiert was das Zeug hält ;)";
-HEL;;UG;Best of Projects (EL);Mistelberger;Pausenbereich UG;;3;Hier findest du die besten Diplomarbeiten im Bereich Elektronik und Technische Informatik, ein best of..;
-HEL;;UG;Experimentelle Elektronik;Kurz / Raschhofer;Pausenbereich UG;;3;Elektronik zum anfassen, selber probieren und testen genau das wollen wir hier;
-HEL;;UG;Fachschule / Robodog;Wagner ;Pausenbereich UG;;3;Lerne unseren selber gebauten Robodog kennen und frage ihn nach seinem Namen;
-HEL;;UG;Labor Diplomarbeiten Elektronik;??;??;;3;;
-Werkstätte;;UG;Vorsicht schnittig (Lasercut);Kaiser;U86;;3;Vorsicht schnittig! Mit unserem Hochleistungslaser wirst du dir die besten Motive lasern.;
-Werkstätte;;UG;Let`s do it! (Löt-Workshop);Oswald;U82;;3;Elektronik zum selber bauen. Bling Bling, ihr werdet es schon sehen;
-Werkstätte;;UG;Robotik / Kuka / Industrierobotik;Wenigwieser;U85;;3;Orangepower, Legotechnik zum testen und probieren;
-HBG;;UG;Medizintechnik / Ultraschall / EKG..;Moser;U04a;;3;Unser Helathcarecenter in der Medizintechnik: Hier wird röntgengestrahlt, ultrageschallt und vieles mehr;
-HBG;;UG;check your health / Biomedizin-Labor;Knogler / Povcaz;U04b;;3;Mikroskopisch klein ist hier das Stichwort;
- ;; ;;;;;;;
+﻿Abt.;Stock;Bezeichung;Verantwortlich;Ort;StopGroup;Stop;Beschreibungstext für Guide-App
+;EG;Kurzpräsentation HTL im Überblick;Pachschwöll/Kern;E22/E23/E26;1;;Eine 10-minütige Einführung in das Bildungsangebot der HTL Leonding. Danach gehts gleich weiter in eine Guide-Tour für die Rookies oder zum Eltern-Talk.
+HIF,HITM;EG;Guide-Tour Informatik & Medientechnik;Pachschwöll;vor E26;2;;Guides begleiten Kleingruppen durch die Informatik- und Medientechnik-Abteilung.
+HBG,HEL;EG;Guide-Tour Elektronik & Medizintechnik;Kern;vor E26;3;;Guides begleiten Kleingruppen durch die Elektronik- und Medizintechnik-Abteilung.
+;EG;Eltern Talks;Reisinger/Pachschwöll/Schröder/Kern;;4;;Spezielles Angebot für Eltern und Begleitpersonen, während die Kids auf Tour sind. Gerne können Sie aber auch auf eigene Faust die Stationen erkunden.
+ALL;EG;Infos der Schulleitung;;E58-2;;4;Die am häufigsten gestellten Fragen werden wir beantwortet.
+ALL;EG;Absolvent:innen-Gespräche;;E58-1/E59-2;;4;Absolventinnen und Absolventen unserer Schule erzählen aus ihrer Schulzeit an der HTL Leonding, und wie es ihnen danach ergangen ist.
+;OG;Aula Highlights;;Aula OG;5;;In der Aula im Obergeschoß haben wir besondere Highlights im Angebot - unter anderem einige Clubs und Freigegenstände.
+;EG;Beratungszentrum;Reiter Riccarda;Aula E30;6;;Noch Fragen? Wir stehen zur Verfügung!
+ALL;EG;Beratung Ausbildungszweige;Reiter Riccarda;Aula E30;;6;Lehrerinnen und Lehrer beraten zu den einzelnen Lehrplänen und Ausbildungsschwerpunkten.
+ALL;EG;Voranmeldung;Dumfart;Aula E30;;6;Hier kannst Du Dich für das kommende Schuljahr 2024/25 bereits voranmelden und erfährst, wie es danach mit Deiner Schulbewerbung weitergeht.
+ALL;EG;Informationen zu Schülerheimen;Reisinger Hannes;Aula E30;;6;Wir haben Schülerheime aus der Umgebung eingeladen um sich vorzustellen!
+ALL;EG;Jobbörse;Tumfart Hannes;E02;;6;Am AbsLeo-Stand (Absolventenverein der HTL Leonding) werden aktuelle Stellenausschreibungen vorgestellt.
+HITM;UG;Sound Garden / Video Garden;Baar Erich;U34, U37;;2;Von einfacher Tonbearbeitung über Mehrspurtechnik zur Podcast-Erstellung und Musikproduktion mit FL-Studio! In der Video-Schnitt-Werkstätte bearbeiten SchülerInnen ihre Videos - vom Rohschnitt bis zum Color-Grading, Filmmusik und Surround-Sound.
+HITM;EG;Gaming Garden;Rammelmüller Natascha;E24;;2;Hier erwarten dich spannende Abenteuer in virtuellen Welten. Denn die neuesten, selbst entwickelten Videospiele der Medientechnik warten darauf ausprobiert zu werden.
+HITM;EG;Medientechnik Cinema;Engleitner Patricia;E71;;2;Besuche das Medientechnik Cinema und erlebe in entspannter Kinoatmosphäre die Vielfalt digitaler Medienkunst. Gezeigt werden 3D-Animationen, Motion-Design-Projekte und Videoproduktionen von Schülerinnen und Schülern der Medientechnikabteilung. 
+HITM;EG;Web Garden;Huemer Martin;E72;;2;Entdecke, wie Technik und Kreativität verschmelzen! Zu sehen gibt es spannende Webseiten und Webprojekte von unseren 1. und 2. Jahrgängen.
+HITM;EG;Practice Garden;Engleitner Patricia;E73;;2;Schülerinnen und Schüler stellen hier ihre kreativen und technischen Arbeiten – von innovativen Multimedia-Projekten über beeindruckende Videoproduktionen bis hin zu interaktiven Anwendungen - vor. 
+HIF,HITM;OG;Best of Projects (INF+MDT);Schröder/Kern;120;;2;Die besten Apps aus den Abschlussjahrgängen der Informatik und Medientechnik: Wir zeigen dir wie sie entstanden sind!
+ALL;OG;Mathematik anwenden und begreifen;Rumetshofer;119;;2,3;
+HIF,HITM;OG;Schnupperprogrammieren;Kaser;123/122;;2;Programmieren kann ziemlich knifflig sein! Logisches Denken und Konzentration werden dabei trainiert. Mit unserer einfachen grafischen Programmiersprache kannst du hier selbst ausprobieren, ob es dir Spaß macht.
+HIF;OG;English Class Goes Web / CSI;Klewein/Schraml/Brückner;104;;2;Englisch ist im Informatik-Unterricht u.a. bei der Entwicklung von Webseiten inkludiert. Hier gibt’s auch Infos über CSI - den englischsprachigen Zweig der Informatik.
+HIF;OG;Informatik-Experimente;Stütz;105;;2;Unglaublich was man mit Informatik alles anstellen kann! Wir machen aus Bananen ein Klavier und spielen gegen den Computer Kopfball.
+HIF;OG;Künstliche Intelligenz;Karpowicz/Kornfellner;106;;2;Künstliche Intelligenz ist im Informatik-Unterricht fix integriert und mittlerweile sogar ein Maturafach. Wir zeigen dir einige Beispiele aus dem Unterricht und aus Diplomarbeiten.
+HIF;OG;Cloud Computing / Hacken & Forensik;Aberger/Unterrainer/Braun/Brückner;108;;2;Cloud Computing nimmt in der Arbeitswelt einen immer höheren Stellenwert ein. Kombiniert mit Netzwerktechnik zeigen wir Dir ein paar Beispiele. Im Hacker-Club kannst du das alles noch vertiefen!
+HIF;OG;Roboterführerschein;Aitenbichler;109;;2;Kleine Roboter flitzen durch den Raum. Gelenkt werden sie … von dir! Natürlich ist es nicht einfach, aber du schaffst es sicher und bekommst dafür einen Führerschein ausgestellt!
+HIF;OG;Wirtschaft;Arzt;vor 104;;2;Wirtschaftskompetenz ist Lebenskompetenz! Du lernst, wie du deine Ideen zu Geld machen kannst.  Von der Unternehmensgründung bis zum Vertragsrecht bist du fit - und die Unternehmerprüfung hast du auch in der Tasche!
+HIF;OG;DDP (Design of Digital Products);Bauer;vor 104;;2;Schülerinnen und Schüler aus der ersten Informatik-DDP-Klasse zeigen dir, was DDP ausmacht.
+HIF,HITM;OG;Virtual Reality & Gaming;Haslinger Markus;101 (Aula);;5;Mit BeamVR kannst Du auf einem Holzbalken balancieren und wirst in eine atemberaubende Dschungelwelt vesetzt. 
+HIF,HITM;OG;Leo Green / School-IoT;Dilly / Stütz;101 (Aula);;5;Umweltschutzbezogene Vorzeigeprojekte
+HIF;OG;Advanced Algorithms;Rainer Stropek;101 (Aula);;5;Hier kannst du Programmierwettbewerbe entdecken, Rätsel lösen und Kreativität zeigen. Probiere am Stand einfache Aufgaben aus und sieh, wie diese mit Code gelöst werden - Spaß und Erfolgserlebnisse garantiert!
+HIF,HEL;OG;Embedded Systems;Stefan Schraml/ Robert Raschhofer;101 (Aula);;5;Zweigübergreifend werden von Schülerinnen und Schülern der Informatik und Elektronik programmierbare und netzwerkfähige Geräte gebaut. Schau dir einige dieser Projekte an!
+HIF;OG;Humanoid Robotics;Steiner Dietmar/Auernig Franz;101 (Aula);;5;Unsere Naos werden spielerisch programmiert und können einfache Aufgaben lösen - eines unserer Team bringt ihnen Fussballspielen bei. Unser Pepper wird in echten Anwendungen eingesetzt: z.b. in einem Seniorenheim als Unterstützung der Pflegekräfte.
+HEL;OG;ESA Raumfahrt / Amateurfunk;Wagner/Gallistl;101 (Aula);;3,5;Kontakt ins Weltall? Wenn ja, dann hier! 
+HITM;OG;Streaming- und Regieraum;Erich Baar;101 (Aula);;5;Wichtige Schulveranstaltungen werden in Ton und Bild mit mehreren Kameras live aufgenommen und ins Internet gestreamt. Somit können z.B. am Projekt-Award auch internationale Jury-Mitglieder (USA, Google) direkt per Stream daran teilnehmen!
+ALL;OG;Lernbüro;Silke Schmidt;Gang bis 143;;5;Dieser Bereich zeigt wie modernes Lernen bei uns funktioniert!
+ALL;OG;Cambridge Business English;Wellisch Alexandra;104;;5;
+ALL;OG;Freigegenstand Spanisch;Florea Petre/Mader Conny;104;;5;Seit neuestem gibt es an der HTL Leonding auch die Möglichkeit, Spanisch zu lernen.
+HEL,HBG;UG;Best of Projects (EL und MED);Mistelberger;Pausenbereich UG;;3;Hier findest du die besten Diplomarbeiten im Bereich Elektronik und Technische Informatik, ein Best Of…
+HEL;UG;Experimentelle Elektronik;Kurz / Raschhofer;U73;;3;Elektronik zum Anfassen, selber Probieren und Testen - genau das wollen wir hier
+HEL;UG;Fachschule / DEBBIE;Wagner ;Pausenbereich UG;;3;Lerne unsere DEBBIE kennen, mehr möchten wir hier nicht verraten
+HEL,HBG;UG;Vorsicht schnittig (Lasercut);Kaiser;U86;;3;Vorsicht schnittig! Mit unserem Hochleistungslaser wirst du dir die besten Motive lasern.
+HEL,HBG;UG;Let`s do it! (Löt-Workshop);Oswald;U82;;3;Elektronik zum selber Bauen. Bling Bling, ihr werdet es schon sehen
+HEL,HBG;UG;Robotik / Kuka / Industrierobotik;Wenigwieser;U85;;3;Orangepower, Legotechnik zum Testen und Probieren
+HBG;UG;Medizintechnik / Ultraschall / EKG;Moser;U04a;;3;Unser Healthcarecenter in der Medizintechnik: Hier wird röntgengestrahlt, ultrageschallt und vieles mehr
+HBG;UG;Check Your Health / Biomedizin-Labor;Knogler / Povcaz;U04b;;3;Mikroskopisch klein ist hier das Stichwort
+HEL;OG;Schnupperprogrammieren (Elektronik);Lüftner;143;;3;Hier kann man selber Hand anlegen und die Tastatur ins Schwitzen bringen. Es wird programmiert was das Zeug hält

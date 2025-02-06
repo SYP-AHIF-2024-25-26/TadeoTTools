@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { HeaderComponent } from '../header/header.component';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
     selector: 'app-about-page',

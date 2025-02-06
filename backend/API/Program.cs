@@ -7,6 +7,9 @@ using Database.Repository.Functions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using API.Endpoints.DivisionManagement;
+using API.Endpoints.StopGroupManagement;
+using API.Endpoints.StopManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders().AddConsole();
@@ -19,7 +22,7 @@ builder.Services.AddDbContext<TadeoTDbContext>(options =>
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddScoped<DivisionFunctions>();
-builder.Services.AddScoped<APIKeyFunctions>();
+builder.Services.AddScoped<ApiKeyFunctions>();
 builder.Services.AddScoped<StopGroupFunctions>();
 builder.Services.AddScoped<StopFunctions>();
 builder.Services.AddScoped<TadeoTDbContext>();
@@ -87,7 +90,7 @@ app.UseMiddleware<ApiKeyMiddleware>();
 
 var scope = app.Services.CreateScope();
 
-var apiKeyFunctions = scope.ServiceProvider.GetService<APIKeyFunctions>();
+var apiKeyFunctions = scope.ServiceProvider.GetService<ApiKeyFunctions>();
 var context = scope.ServiceProvider.GetService<TadeoTDbContext>();
 
 try
@@ -116,11 +119,11 @@ if (apiKeyFunctions is null)
 }
 else
 {
-    if ((await apiKeyFunctions.GetAllAPIKeys()).Count <= 0)
+    if ((await apiKeyFunctions.GetAllApiKeys()).Count <= 0)
     {
         app.Logger.LogInformation("No API key found in database - generating a new one.");
-        var key = new APIKey { APIKeyValue = APIKeyGenerator.GenerateApiKey() };
-        await apiKeyFunctions.AddAPIKey(key);
+        var key = new APIKey { APIKeyValue = ApiKeyGenerator.GenerateApiKey() };
+        await apiKeyFunctions.AddApiKey(key);
         app.Logger.LogInformation("Generated API key: {Key}", key.APIKeyValue);
     }
 }

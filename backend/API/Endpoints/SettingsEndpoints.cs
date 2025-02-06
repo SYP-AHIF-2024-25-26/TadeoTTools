@@ -1,6 +1,5 @@
-using Database;
 using Database.Repository;
-using System.IO;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints;
 
@@ -8,16 +7,20 @@ public static class SettingsEndpoints
 {
     public static void MapSettingsEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("v1/api");
-        group.MapGet("resetDB", ResetDataBase);
+        var group = app.MapGroup("v1");
+        group.MapGet("api/resetDB", ResetDataBase);
+        group.MapGet("keyExists", ApiKeyExists);
     }
 
-    public static async Task ResetDataBase(TadeoTDbContext context)
+    private static Task ResetDataBase(TadeoTDbContext context)
     {
-        new BadHttpRequestException("Not implemented yet");
+        throw new BadHttpRequestException("Not implemented yet");
     }
-    
-    
-    
-    
+
+    private static async Task<IResult> ApiKeyExists(TadeoTDbContext context, string key)
+    {
+        var apiKey = await context.ApiKeys.FirstOrDefaultAsync(x => x.APIKeyValue == key);
+        
+        return apiKey == null ? Results.NotFound($"Apikey not valid!") : Results.Ok();
+    }
 }

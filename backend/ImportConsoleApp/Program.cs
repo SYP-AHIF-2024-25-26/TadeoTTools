@@ -17,10 +17,10 @@ public class Program
 
 
         Console.WriteLine("Generating a new api key ...");
-        var apiKeyFunctions = new APIKeyFunctions(context);
-        if ((await apiKeyFunctions.GetAllAPIKeys()).Count <= 0)
+        var apiKeyFunctions = new ApiKeyFunctions(context);
+        if ((await apiKeyFunctions.GetAllApiKeys()).Count <= 0)
         {
-            await apiKeyFunctions.AddAPIKey(new APIKey { APIKeyValue = APIKeyGenerator.GenerateApiKey() });
+            await apiKeyFunctions.AddApiKey(new APIKey { APIKeyValue = ApiKeyGenerator.GenerateApiKey() });
         }
 
         Console.WriteLine("Importing data ...");
@@ -33,16 +33,16 @@ public class Program
         Console.WriteLine("Imported " + context.StopGroupAssignments.Count() + " stop group assignments");
     }
 
-    public async static Task Main(string?[] args)
+    public static async Task Main(string?[] args)
     {
         if (args.Length > 0)
         {
-            string currentPath = Directory.GetCurrentDirectory();
-            string? parentPath = Directory.GetParent(currentPath)?.FullName;
+            var currentPath = Directory.GetCurrentDirectory();
+            var parentPath = Directory.GetParent(currentPath)?.FullName;
             if (parentPath != null)
             {
-                string importCsvPath = Path.Combine(parentPath, "ImportConsoleApp");
-                string csvFilePath = Path.Combine(importCsvPath, "TdoT_Stationsplanung_2025.csv");
+                var importCsvPath = Path.Combine(parentPath, "ImportConsoleApp");
+                var csvFilePath = Path.Combine(importCsvPath, "TdoT_Stationsplanung_2025.csv");
                 await InitDb(csvFilePath);
             }
         } else
