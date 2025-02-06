@@ -2,18 +2,6 @@
   <div>
     <app-header />
   </div>
-<<<<<<< Updated upstream
-  <div class="flex flex-col justify-center">
-    @for (group of groups(); track group.id) {
-      <app-guide-card
-        class="mt-6"
-        [stopGroup]="group"
-        [id]="group.id.toString()"
-        [ngClass]="{ 'mb-28': groups().indexOf(group) === groups().length - 1 }"
-        (openStopPage)="openStopPage(group)"
-      >
-      </app-guide-card>
-=======
   <div class="h-full flex flex-col justify-center mb-28">
     @if(showResetButton()) {
       @for (group of groups(); track group.id) {
@@ -29,7 +17,6 @@
       <button class="mt-8 h-10 mx-4 text-base font-medium rounded-2xl bg-orange-500 text-white" (click)="resetGuideApp()">
         Leitfaden zurücksetzen
       </button>
->>>>>>> Stashed changes
     }
   </div>
 
