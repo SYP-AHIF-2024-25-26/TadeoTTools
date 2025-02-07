@@ -25,7 +25,6 @@ builder.Services.AddScoped<StopGroupFunctions>();
 builder.Services.AddScoped<StopFunctions>();
 builder.Services.AddScoped<TadeoTDbContext>();
 
-
 builder.Services.AddLeoAuthentication();
 builder.Services.AddBasicLeoAuthorization();
 

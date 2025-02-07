@@ -1,6 +1,4 @@
 ﻿using LeoAuth;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints;
 
@@ -25,13 +23,13 @@ public static class UserEndpoints
         group.MapGet("/everyone-allowed", () =>
             Results.Ok("Everyone is allowed to see this")
         ).AllowAnonymous();
-        
+
         group.MapGet("/token-data", static (HttpContext httpContext) =>
         {
             var userInfo = httpContext.User.GetLeoUserInformation();
-            return userInfo.Match<ActionResult<List<string>>>(
-                user => new OkObjectResult(GetUserInfo(user)),
-                _ => new NotFoundResult()
+            return userInfo.Match(
+                user => Results.Ok(GetUserInfo(user)),
+                _ => Results.BadRequest("User information not found")
             );
         }).RequireAuthorization();
     }
@@ -40,7 +38,7 @@ public static class UserEndpoints
     {
         List<string> data = [];
 
-        user.Username.Switch(username => data.Add($"Username: {username}"), _ => { });
+        user.Username.Switch(username => data.Add($"username: {username}"), _ => { });
 
         var name = user.Name.Match(
             fullName => fullName.Name,
@@ -53,7 +51,7 @@ public static class UserEndpoints
             data.Add($"Name: {name}");
         }
 
-        user.Department.Switch(department => data.Add($"Department: {department.Name}"), _ => { });
+        user.Department.Switch(department => data.Add($"department: {department.Name}"), _ => { });
 
         string? role = user.IsStudent ? "Student" :
                        user.IsTeacher ? "Teacher" :
@@ -61,7 +59,7 @@ public static class UserEndpoints
 
         if (role != null)
         {
-            data.Add($"Role: {role}");
+            data.Add($"role: {role}");
         }
 
         return data;

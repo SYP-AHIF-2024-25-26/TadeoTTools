@@ -14,7 +14,7 @@ export class LoginComponent {
 
   public readonly response: WritableSignal<string | null> = signal(null);
   public readonly loading: WritableSignal<boolean> = signal(false);
-  public readonly showResponse: Signal<boolean> = computed(() => this.showResponse() !== null);
+
   private service: LoginService = inject(LoginService);
 
   private readonly keycloak = inject(Keycloak);
@@ -40,7 +40,8 @@ export class LoginComponent {
     }
     await this.keycloak.logout();
   }
-  getRole(call: string) {
-    this.service.performCall(call);
+
+  async getRole(call: string) {
+    this.response.set(await this.service.performCall(call));
   }
 }
