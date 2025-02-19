@@ -9,6 +9,7 @@ namespace API;
 internal static class Setup
 {
     public const string CorsPolicyName = "AllowOrigins";
+    public const string AdminPolicyName = "IsAdmin";
 
     public static void AddLeoAuthentication(this IServiceCollection services)
     {
@@ -76,7 +77,7 @@ internal static class Setup
                                               .Add(new LeoAuthRequirement(LeoUserRole.Student, true)))
             .AddPolicy(nameof(LeoUserRole.Teacher), policy => policy.Requirements
                                               .Add(new LeoAuthRequirement(LeoUserRole.Teacher, true)))
-            .AddPolicy("IsAdmin", policy => policy.Requirements
+            .AddPolicy(AdminPolicyName, policy => policy.Requirements
                                               .Add(new AdminRequirement())); ;
         services.AddScoped<IAuthorizationHandler, AdminAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, LeoAuthorizationHandler>();

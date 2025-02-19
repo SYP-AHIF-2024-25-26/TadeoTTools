@@ -1,4 +1,5 @@
 ﻿using LeoAuth;
+using API;
 
 namespace API.Endpoints;
 
@@ -26,7 +27,7 @@ public static class UserEndpoints
 
         group.MapGet("/is-admin", () =>
             Results.Ok("You are an admin")
-        ).RequireAuthorization("IsAdmin");
+        ).RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapGet("/token-data", static (HttpContext httpContext) =>
         {

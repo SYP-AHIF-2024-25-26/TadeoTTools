@@ -19,6 +19,7 @@ public static class DivisionManagementApi
             .WithName(nameof(DivisionManagementEndpoints.CreateDivision))
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces<Division>()
+            .RequireAuthorization(Setup.AdminPolicyName)
             .DisableAntiforgery();
 
         group.MapDelete("api/divisions/{divisionId}", DivisionManagementEndpoints.DeleteDivisionById)
@@ -26,23 +27,26 @@ public static class DivisionManagementApi
             .WithName(nameof(DivisionManagementEndpoints.DeleteDivisionById))
             .WithDescription("Delete a Division by its id")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status200OK);
-        
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.AdminPolicyName);
+
         group.MapPut("api/divisions", DivisionManagementEndpoints.UpdateDivision)
             .AddEndpointFilter(DivisionManagementValidations.UpdateDivisionValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.UpdateDivision))
             .WithDescription("Update a division entity")
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status200OK);
-        
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.AdminPolicyName);
+
         group.MapPut("api/divisions/image", DivisionManagementEndpoints.UpdateDivisionImage)
             .AddEndpointFilter(DivisionManagementValidations.UpdateDivisionImageValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.UpdateDivisionImage))
             .WithDescription("Update the image of a division")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
-            .DisableAntiforgery();
+            .DisableAntiforgery()
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapGet("divisions/{divisionId}/image", DivisionManagementEndpoints.GetImageByDivisionId)
             .AddEndpointFilter(DivisionManagementValidations.DoesDivisionExistValidationAsync)
@@ -58,6 +62,7 @@ public static class DivisionManagementApi
             .WithName(nameof(DivisionManagementEndpoints.DeleteImage))
             .WithDescription("Delete an Image of an division")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status200OK);
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.AdminPolicyName);
     }
 }
