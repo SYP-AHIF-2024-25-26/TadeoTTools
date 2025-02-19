@@ -26,11 +26,6 @@ export class DivisionService {
         {
           name: division.name,
           color: division.color,
-        },
-        {
-          headers: {
-            'X-Api-Key': localStorage.getItem('API_KEY') || '',
-          },
         }
       )
     );
@@ -41,42 +36,25 @@ export class DivisionService {
     formData.append('id', id.toString());
     formData.append('image', image);
     await firstValueFrom(
-      this.httpClient.put(`${this.baseUrl}/api/divisions/image`, formData, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') || '',
-        },
-      })
+      this.httpClient.put(`${this.baseUrl}/api/divisions/image`, formData)
     );
   }
 
   async updateDivision(division: Division): Promise<void> {
     await firstValueFrom(
-      this.httpClient.put(`${this.baseUrl}/api/divisions`, division, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') || '',
-        },
-      })
+      this.httpClient.put(`${this.baseUrl}/api/divisions`, division)
     );
   }
 
   async deleteDivision(divisionId: number): Promise<void> {
     await firstValueFrom(
-      this.httpClient.delete(`${this.baseUrl}/api/divisions/${divisionId}`, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') || '',
-        },
-      })
+      this.httpClient.delete(`${this.baseUrl}/api/divisions/${divisionId}`)
     );
   }
   async deleteDivisionImg(divisionId: number): Promise<void> {
     await firstValueFrom(
       this.httpClient.delete(
-        `${this.baseUrl}/api/divisions/${divisionId}/image`,
-        {
-          headers: {
-            'X-Api-Key': localStorage.getItem('API_KEY') || '',
-          },
-        }
+        `${this.baseUrl}/api/divisions/${divisionId}/image`
       )
     );
   }

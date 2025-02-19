@@ -15,61 +15,9 @@ export class StopService {
 
   public async getStops(): Promise<Stop[]> {
     return firstValueFrom(
-      this.httpClient.get<Stop[]>(this.baseUrl + '/api/stops', {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-        },
-      })
+      this.httpClient.get<Stop[]>(this.baseUrl + '/api/stops')
     );
   }
-  /*
-    public async getPrivateStops() {
-        return firstValueFrom(
-            this.httpClient.get<Stop[]>(this.baseUrl + '/api/stops/private', {
-                headers: {
-                    'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-                },
-            })
-        );
-    }
-
-    async getStopsByid(id: number): Promise<Stop[]> {
-        return firstValueFrom(
-            this.httpClient.get<Stop[]>(this.baseUrl + `/stops/groups/${id}`)
-        );
-    }
-
-    updateStopOrder(stops: number[]) {
-        firstValueFrom(
-            this.httpClient.put(
-                this.baseUrl + '/api/stops/order', { order: stops }, {
-                    headers: {
-                        'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-                    },
-                }
-            )
-        );
-    }
-
-    async updateStopid(stop: Stop) {
-        return await firstValueFrom(
-            this.httpClient.put(
-                this.baseUrl + `/api/stops/` + stop.id,
-                {
-                    name: stop.name,
-                    description: stop.description,
-                    roomNr: stop.roomNr,
-                    id: stop.id,
-                    id: stop.id,
-                },
-                {
-                    headers: {
-                        'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-                    },
-                }
-            )
-        );
-    }*/
 
   async addStop(stop: {
     name: string;
@@ -79,40 +27,24 @@ export class StopService {
     stopGroupIDs: number[];
   }) {
     await firstValueFrom(
-      this.httpClient.post(this.baseUrl + '/api/stops', stop, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-        },
-      })
+      this.httpClient.post(this.baseUrl + '/api/stops', stop)
     );
   }
 
   async updateStop(stop: StopWithoutOrders) {
     await firstValueFrom(
-      this.httpClient.put(this.baseUrl + `/api/stops`, stop, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-        },
-      })
+      this.httpClient.put(this.baseUrl + `/api/stops`, stop)
     );
   }
   async updateStopWithoutOrder(stop: StopWithoutOrders) {
     await firstValueFrom(
-      this.httpClient.put(this.baseUrl + `/api/stops?updateOrder=false`, stop, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-        }
-      })
+      this.httpClient.put(this.baseUrl + `/api/stops?updateOrder=false`, stop)
     );
   }
 
   async deleteStop(id: number) {
     await firstValueFrom(
-      this.httpClient.delete(this.baseUrl + `/api/stops/${id}`, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-        },
-      })
+      this.httpClient.delete(this.baseUrl + `/api/stops/${id}`)
     );
   }
 }

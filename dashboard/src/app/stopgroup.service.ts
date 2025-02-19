@@ -15,21 +15,13 @@ export class StopGroupService {
 
   async getStopGroups(): Promise<StopGroup[]> {
     return firstValueFrom(
-      this.httpClient.get<StopGroup[]>(this.baseUrl + '/api/groups', {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-        },
-      })
+      this.httpClient.get<StopGroup[]>(this.baseUrl + '/api/groups')
     );
   }
 
   updateStopGroupOrder(stopGroups: number[]) {
     firstValueFrom(
-      this.httpClient.put(this.baseUrl + `/api/groups/order`, stopGroups, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-        },
-      })
+      this.httpClient.put(this.baseUrl + `/api/groups/order`, stopGroups)
     );
   }
 
@@ -39,32 +31,20 @@ export class StopGroupService {
     isPublic: boolean;
   }) {
     await firstValueFrom(
-      this.httpClient.post(this.baseUrl + '/api/groups', stopGroup, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-        },
-      })
+      this.httpClient.post(this.baseUrl + '/api/groups', stopGroup)
     );
   }
 
   async updateStopGroup(stopGroup: StopGroup) {
     console.log(typeof stopGroup.isPublic);
     await firstValueFrom(
-      this.httpClient.put(this.baseUrl + `/api/groups`, stopGroup, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-        },
-      })
+      this.httpClient.put(this.baseUrl + `/api/groups`, stopGroup)
     );
   }
 
   async deleteStopGroup(stopGroupID: number) {
     await firstValueFrom(
-      this.httpClient.delete(this.baseUrl + `/api/groups/${stopGroupID}`, {
-        headers: {
-          'X-Api-Key': localStorage.getItem('API_KEY') ?? '',
-        },
-      })
+      this.httpClient.delete(this.baseUrl + `/api/groups/${stopGroupID}`)
     );
   }
 }
