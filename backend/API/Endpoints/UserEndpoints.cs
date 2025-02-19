@@ -24,6 +24,10 @@ public static class UserEndpoints
             Results.Ok("Everyone is allowed to see this")
         ).AllowAnonymous();
 
+        group.MapGet("/is-admin", () =>
+            Results.Ok("You are an admin")
+        ).RequireAuthorization("IsAdmin");
+
         group.MapGet("/token-data", static (HttpContext httpContext) =>
         {
             var userInfo = httpContext.User.GetLeoUserInformation();

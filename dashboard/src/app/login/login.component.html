@@ -17,6 +17,10 @@
           color="primary">
     Check if backend recognizes you as a teacher
   </button>
+  <button mat-raised-button (click)="getRole('is-admin')" [disabled]="loading()"
+  color="primary">
+    Check if backend recognizes you as an admin
+  </button>
   <button mat-raised-button (click)="getRole('token-data')" [disabled]="loading()"
           color="primary">
     Get Token Data

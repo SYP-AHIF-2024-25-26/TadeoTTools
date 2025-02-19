@@ -69,13 +69,16 @@ internal static class Setup
         });
     }
 
-    public static void AddBasicLeoAuthorization(this IServiceCollection services)
+    public static void AddBasicAuthorization(this IServiceCollection services)
     {
         services.AddAuthorizationBuilder()
             .AddPolicy(nameof(LeoUserRole.Student), policy => policy.Requirements
                                               .Add(new LeoAuthRequirement(LeoUserRole.Student, true)))
             .AddPolicy(nameof(LeoUserRole.Teacher), policy => policy.Requirements
-                                              .Add(new LeoAuthRequirement(LeoUserRole.Teacher, true)));
+                                              .Add(new LeoAuthRequirement(LeoUserRole.Teacher, true)))
+            .AddPolicy("IsAdmin", policy => policy.Requirements
+                                              .Add(new AdminRequirement())); ;
+        services.AddScoped<IAuthorizationHandler, AdminAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, LeoAuthorizationHandler>();
     }
 }

@@ -26,7 +26,7 @@ builder.Services.AddScoped<StopFunctions>();
 builder.Services.AddScoped<TadeoTDbContext>();
 
 builder.Services.AddLeoAuthentication();
-builder.Services.AddBasicLeoAuthorization();
+builder.Services.AddBasicAuthorization();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithAuth();
