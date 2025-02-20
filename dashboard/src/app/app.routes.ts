@@ -6,6 +6,7 @@ import { DivisionDetailsComponent } from './detail-pages/division-details/divisi
 import { StopgroupDetailsComponent } from './detail-pages/stopgroup-details/stopgroup-details.component';
 import { StopDetailsComponent } from './detail-pages/stop-details/stop-details.component';
 import { StopsComponent } from './pages/stops/stops.component';
+import { StudentComponent } from './student/student.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -15,5 +16,6 @@ export const routes: Routes = [
   { path: 'division', component: DivisionDetailsComponent },
   { path: 'stopgroup', component: StopgroupDetailsComponent },
   { path: 'stop', component: StopDetailsComponent },
+  { path: 'student', component: StudentComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

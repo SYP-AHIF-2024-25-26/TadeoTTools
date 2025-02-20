@@ -1,21 +1,27 @@
-import { Component, inject, signal, OnInit, Signal, computed, WritableSignal } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginService } from '../login.service';
-import Keycloak from "keycloak-js";
+import Keycloak from 'keycloak-js';
+import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-login',
-    standalone: true,
-    imports: [FormsModule],
-    templateUrl: './login.component.html',
-    styleUrl: './login.component.css'
+  selector: 'app-login',
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
 })
 export class LoginComponent {
-
   public readonly response: WritableSignal<string | null> = signal(null);
   public readonly loading: WritableSignal<boolean> = signal(false);
 
   private service: LoginService = inject(LoginService);
+  private readonly router = inject(Router);
 
   private readonly keycloak = inject(Keycloak);
   protected isLoggedIn = this.keycloak.authenticated ?? false;
@@ -31,7 +37,6 @@ export class LoginComponent {
       return;
     }
     await this.keycloak.login();
-
   }
 
   public async logout(): Promise<void> {
@@ -43,5 +48,20 @@ export class LoginComponent {
 
   async getRole(call: string) {
     this.response.set(await this.service.performCall(call));
+  }
+
+  async goToPage() {
+    await this.getRole('is-admin');
+    if (this.response() && this.response()!.includes('admin')){
+      this.router.navigate(['/stopgroups']);
+    }
+    await this.getRole('is-teacher');
+    if (this.response() && this.response()!.includes('teacher')){
+      this.router.navigate(['/stop/1']); // TODO: go to correlating stop
+    }
+    await this.getRole('at-least-student');
+    if (this.response() && this.response()!.includes('student')){
+      this.router.navigate(['/student']);
+    }
   }
 }
