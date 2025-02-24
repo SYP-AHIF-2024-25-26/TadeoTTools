@@ -8,11 +8,10 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { CURRENT_STOP_GROUP_PREFIX, CURRENT_STOP_PREFIX } from '../constants';
 
 @Component({
-  selector: 'app-stop-description-page',
-  standalone: true,
-  imports: [DescriptionContainerComponent, HeaderComponent, BreadcrumbComponent, NavbarComponent],
-  templateUrl: './stop-description-page.component.html',
-  styleUrl: './stop-description-page.component.css',
+    selector: 'app-stop-description-page',
+    imports: [DescriptionContainerComponent, HeaderComponent, BreadcrumbComponent, NavbarComponent],
+    templateUrl: './stop-description-page.component.html',
+    styleUrl: './stop-description-page.component.css'
 })
 export class StopDescriptionPageComponent {
   private router = inject(Router);

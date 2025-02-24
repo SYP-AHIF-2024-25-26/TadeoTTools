@@ -1,19 +1,25 @@
-<div class="flex h-screen w-full flex-col justify-start overflow-y-scroll bg-gray-50">
+<div class="flex w-full flex-col justify-start overflow-y-scroll bg-gray-50">
   <div>
-    <app-header></app-header>
+    <app-header />
   </div>
-  <div class="h-full flex flex-col justify-center">
-    @for (group of groups(); track group.id) {
-      <app-guide-card
-        class="mt-6"
-        [stopGroup]="group"
-        [id]="group.id.toString()"
-        [ngClass]="{ 'mb-28': groups().indexOf(group) === groups().length - 1 }"
-        (openStopPage)="openStopPage(group)"
-      >
-      </app-guide-card>
+  <div class="h-full flex flex-col justify-center mb-28">
+    @if(showResetButton()) {
+      @for (group of groups(); track group.id) {
+        <app-guide-card
+          class="mt-6"
+          [stopGroup]="group"
+          [id]="group.id.toString()"
+          (openStopPage)="openStopPage(group)"
+        >
+        </app-guide-card>
+      }
+
+      <button class="mt-8 h-10 mx-4 text-base font-medium rounded-2xl bg-orange-500 text-white" (click)="resetGuideApp()">
+        Leitfaden zurücksetzen
+      </button>
     }
   </div>
+
   <div class="fixed bottom-0 left-0 right-0 mx-2">
     <app-navbar [mode]="'station'" />
   </div>

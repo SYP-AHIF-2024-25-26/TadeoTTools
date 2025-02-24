@@ -1,4 +1,4 @@
-<div class="flex h-screen w-full flex-col space-y-reverse overflow-y-scroll bg-gray-50">
+<div class="flex min-h-screen w-full flex-col space-y-reverse overflow-y-scroll bg-gray-50">
   <div>
     <app-header [showWelcomeText]="false"></app-header>
   </div>
@@ -19,9 +19,9 @@
         ></app-stop-card>
       }
     } @else if (stops().length === 1) {
-      <app-description-container [title]="stops()[0].name" [description]="stops()[0].description" [roomNr]="stops()[0].roomNr" />
+      <app-description-container class="mb-28" [title]="stops()[0].name" [description]="stops()[0].description" [roomNr]="stops()[0].roomNr" />
     } @else {
-      <app-description-container [title]="parentStopGroup().name" [description]="parentStopGroup().description" />
+      <app-description-container class="mb-28" [title]="parentStopGroup().name" [description]="parentStopGroup().description" />
     }
   </div>
   <div class="fixed bottom-0 left-0 right-0 mx-2">

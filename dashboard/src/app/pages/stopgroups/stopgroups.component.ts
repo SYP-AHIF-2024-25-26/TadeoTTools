@@ -43,6 +43,7 @@ export class StopGroupsComponent {
   stopIdToRemove: number = -1;
   stopGroupToRemoveFrom: StopGroup | undefined = undefined;
 
+  showPrivateStopGroups = signal<boolean>(true);
   showStops = signal<boolean>(true);
   showRemoveStopPopup = signal<boolean>(false);
   showRemoveGroupPopup = signal<boolean>(false);

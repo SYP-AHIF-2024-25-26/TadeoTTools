@@ -1,11 +1,13 @@
-<div class="flex h-screen w-full flex-col justify-start overflow-x-hidden overflow-y-scroll bg-gray-50">
-  <app-header />
+<div class="flex min-h-screen w-full flex-col overflow-y-scroll bg-gray-50">
+  <div>
+    <app-header />
+  </div>
 
   <app-breadcrumb [name]="currentStopGroup().name" [stopGroupId]="currentStopGroup().id" />
 
-  <app-description-container [title]="stop().name" [description]="stop().description" [roomNr]="stop().roomNr" [divisionIds]="stop().divisionIds" />
+  <app-description-container class="mb-28" [title]="stop().name" [description]="stop().description" [roomNr]="stop().roomNr" [divisionIds]="stop().divisionIds" />
 
-  <div class="fixed bottom-0 left-0 right-0 mx-2">
-    <app-navbar [mode]="'station'" />
-  </div>
+</div>
+<div class="fixed bottom-0 left-0 right-0 mx-2">
+  <app-navbar [mode]="'station'" />
 </div>
