@@ -48,6 +48,7 @@ export class StopGroupsComponent {
   showStopsForStopGroup = signal<StopsShownInStopGroup[]>([]);
   showRemoveStopPopup = signal<boolean>(false);
   showRemoveGroupPopup = signal<boolean>(false);
+  onlyPublicGroups = signal<boolean>(false);
 
   divisionFilter = signal<number>(0);
 
