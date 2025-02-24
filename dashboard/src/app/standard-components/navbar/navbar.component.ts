@@ -14,11 +14,6 @@ export class NavbarComponent {
   private readonly router = inject(Router);
 
   async logout() {
-    if (!this.keycloak.authenticated) {
-      return;
-    }
-
-    await this.keycloak.logout();
-    this.router.navigate(['/login']);
+    await this.keycloak.logout({ redirectUri: window.location.origin + '/login' });
   }
 }

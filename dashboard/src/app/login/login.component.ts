@@ -54,14 +54,16 @@ export class LoginComponent {
     await this.getRole('is-admin');
     if (this.response() && this.response()!.includes('admin')){
       this.router.navigate(['/stopgroups']);
-    }
-    await this.getRole('is-teacher');
-    if (this.response() && this.response()!.includes('teacher')){
-      this.router.navigate(['/stop/1']); // TODO: go to correlating stop
-    }
-    await this.getRole('at-least-student');
-    if (this.response() && this.response()!.includes('student')){
-      this.router.navigate(['/student']);
+    } else {
+      await this.getRole('is-teacher');
+      if (this.response() && this.response()!.includes('teacher')){
+        this.router.navigate(['/stop/1']); // TODO: go to correlating stop
+      } else {
+        await this.getRole('at-least-student');
+        if (this.response() && this.response()!.includes('student')){
+          this.router.navigate(['/student']);
+        }
+      }
     }
   }
 }
