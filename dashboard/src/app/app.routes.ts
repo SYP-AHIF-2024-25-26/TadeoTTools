@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
-import { StopGroupsComponent } from './stopgroups/stopgroups.component';
-import { DivisionsListComponent } from './divisions-list/divisions-list.component';
-import { DivisionDetailsComponent } from './division-details/division-details.component';
-import { StopgroupDetailsComponent } from './stopgroup-details/stopgroup-details.component';
-import { StopDetailsComponent } from './stop-details/stop-details.component';
-import { StopsComponent } from './stops/stops.component';
+import { StopGroupsComponent } from './pages/stopgroups/stopgroups.component';
+import { DivisionsListComponent } from './pages/divisions-list/divisions-list.component';
+import { DivisionDetailsComponent } from './detail-pages/division-details/division-details.component';
+import { StopgroupDetailsComponent } from './detail-pages/stopgroup-details/stopgroup-details.component';
+import { StopDetailsComponent } from './detail-pages/stop-details/stop-details.component';
+import { StopsComponent } from './pages/stops/stops.component';
+import { StudentComponent } from './pages/student/student.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -15,5 +16,6 @@ export const routes: Routes = [
   { path: 'division', component: DivisionDetailsComponent },
   { path: 'stopgroup', component: StopgroupDetailsComponent },
   { path: 'stop', component: StopDetailsComponent },
+  { path: 'student', component: StudentComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

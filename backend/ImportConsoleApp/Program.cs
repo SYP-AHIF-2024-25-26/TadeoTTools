@@ -15,14 +15,6 @@ public class Program
         await context.Database.EnsureDeletedAsync();
         await context.Database.EnsureCreatedAsync();
 
-
-        Console.WriteLine("Generating a new api key ...");
-        var apiKeyFunctions = new APIKeyFunctions(context);
-        if ((await apiKeyFunctions.GetAllAPIKeys()).Count <= 0)
-        {
-            await apiKeyFunctions.AddAPIKey(new APIKey { APIKeyValue = APIKeyGenerator.GenerateApiKey() });
-        }
-
         Console.WriteLine("Importing data ...");
 
         await CsvImporter.ImportCsvFileAsync(path ?? "TdoT_Stationsplanung_2025.csv", context);
@@ -33,16 +25,16 @@ public class Program
         Console.WriteLine("Imported " + context.StopGroupAssignments.Count() + " stop group assignments");
     }
 
-    public async static Task Main(string?[] args)
+    public static async Task Main(string?[] args)
     {
         if (args.Length > 0)
         {
-            string currentPath = Directory.GetCurrentDirectory();
-            string? parentPath = Directory.GetParent(currentPath)?.FullName;
+            var currentPath = Directory.GetCurrentDirectory();
+            var parentPath = Directory.GetParent(currentPath)?.FullName;
             if (parentPath != null)
             {
-                string importCsvPath = Path.Combine(parentPath, "ImportConsoleApp");
-                string csvFilePath = Path.Combine(importCsvPath, "TdoT_Stationsplanung_2025.csv");
+                var importCsvPath = Path.Combine(parentPath, "ImportConsoleApp");
+                var csvFilePath = Path.Combine(importCsvPath, "TdoT_Stationsplanung_2025.csv");
                 await InitDb(csvFilePath);
             }
         } else

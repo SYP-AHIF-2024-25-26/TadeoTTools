@@ -11,6 +11,7 @@ public static class DivisionManagementEndpoints
     {
         return Results.Ok(await DivisionFunctions.GetAllDivisionsWithoutImageAsync(context));
     }
+    
     public static async Task<IResult> CreateDivision(TadeoTDbContext context, [FromForm] string name,
         [FromForm] string color, IFormFile? image)
     {
@@ -31,6 +32,7 @@ public static class DivisionManagementEndpoints
         await context.SaveChangesAsync();
         return Results.Ok(division);
     }
+    
     public static async Task<IResult> UpdateDivision(TadeoTDbContext context, UpdateDivisionDto dto)
     {
         var division = await context.Divisions.FindAsync(dto.Id);
@@ -41,6 +43,7 @@ public static class DivisionManagementEndpoints
         await context.SaveChangesAsync();
         return Results.Ok();
     }
+    
     public static async Task<IResult> UpdateDivisionImage(TadeoTDbContext context,
         [FromForm] UpdateDivisionImageDto dto)
     {
@@ -53,23 +56,12 @@ public static class DivisionManagementEndpoints
         await context.SaveChangesAsync();
         return Results.Ok();
     }
+    
     public static async Task<IResult> DeleteDivisionById(TadeoTDbContext context, int divisionId)
     {
         var division = await context.Divisions.FindAsync(divisionId);
         
         context.Divisions.Remove(division!);
-        await context.SaveChangesAsync();
-        return Results.Ok();
-    }
-    public static async Task<IResult> DeleteDivisionImage(TadeoTDbContext context, int divisionId)
-    {
-        var division = await context.Divisions.FindAsync(divisionId);
-        if (division == null)
-        {
-            return Results.NotFound();
-        }
-
-        division.Image = null;
         await context.SaveChangesAsync();
         return Results.Ok();
     }
@@ -79,6 +71,7 @@ public static class DivisionManagementEndpoints
         
         return image != null ? Results.File(image, "image/png") : Results.NotFound();
     }
+    
     public static async Task<IResult> DeleteImage(TadeoTDbContext context, int divisionId)
     {
         var division = await context.Divisions.FindAsync(divisionId);
