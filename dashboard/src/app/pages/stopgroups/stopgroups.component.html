@@ -1,4 +1,5 @@
-<div class="bg-white flex justify-between pr-10 pl-10 pt-2 sticky top-10">
+<div class="bg-white flex justify-between pr-10 pl-10 pt-2 sticky">
+
   <div>
     <button
       (click)="saveChanges()"
@@ -16,18 +17,21 @@
     </button>
 
     <button
-      (click)="showStops.set(!showStops())"
+      (click)="toggleShowStops()"
       class="bg-htl-orange h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400"
     >
-      Show Stops
+      Collapse All
     </button>
 
-    <button
-      (click)="showPrivateStopGroups.set(!showPrivateStopGroups())"
+    <input
+      (click)="onlyPublicGroups.set(!onlyPublicGroups())"
       class="bg-htl-orange h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400"
+      type="checkbox"
+      value="Show Private Groups"
+      id="only-public-groups"
     >
-      Private StopGroups
-    </button>
+    <label for="only-public-groups">Show Private Groups</label>
+
   </div>
 
   <div>
@@ -50,10 +54,17 @@
 <div class="flex">
   <div (cdkDropListDropped)="dropGroup($event)" cdkDropList class="w-2/3">
     @for (group of stopGroups(); track group) {
-      @if (group.isPublic || showPrivateStopGroups()) {
+      @if (!onlyPublicGroups() || group.isPublic) {
         <div class="bg-gray-100 p-5 m-10 rounded-xl" cdkDrag>
           <div class="flex justify-between">
             <div>
+              <button (click)="toggleShowStop(group.id)">
+                @if (shouldStopsBeShown(group.id)) {
+                  -
+                } @else {
+                  >
+                }
+              </button>
               <p class="font-bold">{{ group.name }}</p>
               <p>{{ group.description }}</p>
             </div>
@@ -64,14 +75,13 @@
             id: group.id,
             name: group.name,
             description: group.description,
-            isPublic: group.isPublic,
-            stopIds: group.stopIds
+            isPublic: group.isPublic
           }"
             >
               Details
             </button>
           </div>
-          @if (showStops()) {
+          @if (shouldStopsBeShown(group.id)) {
             <div
               class="flex flex-col m-5 bg-gray-50 p-4 rounded-xl"
               cdkDropList
@@ -127,7 +137,7 @@
     <div
       [cdkDropListConnectedTo]="getDropGroups()"
       cdkDropList
-      class="bg-gray-100 p-5 m-10 rounded-xl"
+      class="bg-gray-100 p-5 m-10 rounded-xl h-[80vh] overflow-x-scroll"
       id="all-stops"
     >
       <p>Unassigned Stops</p>
