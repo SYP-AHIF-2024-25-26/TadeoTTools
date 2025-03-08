@@ -91,6 +91,20 @@ try
     {
         app.Logger.LogInformation("Database already contains data.");
     }
+
+    if (await context.Students.CountAsync() == 0)
+    {
+        app.Logger.LogInformation("Importing Students data ...");
+        // Students.csv just for testing purposes right now
+        await CsvImporter.ImportStudentsAsync("Students.csv", context);
+    }
+
+    if (await context.Teachers.CountAsync() == 0)
+    {
+        app.Logger.LogInformation("Importing Teachers data ...");
+        // Teachers.csv just for testing purposes right now
+        await CsvImporter.ImportTeachersAsync("Teachers.csv", context);
+    }
 } catch (Exception e)
 {
     app.Logger.LogError(e.Message);

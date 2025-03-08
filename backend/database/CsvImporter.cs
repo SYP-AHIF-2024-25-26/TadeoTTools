@@ -81,4 +81,41 @@ public class CsvImporter
         await context.Stops.AddRangeAsync(stops);
         await context.SaveChangesAsync();
     }
+    
+    public static async Task ImportStudentsAsync(string path, TadeoTDbContext context)
+    {
+        var lines = await File.ReadAllLinesAsync(path);
+        var students = lines
+            .Skip(1)
+            .Select(line => line.Split(';'))
+            .Select(cols => new Student
+            {
+                EdufsUsername = cols[0],
+                FirstName = cols[1],
+                LastName = cols[2],
+                StudentClass = cols[3],
+                Department = cols[4],
+            });
+        
+        await context.Students.AddRangeAsync(students);
+        await context.SaveChangesAsync();
+    }
+
+    public static async Task ImportTeachersAsync(string path, TadeoTDbContext context)
+    {
+        var lines = await File.ReadAllLinesAsync(path);
+
+        var teachers = lines
+            .Skip(1)
+            .Select(line => line.Split(';'))
+            .Select(cols => new Teacher
+            {
+                EdufsUsername = cols[0],
+                FirstName = cols[1],
+                LastName = cols[2],
+            });
+
+        await context.Teachers.AddRangeAsync(teachers);
+        await context.SaveChangesAsync();
+    }
 }
