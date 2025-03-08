@@ -1,25 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
 namespace Database.Repository;
 
-public static class TadeoTDbContextFactory
+public class TadeoTDbContextFactory : IDesignTimeDbContextFactory<TadeoTDbContext>
 {
-    public static TadeoTDbContext CreateDbContext()
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<TadeoTDbContext>();
-        optionsBuilder.UseMySql(GetConnectionString(), ServerVersion.AutoDetect(GetConnectionString()));
-
-        return new TadeoTDbContext(optionsBuilder.Options);
-    }
-
     private static string GetConnectionString()
     {
         var config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
 
-        var connectionString = config["ConnectionStrings:DefaultConnection"];
+        var connectionString = config.GetConnectionString("DefaultConnection");
         if (!string.IsNullOrEmpty(connectionString))
         {
             return connectionString;
@@ -32,5 +25,13 @@ public static class TadeoTDbContextFactory
         var password = config["Database:Password"];
 
         return $"Server={serverName};Port={serverPort};Database={databaseName};User={username};Password={password};";
+    }
+
+    public TadeoTDbContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<TadeoTDbContext>();
+        optionsBuilder.UseMySql(GetConnectionString(), ServerVersion.AutoDetect(GetConnectionString()));
+
+        return new TadeoTDbContext(optionsBuilder.Options);
     }
 }

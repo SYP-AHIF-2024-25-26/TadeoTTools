@@ -7,10 +7,11 @@ namespace ImportConsoleApp;
 
 public class Program
 {
-    private static async Task InitDb(string? path)
+    private static async Task InitDb(string? path, string[] args)
     {
         Console.WriteLine("Recreate database ...");
-        using var context = TadeoTDbContextFactory.CreateDbContext();
+        var factory = new TadeoTDbContextFactory();
+        using var context = factory.CreateDbContext(args);
 
         await context.Database.EnsureDeletedAsync();
         await context.Database.EnsureCreatedAsync();
@@ -35,11 +36,11 @@ public class Program
             {
                 var importCsvPath = Path.Combine(parentPath, "ImportConsoleApp");
                 var csvFilePath = Path.Combine(importCsvPath, "TdoT_Stationsplanung_2025.csv");
-                await InitDb(csvFilePath);
+                await InitDb(csvFilePath, args);
             }
         } else
         {
-            await InitDb(null);
+            await InitDb(null, args);
         }
     }
 }
