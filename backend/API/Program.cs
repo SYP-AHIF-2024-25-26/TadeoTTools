@@ -82,8 +82,7 @@ try
 {
     app.Logger.LogInformation("Ensure database is created...");
     await context!.Database.EnsureCreatedAsync();
-    var divisions = await context.Divisions.CountAsync();
-    if (divisions == 0)
+    if (await context.Divisions.AnyAsync())
     {
         app.Logger.LogInformation("Importing data ...");
         await CsvImporter.ImportCsvFileAsync("TdoT_Stationsplanung_2025.csv", context);
@@ -92,14 +91,14 @@ try
         app.Logger.LogInformation("Database already contains data.");
     }
 
-    if (await context.Students.CountAsync() == 0)
+    if (!await context.Students.AnyAsync())
     {
         app.Logger.LogInformation("Importing Students data ...");
         // Students.csv just for testing purposes right now
         await CsvImporter.ImportStudentsAsync("Students.csv", context);
     }
 
-    if (await context.Teachers.CountAsync() == 0)
+    if (!await context.Teachers.AnyAsync())
     {
         app.Logger.LogInformation("Importing Teachers data ...");
         // Teachers.csv just for testing purposes right now
