@@ -82,7 +82,7 @@ try
 {
     app.Logger.LogInformation("Ensure database is created...");
     await context!.Database.EnsureCreatedAsync();
-    if (await context.Divisions.AnyAsync())
+    if (!await context.Divisions.AnyAsync())
     {
         app.Logger.LogInformation("Importing data ...");
         await CsvImporter.ImportCsvFileAsync("TdoT_Stationsplanung_2025.csv", context);
