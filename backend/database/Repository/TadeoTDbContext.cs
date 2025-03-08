@@ -11,4 +11,6 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<Division> Divisions { get; set; }
     public DbSet<StopStatistic> StopStatistics { get; set; }
     public DbSet<Admin> Admins { get; set; }
+    public DbSet<Student> Students { get; set; }
+    public DbSet<Teacher> Teachers { get; set; }
 }
