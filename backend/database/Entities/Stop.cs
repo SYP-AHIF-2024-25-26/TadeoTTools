@@ -17,5 +17,4 @@ public class Stop
     public List<Division> Divisions { get; set; } = [];
     public List<StopGroupAssignment> StopGroupAssignments { get; set; } = [];
     public List<StudentAssignment> StudentAssignments { get; set; } = [];
-
 }

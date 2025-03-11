@@ -22,7 +22,7 @@ export class LoginService {
   constructor() {}
 
   public performCall(action: string): Promise<string> {
-    const route = this.baseUrl + `/api/${action}`;
+    const route = this.baseUrl + `/api/users/${action}`;
     return firstValueFrom(
       this.httpClient
         .get(route, { responseType: 'text' })
