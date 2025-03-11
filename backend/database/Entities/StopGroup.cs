@@ -13,5 +13,5 @@ public class StopGroup
     public required string Description { get; set; }
     public required bool IsPublic { get; set; }
 
-    public List<StopGroupAssignment> StopAssignments { get; set; } = new();
+    public List<StopGroupAssignment> StopAssignments { get; set; } = [];
 }
