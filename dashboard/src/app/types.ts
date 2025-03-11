@@ -8,6 +8,13 @@ export type Stop = {
   orders: number[];
 };
 
+export type StopOfStudent = {
+  name: string;
+  status: string,
+  description: string;
+  roomNr: string;
+}
+
 export type StopWithoutOrders = {
   id: number;
   name: string;

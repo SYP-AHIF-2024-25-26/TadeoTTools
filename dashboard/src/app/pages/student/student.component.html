@@ -1,1 +1,10 @@
-<p>student works!</p>
+<h2>Welcome to the TadeoT Stop Management!</h2>
+<div>This are your possible stops:</div>
+@for(stop of stops(); track $index) {
+  <div>
+    <p>Name:        {{ stop.name }}</p>
+    <p>Description: {{ stop.description }}</p>
+    <p>Room Number: {{ stop.roomNr }}</p>
+    <p>Status:      {{stop.status}}</p>
+  </div>
+}

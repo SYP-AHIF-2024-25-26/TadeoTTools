@@ -1,13 +1,16 @@
 ﻿using LeoAuth;
-using API;
+using Database.Repository;
+using System.Security.Cryptography.X509Certificates;
+using API.Endpoints.StopGroupManagement;
+using Microsoft.AspNetCore.Mvc;
 
-namespace API.Endpoints;
+namespace API.Endpoints.UserManagement;
 
-public static class UserEndpoints
+public static class UserManagementApi
 {
     public static void MapUserEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("v1/api");
+        var group = app.MapGroup("v1/api/users");
 
         group.MapGet("/at-least-logged-in", () =>
             Results.Ok("You are at least logged in")
@@ -33,40 +36,17 @@ public static class UserEndpoints
         {
             var userInfo = httpContext.User.GetLeoUserInformation();
             return userInfo.Match(
-                user => Results.Ok(GetUserInfo(user)),
+                user => Results.Ok(UserManagementEndpoints.GetUserInfo(user)),
                 _ => Results.BadRequest("User information not found")
             );
         }).RequireAuthorization();
-    }
 
-    private static List<string> GetUserInfo(LeoUser user)
-    {
-        List<string> data = [];
 
-        user.Username.Switch(username => data.Add($"username: {username}"), _ => { });
-
-        var name = user.Name.Match(
-            fullName => fullName.Name,
-            firstNameOnly => firstNameOnly.FirstName,
-            lastNameOnly => lastNameOnly.LastName,
-            _ => string.Empty
-        );
-        if (!string.IsNullOrEmpty(name))
-        {
-            data.Add($"Name: {name}");
-        }
-
-        user.Department.Switch(department => data.Add($"department: {department.Name}"), _ => { });
-
-        string? role = user.IsStudent ? "Student" :
-                       user.IsTeacher ? "Teacher" :
-                       user.IsTestUser ? "Test User" : null;
-
-        if (role != null)
-        {
-            data.Add($"role: {role}");
-        }
-
-        return data;
+        group.MapPut("correlating-stops", UserManagementEndpoints.GetCorrelatingStops)
+            .WithName(nameof(UserManagementEndpoints.GetCorrelatingStops))
+            .WithDescription("Get the correlating stops of a student")
+            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(nameof(LeoUserRole.Student));
     }
 }
