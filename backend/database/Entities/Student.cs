@@ -12,5 +12,5 @@ public class Student
     public string StudentClass { get; set; } = string.Empty;
     public string Department { get; set; } = string.Empty;
     public List<Stop> Stops { get; set; } = [];
-    public List<StudentFunctions> StudentAssignments { get; set; } = [];
+    public List<StudentAssignment> StudentAssignments { get; set; } = [];
 }
