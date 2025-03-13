@@ -42,7 +42,7 @@ public static class UserManagementApi
         }).RequireAuthorization();
 
 
-        group.MapPut("correlating-stops", UserManagementEndpoints.GetCorrelatingStops)
+        group.MapGet("/correlating-stops", UserManagementEndpoints.GetCorrelatingStops)
             .WithName(nameof(UserManagementEndpoints.GetCorrelatingStops))
             .WithDescription("Get the correlating stops of a student")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
