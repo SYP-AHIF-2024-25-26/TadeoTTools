@@ -4,10 +4,10 @@ import { NgClass, NgIf } from '@angular/common';
 import { GUIDE_CARD_PREFIX, MANUAL_CHECK_PREFIX } from '../constants';
 
 @Component({
-    selector: 'app-checkbox',
-    imports: [FormsModule, NgClass, NgIf],
-    templateUrl: './checkbox.component.html',
-    styleUrl: './checkbox.component.css'
+  selector: 'app-checkbox',
+  imports: [FormsModule, NgClass, NgIf],
+  templateUrl: './checkbox.component.html',
+  styleUrl: './checkbox.component.css',
 })
 export class CheckboxComponent {
   @Input() id!: string;

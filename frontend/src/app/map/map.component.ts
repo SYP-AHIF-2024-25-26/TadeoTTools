@@ -3,10 +3,10 @@ import { HeaderComponent } from '../header/header.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
-    selector: 'app-map',
-    templateUrl: './map.component.html',
-    styleUrl: './map.component.css',
-    imports: [HeaderComponent, NavbarComponent]
+  selector: 'app-map',
+  templateUrl: './map.component.html',
+  styleUrl: './map.component.css',
+  imports: [HeaderComponent, NavbarComponent],
 })
 export class MapComponent {
   @Input() roomNr: string | undefined;
