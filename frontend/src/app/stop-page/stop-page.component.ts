@@ -11,10 +11,10 @@ import { DescriptionContainerComponent } from '../description-container/descript
 import { CURRENT_STOP_GROUP_PREFIX, CURRENT_STOP_PREFIX, STOP_GROUP_PROGRESS_PREFIX, STOPS_COUNT_PREFIX } from '../constants';
 
 @Component({
-    selector: 'app-stop-page',
-    imports: [HeaderComponent, NavbarComponent, BreadcrumbComponent, StopCardComponent, NgClass, DescriptionContainerComponent],
-    templateUrl: './stop-page.component.html',
-    styleUrl: './stop-page.component.css'
+  selector: 'app-stop-page',
+  imports: [HeaderComponent, NavbarComponent, BreadcrumbComponent, StopCardComponent, NgClass, DescriptionContainerComponent],
+  templateUrl: './stop-page.component.html',
+  styleUrl: './stop-page.component.css',
 })
 export class StopPageComponent {
   protected apiFetchService = inject(ApiFetchService);
@@ -24,7 +24,15 @@ export class StopPageComponent {
   parentStopGroup: WritableSignal<StopGroup> = signal({} as StopGroup);
   stops: WritableSignal<Stop[]> = signal([]);
   divisions: WritableSignal<Division[]> = signal([]);
-  divisionIds: Signal<number[]> = computed(() => Array.from(new Set(this.stops().flatMap((stop) => stop.divisionIds).sort((a, b) => a - b))));
+  divisionIds: Signal<number[]> = computed(() =>
+    Array.from(
+      new Set(
+        this.stops()
+          .flatMap((stop) => stop.divisionIds)
+          .sort((a, b) => a - b)
+      )
+    )
+  );
 
   async ngOnInit() {
     if (this.stopGroupId === undefined) {

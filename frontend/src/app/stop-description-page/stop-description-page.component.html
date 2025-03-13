@@ -5,8 +5,13 @@
 
   <app-breadcrumb [name]="currentStopGroup().name" [stopGroupId]="currentStopGroup().id" />
 
-  <app-description-container class="mb-28" [title]="stop().name" [description]="stop().description" [roomNr]="stop().roomNr" [divisionIds]="stop().divisionIds" />
-
+  <app-description-container
+    class="mb-28"
+    [title]="stop().name"
+    [description]="stop().description"
+    [roomNr]="stop().roomNr"
+    [divisionIds]="stop().divisionIds"
+  />
 </div>
 <div class="fixed bottom-0 left-0 right-0 mx-2">
   <app-navbar [mode]="'station'" />

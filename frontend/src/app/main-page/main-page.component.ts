@@ -8,10 +8,10 @@ import { Router } from '@angular/router';
 import { CURRENT_STOP_GROUP_PREFIX } from '../constants';
 
 @Component({
-    selector: 'app-main-page',
+  selector: 'app-main-page',
   imports: [NavbarComponent, HeaderComponent, GuideCardComponent],
-    templateUrl: './main-page.component.html',
-    styleUrl: './main-page.component.css'
+  templateUrl: './main-page.component.html',
+  styleUrl: './main-page.component.css',
 })
 export class MainPageComponent {
   private apiFetchService = inject(ApiFetchService);
