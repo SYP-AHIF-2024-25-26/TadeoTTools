@@ -16,5 +16,5 @@ public class Division
     [Column(TypeName = "MEDIUMBLOB")]
     public byte[]? Image { get; set; }
 
-    public List<Stop> Stops { get; set; } = new();
+    public List<Stop> Stops { get; set; } = [];
 }

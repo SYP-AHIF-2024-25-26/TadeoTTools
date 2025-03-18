@@ -1,15 +1,17 @@
 <app-header [showWelcomeText]="false" />
-<div class="min-h-screen w-full bg-gray-50 flex justify-start p-4">
-
-
-  <div class="max-w-3xl mx-auto text-center space-y-8 mt-16">
-    <h1 class="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl animate-gradient bg-gradient-to-r from-informatic-blue via-electronics-red to-medicin-technology-yellow bg-clip-text text-transparent">
+<div class="flex min-h-screen w-full flex-col justify-start bg-gray-50 p-4">
+  <div class="mx-auto mt-16 max-w-3xl space-y-8 text-center">
+    <h1
+      class="animate-gradient bg-gradient-to-r from-informatic-blue via-electronics-red to-medicin-technology-yellow bg-clip-text text-4xl font-bold tracking-tighter text-transparent sm:text-5xl md:text-6xl lg:text-7xl"
+    >
       Wir sind bald zurück
     </h1>
 
-    <p class="text-xl font-medium max-w-[600px] mx-auto text-black">
+    <p class="mx-auto max-w-[600px] text-xl font-medium text-black">
       Unsere Website wird aktualisiert und ist am nächsten Tag der offenen Tür wieder verfügbar.
     </p>
-
+  </div>
+  <div class="mt-16 self-center">
+    <app-countdown [targetDate]="targetDate" />
   </div>
 </div>

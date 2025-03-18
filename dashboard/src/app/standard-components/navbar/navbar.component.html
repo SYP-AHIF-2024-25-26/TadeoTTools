@@ -1,13 +1,18 @@
 <div class="sticky">
   <nav class="bg-htl-orange text-white p-2 flex items-center space-x-10">
-    <div class="flex space-x-10">
-      <div class="text-lg mr-auto">Admin Dashboard</div>
-      <button [routerLink]="['/stopgroups']">StopGroups</button>
+    <div class="flex space-x-10 w-full justify-start">
+      <div class="text-lg">Admin Dashboard</div>
+      <button class="justify-start" [routerLink]="['/stopgroups']">StopGroups</button>
       <button [routerLink]="['/stops']">Stops</button>
       <button [routerLink]="['/divisions']">Divisions</button>
     </div>
-    <button (click)="logout()" class="ml-auto">
-      Logout
-    </button>
+    @if (!isAdmin()) {
+      <button (click)="logout()" class="justify-start">
+        Logout
+      </button>
+    }
+    @else {
+      <app-admin-dropdown />
+    }
   </nav>
 </div>

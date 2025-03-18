@@ -57,7 +57,7 @@ export class LoginComponent {
     } else {
       await this.getRole('is-teacher');
       if (this.response() && this.response()!.includes('teacher')){
-        this.router.navigate(['/stop/1']); // TODO: go to correlating stop
+        this.router.navigate(['/teacher']); // TODO: go to correlating stop
       } else {
         await this.getRole('at-least-student');
         if (this.response() && this.response()!.includes('student')){

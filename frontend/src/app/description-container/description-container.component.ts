@@ -3,10 +3,10 @@ import { Router } from '@angular/router';
 import { BASE_URL } from '../app.config';
 
 @Component({
-    selector: 'app-description-container',
-    imports: [],
-    templateUrl: './description-container.component.html',
-    styleUrl: './description-container.component.css'
+  selector: 'app-description-container',
+  imports: [],
+  templateUrl: './description-container.component.html',
+  styleUrl: './description-container.component.css',
 })
 export class DescriptionContainerComponent {
   @Input({ required: true }) title!: string;
