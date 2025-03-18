@@ -10,10 +10,17 @@ export type Stop = {
 
 export type StopOfStudent = {
   name: string;
-  status: string,
+  status: Status,
   description: string;
   roomNr: string;
 }
+
+export enum Status {
+  Pending,
+  Accepted,
+  Declined
+}
+
 
 export type StopWithoutOrders = {
   id: number;

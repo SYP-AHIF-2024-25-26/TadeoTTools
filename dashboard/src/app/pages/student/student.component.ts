@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
-import { LoginService } from '../../login.service';
 import { StopOfStudent } from '../../types';
 import { StopService } from '../../stop.service';
+import { Status } from '../../types';
 
 @Component({
   selector: 'app-student',
@@ -17,5 +17,9 @@ export class StudentComponent {
   async ngOnInit() {
     this.stops.set(await this.service.getStopsOfStudent());
   }
-
+  getStatusName(status: Status): string {
+    console.log('status', status);
+    console.log(Status[status]);
+    return Status[status];
+  }
 }
