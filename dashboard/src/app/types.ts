@@ -8,6 +8,20 @@ export type Stop = {
   orders: number[];
 };
 
+export type StopOfStudent = {
+  name: string;
+  status: Status,
+  description: string;
+  roomNr: string;
+}
+
+export enum Status {
+  Pending,
+  Accepted,
+  Declined
+}
+
+
 export type StopWithoutOrders = {
   id: number;
   name: string;

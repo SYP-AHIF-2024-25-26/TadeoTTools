@@ -3,6 +3,7 @@ using API.Endpoints;
 using API.Endpoints.DivisionManagement;
 using API.Endpoints.StopGroupManagement;
 using API.Endpoints.StopManagement;
+using API.Endpoints.UserManagement;
 using Database;
 using Database.Repository;
 using Database.Repository.Functions;
@@ -17,7 +18,7 @@ builder.Logging.ClearProviders().AddConsole();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<TadeoTDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))); //ServiceLifetime Transient
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))); // ServiceLifetime Transient
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
