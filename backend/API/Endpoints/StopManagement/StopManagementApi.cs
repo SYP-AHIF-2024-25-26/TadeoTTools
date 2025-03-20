@@ -1,6 +1,9 @@
+using Database.Repository;
 using Database.Repository.Functions;
 using LeoAuth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints.StopManagement;
 
@@ -18,7 +21,7 @@ public static class StopManagementApi
         group.MapGet("stops", StopManagementEndpoints.GetPublicStops)
             .WithName(nameof(StopManagementEndpoints.GetPublicStops))
             .WithDescription("Get all stops that are publically available to see")
-            .Produces <List<StopWithAssignmentsAndDivisionsDto>>()
+            .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
             .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPost("api/stops", StopManagementEndpoints.CreateStop)
@@ -36,7 +39,8 @@ public static class StopManagementApi
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(nameof(LeoUserRole.Teacher));
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+
 
         group.MapDelete("api/stops/{stopId}", StopManagementEndpoints.DeleteStop)
             .AddEndpointFilter(StopManagementValidations.DeleteStopValidationAsync)
