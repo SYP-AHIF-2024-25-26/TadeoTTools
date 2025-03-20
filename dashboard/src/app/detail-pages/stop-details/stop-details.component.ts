@@ -1,25 +1,27 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { StopService } from '../../stop.service';
-import { BASE_URL } from '../../app.config';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { Division, StopGroup } from '../../types';
-import { DivisionService } from '../../division.service';
-import { isValid } from '../../utilfunctions';
-import { firstValueFrom } from 'rxjs';
-import { StopGroupService } from '../../stopgroup.service';
-import { ChipComponent } from '../../standard-components/chip/chip.component';
-import { Location } from '@angular/common';
+import {Component, computed, inject, signal} from '@angular/core';
+import {StopService} from '../../stop.service';
+import {BASE_URL} from '../../app.config';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {RouterModule} from '@angular/router';
+import {Division, StopGroup, Teacher, TeacherAssignment} from '../../types';
+import {DivisionService} from '../../division.service';
+import {isValid} from '../../utilfunctions';
+import {firstValueFrom} from 'rxjs';
+import {StopGroupService} from '../../stopgroup.service';
+import {ChipComponent} from '../../standard-components/chip/chip.component';
+import {Location} from '@angular/common';
+import {StopStore} from "../../store/stop.store";
 
 @Component({
-    selector: 'app-stop-details',
-    standalone: true,
-    imports: [FormsModule, RouterModule, ChipComponent],
-    templateUrl: './stop-details.component.html',
-    styleUrl: './stop-details.component.css'
+  selector: 'app-stop-details',
+  standalone: true,
+  imports: [FormsModule, RouterModule, ChipComponent],
+  templateUrl: './stop-details.component.html',
+  styleUrl: './stop-details.component.css'
 })
 export class StopDetailsComponent {
+  private stopStore = inject(StopStore);
   private service: StopService = inject(StopService);
   private divisionService: DivisionService = inject(DivisionService);
   private stopGroupService: StopGroupService = inject(StopGroupService);
@@ -40,6 +42,8 @@ export class StopDetailsComponent {
 
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
+  allTeachers = signal<Teacher[]>([]);
+  teacherAssignments = signal<TeacherAssignment[]>([]);
 
   errorMessage = signal<string | null>(null);
 
@@ -75,6 +79,7 @@ export class StopDetailsComponent {
     }
     return true;
   }
+
   async submitStopDetail() {
     if (!this.isInputValid()) {
       return;
@@ -88,16 +93,20 @@ export class StopDetailsComponent {
         stopGroupIDs: this.stopGroupIds,
       });
     } else {
-      await this.service.updateStopWithoutOrder({
+      const stop = {
         id: this.stopId(),
         name: this.name(),
         description: this.description(),
         roomNr: this.roomNr(),
         stopGroupIds: this.stopGroupIds,
         divisionIds: this.divisionIds(),
-      });
+        teachers: this.teacherAssignments(),
+        orders: []
+      };
+      //await this.stopStore.updateStop(stop);
+      await this.service.updateStop(stop);
     }
-    this.location.back();
+    //this.location.back();
   }
 
   async deleteAndGoBack() {

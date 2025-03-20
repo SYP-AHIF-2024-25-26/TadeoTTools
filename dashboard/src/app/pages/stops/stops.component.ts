@@ -6,6 +6,7 @@ import { StopGroupService } from '../../stopgroup.service';
 import { DivisionService } from '../../division.service';
 import { FilterComponent } from '../../standard-components/filter/filter.component';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
+import {StopStore} from "../../store/stop.store";
 
 @Component({
     selector: 'app-stops',
@@ -15,6 +16,7 @@ import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.com
     styleUrl: './stops.component.css'
 })
 export class StopsComponent implements OnInit {
+  private stopStore = inject(StopStore);
   private service: StopService = inject(StopService);
   private groupService: StopGroupService = inject(StopGroupService);
   private divisionService: DivisionService = inject(DivisionService);
@@ -46,11 +48,11 @@ export class StopsComponent implements OnInit {
 
   filterStopsByDivisionId(divisionId: number): Stop[] {
     if (divisionId === 0) {
-      return this.stops();
+      return this.stopStore.stops();
     }
-    this.stops().forEach((stop) => console.log(stop));
+    this.stopStore.stops().forEach((stop) => console.log(stop));
     console.log('Filtering stops by divisionId: ' + divisionId);
-    return this.stops().filter(
+    return this.stopStore.stops().filter(
       (stop) =>
         Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId)
     );
@@ -67,7 +69,7 @@ export class StopsComponent implements OnInit {
   }
 
   async removeStopgroup() {
-    const stopToUpdate: Stop = this.stops().find((s) => s.id === this.stopIdFromRemove)!;
+    const stopToUpdate: Stop = this.stopStore.stops().find((s) => s.id === this.stopIdFromRemove)!;
     stopToUpdate.stopGroupIds = stopToUpdate.stopGroupIds.filter((sgId) => sgId !== this.stopGroupIdToRemove);
     await this.service.updateStop(stopToUpdate);
     this.showRemoveStopgroupPopup.set(false);
