@@ -1,9 +1,5 @@
-using Database.Repository;
 using Database.Repository.Functions;
-using LeoAuth;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints.StopManagement;
 

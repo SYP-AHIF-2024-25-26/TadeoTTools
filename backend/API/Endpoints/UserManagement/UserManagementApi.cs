@@ -41,6 +41,26 @@ public static class UserManagementApi
             );
         }).RequireAuthorization();
 
+        group.MapPost("/admins", UserManagementEndpoints.AddAdmin)
+            .WithName(nameof(UserManagementEndpoints.AddAdmin))
+            .WithDescription("Add an admin")
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.AdminPolicyName);
+
+        group.MapDelete("/admins/{name}", UserManagementEndpoints.DeleteAdmin)
+            .WithName(nameof(UserManagementEndpoints.DeleteAdmin))
+            .WithDescription("Delete an admin")
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.AdminPolicyName);
+
+        group.MapGet("/admins", UserManagementEndpoints.GetAllAdmins)
+            .WithName(nameof(UserManagementEndpoints.GetAllAdmins))
+            .WithDescription("Get all admins")
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapGet("/correlating-stops", UserManagementEndpoints.GetCorrelatingStops)
             .WithName(nameof(UserManagementEndpoints.GetCorrelatingStops))
