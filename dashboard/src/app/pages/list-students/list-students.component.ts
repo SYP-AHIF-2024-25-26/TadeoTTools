@@ -44,23 +44,11 @@ export class ListStudentsComponent implements OnInit {
     ));
   }
 
-  setSelectedAssignment(student: Student, stopId: number): void {
-    this.selectedAssignments.set(student.edufsUsername, stopId);
-  }
-
   confirmConflicts(): void {
     this.conflicts().forEach((student) => {
       const stopId = this.selectedAssignments.get(student.edufsUsername);
       if (stopId !== undefined) {
         this.approveStudentByStopId(student, stopId);
-      }
-    });
-  }
-
-  confirmSingles(): void {
-    this.singleAssignments().forEach(student => {
-      if (this.approvedSingles.has(student.edufsUsername)) {
-        this.approveStudent(student, 0);
       }
     });
   }
