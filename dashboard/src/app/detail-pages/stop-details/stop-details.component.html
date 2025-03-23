@@ -40,12 +40,12 @@
         name="roomNr"
         id="roomNr"
       />
-      {{stop().stopGroupIds}}
       <h1 class="font-medium text-lg my-2">StopGroups</h1>
+    </div>
+
       @for (stopGroupId of stop().stopGroupIds; track $index) {
         <p>{{ stopGroupStore.getStopGroupById(stopGroupId)!.name }}</p>
       }
-    </div>
 
     <div>
       <div class="flex items-baseline mt-4 mb-6">

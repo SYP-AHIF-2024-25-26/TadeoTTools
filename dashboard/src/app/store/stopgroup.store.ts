@@ -1,4 +1,4 @@
-import {StopGroup} from "../types";
+import {Stop, StopGroup} from "../types";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {inject} from "@angular/core";
 import {StopGroupService} from "../stopgroup.service";
@@ -19,10 +19,18 @@ export const StopGroupStore = signalStore(
     (async function fetchInitialStopGroups() {
       if (initialState.stopGroups.length == 0) {
         const stopGroups = await stopGroupService.getStopGroups();
+        console.log("stopGroups comming");
+        console.log(stopGroups);
         patchState(store, {stopGroups});
       }
     })();
     return {
+      async addStopGroup(stopGroupToAdd: StopGroup) {
+        const stopGroup = await stopGroupService.addStopGroup(stopGroupToAdd);
+        patchState(store, {
+          stopGroups: [...store.stopGroups(), stopGroup]
+        });
+      },
       async updateStopGroup(stopGroupToUpdate: StopGroup) {
         patchState(store, {
           stopGroups:

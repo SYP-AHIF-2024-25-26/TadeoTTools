@@ -42,6 +42,10 @@ export class StopDetailsComponent implements OnInit {
     this.divisionStore.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id))
   );
 
+  inactiveStopGroups = computed(() =>
+    this.stopGroupStore.stopGroups().filter((g) => !this.stop()?.stopGroupIds.includes(g.id))
+  );
+
   errorMessage = signal<string | null>(null);
 
   async ngOnInit() {
@@ -113,4 +117,5 @@ export class StopDetailsComponent implements OnInit {
       return stop;
     });
   }
+
 }
