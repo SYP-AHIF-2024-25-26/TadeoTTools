@@ -1,40 +1,52 @@
-import { patchState, signalStore, withMethods, withState } from "@ngrx/signals";
+import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {Stop, StopWithoutOrders} from "../types";
-import { inject } from "@angular/core";
-import { StopService } from "../stop.service";
-
+import {inject} from "@angular/core";
+import {StopService} from "../stop.service";
 
 
 type StopState = {
-  stops: Stop[];
+	stops: Stop[];
 };
 
 const initialState: StopState = {
-  stops: []
+	stops: []
 };
 
 export const StopStore = signalStore(
-  { providedIn: "root" },
-  withState(initialState),
-  withMethods((store) => {
-    const stopService = inject(StopService);
+	{providedIn: "root"},
+	withState(initialState),
+	withMethods((store) => {
+		const stopService = inject(StopService);
 
-    (async function fetchInitialStops() {
-      if (initialState.stops.length == 0) {
-        const stops = await stopService.getStops();
-        patchState(store, {stops});
-      }
-    })();
+		(async function fetchInitialStops() {
+			if (initialState.stops.length == 0) {
+				const stops = await stopService.getStops();
+				patchState(store, {stops});
+			}
+		})();
 
-    return {
-      async updateStop(stopToUpdate: Stop) {
-        patchState(store, {
-          stops: store.stops().map((stop) =>
-            stop.id === stopToUpdate.id ? stopToUpdate : stop
-          )
-        });
-        await stopService.updateStop(stopToUpdate as StopWithoutOrders);
-      }
-    };
-  })
+		return {
+			async addStop(stopToAdd: Stop) {
+				const stop = await stopService.addStop(stopToAdd);
+				console.log(stop);
+				patchState(store, {
+					stops: [...store.stops(), stop]
+				});
+			},
+			async updateStop(stopToUpdate: Stop) {
+				patchState(store, {
+					stops: store.stops().map((stop) =>
+						stop.id === stopToUpdate.id ? stopToUpdate : stop
+					)
+				});
+				await stopService.updateStop(stopToUpdate as StopWithoutOrders);
+			},
+			async deleteStop(stopIdToDelete: number) {
+				patchState(store, {
+					stops: store.stops().filter((stop) => stop.id !== stopIdToDelete)
+				});
+				await stopService.deleteStop(stopIdToDelete);
+			}
+		};
+	})
 );

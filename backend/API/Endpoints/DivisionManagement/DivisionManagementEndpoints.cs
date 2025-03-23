@@ -12,24 +12,18 @@ public static class DivisionManagementEndpoints
         return Results.Ok(await DivisionFunctions.GetAllDivisionsWithoutImageAsync(context));
     }
     
-    public static async Task<IResult> CreateDivision(TadeoTDbContext context, [FromForm] string name,
-        [FromForm] string color, IFormFile? image)
+    public static async Task<IResult> CreateDivision(TadeoTDbContext context, AddDivisionDto divisionToAdd)
     {
         var division = new Division
         {
-            Name = name,
-            Color = color,
+            Name = divisionToAdd.Name,
+            Color = divisionToAdd.Color,
         };
 
-        if (image is not null)
-        {
-            using var memoryStream = new MemoryStream();
-            await image.CopyToAsync(memoryStream);
-            division.Image = memoryStream.ToArray();
-        }
-
-        context.Divisions.Add(division);
+        var entityEntry = context.Divisions.Add(division);
+        division.Id = entityEntry.Entity.Id;
         await context.SaveChangesAsync();
+        
         return Results.Ok(division);
     }
     
@@ -81,6 +75,7 @@ public static class DivisionManagementEndpoints
         return Results.Ok();
     }
     
+    public record AddDivisionDto(string Name, string Color);
     public record UpdateDivisionDto(int Id, string Name, string Color);
     public record UpdateDivisionImageDto(int Id, IFormFile Image);
 }

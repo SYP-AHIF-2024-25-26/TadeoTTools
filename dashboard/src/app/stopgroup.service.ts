@@ -36,7 +36,6 @@ export class StopGroupService {
   }
 
   async updateStopGroup(stopGroup: StopGroup) {
-    console.log(typeof stopGroup.isPublic);
     await firstValueFrom(
       this.httpClient.put(this.baseUrl + `/api/groups`, stopGroup)
     );

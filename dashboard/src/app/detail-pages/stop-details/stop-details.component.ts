@@ -1,17 +1,15 @@
-import {Component, computed, inject, signal} from '@angular/core';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {StopService} from '../../stop.service';
-import {BASE_URL} from '../../app.config';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, RouterModule} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {RouterModule} from '@angular/router';
-import {Division, StopGroup, Teacher, TeacherAssignment} from '../../types';
-import {DivisionService} from '../../division.service';
+import {Stop} from '../../types';
 import {isValid} from '../../utilfunctions';
 import {firstValueFrom} from 'rxjs';
-import {StopGroupService} from '../../stopgroup.service';
 import {ChipComponent} from '../../standard-components/chip/chip.component';
 import {Location} from '@angular/common';
 import {StopStore} from "../../store/stop.store";
+import {DivisionStore} from "../../store/division.store";
+import {StopGroupStore} from "../../store/stopgroup.store";
 
 @Component({
   selector: 'app-stop-details',
@@ -20,60 +18,51 @@ import {StopStore} from "../../store/stop.store";
   templateUrl: './stop-details.component.html',
   styleUrl: './stop-details.component.css'
 })
-export class StopDetailsComponent {
+export class StopDetailsComponent implements OnInit {
   private stopStore = inject(StopStore);
+  protected divisionStore = inject(DivisionStore);
+  protected stopGroupStore = inject(StopGroupStore);
   private service: StopService = inject(StopService);
-  private divisionService: DivisionService = inject(DivisionService);
-  private stopGroupService: StopGroupService = inject(StopGroupService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
 
-  baseUrl = inject(BASE_URL);
+  emptyStop = {
+    id: -1,
+    name: '',
+    description: '',
+    roomNr: '',
+    divisionIds: [],
+    stopGroupIds: [],
+    teachers: [],
+    orders: []
+  };
+  stop = signal<Stop>(this.emptyStop);
 
-  stopId = signal<number>(-1);
-  name = signal<string>('');
-  description = signal<string>('');
-  roomNr = signal<string>('');
-  stopGroupIds: number[] = [];
-  divisionIds = signal<number[]>([]);
   inactiveDivisions = computed(() =>
-    this.divisions().filter((d) => !this.divisionIds().includes(d.id))
+    this.divisionStore.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id))
   );
-
-  divisions = signal<Division[]>([]);
-  stopGroups = signal<StopGroup[]>([]);
-  allTeachers = signal<Teacher[]>([]);
-  teacherAssignments = signal<TeacherAssignment[]>([]);
 
   errorMessage = signal<string | null>(null);
 
   async ngOnInit() {
-    this.divisions.set(await this.divisionService.getDivisions());
-    this.stopGroups.set(await this.stopGroupService.getStopGroups());
     const params = await firstValueFrom(this.route.queryParams);
-    this.stopId.set(params['id'] || -1);
-    this.name.set(params['name'] || '');
-    this.description.set(params['description'] || '');
-    this.roomNr.set(params['roomNr'] || '');
-    this.stopGroupIds =
-      params['stopGroupIds'].map((x: string) => parseInt(x)) || null;
-    this.divisionIds.set(
-      Array.from<string>(params['divisionIds']).map((x: string) =>
-        parseInt(x)
-      ) || []
-    );
+    const id = params['id'] || -1;
+    const maybeStop = this.stopStore.stops().find(s => s.id == id);
+    if (maybeStop) {
+      this.stop.set(maybeStop)
+    }
   }
 
   isInputValid() {
-    if (!isValid(this.name(), 50)) {
+    if (!isValid(this.stop().name, 50)) {
       this.errorMessage.set('Name must be between 1 and 50 characters');
       return false;
     }
-    if (!isValid(this.description(), 255)) {
+    if (!isValid(this.stop().description, 255)) {
       this.errorMessage.set('Description must be between 1 and 255 characters');
       return false;
     }
-    if (!isValid(this.roomNr(), 50)) {
+    if (!isValid(this.stop().roomNr, 50)) {
       this.errorMessage.set('Room number must be between 1 and 50 characters');
       return false;
     }
@@ -84,56 +73,44 @@ export class StopDetailsComponent {
     if (!this.isInputValid()) {
       return;
     }
-    if (this.stopId() === -1) {
-      await this.service.addStop({
-        name: this.name(),
-        description: this.description(),
-        roomNr: this.roomNr(),
-        divisionIDs: this.divisionIds(),
-        stopGroupIDs: this.stopGroupIds,
-      });
+    if (this.stop().id === -1) {
+      await this.service.addStop(this.stop());
     } else {
-      const stop = {
-        id: this.stopId(),
-        name: this.name(),
-        description: this.description(),
-        roomNr: this.roomNr(),
-        stopGroupIds: this.stopGroupIds,
-        divisionIds: this.divisionIds(),
-        teachers: this.teacherAssignments(),
-        orders: []
-      };
-      //await this.stopStore.updateStop(stop);
-      await this.service.updateStop(stop);
+      await this.stopStore.updateStop(this.stop());
     }
-    //this.location.back();
+    this.stop.set(this.emptyStop);
+    this.location.back();
   }
 
   async deleteAndGoBack() {
-    await this.service.deleteStop(this.stopId());
+    await this.stopStore.deleteStop(this.stop().id);
+    this.stop.set(this.emptyStop);
     this.location.back();
   }
 
   goBack() {
+    this.stop.set(this.emptyStop);
     this.location.back();
   }
 
-  onDivisionSelect($event: Event) {
+  async onDivisionSelect($event: Event) {
     const target = $event.target as HTMLSelectElement;
     const divisionId = parseInt(target.value);
     if (
-      !this.divisionIds().includes(divisionId) &&
-      this.divisions().find((d) => d.id === divisionId)
+      !this.stop().divisionIds.includes(divisionId) &&
+      this.divisionStore.divisions().find((d) => d.id === divisionId)
     ) {
-      this.divisionIds.update((ids) => [...ids, divisionId]);
+      this.stop.update((stop) => {
+        stop.divisionIds = [divisionId, ...stop.divisionIds];
+        return stop;
+      });
     }
   }
 
   onDivisionRemove(divisionId: number) {
-    this.divisionIds.update((ids) => ids.filter((id) => id !== divisionId));
-  }
-
-  getDivisionById(id: number) {
-    return this.divisions().find((division) => division.id === id);
+    this.stop.update((stop) => {
+      stop.divisionIds = stop.divisionIds.filter((ids) => ids !== divisionId);
+      return stop;
+    });
   }
 }

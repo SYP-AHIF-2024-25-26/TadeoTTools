@@ -28,14 +28,7 @@
         <button
           class="text-white shadow-lg p-1.5 mr-5 bg-htl-orange border rounded border-transparent"
           [routerLink]="['/stop']"
-          [queryParams]="{
-            id: stop.id,
-            name: stop.name,
-            description: stop.description,
-            roomNr: stop.roomNr,
-            stopGroupIds: stop.stopGroupIds,
-            divisionIds: stop.divisionIds
-          }"
+          [queryParams]="{id: stop.id}"
         >
           Details
         </button>
