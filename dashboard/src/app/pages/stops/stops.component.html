@@ -12,7 +12,7 @@
     Add Stop
   </button>
   <app-filter
-    [elements]="divisions()"
+    [elements]="divisionStore.getDivisions()"
     (filter)="divisionFilter.set($event)"
     class="mr-10"
   ></app-filter>

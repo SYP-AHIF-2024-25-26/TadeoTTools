@@ -5,10 +5,12 @@ import {StopGroupService} from "../stopgroup.service";
 
 export type StopGroupState = {
   stopGroups: StopGroup[];
+  initialised: boolean;
 }
 
 const initialState: StopGroupState = {
-  stopGroups: []
+  stopGroups: [],
+  initialised: false
 }
 
 export const StopGroupStore = signalStore(
@@ -19,9 +21,7 @@ export const StopGroupStore = signalStore(
     (async function fetchInitialStopGroups() {
       if (initialState.stopGroups.length == 0) {
         const stopGroups = await stopGroupService.getStopGroups();
-        console.log("stopGroups comming");
-        console.log(stopGroups);
-        patchState(store, {stopGroups});
+        patchState(store, {stopGroups: stopGroups, initialised: true});
       }
     })();
     return {
@@ -32,6 +32,7 @@ export const StopGroupStore = signalStore(
         });
       },
       async updateStopGroup(stopGroupToUpdate: StopGroup) {
+        await stopGroupService.updateStopGroup(stopGroupToUpdate);
         patchState(store, {
           stopGroups:
             store.stopGroups().map((stopGroup) =>
@@ -39,11 +40,18 @@ export const StopGroupStore = signalStore(
             )
         });
       },
+      updateStopGroupOrder(order: number[]) {
+        stopGroupService.updateStopGroupOrder(order);
+      },
       async deleteStopGroup(stopGroupIdToDelete: number) {
         patchState(store, {
           stopGroups:
             store.stopGroups().filter((stopGroup) => stopGroup.id !== stopGroupIdToDelete)
         });
+        await stopGroupService.deleteStopGroup(stopGroupIdToDelete);
+      },
+      getStopGroups() {
+        return store.stopGroups();
       },
       getStopGroupById(id: number): StopGroup | undefined {
         return store.stopGroups().find((stopGroup) => stopGroup.id === id);

@@ -29,8 +29,7 @@ export class StopgroupDetailsComponent implements OnInit {
   async ngOnInit() {
     const params = await firstValueFrom(this.route.queryParams);
     this.stopGroupId.set(params['id'] || -1);
-    console.log(this.stopGroupId());
-    console.log(this.stopGroupStore.stopGroups().map(s => s.id));
+
     let stopGroup: StopGroup | undefined = undefined;
     while (stopGroup === undefined) {
       stopGroup = this.stopGroupStore.stopGroups().find(g => g.id == this.stopGroupId());
@@ -42,7 +41,6 @@ export class StopgroupDetailsComponent implements OnInit {
     this.stopIds.set(stopGroup.stopIds);
     this.description.set(stopGroup.description);
     this.isPublic.set(stopGroup.isPublic);
-
   }
 
   isInputValid(): boolean {

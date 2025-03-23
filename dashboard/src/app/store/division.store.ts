@@ -55,6 +55,9 @@ export const DivisionStore = signalStore(
       async deleteDivisionImg(divisionId: number) {
         await divisionService.deleteDivisionImg(divisionId);
       },
+      getDivisions() {
+        return store.divisions();
+      },
       getDivisionById(id: number) {
         return store.divisions().find((division) => division.id === id);
       }
