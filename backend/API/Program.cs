@@ -3,6 +3,7 @@ using API.Endpoints;
 using API.Endpoints.DivisionManagement;
 using API.Endpoints.StopGroupManagement;
 using API.Endpoints.StopManagement;
+using API.Endpoints.StudentManagement;
 using API.Endpoints.UserManagement;
 using Database;
 using Database.Repository;
@@ -53,6 +54,7 @@ app.Logger.LogInformation("Connection String:" + connectionString);
 
 app.MapStopGroupEndpoints();
 app.MapStopEndpoints();
+app.MapStudentEndpoints();
 app.MapDivisionEndpoints();
 app.MapTeacherEndpoints();
 app.MapSettingsEndpoints();

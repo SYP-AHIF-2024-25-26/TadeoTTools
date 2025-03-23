@@ -1,0 +1,25 @@
+<div class="m-4">
+  <div class="m-4 text-lg">Welcome to the Admin Overview!</div>
+  <div>
+    <input
+      class="mb-4 border rounded px-4 py-2"
+      type="text"
+      [value]="addname()"
+      [(ngModel)]="addname"
+      name="addname"
+      id="addname"
+    />
+    <button (click)="addAdmin()" class="bg-htl-orange p-2 rounded text-white m-4">
+      Add Admin
+    </button>
+  </div>
+</div>
+
+@for(admin of admins(); track $index) {
+  <div class="m-4 p-4 border rounded-lg shadow-md flex justify-between items-center">
+    <div class="text-lg font-semibold">{{ admin }}</div>
+    <button (click)="deleteAdmin(admin)" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+      Delete
+    </button>
+  </div>
+}

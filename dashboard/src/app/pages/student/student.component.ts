@@ -7,7 +7,6 @@ import { Status } from '../../types';
   selector: 'app-student',
   imports: [],
   templateUrl: './student.component.html',
-  styleUrl: './student.component.css'
 })
 export class StudentComponent {
   private service: StopService = inject(StopService);
@@ -18,8 +17,6 @@ export class StudentComponent {
     this.stops.set(await this.service.getStopsOfStudent());
   }
   getStatusName(status: Status): string {
-    console.log('status', status);
-    console.log(Status[status]);
     return Status[status];
   }
 }
