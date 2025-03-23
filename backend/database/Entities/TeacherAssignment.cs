@@ -2,19 +2,12 @@
 
 namespace Database.Entities;
 
-public enum Status
-{
-    PENDING,
-    ACCEPTED,
-    DECLINED
-}
-
-public class StudentAssignment
+public class TeacherAssignment
 {
     [Key]
     public int Id { get; set; }
-    public string StudentId { get; set; }
-    public Student? Student { get; set; }
+    public string TeacherId { get; set; }
+    public Teacher? Teacher { get; set; }
     public int StopId { get; set; }
     public Stop? Stop { get; set; }
     public Status Status { get; set; }

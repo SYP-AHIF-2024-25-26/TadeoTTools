@@ -24,15 +24,9 @@ export class StopService {
       this.httpClient.get<StopOfStudent[]>(this.baseUrl + '/api/users/correlating-stops'));
   }
 
-  async addStop(stop: {
-    name: string;
-    description: string;
-    roomNr: string;
-    divisionIDs: number[];
-    stopGroupIDs: number[];
-  }) {
-    await firstValueFrom(
-      this.httpClient.post(this.baseUrl + '/api/stops', stop)
+  async addStop(stop: Stop) {
+    return await firstValueFrom(
+      this.httpClient.post<Stop>(this.baseUrl + '/api/stops', stop)
     );
   }
 

@@ -1,4 +1,5 @@
 using Database.Repository.Functions;
+using LeoAuth;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.StopManagement;
@@ -17,7 +18,7 @@ public static class StopManagementApi
         group.MapGet("stops", StopManagementEndpoints.GetPublicStops)
             .WithName(nameof(StopManagementEndpoints.GetPublicStops))
             .WithDescription("Get all stops that are publically available to see")
-            .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
+            .Produces <List<StopWithAssignmentsAndDivisionsDto>>()
             .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPost("api/stops", StopManagementEndpoints.CreateStop)

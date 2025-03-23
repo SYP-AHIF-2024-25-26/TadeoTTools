@@ -4,6 +4,7 @@ using Database.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace database.Migrations
 {
     [DbContext(typeof(TadeoTDbContext))]
-    partial class TadeoTDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250318151149_TeacherAssignemnt")]
+    partial class TeacherAssignemnt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -210,15 +213,18 @@ namespace database.Migrations
                     b.Property<int>("StopId")
                         .HasColumnType("int");
 
-                    b.Property<string>("StudentId")
+                    b.Property<string>("StudentEdufsUsername")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("StopId");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("StudentEdufsUsername");
 
                     b.ToTable("StudentAssignments");
                 });
@@ -255,15 +261,18 @@ namespace database.Migrations
                     b.Property<int>("StopId")
                         .HasColumnType("int");
 
-                    b.Property<string>("TeacherId")
+                    b.Property<string>("TeacherEdufsUsername")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
+
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("StopId");
 
-                    b.HasIndex("TeacherId");
+                    b.HasIndex("TeacherEdufsUsername");
 
                     b.ToTable("TeacherAssignments");
                 });
@@ -323,7 +332,7 @@ namespace database.Migrations
 
                     b.HasOne("Database.Entities.Student", "Student")
                         .WithMany("StudentAssignments")
-                        .HasForeignKey("StudentId")
+                        .HasForeignKey("StudentEdufsUsername")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -342,7 +351,7 @@ namespace database.Migrations
 
                     b.HasOne("Database.Entities.Teacher", "Teacher")
                         .WithMany("TeacherAssignments")
-                        .HasForeignKey("TeacherId")
+                        .HasForeignKey("TeacherEdufsUsername")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

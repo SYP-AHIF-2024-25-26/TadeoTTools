@@ -21,7 +21,7 @@ public static class StopManagementEndpoints
             .Where(stop => stop.StopGroupAssignments.Any(a => a.StopGroup!.IsPublic))
             .ToListAsync();
         
-        return Results.Ok(stops.Select(stop => new StopWithAssignmentsAndDivisionsDto(
+        return Results.Ok(stops.Select(stop => new StopWithGroupAssignmentsAndDivisionsDto(
             stop.Id,
             stop.Name,
             stop.RoomNr,
@@ -31,6 +31,16 @@ public static class StopManagementEndpoints
             stop.StopGroupAssignments.Select(a => a.Order).ToArray()
         )).ToList());
     }
+    
+    public record StopWithGroupAssignmentsAndDivisionsDto(
+        int Id,
+        string Name,
+        string RoomNr,
+        string Description,
+        int[] DivisionIds,
+        int[] StopGroupIds,
+        int[] Orders
+    );
     
     public static async Task<IResult> CreateStop(TadeoTDbContext context, CreateStopRequestDto createStopDto)
     {

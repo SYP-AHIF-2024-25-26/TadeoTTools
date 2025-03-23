@@ -23,7 +23,19 @@ export type Stop = {
   divisionIds: number[];
   stopGroupIds: number[];
   orders: number[];
+  teachers: TeacherAssignment[];
 };
+
+export type TeacherAssignment = {
+  teacherId: string;
+  status: Status;
+}
+
+export type Teacher = {
+  edufsUsername: string;
+  firstName: string;
+  lastName: string;
+}
 
 export type StopOfStudent = {
   name: string;

@@ -9,20 +9,19 @@ public static class DivisionManagementValidations
         EndpointFilterDelegate next)
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
-        var name = context.GetArgument<string>(1);
-        var color = context.GetArgument<string>(2);
+        var division = context.GetArgument<DivisionManagementEndpoints.AddDivisionDto>(1);
         
-        if (name.Length > 255)
+        if (division.Name.Length > 255)
         {
             return Results.BadRequest("Division name must be less than 255 characters.");
         }
 
-        if (color.Length > 7)
+        if (division.Color.Length > 7)
         {
             return Results.BadRequest("Color must be less than 8 characters.");
         }
 
-        if (dbContext.Divisions.Any(d => d.Name == name))
+        if (dbContext.Divisions.Any(d => d.Name == division.Name))
         {
             return Results.BadRequest("Division name already exists.");
         }
