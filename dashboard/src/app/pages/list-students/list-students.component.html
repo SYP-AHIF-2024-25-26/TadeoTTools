@@ -1,0 +1,36 @@
+<div class="p-4">
+  <h2 class="text-xl font-bold mb-4">Student Conflict Manager</h2>
+
+  <h3 class="text-lg font-semibold mb-2">Conflicts (Multiple Pending Assignments)</h3>
+  <button (click)="confirmConflicts()" class="ml-2 bg-htl-orange text-white px-4 py-2 rounded">Confirm</button>
+  @for(student of conflicts(); track $index) {
+    <div class="mb-4">
+      <label>{{ student.firstName }} {{ student.lastName }} ({{ student.studentClass }})</label>
+      <select (change)="setSelectedAssignment(student, $index)">
+        @for(assignment of student.studentAssignments; track $index) {
+          <option [value]="assignment.stopId">{{ assignment.stopName }}</option>
+        }
+      </select>
+    </div>
+  }
+
+  <div class="flex items-center">
+    <h3 class="text-lg font-semibold">Single Assignment</h3>
+    <button (click)="autoApproveAll()" class="bg-htl-orange text-white px-4 py-2 rounded m-4">Auto Approve All</button>
+    <button (click)="confirmSingles()" class="ml-2 bg-htl-orange text-white px-4 py-2 rounded">Confirm</button>
+  </div>
+
+  @for(student of singleAssignments(); track $index) {
+    <div class="mb-2 flex items-center">
+      <label for="approve-{{student.edufsUsername}}" class="ml-2">{{ student.firstName }} {{ student.lastName }} - Approve: </label>
+      <input type="checkbox" id="approve-{{student.edufsUsername}}" (change)="approveStudent(student, 0)">
+    </div>
+  }
+
+  <h3 class="text-lg font-semibold mt-6 mb-2">No Assignments</h3>
+  <ul>
+    @for(student of noAssignments(); track $index) {
+      <li>{{ student.firstName }} {{ student.lastName }} ({{ student.studentClass }})</li>
+    }
+  </ul>
+</div>

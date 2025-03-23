@@ -4,6 +4,7 @@
       <div class="text-lg">Admin Dashboard</div>
       @if(isAdmin()) {
         <button class="justify-start" [routerLink]="['/overview']">Overview</button>
+        <button [routerLink]="['/students']">Students</button>
         <button [routerLink]="['/stopgroups']">StopGroups</button>
         <button [routerLink]="['/stops']">Stops</button>
         <button [routerLink]="['/divisions']">Divisions</button>

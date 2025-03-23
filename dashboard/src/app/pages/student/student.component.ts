@@ -7,7 +7,6 @@ import { Status } from '../../types';
   selector: 'app-student',
   imports: [],
   templateUrl: './student.component.html',
-  styleUrl: './student.component.css'
 })
 export class StudentComponent {
   private service: StopService = inject(StopService);

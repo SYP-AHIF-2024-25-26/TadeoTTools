@@ -9,6 +9,7 @@ import { StopsComponent } from './pages/stops/stops.component';
 import { StudentComponent } from './pages/student/student.component';
 import { TeacherComponent } from './pages/teacher/teacher.component';
 import { AdminOverviewComponent } from './pages/admin-overview/admin-overview.component';
+import { ListStudentsComponent } from './pages/list-students/list-students.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -21,5 +22,6 @@ export const routes: Routes = [
   { path: 'student', component: StudentComponent },
   { path: 'teacher', component: TeacherComponent },
   { path: 'overview', component: AdminOverviewComponent },
+  { path: 'students', component: ListStudentsComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];
