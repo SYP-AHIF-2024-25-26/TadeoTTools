@@ -10,5 +10,4 @@ public class TeacherAssignment
     public Teacher? Teacher { get; set; }
     public int StopId { get; set; }
     public Stop? Stop { get; set; }
-    public Status Status { get; set; }
 }
