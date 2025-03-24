@@ -12,7 +12,7 @@ public class TeacherFunctions(TadeoTDbContext context)
                 t.EdufsUsername, 
                 t.FirstName, 
                 t.LastName,
-                t.AssignedStops.Select(a => a.Id).ToArray()
+                t.AssignedStops.Select(a => a.StopId).ToArray()
                 )
         ).ToListAsync();
     }

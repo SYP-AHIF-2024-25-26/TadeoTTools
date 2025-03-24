@@ -9,7 +9,7 @@ public class StopFunctions
     {
         var stops = await context.Stops
             .Include(stop => stop.Divisions)
-            .Include(stop => stop.StopGroupAssignments).Include(stop => stop.TeacherAssignments)
+            .Include(stop => stop.StopGroupAssignments)
             .OrderBy(stop => stop.Name)
             .ToListAsync();
 
@@ -20,8 +20,7 @@ public class StopFunctions
             stop.Description,
             stop.Divisions.Select(d => d.Id).ToArray(),
             stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
-            stop.StopGroupAssignments.Select(a => a.Order).ToArray(),
-            stop.TeacherAssignments.Select(a => a.EdufsUsername).ToArray()
+            stop.StopGroupAssignments.Select(a => a.Order).ToArray()
         )).ToList();
     }
 
@@ -38,11 +37,5 @@ public record StopWithAssignmentsAndDivisionsDto(
     string Description,
     int[] DivisionIds,
     int[] StopGroupIds,
-    int[] Orders,
-    string[] TeacherAssignments
-);
-
-public record TeacherAssignment(
-    string TeacherId,
-    Status Status
+    int[] Orders
 );

@@ -11,11 +11,27 @@ export class TeacherService {
   baseUrl = inject(BASE_URL);
   httpClient = inject(HttpClient);
 
-  constructor() { }
+  constructor() {
+  }
 
   async getTeachers() {
-      return firstValueFrom(
-        this.httpClient.get<Teacher[]>(this.baseUrl + '/api/teachers')
-      );
+    return firstValueFrom(
+      this.httpClient.get<Teacher[]>(this.baseUrl + '/api/teachers')
+    );
+  }
+
+  async assignStopToTeacher(edufsUsername: string, stopId: number) {
+    return firstValueFrom(
+      this.httpClient.put(this.baseUrl + '/teachers/assign', {
+        edufsUsername: edufsUsername,
+        stopId: stopId
+      })
+    );
+  }
+
+  async unassignAllFromStop(stopId: number) {
+    return firstValueFrom(
+      this.httpClient.put(this.baseUrl + '/teachers/unassign/' + stopId, {})
+    );
   }
 }

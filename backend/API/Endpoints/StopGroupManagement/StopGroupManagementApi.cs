@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.StopGroupManagement;
 
-public static class StopGroupManagementApi
+public static class  StopGroupManagementApi
 {
     public static void MapStopGroupEndpoints(this IEndpointRouteBuilder app)
     {

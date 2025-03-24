@@ -1,4 +1,5 @@
 ﻿using Database.Entities;
+using Database.Repository.Functions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Database.Repository;
@@ -14,4 +15,5 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<Student> Students { get; set; }
     public DbSet<Teacher> Teachers { get; set; }
     public DbSet<StudentAssignment> StudentAssignments { get; set; }
+    public DbSet<TeacherAssignments> TeacherAssignments { get; set; }
 }
