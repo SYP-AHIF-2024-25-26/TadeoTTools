@@ -21,7 +21,7 @@ public class StopFunctions
             stop.Divisions.Select(d => d.Id).ToArray(),
             stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
             stop.StopGroupAssignments.Select(a => a.Order).ToArray(),
-            stop.TeacherAssignments.Where(a => a.StopId == stop.Id).Select(a => new TeacherAssignment(a.TeacherId, a.Status)).ToArray()
+            stop.TeacherAssignments.Select(a => a.EdufsUsername).ToArray()
         )).ToList();
     }
 
@@ -39,7 +39,7 @@ public record StopWithAssignmentsAndDivisionsDto(
     int[] DivisionIds,
     int[] StopGroupIds,
     int[] Orders,
-    TeacherAssignment[] TeacherAssignments
+    string[] TeacherAssignments
 );
 
 public record TeacherAssignment(

@@ -10,10 +10,12 @@ import { Division } from '../../types';
     styleUrl: './chip.component.css'
 })
 export class ChipComponent {
-  @Input() division!: Division;
-  @Output() remove = new EventEmitter<number>();
+  @Input() id: string = '';
+  @Input() value: string = '';
+  @Input() color: string = '#007bff';
+  @Output() remove = new EventEmitter<string>();
 
   onRemove() {
-    this.remove.emit(this.division.id);
+    this.remove.emit(this.id);
   }
 }

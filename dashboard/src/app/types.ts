@@ -5,7 +5,6 @@ export type StudentAssignment = {
   status: Status
 }
 
-
 export type Student = {
   edufsUsername: string;
   firstName: string;
@@ -23,11 +22,10 @@ export type Stop = {
   divisionIds: number[];
   stopGroupIds: number[];
   orders: number[];
-  teachers: TeacherAssignment[];
 };
 
 export type TeacherAssignment = {
-  teacherId: string;
+  stopId: number;
   status: Status;
 }
 
@@ -35,6 +33,7 @@ export type Teacher = {
   edufsUsername: string;
   firstName: string;
   lastName: string;
+  assignments: TeacherAssignment[];
 }
 
 export type StopOfStudent = {

@@ -1,9 +1,9 @@
 <div class="m-6">
   <h3 class="mb-4 text-4xl">Stop Details</h3>
-  @if(stop().id != -1) {
-  <h4 class="text-2xl">Stop ID: {{ stop().id }}</h4>
+  @if (stop().id != -1) {
+    <h4 class="text-2xl">Stop ID: {{ stop().id }}</h4>
   } @else {
-  <h4 class="text-2xl">New Stop</h4>
+    <h4 class="text-2xl">New Stop</h4>
   }
   <form (submit)="submitStopDetail()" class="mt-4">
     <div>
@@ -19,7 +19,7 @@
     </div>
     <div class="mb-4">
       <label for="description" class="block mb-2 text-gray-700"
-        >Description</label
+      >Description</label
       >
       <textarea
         class="border rounded px-4 py-2 text-gray-700 w-full"
@@ -40,12 +40,46 @@
         name="roomNr"
         id="roomNr"
       />
-      <h1 class="font-medium text-lg my-2">StopGroups</h1>
+    </div>
+    <div>
+      <div class="flex items-baseline mt-4 mb-6">
+        <h1 class="font-medium text-lg my-2">Teachers</h1>
+
+        <form class="ml-10">
+          <label
+            for="teachers"
+            class="block text-sm font-medium text-gray-900"
+          ></label>
+          <select
+            id="teachers"
+            (change)="onTeacherSelect($event)"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          >
+            <option value="0" selected>Add Teacher</option>
+            @for (teacher of teacherStore.getTeachersNotInStop(stop().id); track teacher.edufsUsername) {
+              <option value="{{ teacher.edufsUsername }}">{{ teacher.lastName + " " + teacher.firstName }}</option>
+            }
+          </select>
+        </form>
+      </div>
+    </div>
+    <div>
+      @for (teacher of teacherStore.getTeachersByStopId(stop().id); track $index) {
+        <app-chip
+          class="w-1/12"
+          [id]="teacher.edufsUsername"
+          [value]="teacher.lastName + ' ' + teacher.firstName"
+          (remove)="onTeacherRemove($event)"
+        >
+        </app-chip>
+      }
     </div>
 
-      @for (stopGroupId of stop().stopGroupIds; track $index) {
-        <p>{{ stopGroupStore.getStopGroupById(stopGroupId)!.name }}</p>
-      }
+    <h1 class="font-medium text-lg my-2">StopGroups</h1>
+
+    @for (stopGroupId of stop().stopGroupIds; track $index) {
+      <p>{{ stopGroupStore.getStopGroupById(stopGroupId)!.name }}</p>
+    }
 
     <div>
       <div class="flex items-baseline mt-4 mb-6">
@@ -62,26 +96,28 @@
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           >
             <option value="0" selected>Add Division</option>
-            @for(division of inactiveDivisions(); track division.id) {
-            <option value="{{ division.id }}">{{ division.name }}</option>
+            @for (division of inactiveDivisions(); track division.id) {
+              <option value="{{ division.id }}">{{ division.name }}</option>
             }
           </select>
         </form>
       </div>
 
       <div class="flex flex-wrap">
-        @for(id of stop().divisionIds; track $index) {
-        <app-chip
-          class="mr-2"
-          [division]="divisionStore.getDivisionById(id)!"
-          (remove)="onDivisionRemove($event)"
-        ></app-chip>
+        @for (id of stop().divisionIds; track $index) {
+          <app-chip
+            class="mr-2"
+            [id]="id.toString()"
+            [color]="divisionStore.getDivisionById(id)!.color"
+            [value]="divisionStore.getDivisionById(id)!.name"
+            (remove)="onDivisionRemove($event)"
+          ></app-chip>
         }
       </div>
     </div>
 
     @if (errorMessage() != null) {
-    <p class="text-red-700">{{ errorMessage() }}</p>
+      <p class="text-red-700">{{ errorMessage() }}</p>
     }
     <div>
       <button type="submit" class="bg-htl-orange mr-4 p-2 rounded text-white">
@@ -96,13 +132,13 @@
         Cancel
       </button>
       @if (stop().id != -1) {
-      <button
-        (click)="deleteAndGoBack()"
-        type="button"
-        class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
-      >
-        Delete
-      </button>
+        <button
+          (click)="deleteAndGoBack()"
+          type="button"
+          class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
+        >
+          Delete
+        </button>
       }
     </div>
   </form>

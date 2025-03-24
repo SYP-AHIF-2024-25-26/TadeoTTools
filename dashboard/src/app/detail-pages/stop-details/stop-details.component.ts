@@ -10,6 +10,7 @@ import {Location} from '@angular/common';
 import {StopStore} from "../../store/stop.store";
 import {DivisionStore} from "../../store/division.store";
 import {StopGroupStore} from "../../store/stopgroup.store";
+import {TeacherStore} from "../../store/teacher.store";
 
 @Component({
   selector: 'app-stop-details',
@@ -22,6 +23,7 @@ export class StopDetailsComponent implements OnInit {
   private stopStore = inject(StopStore);
   protected divisionStore = inject(DivisionStore);
   protected stopGroupStore = inject(StopGroupStore);
+  protected teacherStore = inject(TeacherStore);
   private service: StopService = inject(StopService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
@@ -40,10 +42,6 @@ export class StopDetailsComponent implements OnInit {
 
   inactiveDivisions = computed(() =>
     this.divisionStore.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id))
-  );
-
-  inactiveStopGroups = computed(() =>
-    this.stopGroupStore.stopGroups().filter((g) => !this.stop()?.stopGroupIds.includes(g.id))
   );
 
   errorMessage = signal<string | null>(null);
@@ -111,11 +109,20 @@ export class StopDetailsComponent implements OnInit {
     }
   }
 
-  onDivisionRemove(divisionId: number) {
+  onDivisionRemove(divisionId: string) {
     this.stop.update((stop) => {
-      stop.divisionIds = stop.divisionIds.filter((ids) => ids !== divisionId);
+      stop.divisionIds = stop.divisionIds.filter((ids) => ids !== Number.parseInt(divisionId));
       return stop;
     });
   }
 
+  onTeacherRemove(edufsUsername: string) {
+    this.teacherStore.removeStopFromTeacher(edufsUsername, this.stop().id);
+  }
+
+  onTeacherSelect($event: Event) {
+    const target = $event.target as HTMLSelectElement;
+    const edufsUsername = target.value;
+    this.teacherStore.addStopToTeacher(edufsUsername, this.stop().id)
+  }
 }

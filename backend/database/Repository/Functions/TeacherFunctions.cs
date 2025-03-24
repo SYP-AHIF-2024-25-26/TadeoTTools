@@ -5,13 +5,15 @@ namespace Database.Repository.Functions;
 
 public class TeacherFunctions(TadeoTDbContext context)
 {
-    public static async Task<List<TeacherWithoutStopsDto>> GetAllTeachersAsync(TadeoTDbContext context)
+    public static async Task<List<TeacherWithStopsDto>> GetAllTeachersAsync(TadeoTDbContext context)
     {
         return await context.Teachers.Select(t => 
-            new TeacherWithoutStopsDto (
+            new TeacherWithStopsDto (
                 t.EdufsUsername, 
                 t.FirstName, 
-                t.LastName)
+                t.LastName,
+                t.AssignedStops.Select(a => a.Id).ToArray()
+                )
         ).ToListAsync();
     }
 
@@ -22,5 +24,6 @@ public class TeacherFunctions(TadeoTDbContext context)
             .FirstOrDefaultAsync();
     }
     
-    public record TeacherWithoutStopsDto(string EdufsUsername, string FirstName, string LastName);
+    public record TeacherWithStopsDto(string EdufsUsername, string FirstName, string LastName, int[] StopAssignments);
+    public record TeacherAssignment(int StopId, Status Status);
 }
