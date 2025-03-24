@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace database.Migrations
 {
     [DbContext(typeof(TadeoTDbContext))]
-    [Migration("20250318153029_TeacherIdFix")]
-    partial class TeacherIdFix
+    [Migration("20250324194354_FixedTeacherAssignment")]
+    partial class FixedTeacherAssignment
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -244,33 +244,6 @@ namespace database.Migrations
                     b.ToTable("Teachers");
                 });
 
-            modelBuilder.Entity("Database.Entities.TeacherAssignment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StopId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TeacherId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StopId");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("TeacherAssignments");
-                });
-
             modelBuilder.Entity("DivisionStop", b =>
                 {
                     b.Property<int>("DivisionsId")
@@ -284,6 +257,21 @@ namespace database.Migrations
                     b.HasIndex("StopsId");
 
                     b.ToTable("DivisionStop");
+                });
+
+            modelBuilder.Entity("StopTeacher", b =>
+                {
+                    b.Property<int>("AssignedStopsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TeacherAssignmentsEdufsUsername")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("AssignedStopsId", "TeacherAssignmentsEdufsUsername");
+
+                    b.HasIndex("TeacherAssignmentsEdufsUsername");
+
+                    b.ToTable("StopTeacher");
                 });
 
             modelBuilder.Entity("Database.Entities.StopGroupAssignment", b =>
@@ -335,25 +323,6 @@ namespace database.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("Database.Entities.TeacherAssignment", b =>
-                {
-                    b.HasOne("Database.Entities.Stop", "Stop")
-                        .WithMany("TeacherAssignments")
-                        .HasForeignKey("StopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Database.Entities.Teacher", "Teacher")
-                        .WithMany("TeacherAssignments")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Stop");
-
-                    b.Navigation("Teacher");
-                });
-
             modelBuilder.Entity("DivisionStop", b =>
                 {
                     b.HasOne("Database.Entities.Division", null)
@@ -369,6 +338,21 @@ namespace database.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("StopTeacher", b =>
+                {
+                    b.HasOne("Database.Entities.Stop", null)
+                        .WithMany()
+                        .HasForeignKey("AssignedStopsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Database.Entities.Teacher", null)
+                        .WithMany()
+                        .HasForeignKey("TeacherAssignmentsEdufsUsername")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Database.Entities.Stop", b =>
                 {
                     b.Navigation("Statistics");
@@ -376,8 +360,6 @@ namespace database.Migrations
                     b.Navigation("StopGroupAssignments");
 
                     b.Navigation("StudentAssignments");
-
-                    b.Navigation("TeacherAssignments");
                 });
 
             modelBuilder.Entity("Database.Entities.StopGroup", b =>
@@ -388,11 +370,6 @@ namespace database.Migrations
             modelBuilder.Entity("Database.Entities.Student", b =>
                 {
                     b.Navigation("StudentAssignments");
-                });
-
-            modelBuilder.Entity("Database.Entities.Teacher", b =>
-                {
-                    b.Navigation("TeacherAssignments");
                 });
 #pragma warning restore 612, 618
         }
