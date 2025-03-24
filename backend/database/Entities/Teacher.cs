@@ -8,5 +8,5 @@ public class Teacher
     public required string EdufsUsername { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public List<Stop> AssignedStops { get; set; } = [];
+    public List<TeacherAssignments> AssignedStops { get; set; } = [];
 }

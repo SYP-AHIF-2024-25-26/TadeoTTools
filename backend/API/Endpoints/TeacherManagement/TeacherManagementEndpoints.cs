@@ -1,5 +1,9 @@
+using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints.TeacherManagement;
 
@@ -9,48 +13,45 @@ public static class TeacherManagementEndpoints
     {
         return Results.Ok(await TeacherFunctions.GetAllTeachersAsync(context));
     }
-    
-    public static async Task<IResult> AssignStopToTeacher(TadeoTDbContext context, TeacherStopAssignmentDto assignmentDto)
-    {
-        var teacher = await TeacherFunctions.GetTeacherByUsernameAsync(context, assignmentDto.edufsUsername);
-        if (teacher == null)
-        {
-            return Results.NotFound();
-        }
 
-        var stop = await context.Stops.FindAsync(assignmentDto.StopId);
+    public static async Task<IResult> AssignStopToTeacher(TadeoTDbContext context,
+        TeacherStopAssignmentDto assignmentDto)
+    {
+        var stop = await context.Stops.Include(s => s.TeacherAssignments).FirstOrDefaultAsync(s => s.Id == assignmentDto.StopId);
         if (stop == null)
         {
             return Results.NotFound();
         }
-        teacher.AssignedStops.Add(stop);
         
-        await context.SaveChangesAsync();
-        return Results.Ok();
-    }
-    
-    public static async Task<IResult> UnassignStopToTeacher(TadeoTDbContext context, TeacherStopAssignmentDto assignmentDto)
-    {
-        var teacher = await TeacherFunctions.GetTeacherByUsernameAsync(context, assignmentDto.edufsUsername);
+        var teacher = await TeacherFunctions.GetTeacherByUsernameAsync(context, assignmentDto.EdufsUsername);
         if (teacher == null)
         {
             return Results.NotFound();
         }
-
-        var stop = await context.Stops.FindAsync(assignmentDto.StopId);
-        if (stop == null)
-        {
-            return Results.NotFound();
-        }
-
-        if (teacher.AssignedStops.Contains(stop))
-        {
-            teacher.AssignedStops.Remove(stop);
-        }
         
+        if (context.TeacherAssignments.Any(ta => ta.StopId == stop.Id && ta.EdufsUsername == teacher.EdufsUsername))
+        {
+            return Results.BadRequest("Stop already assigned to teacher");
+        }
+        stop.TeacherAssignments.Add(new TeacherAssignments()
+        {
+            EdufsUsername = teacher.EdufsUsername,
+            StopId = stop.Id,
+            Stop = stop,
+            Teacher = teacher
+        });
         await context.SaveChangesAsync();
         return Results.Ok();
     }
-    
-    public record TeacherStopAssignmentDto(string edufsUsername, int StopId);
+
+    public static async Task<IResult> UnassignTeachersFromStop(TadeoTDbContext context,
+        [FromRoute] int stopId)
+    {
+        var assignemnts = context.TeacherAssignments.Where(a => a.StopId != stopId).ToArray();
+        context.TeacherAssignments.RemoveRange(assignemnts);
+        await context.SaveChangesAsync();
+        return Results.Ok();
+    }
+
+    public record TeacherStopAssignmentDto(string EdufsUsername, int StopId);
 }

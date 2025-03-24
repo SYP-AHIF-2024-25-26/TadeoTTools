@@ -17,12 +17,14 @@ public static class TeacherManagementApi
             .WithName(nameof(TeacherManagementEndpoints.AssignStopToTeacher))
             .WithDescription("Upsert a teacher/stop assignment")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces<ProblemDetails>(StatusCodes.Status200OK);
         
-        group.MapPut("teachers/unassign", TeacherManagementEndpoints.UnassignStopToTeacher)
-            .WithName(nameof(TeacherManagementEndpoints.UnassignStopToTeacher))
-            .WithDescription("Upsert a teacher/stop assignment")
+        group.MapPut( "teachers/unassign/{stopId}", TeacherManagementEndpoints.UnassignTeachersFromStop)
+            .WithName(nameof(TeacherManagementEndpoints.UnassignTeachersFromStop))
+            .WithDescription("Unassign all teachers from a stop")
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces<ProblemDetails>(StatusCodes.Status200OK);
     }
 }

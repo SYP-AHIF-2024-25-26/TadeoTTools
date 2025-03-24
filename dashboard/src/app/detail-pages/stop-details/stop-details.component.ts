@@ -2,7 +2,7 @@ import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {StopService} from '../../stop.service';
 import {ActivatedRoute, RouterModule} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {Stop} from '../../types';
+import {Stop, StopGroup, Teacher} from '../../types';
 import {isValid} from '../../utilfunctions';
 import {firstValueFrom} from 'rxjs';
 import {ChipComponent} from '../../standard-components/chip/chip.component';
@@ -11,6 +11,7 @@ import {StopStore} from "../../store/stop.store";
 import {DivisionStore} from "../../store/division.store";
 import {StopGroupStore} from "../../store/stopgroup.store";
 import {TeacherStore} from "../../store/teacher.store";
+import {TeacherService} from "../../teacher.service";
 
 @Component({
   selector: 'app-stop-details',
@@ -24,6 +25,7 @@ export class StopDetailsComponent implements OnInit {
   protected divisionStore = inject(DivisionStore);
   protected stopGroupStore = inject(StopGroupStore);
   protected teacherStore = inject(TeacherStore);
+  teacherService = inject(TeacherService);
   private service: StopService = inject(StopService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
@@ -40,6 +42,8 @@ export class StopDetailsComponent implements OnInit {
   };
   stop = signal<Stop>(this.emptyStop);
 
+  teachers = signal<Teacher[]>([]);
+
   inactiveDivisions = computed(() =>
     this.divisionStore.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id))
   );
@@ -47,6 +51,7 @@ export class StopDetailsComponent implements OnInit {
   errorMessage = signal<string | null>(null);
 
   async ngOnInit() {
+    this.teachers.set(await this.teacherService.getTeachers());
     const params = await firstValueFrom(this.route.queryParams);
     const id = params['id'] || -1;
     const maybeStop = this.stopStore.stops().find(s => s.id == id);
@@ -79,6 +84,11 @@ export class StopDetailsComponent implements OnInit {
       await this.service.addStop(this.stop());
     } else {
       await this.stopStore.updateStop(this.stop());
+      await this.teacherService.unassignAllFromStop(this.stop().id);
+      this.getTeachersByStopId(this.stop().id).forEach((teacher) => {
+        console.log(teacher.edufsUsername)
+        this.teacherService.assignStopToTeacher(teacher.edufsUsername, this.stop().id);
+      });
     }
     this.stop.set(this.emptyStop);
     this.location.back();
@@ -118,11 +128,32 @@ export class StopDetailsComponent implements OnInit {
 
   onTeacherRemove(edufsUsername: string) {
     this.teacherStore.removeStopFromTeacher(edufsUsername, this.stop().id);
+    this.teachers.set(this.teacherStore.getTeachers());
   }
 
   onTeacherSelect($event: Event) {
     const target = $event.target as HTMLSelectElement;
     const edufsUsername = target.value;
     this.teacherStore.addStopToTeacher(edufsUsername, this.stop().id)
+    this.teachers.set(this.teacherStore.getTeachers());
+  }
+
+  getTeachersByStopId(stopId: number): Teacher[] {
+    return this.teachers().filter((teacher) => {
+      if (teacher.assignments) {
+        return teacher.assignments.some((assignment) => assignment.stopId === stopId);
+      }
+      return false;
+    });
+  }
+
+  getTeachersNotInStop(stopId: number): Teacher[] {
+    const wrongTeachers = this.teachers().filter((teacher) => {
+      if (teacher.assignments) {
+        return teacher.assignments.some((assignment) => assignment.stopId === stopId);
+      }
+      return false;
+    });
+    return this.teachers().filter((teacher) => !wrongTeachers.includes(teacher));
   }
 }

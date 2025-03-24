@@ -12,7 +12,7 @@ public class TeacherFunctions(TadeoTDbContext context)
                 t.EdufsUsername, 
                 t.FirstName, 
                 t.LastName,
-                t.AssignedStops.Select(a => a.Id).ToArray()
+                t.AssignedStops.Select(a => a.StopId).ToArray()
                 )
         ).ToListAsync();
     }
@@ -20,6 +20,7 @@ public class TeacherFunctions(TadeoTDbContext context)
     public static async Task<Teacher?> GetTeacherByUsernameAsync(TadeoTDbContext context, string edufsUsername)
     {
         return await context.Teachers
+            .Include(t => t.AssignedStops)
             .Where(t => t.EdufsUsername == edufsUsername)
             .FirstOrDefaultAsync();
     }
