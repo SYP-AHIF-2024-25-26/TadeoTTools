@@ -1,1 +1,13 @@
-{{teacherStore.getTeachers()[0].firstName}}
+@if (teacher()) {
+  @for (stopId of teacher()?.stopAssignments; track $index) {
+    @if (stopStore.getStopById(stopId)) {
+      <div>
+        {{stopStore.getStopById(stopId)?.name}}
+      <button
+        class="text-white shadow-lg p-1.5 mr-5 bg-htl-orange border rounded border-transparent"
+        [routerLink]="['/stop']"
+        [queryParams]="{id: stopId}">Details</button>
+      </div>
+    }
+  }
+}

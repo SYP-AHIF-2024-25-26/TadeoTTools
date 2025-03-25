@@ -36,6 +36,9 @@ export const TeacherStore = signalStore(
       getTeachers(): Teacher[] {
         return store.teachers();
       },
+      getTeacherById(id: string): Teacher | undefined {
+        return store.teachers().find((teacher) => teacher.edufsUsername === id);
+      },
       getTeachersByStopId(stopId: number): Teacher[] {
         console.log(store.teachers().map(t => t.edufsUsername));
         return store.teachers().filter((teacher) => {
