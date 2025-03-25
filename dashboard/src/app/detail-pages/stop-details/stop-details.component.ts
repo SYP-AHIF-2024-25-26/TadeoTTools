@@ -12,6 +12,9 @@ import {DivisionStore} from "../../store/division.store";
 import {StopGroupStore} from "../../store/stopgroup.store";
 import {TeacherStore} from "../../store/teacher.store";
 import {TeacherService} from "../../teacher.service";
+import Keycloak from "keycloak-js";
+import {LoginComponent} from "../../login/login.component";
+import {LoginService} from "../../login.service";
 
 @Component({
   selector: 'app-stop-details',
@@ -25,6 +28,7 @@ export class StopDetailsComponent implements OnInit {
   protected divisionStore = inject(DivisionStore);
   protected stopGroupStore = inject(StopGroupStore);
   protected teacherStore = inject(TeacherStore);
+  loginService = inject(LoginService);
   teacherService = inject(TeacherService);
   private service: StopService = inject(StopService);
   private route: ActivatedRoute = inject(ActivatedRoute);
@@ -41,6 +45,7 @@ export class StopDetailsComponent implements OnInit {
     orders: []
   };
   stop = signal<Stop>(this.emptyStop);
+  isAdmin = signal(false);
 
   inactiveDivisions = computed(() =>
     this.divisionStore.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id))
@@ -60,6 +65,8 @@ export class StopDetailsComponent implements OnInit {
   });
 
   async ngOnInit() {
+    const response = await this.loginService.performCall('is-admin');
+    this.isAdmin.set(response.includes('admin'));
     const params = await firstValueFrom(this.route.queryParams);
     const id = params['id'] || -1;
     const maybeStop = this.stopStore.stops().find(s => s.id == id);
