@@ -56,7 +56,7 @@
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           >
             <option value="0" selected>Add Teacher</option>
-            @for (teacher of getTeachersNotInStop(stop().id); track teacher.edufsUsername) {
+            @for (teacher of teachersNotInStop(); track teacher.edufsUsername) {
               <option value="{{ teacher.edufsUsername }}">{{ teacher.lastName + " " + teacher.firstName }}</option>
             }
           </select>
@@ -64,7 +64,7 @@
       </div>
     </div>
     <div>
-      @for (teacher of getTeachersByStopId(stop().id); track $index) {
+      @for (teacher of teachersByStopId(); track $index) {
         <app-chip
           class="w-1/12"
           [id]="teacher.edufsUsername"

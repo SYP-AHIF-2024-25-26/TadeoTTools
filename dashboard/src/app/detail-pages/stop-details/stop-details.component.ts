@@ -50,6 +50,25 @@ export class StopDetailsComponent implements OnInit {
 
   errorMessage = signal<string | null>(null);
 
+  teachersByStopId = computed(() => {
+    return this.teachers().filter((teacher) => {
+      if (teacher.assignments) {
+        return teacher.assignments.some((assignment) => assignment.stopId === this.stop().id);
+      }
+      return false;
+    });
+  });
+
+  teachersNotInStop = computed(() => {
+    const wrongTeachers = this.teachers().filter((teacher) => {
+      if (teacher.assignments) {
+        return teacher.assignments.some((assignment) => assignment.stopId === this.stop().id);
+      }
+      return false;
+    });
+    return this.teachers().filter((teacher) => !wrongTeachers.includes(teacher));
+  });
+
   async ngOnInit() {
     this.teachers.set(await this.teacherService.getTeachers());
     const params = await firstValueFrom(this.route.queryParams);
@@ -85,7 +104,7 @@ export class StopDetailsComponent implements OnInit {
     } else {
       await this.stopStore.updateStop(this.stop());
       await this.teacherService.unassignAllFromStop(this.stop().id);
-      this.getTeachersByStopId(this.stop().id).forEach((teacher) => {
+      this.teachersByStopId().forEach((teacher) => {
         console.log(teacher.edufsUsername)
         this.teacherService.assignStopToTeacher(teacher.edufsUsername, this.stop().id);
       });
@@ -136,24 +155,5 @@ export class StopDetailsComponent implements OnInit {
     const edufsUsername = target.value;
     this.teacherStore.addStopToTeacher(edufsUsername, this.stop().id)
     this.teachers.set(this.teacherStore.getTeachers());
-  }
-
-  getTeachersByStopId(stopId: number): Teacher[] {
-    return this.teachers().filter((teacher) => {
-      if (teacher.assignments) {
-        return teacher.assignments.some((assignment) => assignment.stopId === stopId);
-      }
-      return false;
-    });
-  }
-
-  getTeachersNotInStop(stopId: number): Teacher[] {
-    const wrongTeachers = this.teachers().filter((teacher) => {
-      if (teacher.assignments) {
-        return teacher.assignments.some((assignment) => assignment.stopId === stopId);
-      }
-      return false;
-    });
-    return this.teachers().filter((teacher) => !wrongTeachers.includes(teacher));
   }
 }

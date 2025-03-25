@@ -47,7 +47,7 @@ public static class TeacherManagementEndpoints
     public static async Task<IResult> UnassignTeachersFromStop(TadeoTDbContext context,
         [FromRoute] int stopId)
     {
-        var assignemnts = context.TeacherAssignments.Where(a => a.StopId != stopId).ToArray();
+        var assignemnts = context.TeacherAssignments.Where(a => a.StopId == stopId).ToArray();
         context.TeacherAssignments.RemoveRange(assignemnts);
         await context.SaveChangesAsync();
         return Results.Ok();
