@@ -24,16 +24,11 @@ export type Stop = {
   orders: number[];
 };
 
-export type TeacherAssignment = {
-  stopId: number;
-  status: Status;
-}
-
 export type Teacher = {
   edufsUsername: string;
   firstName: string;
   lastName: string;
-  assignments: TeacherAssignment[];
+  stopAssignments: number[];
 }
 
 export type StopOfStudent = {

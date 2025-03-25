@@ -1,5 +1,5 @@
-import {patchState, signalStore, withComputed, withMethods, withState} from "@ngrx/signals";
-import {Teacher, TeacherAssignment} from "../types";
+import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
+import {Teacher} from "../types";
 import {inject} from "@angular/core";
 import {TeacherService} from "../teacher.service";
 
@@ -39,36 +39,37 @@ export const TeacherStore = signalStore(
       getTeachersByStopId(stopId: number): Teacher[] {
         console.log(store.teachers().map(t => t.edufsUsername));
         return store.teachers().filter((teacher) => {
-          if (teacher.assignments) {
-            return teacher.assignments.some((assignment) => assignment.stopId === stopId);
+          if (teacher.stopAssignments) {
+            return teacher.stopAssignments.some((assignment) => assignment === stopId);
           }
           return false;
         });
       },
       getTeachersNotInStop(stopId: number): Teacher[] {
         const wrongTeachers = store.teachers().filter((teacher) => {
-          if (teacher.assignments) {
-            return teacher.assignments.some((assignment) => assignment.stopId === stopId);
+          if (teacher.stopAssignments) {
+            return teacher.stopAssignments.some((assignment) => assignment === stopId);
           }
           return false;
         });
         return store.teachers().filter((teacher) => !wrongTeachers.includes(teacher));
       },
-      async addStopToTeacher(edufsUsername: string, stopId: number): Promise<void> {
+      async addStopToTeacher(edufsUsername: string, stopId: number): Promise<Teacher[]> {
         const teacher = store.teachers().find((teacher) => teacher.edufsUsername === edufsUsername);
         if (teacher) {
-          if (teacher.assignments === undefined) {
-            teacher.assignments = [];
+          if (teacher.stopAssignments === undefined) {
+            teacher.stopAssignments = [];
           }
-          teacher.assignments.push({stopId} as TeacherAssignment);
-          patchState(store, {teachers: store.teachers()});
+          teacher.stopAssignments.push(stopId);
+          patchState(store, {teachers: [...store.teachers().filter((teacher) => teacher.edufsUsername !== edufsUsername), teacher]});
         }
+        return store.teachers();
       },
       removeStopFromTeacher(edufsUsername: string, stopId: number): void {
         const teacher = store.teachers().find((teacher) => teacher.edufsUsername === edufsUsername);
         if (teacher) {
-          teacher.assignments = teacher.assignments.filter((assignment) => assignment.stopId !== stopId);
-          patchState(store, {teachers: store.teachers()});
+          teacher.stopAssignments = teacher.stopAssignments.filter((assignment) => assignment !== stopId);
+          patchState(store, {teachers: [...store.teachers().filter((teacher) => teacher.edufsUsername !== edufsUsername), teacher]});
         }
         console.log(store.teachers());
       }

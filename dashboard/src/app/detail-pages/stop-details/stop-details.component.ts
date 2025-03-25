@@ -51,21 +51,17 @@ export class StopDetailsComponent implements OnInit {
   errorMessage = signal<string | null>(null);
 
   teachersByStopId = computed(() => {
-    return this.teachers().filter((teacher) => {
-      if (teacher.assignments) {
-        return teacher.assignments.some((assignment) => assignment.stopId === this.stop().id);
+    const result = this.teachers().filter((teacher) => {
+      if (teacher.stopAssignments) {
+        return teacher.stopAssignments.some((assignment) => assignment == this.stop().id);
       }
       return false;
     });
+    return result;
   });
 
   teachersNotInStop = computed(() => {
-    const wrongTeachers = this.teachers().filter((teacher) => {
-      if (teacher.assignments) {
-        return teacher.assignments.some((assignment) => assignment.stopId === this.stop().id);
-      }
-      return false;
-    });
+    const wrongTeachers = this.teachersByStopId();
     return this.teachers().filter((teacher) => !wrongTeachers.includes(teacher));
   });
 
@@ -105,7 +101,6 @@ export class StopDetailsComponent implements OnInit {
       await this.stopStore.updateStop(this.stop());
       await this.teacherService.unassignAllFromStop(this.stop().id);
       this.teachersByStopId().forEach((teacher) => {
-        console.log(teacher.edufsUsername)
         this.teacherService.assignStopToTeacher(teacher.edufsUsername, this.stop().id);
       });
     }
@@ -150,10 +145,10 @@ export class StopDetailsComponent implements OnInit {
     this.teachers.set(this.teacherStore.getTeachers());
   }
 
-  onTeacherSelect($event: Event) {
+  async onTeacherSelect($event: Event) {
     const target = $event.target as HTMLSelectElement;
     const edufsUsername = target.value;
-    this.teacherStore.addStopToTeacher(edufsUsername, this.stop().id)
+    await this.teacherStore.addStopToTeacher(edufsUsername, this.stop().id);
     this.teachers.set(this.teacherStore.getTeachers());
   }
 }
