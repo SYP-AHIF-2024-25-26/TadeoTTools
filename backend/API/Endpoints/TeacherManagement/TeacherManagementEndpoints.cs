@@ -29,13 +29,13 @@ public static class TeacherManagementEndpoints
             return Results.NotFound();
         }
         
-        if (context.TeacherAssignments.Any(ta => ta.StopId == stop.Id && ta.EdufsUsername == teacher.EdufsUsername))
+        if (context.TeacherAssignments.Any(ta => ta.StopId == stop.Id && ta.TeacherId == teacher.EdufsUsername))
         {
             return Results.BadRequest("Stop already assigned to teacher");
         }
-        stop.TeacherAssignments.Add(new TeacherAssignments()
+        stop.TeacherAssignments.Add(new TeacherAssignment()
         {
-            EdufsUsername = teacher.EdufsUsername,
+            TeacherId = teacher.EdufsUsername,
             StopId = stop.Id,
             Stop = stop,
             Teacher = teacher

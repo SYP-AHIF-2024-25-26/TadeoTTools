@@ -26,5 +26,4 @@ public class TeacherFunctions(TadeoTDbContext context)
     }
     
     public record TeacherWithStopsDto(string EdufsUsername, string FirstName, string LastName, int[] StopAssignments);
-    public record TeacherAssignment(int StopId, Status Status);
 }
