@@ -27,45 +27,40 @@ export class ListStudentsComponent implements OnInit {
   }
 
   processStudents(): void {
-    console.log(this.students()[4].studentAssignments[0].status);
-    console.log(Status.Pending);
-    this.conflicts.set(this.students().filter(
-      (s) =>
-        s.studentAssignments.filter((a) => a.status - 1 === Status.Pending).length >
-        1
-    ));
-    this.singleAssignments.set(this.students().filter(
-      (s) =>
-        s.studentAssignments.filter((a) => a.status - 1 === Status.Pending)
-          .length === 1
-    ));
-    this.noAssignments.set(this.students().filter(
-      (s) => s.studentAssignments.length === 0
-    ));
-  }
-
-  confirmConflicts(): void {
-    this.conflicts().forEach((student) => {
-      const stopId = this.selectedAssignments.get(student.edufsUsername);
-      if (stopId !== undefined) {
-        this.approveStudentByStopId(student, stopId);
-      }
-    });
+    // all where there is more than one assignment and at least one is pending
+    this.conflicts.set(
+      this.students().filter(
+        (s) =>
+          s.studentAssignments.filter((a) => a.status === Status.Pending)
+            .length >= 1 && s.studentAssignments.length > 1
+      )
+    );
+    // all where there is only one assingment and that one is pending
+    this.singleAssignments.set(
+      this.students().filter(
+        (s) =>
+          s.studentAssignments.length === 1 &&
+          s.studentAssignments[0].status === Status.Pending
+      )
+    );
+    // all where there are no assignments
+    this.noAssignments.set(
+      this.students().filter((s) => s.studentAssignments.length === 0)
+    );
   }
 
   approveStudent(student: Student, index: number): void {
-    const assignment = student.studentAssignments[index];
-    student.studentAssignments.forEach((a) => {
-      a.status =
-        a.stopId === assignment.stopId ? Status.Accepted : Status.Declined;
-    });
+    student.studentAssignments[index].status = Status.Accepted;
     this.updateStudent(student);
   }
 
-  approveStudentByStopId(student: Student, stopId: number): void {
-    student.studentAssignments.forEach((a) => {
-      a.status = a.stopId === stopId ? Status.Accepted : Status.Declined;
-    });
+  undoStatus(student: Student, index: number): void {
+    student.studentAssignments[index].status = Status.Pending;
+    this.updateStudent(student);
+  }
+
+  rejectStudent(student: Student, index: number): void {
+    student.studentAssignments[index].status = Status.Declined;
     this.updateStudent(student);
   }
 

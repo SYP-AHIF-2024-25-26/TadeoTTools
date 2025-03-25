@@ -2,11 +2,6 @@ import { Component } from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { CountdownComponent } from '../countdown/countdown.component';
 
-type TimeBox = {
-  label: string;
-  value: string;
-};
-
 @Component({
   selector: 'app-next-year-page',
   imports: [HeaderComponent, CountdownComponent],
