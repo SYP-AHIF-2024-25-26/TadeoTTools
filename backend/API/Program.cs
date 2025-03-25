@@ -36,7 +36,7 @@ builder.Services.AddSwaggerWithAuth();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: "default",
+    options.AddPolicy(Setup.CorsPolicyName,
         policyBuilder =>
         {
             policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:4300", "http://localhost:51566", "http://localhost:5005");
@@ -59,8 +59,6 @@ app.MapDivisionEndpoints();
 app.MapTeacherEndpoints();
 app.MapSettingsEndpoints();
 app.MapUserEndpoints();
-
-app.UseCors("default");
 
 if (app.Environment.IsDevelopment())
 {
