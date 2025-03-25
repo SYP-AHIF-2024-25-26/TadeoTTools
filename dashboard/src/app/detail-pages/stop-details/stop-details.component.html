@@ -1,7 +1,7 @@
 <div class="m-6">
   <h3 class="mb-4 text-4xl">Stop Details</h3>
-  @if(stopId() != -1) {
-  <h4 class="text-2xl">Stop ID: {{ stopId() }}</h4>
+  @if(stop().id != -1) {
+  <h4 class="text-2xl">Stop ID: {{ stop().id }}</h4>
   } @else {
   <h4 class="text-2xl">New Stop</h4>
   }
@@ -11,8 +11,8 @@
       <input
         class="mb-4 border rounded px-4 py-2 text-gray-700"
         type="text"
-        [value]="name()"
-        [(ngModel)]="name"
+        [value]="stop().name"
+        [(ngModel)]="stop().name"
         name="name"
         id="name"
       />
@@ -23,31 +23,29 @@
       >
       <textarea
         class="border rounded px-4 py-2 text-gray-700 w-full"
-        [value]="description()"
-        [(ngModel)]="description"
+        [value]="stop().description"
+        [(ngModel)]="stop().description"
         name="description"
         id="description"
         rows="4"
       ></textarea>
     </div>
-
     <div>
       <label for="roomNr" class="mr-4">Room Number</label>
       <input
         class="mb-4 border rounded px-4 py-2 text-gray-700"
         type="text"
-        [value]="roomNr()"
-        [(ngModel)]="roomNr"
+        [value]="stop().roomNr"
+        [(ngModel)]="stop().roomNr"
         name="roomNr"
         id="roomNr"
       />
-
       <h1 class="font-medium text-lg my-2">StopGroups</h1>
-      @for (sg of stopGroups(); track $index) {
-      @if(stopGroupIds.includes(sg.id)) {
-      <p>{{ sg.name }}</p>
-      } }
     </div>
+
+      @for (stopGroupId of stop().stopGroupIds; track $index) {
+        <p>{{ stopGroupStore.getStopGroupById(stopGroupId)!.name }}</p>
+      }
 
     <div>
       <div class="flex items-baseline mt-4 mb-6">
@@ -72,10 +70,10 @@
       </div>
 
       <div class="flex flex-wrap">
-        @for(id of divisionIds(); track $index) {
+        @for(id of stop().divisionIds; track $index) {
         <app-chip
           class="mr-2"
-          [division]="getDivisionById(id)!"
+          [division]="divisionStore.getDivisionById(id)!"
           (remove)="onDivisionRemove($event)"
         ></app-chip>
         }
@@ -97,7 +95,7 @@
       >
         Cancel
       </button>
-      @if (stopId() != -1) {
+      @if (stop().id != -1) {
       <button
         (click)="deleteAndGoBack()"
         type="button"

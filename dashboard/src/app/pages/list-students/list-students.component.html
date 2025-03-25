@@ -1,0 +1,46 @@
+<div class="p-4">
+  <h2 class="text-xl font-bold mb-4">Student Conflict Manager</h2>
+
+  <h3 class="text-lg font-semibold mb-2">Conflicts (Multiple Pending Assignments)</h3>
+  @for(student of conflicts(); track $index) {
+    <div class="mb-4">
+      <label>{{ student.firstName }} {{ student.lastName }} ({{ student.studentClass }})</label>
+      @for(assignment of student.studentAssignments; track $index) {
+        <div class="flex items-center">
+          <label for="approve-{{student.edufsUsername}}-{{assignment.stopId}}" class="ml-2">{{ assignment.stopName }}</label>
+          @if(assignment.status === 1) {
+            <!--Already approved-->
+            <button class="bg-gray-400 text-white px-4 py-2 rounded mx-2 hover:bg-gray-500" (click)="undoStatus(student, $index)">Approved (undo)</button>
+          }@else {
+            <button (click)="approveStudent(student, $index)" class="bg-htl-orange text-white px-4 py-2 rounded mx-2 my-2 hover:bg-htl-orange-dark">Approve</button>
+          }
+          @if(assignment.status === 2) {
+            <!--Already rejected-->
+            <button class="bg-gray-400 text-white px-4 py-2 rounded mx-2 hover:bg-gray-500" (click)="undoStatus(student, $index)">Rejected (undo)</button>
+          }@else {
+            <button (click)="rejectStudent(student, $index)" class="bg-htl-orange text-white px-4 py-2 rounded mx-2 hover:bg-htl-orange-dark">Reject</button>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <div class="flex items-center">
+    <h3 class="text-lg font-semibold">Single Assignment</h3>
+    <button (click)="autoApproveAll()" class="bg-htl-orange text-white px-4 py-2 rounded m-4">Auto Approve All</button>
+  </div>
+
+  @for(student of singleAssignments(); track $index) {
+    <div class="mb-2 flex items-center">
+      <input type="checkbox" id="approve-{{student.edufsUsername}}" (change)="approveStudent(student, 0)">
+      <label for="approve-{{student.edufsUsername}}" class="ml-2">{{ student.firstName }} {{ student.lastName }}</label>
+    </div>
+  }
+
+  <h3 class="text-lg font-semibold mt-6 mb-2">No Assignments</h3>
+  <ul>
+    @for(student of noAssignments(); track $index) {
+      <li>{{ student.firstName }} {{ student.lastName }} ({{ student.studentClass }})</li>
+    }
+  </ul>
+</div>

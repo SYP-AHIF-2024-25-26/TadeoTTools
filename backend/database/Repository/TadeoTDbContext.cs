@@ -14,4 +14,5 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<Student> Students { get; set; }
     public DbSet<Teacher> Teachers { get; set; }
     public DbSet<StudentAssignment> StudentAssignments { get; set; }
+    public DbSet<TeacherAssignment> TeacherAssignments { get; set; }
 }

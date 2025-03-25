@@ -36,7 +36,8 @@ public static class StopManagementApi
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(nameof(LeoUserRole.Teacher));
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+
 
         group.MapDelete("api/stops/{stopId}", StopManagementEndpoints.DeleteStop)
             .AddEndpointFilter(StopManagementValidations.DeleteStopValidationAsync)

@@ -14,7 +14,6 @@ import {LoginService} from "../../login.service";
 export class NavbarComponent {
   private readonly keycloak = inject(Keycloak);
   private readonly service = inject(LoginService);
-  private readonly router = inject(Router);
   protected isAdmin = signal(false);
 
   async logout() {

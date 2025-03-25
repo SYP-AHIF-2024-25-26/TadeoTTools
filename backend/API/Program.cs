@@ -3,11 +3,14 @@ using API.Endpoints;
 using API.Endpoints.DivisionManagement;
 using API.Endpoints.StopGroupManagement;
 using API.Endpoints.StopManagement;
+using API.Endpoints.StudentManagement;
+using API.Endpoints.UserManagement;
 using Database;
 using Database.Repository;
 using Database.Repository.Functions;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using API.Endpoints.TeacherManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +19,7 @@ builder.Logging.ClearProviders().AddConsole();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<TadeoTDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))); //ServiceLifetime Transient
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))); // ServiceLifetime Transient
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
@@ -51,7 +54,9 @@ app.Logger.LogInformation("Connection String:" + connectionString);
 
 app.MapStopGroupEndpoints();
 app.MapStopEndpoints();
+app.MapStudentEndpoints();
 app.MapDivisionEndpoints();
+app.MapTeacherEndpoints();
 app.MapSettingsEndpoints();
 app.MapUserEndpoints();
 

@@ -6,7 +6,7 @@
     New Division
   </button>
   <div class="flex gap-4 flex-wrap mx-10">
-    @for (division of divisions(); track $index) {
+    @for (division of divisionStore.getDivisions(); track $index) {
     <div
       class="w-64 p-6 border rounded-lg m-2 text-black bg-white flex flex-wrap flex-col justify-between"
     >

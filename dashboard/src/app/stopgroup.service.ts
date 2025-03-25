@@ -25,18 +25,13 @@ export class StopGroupService {
     );
   }
 
-  async addStopGroup(stopGroup: {
-    name: string;
-    description: string;
-    isPublic: boolean;
-  }) {
-    await firstValueFrom(
-      this.httpClient.post(this.baseUrl + '/api/groups', stopGroup)
+  async addStopGroup(stopGroup: StopGroup) {
+    return await firstValueFrom(
+      this.httpClient.post<StopGroup>(this.baseUrl + '/api/groups', stopGroup)
     );
   }
 
   async updateStopGroup(stopGroup: StopGroup) {
-    console.log(typeof stopGroup.isPublic);
     await firstValueFrom(
       this.httpClient.put(this.baseUrl + `/api/groups`, stopGroup)
     );

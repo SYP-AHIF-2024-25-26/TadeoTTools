@@ -6,6 +6,9 @@ import { StopGroupService } from '../../stopgroup.service';
 import { DivisionService } from '../../division.service';
 import { FilterComponent } from '../../standard-components/filter/filter.component';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
+import {StopStore} from "../../store/stop.store";
+import {StopGroupStore} from "../../store/stopgroup.store";
+import {DivisionStore} from "../../store/division.store";
 
 @Component({
     selector: 'app-stops',
@@ -14,14 +17,10 @@ import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.com
     templateUrl: './stops.component.html',
     styleUrl: './stops.component.css'
 })
-export class StopsComponent implements OnInit {
-  private service: StopService = inject(StopService);
-  private groupService: StopGroupService = inject(StopGroupService);
-  private divisionService: DivisionService = inject(DivisionService);
-
-  stops = signal<Stop[]>([]);
-  stopGroups = signal<StopGroup[]>([]);
-  divisions = signal<Division[]>([]);
+export class StopsComponent {
+  private stopStore = inject(StopStore);
+  private stopGroupStore = inject(StopGroupStore);
+  protected divisionStore = inject(DivisionStore);
 
   divisionFilter = signal<number>(0);
   showRemoveStopgroupPopup = signal<boolean>(false);
@@ -30,34 +29,16 @@ export class StopsComponent implements OnInit {
   stopIdFromRemove: number = -1;
 
   filteredStops = computed(() =>
-    this.filterStopsByDivisionId(this.divisionFilter())
+    this.stopStore.filterStopsByDivisionId(this.divisionFilter())
   );
 
-  async ngOnInit() {
-    this.stops.set(await this.service.getStops());
-    this.stopGroups.set(await this.groupService.getStopGroups());
-    this.divisions.set(await this.divisionService.getDivisions());
-  }
 
   async deleteStop(stopId: number) {
-    await this.service.deleteStop(stopId);
-    this.stops.set(await this.service.getStops());
-  }
-
-  filterStopsByDivisionId(divisionId: number): Stop[] {
-    if (divisionId === 0) {
-      return this.stops();
-    }
-    this.stops().forEach((stop) => console.log(stop));
-    console.log('Filtering stops by divisionId: ' + divisionId);
-    return this.stops().filter(
-      (stop) =>
-        Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId)
-    );
+    await this.stopStore.deleteStop(stopId);
   }
 
   getGroupById(sgId: number): StopGroup | null {
-    return this.stopGroups().find((sg) => sg.id === sgId) || null;
+    return this.stopGroupStore.stopGroups().find((sg) => sg.id === sgId) || null;
   }
 
   async selectStopgroupToRemove(stopId: number, sgId: number) {
@@ -67,11 +48,9 @@ export class StopsComponent implements OnInit {
   }
 
   async removeStopgroup() {
-    const stopToUpdate: Stop = this.stops().find((s) => s.id === this.stopIdFromRemove)!;
+    const stopToUpdate: Stop = this.stopStore.stops().find((s) => s.id === this.stopIdFromRemove)!;
     stopToUpdate.stopGroupIds = stopToUpdate.stopGroupIds.filter((sgId) => sgId !== this.stopGroupIdToRemove);
-    await this.service.updateStop(stopToUpdate);
+    await this.stopStore.updateStop(stopToUpdate);
     this.showRemoveStopgroupPopup.set(false);
-    this.stops.set(await this.service.getStops());
-    this.stopGroups.set(await this.groupService.getStopGroups());
   }
 }

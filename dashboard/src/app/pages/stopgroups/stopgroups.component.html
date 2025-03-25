@@ -53,7 +53,7 @@
 
 <div class="flex">
   <div (cdkDropListDropped)="dropGroup($event)" cdkDropList class="w-2/3">
-    @for (group of stopGroups(); track group) {
+    @for (group of stopGroupStore.getStopGroups(); track group) {
       @if (!onlyPublicGroups() || group.isPublic) {
         <div class="bg-gray-100 p-5 m-10 rounded-xl" cdkDrag>
           <div class="flex justify-between">
@@ -96,7 +96,7 @@
                   class="mb-1 p-3 rounded-l flex justify-between items-center cursor-grab"
                   cdkDrag
                 >
-                  <p class="ml-5">{{ getStopByStopId(stopId)?.name }}</p>
+                  <p class="ml-5">{{ stopStore.getStopById(stopId)?.name }}</p>
                   <div>
                     <button
                       class="text-white p-1 my-1 bg-htl-orange appearance-none border rounded border-transparent m-5"
@@ -108,13 +108,8 @@
                       class="text-white p-1 my-1 bg-htl-orange appearance-none border rounded border-transparent"
                       [routerLink]="['/stop']"
                       [queryParams]="{
-                id: getStopByStopId(stopId)?.id,
-                name: getStopByStopId(stopId)?.name,
-                description: getStopByStopId(stopId)?.description,
-                roomNr: getStopByStopId(stopId)?.roomNr,
-                stopGroupIds: getStopByStopId(stopId)?.stopGroupIds,
-                divisionIds: getStopByStopId(stopId)?.divisionIds
-              }"
+                id: stopId
+             }"
                     >
                       Details
                     </button>
@@ -131,7 +126,7 @@
     <div>
       <app-filter
         (filter)="divisionFilter.set($event)"
-        [elements]="divisions()"
+        [elements]="divisionStore.getDivisions()"
       ></app-filter>
     </div>
     <div

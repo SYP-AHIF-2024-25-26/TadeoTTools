@@ -4,6 +4,7 @@ import { Division } from '../../types';
 import { RouterModule } from '@angular/router';
 import { BASE_URL } from '../../app.config';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
+import {DivisionStore} from "../../store/division.store";
 
 @Component({
     selector: 'app-divisions-list',
@@ -12,22 +13,19 @@ import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.com
     templateUrl: './divisions-list.component.html',
     styleUrl: './divisions-list.component.css'
 })
-export class DivisionsListComponent implements OnInit {
-  private service: DivisionService = inject(DivisionService);
-  divisions = signal<Division[]>([]);
+export class DivisionsListComponent {
+  public divisionStore = inject(DivisionStore);
+
+
 
   baseUrl = inject(BASE_URL);
   divisionIdToRemove: number = -1;
   showRemoveDivisionPopup = signal<boolean>(false);
 
-  async ngOnInit() {
-    this.divisions.set(await this.service.getDivisions());
-  }
 
   async deleteDivision() {
-    await this.service.deleteDivision(this.divisionIdToRemove);
+    await this.divisionStore.deleteDivision(this.divisionIdToRemove);
     this.showRemoveDivisionPopup.set(false);
-    this.divisions.set(await this.service.getDivisions());
   }
 
   showDeletePopup(divisionId: number): void {

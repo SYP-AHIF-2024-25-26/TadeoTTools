@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Stop, StopWithoutOrders } from './types';
+import { Stop, StopOfStudent, StopWithoutOrders } from './types';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from './app.config';
@@ -19,15 +19,14 @@ export class StopService {
     );
   }
 
-  async addStop(stop: {
-    name: string;
-    description: string;
-    roomNr: string;
-    divisionIDs: number[];
-    stopGroupIDs: number[];
-  }) {
-    await firstValueFrom(
-      this.httpClient.post(this.baseUrl + '/api/stops', stop)
+  public async getStopsOfStudent(): Promise<StopOfStudent[]> {
+    return firstValueFrom(
+      this.httpClient.get<StopOfStudent[]>(this.baseUrl + '/api/users/correlating-stops'));
+  }
+
+  async addStop(stop: Stop) {
+    return await firstValueFrom(
+      this.httpClient.post<Stop>(this.baseUrl + '/api/stops', stop)
     );
   }
 

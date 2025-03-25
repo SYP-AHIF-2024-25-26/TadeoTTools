@@ -19,9 +19,9 @@ export class DivisionService {
     );
   }
 
-  async addDivision(division: { name: string; color: string }): Promise<void> {
-    await firstValueFrom(
-      this.httpClient.post(
+  async addDivision(division: { name: string; color: string }): Promise<Division> {
+    return await firstValueFrom(
+      this.httpClient.post<Division>(
         `${this.baseUrl}/api/divisions`,
         {
           name: division.name,
