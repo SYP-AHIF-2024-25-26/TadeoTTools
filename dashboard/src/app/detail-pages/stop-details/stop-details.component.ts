@@ -42,8 +42,6 @@ export class StopDetailsComponent implements OnInit {
   };
   stop = signal<Stop>(this.emptyStop);
 
-  teachers = signal<Teacher[]>([]);
-
   inactiveDivisions = computed(() =>
     this.divisionStore.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id))
   );
@@ -51,22 +49,17 @@ export class StopDetailsComponent implements OnInit {
   errorMessage = signal<string | null>(null);
 
   teachersByStopId = computed(() => {
-    const result = this.teachers().filter((teacher) => {
-      if (teacher.stopAssignments) {
-        return teacher.stopAssignments.some((assignment) => assignment == this.stop().id);
-      }
-      return false;
-    });
-    return result;
+    return this.teacherStore.teachers().filter((teacher) =>
+      teacher.stopAssignments.some((assignment) => assignment == this.stop().id)
+    )
   });
 
   teachersNotInStop = computed(() => {
     const wrongTeachers = this.teachersByStopId();
-    return this.teachers().filter((teacher) => !wrongTeachers.includes(teacher));
+    return this.teacherStore.teachers().filter((teacher) => !wrongTeachers.includes(teacher));
   });
 
   async ngOnInit() {
-    this.teachers.set(await this.teacherService.getTeachers());
     const params = await firstValueFrom(this.route.queryParams);
     const id = params['id'] || -1;
     const maybeStop = this.stopStore.stops().find(s => s.id == id);
@@ -142,13 +135,11 @@ export class StopDetailsComponent implements OnInit {
 
   onTeacherRemove(edufsUsername: string) {
     this.teacherStore.removeStopFromTeacher(edufsUsername, this.stop().id);
-    this.teachers.set(this.teacherStore.getTeachers());
   }
 
   async onTeacherSelect($event: Event) {
     const target = $event.target as HTMLSelectElement;
     const edufsUsername = target.value;
     await this.teacherStore.addStopToTeacher(edufsUsername, this.stop().id);
-    this.teachers.set(this.teacherStore.getTeachers());
   }
 }
