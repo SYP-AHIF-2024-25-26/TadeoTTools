@@ -1,13 +1,8 @@
-import {
-  Component,
-  inject,
-  signal,
-  WritableSignal,
-} from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { LoginService } from '../login.service';
+import {Component, inject, signal, WritableSignal,} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {LoginService} from '../login.service';
 import Keycloak from 'keycloak-js';
-import { Router } from '@angular/router';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',

@@ -2,7 +2,7 @@ import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {StopService} from '../../stop.service';
 import {ActivatedRoute, RouterModule} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {Stop, StopGroup, Teacher} from '../../types';
+import {Stop} from '../../types';
 import {isValid} from '../../utilfunctions';
 import {firstValueFrom} from 'rxjs';
 import {ChipComponent} from '../../standard-components/chip/chip.component';
@@ -12,8 +12,6 @@ import {DivisionStore} from "../../store/division.store";
 import {StopGroupStore} from "../../store/stopgroup.store";
 import {TeacherStore} from "../../store/teacher.store";
 import {TeacherService} from "../../teacher.service";
-import Keycloak from "keycloak-js";
-import {LoginComponent} from "../../login/login.component";
 import {LoginService} from "../../login.service";
 
 @Component({

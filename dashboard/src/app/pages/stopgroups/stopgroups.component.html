@@ -55,7 +55,7 @@
   <div (cdkDropListDropped)="dropGroup($event)" cdkDropList class="w-2/3">
     @for (group of stopGroupStore.getStopGroups(); track group) {
       @if (!onlyPublicGroups() || group.isPublic) {
-        <div class="bg-gray-100 p-5 m-10 rounded-xl" cdkDrag>
+        <div class="p-5 m-10 shadow-xl rounded-xl" cdkDrag>
           <div class="flex justify-between">
             <div>
               <button (click)="toggleShowStop(group.id)">
@@ -83,7 +83,7 @@
           </div>
           @if (shouldStopsBeShown(group.id)) {
             <div
-              class="flex flex-col m-5 bg-gray-50 p-4 rounded-xl"
+              class="flex flex-col m-5 p-4 shadow-xl rounded-xl"
               cdkDropList
               [cdkDropListConnectedTo]="getDropGroups()"
               [cdkDropListData]="group.stopIds"
@@ -132,7 +132,7 @@
     <div
       [cdkDropListConnectedTo]="getDropGroups()"
       cdkDropList
-      class="bg-gray-100 p-5 m-10 rounded-xl h-[80vh] overflow-x-scroll"
+      class="shadow-xl rounded-xl p-5 m-10 h-[80vh] overflow-x-scroll"
       id="all-stops"
     >
       <p>Unassigned Stops</p>
