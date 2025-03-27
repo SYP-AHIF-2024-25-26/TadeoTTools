@@ -41,6 +41,39 @@
         id="roomNr"
       />
     </div>
+    <div class="w-1/2">
+      <div class="flex items-baseline mt-4 mb-6">
+        <h1 class="font-medium text-lg my-2">Students</h1>
+
+        <form class="ml-10">
+          <label
+            for="students"
+            class="block text-sm font-medium text-gray-900"
+          ></label>
+          <select
+            id="students"
+            (change)="onStudentSelect($event)"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          >
+            <option value="0" selected>Add Teacher</option>
+            @for (student of studentsNotInStop(); track student.edufsUsername) {
+              <option value="{{ student.edufsUsername }}">{{ student.lastName + " " + student.firstName }}</option>
+            }
+          </select>
+        </form>
+      </div>
+    </div>
+    <div class="flex flex-row">
+      @for (student of studentsByStopId(); track $index) {
+        <app-chip
+          class="w-auto mr-2"
+          [id]="student.edufsUsername"
+          [value]="student.lastName + ' ' + student.firstName"
+          (remove)="onStudentRemove($event)"
+        >
+        </app-chip>
+      }
+    </div>
     @if (isAdmin()) {
       <div class="w-1/2">
         <div class="flex items-baseline mt-4 mb-6">

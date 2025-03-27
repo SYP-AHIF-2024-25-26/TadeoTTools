@@ -69,6 +69,12 @@ export const TeacherStore = signalStore(
           patchState(store, {teachers: [...store.teachers().filter((teacher) => teacher.edufsUsername !== edufsUsername), teacher]});
         }
         console.log(store.teachers());
+      },
+      async setAssignments(stopId: number) {
+        await teacherService.unassignAllFromStop(stopId);
+        this.getTeachersByStopId(stopId).forEach((teacher) => {
+          teacherService.assignStopToTeacher(teacher.edufsUsername, stopId);
+        });
       }
     };
   })
