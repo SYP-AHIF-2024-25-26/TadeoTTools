@@ -19,7 +19,7 @@ export const TeacherStore = signalStore(
   withMethods((store) => {
     const teacherService = inject(TeacherService);
 
-    (async function fetchInitialDivisions() {
+    (async function fetchInitialTeachers() {
       if (initialState.teachers.length == 0) {
         const teachers = await teacherService.getTeachers();
         patchState(store, {teachers, loaded: true});
@@ -27,12 +27,6 @@ export const TeacherStore = signalStore(
     })();
 
     return {
-      async fetchInitialDivisions() {
-        if (initialState.teachers.length == 0) {
-          const teachers = await teacherService.getTeachers();
-          patchState(store, {teachers, loaded: true});
-        }
-      },
       getTeachers(): Teacher[] {
         return store.teachers();
       },

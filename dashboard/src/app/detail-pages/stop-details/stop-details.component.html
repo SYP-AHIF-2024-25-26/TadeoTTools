@@ -42,7 +42,7 @@
       />
     </div>
     @if (isAdmin()) {
-      <div>
+      <div class="w-1/2">
         <div class="flex items-baseline mt-4 mb-6">
           <h1 class="font-medium text-lg my-2">Teachers</h1>
 
@@ -64,10 +64,10 @@
           </form>
         </div>
       </div>
-      <div>
+      <div class="flex flex-row">
         @for (teacher of teachersByStopId(); track $index) {
           <app-chip
-            class="w-1/12"
+            class="w-auto mr-2"
             [id]="teacher.edufsUsername"
             [value]="teacher.lastName + ' ' + teacher.firstName"
             (remove)="onTeacherRemove($event)"
