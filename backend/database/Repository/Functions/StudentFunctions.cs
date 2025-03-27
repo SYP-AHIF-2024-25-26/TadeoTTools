@@ -43,6 +43,7 @@ public class StudentFunctions
     public static async Task<Student?> GetStudentByEdufsUsername(TadeoTDbContext context, string edufsUsername)
     {
         return await context.Students
+            .Include(s => s.StudentAssignments)
             .FirstOrDefaultAsync(s => s.EdufsUsername == edufsUsername);
     }
 }
