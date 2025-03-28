@@ -21,8 +21,8 @@ public static class StudentManagementApi
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
-        group.MapPut("api/students/{id}/assignments", StudentManagementEndpoints.SetAssignments)
-            .WithName(nameof(StudentManagementEndpoints.SetAssignments))
+        group.MapPut("api/students/{id}/assignments", StudentManagementEndpoints.SetStudentAssignments)
+            .WithName(nameof(StudentManagementEndpoints.SetStudentAssignments))
             .WithDescription("Set assignments for a student")
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)

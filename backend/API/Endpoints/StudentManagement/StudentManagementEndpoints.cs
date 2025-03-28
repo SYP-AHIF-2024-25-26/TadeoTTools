@@ -46,7 +46,7 @@ public class StudentManagementEndpoints
         return Results.Ok("Student updated successfully");
     }
     
-    public static async Task<IResult> SetAssignments(TadeoTDbContext context, [FromRoute] string id, StudentAssignment[] assignments)
+    public static async Task<IResult> SetStudentAssignments(TadeoTDbContext context, [FromRoute] string id, StudentAssignment[] assignments)
     {
         var student = await StudentFunctions.GetStudentByEdufsUsername(context, id);
         if (student == null)
@@ -58,6 +58,6 @@ public class StudentManagementEndpoints
         student.StudentAssignments.AddRange(assignments);
         await context.SaveChangesAsync();
 
-        return Results.Ok(student);
+        return Results.Ok();
     }
 }

@@ -12,19 +12,12 @@ public static class TeacherManagementApi
             .WithName(nameof(TeacherManagementEndpoints.GetAllTeachers))
             .WithDescription("Get all teachers")
             .Produces<List<TeacherFunctions.TeacherWithStopsDto>>();
-        
-        group.MapPut("teachers/assign", TeacherManagementEndpoints.AssignStopToTeacher)
-            .WithName(nameof(TeacherManagementEndpoints.AssignStopToTeacher))
-            .WithDescription("Upsert a teacher/stop assignment")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+
+        group.MapPut("teachers/{id}/assignments", TeacherManagementEndpoints.SetTeacherAssignments)
+            .WithName(nameof(TeacherManagementEndpoints.SetTeacherAssignments))
+            .WithDescription("Set assignments for a teacher")
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces<ProblemDetails>(StatusCodes.Status200OK);
-        
-        group.MapPut( "teachers/unassign/{stopId}", TeacherManagementEndpoints.UnassignTeachersFromStop)
-            .WithName(nameof(TeacherManagementEndpoints.UnassignTeachersFromStop))
-            .WithDescription("Unassign all teachers from a stop")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces<ProblemDetails>(StatusCodes.Status200OK);
+            .Produces(StatusCodes.Status200OK);
+        //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
     }
 }
