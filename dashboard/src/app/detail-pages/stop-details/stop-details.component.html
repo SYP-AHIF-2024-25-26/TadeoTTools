@@ -64,7 +64,7 @@
       </div>
     </div>
     <div class="flex flex-row">
-      @for (student of studentsByStopId(); track $index) {
+      @for (student of studentStore.getStudentsByStopId(stop().id); track $index) {
         <app-chip
           class="w-auto mr-2"
           [id]="student.edufsUsername"

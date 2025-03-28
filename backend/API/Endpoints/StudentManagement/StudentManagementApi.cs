@@ -13,7 +13,7 @@ public static class StudentManagementApi
             .WithDescription("Get all students")
             .Produces<List<StudentFunctions.StudentDto>>()
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
-        
+
         group.MapPut("api/students/{id}", StudentManagementEndpoints.UpdateStudent)
             .WithName(nameof(StudentManagementEndpoints.UpdateStudent))
             .WithDescription("Update a student")
@@ -21,11 +21,11 @@ public static class StudentManagementApi
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
-        group.MapPut("students/{id}/assignments", StudentManagementEndpoints.SetAssignments)
+        group.MapPut("api/students/{id}/assignments", StudentManagementEndpoints.SetAssignments)
             .WithName(nameof(StudentManagementEndpoints.SetAssignments))
             .WithDescription("Set assignments for a student")
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status200OK);
-        //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
     }
 }

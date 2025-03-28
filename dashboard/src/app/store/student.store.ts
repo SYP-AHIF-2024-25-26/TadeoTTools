@@ -1,6 +1,6 @@
-import {patchState, signalStore, withComputed, withMethods, withState} from "@ngrx/signals";
+import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {Student, StudentAssignment} from "../types";
-import {computed, inject} from "@angular/core";
+import {inject} from "@angular/core";
 import {StudentService} from "../student.service";
 
 type StudentState = {
@@ -27,7 +27,10 @@ export const StudentStore = signalStore(
     })();
 
     return {
-      getStudentsByStopId(stopId: number) : Student[] {
+      getTeacherByUsername(edufsUsername: string): Student | undefined {
+        return store.students().find((student) => student.edufsUsername === edufsUsername);
+      },
+      getStudentsByStopId(stopId: number): Student[] {
         return store.students().filter((student) =>
           student.studentAssignments.some((assignment) => assignment.stopId == stopId)
         )
@@ -51,13 +54,24 @@ export const StudentStore = signalStore(
           patchState(store, {students: [...store.students().filter((student) => student.edufsUsername !== edufsUsername), student]});
         }
       },
-      async setAssignments(stopId: number) {
-        await studentService.unassignAllFromStop(stopId);
-        this.getStudentsByStopId(stopId).forEach((student) => {
-          studentService.assignStopToStudent(student.edufsUsername, stopId);
+      // Since the stopId we set earlier was -1 because we didn't know yet we have to change it to the real stopId here
+      setStopIdForAssignmentsOnNewStop(stopId: number) {
+        store.students().forEach((student) => {
+          student.studentAssignments.forEach((assignment) => {
+            if (assignment.stopId === -1) {
+              assignment.stopId = stopId;
+            }
+          });
         });
-      };
+        patchState(store, {students: [...store.students()]});
+      },
+      async setAssignments(edufsUsername: string) {
+        const teacher = this.getTeacherByUsername(edufsUsername);
+        if (teacher) {
+          console.log(teacher.firstName + " " + teacher.lastName + " " + teacher.edufsUsername);
+          await studentService.setAssignments(edufsUsername, teacher.studentAssignments);
+        }
+      }
     }
-  )
-  )
-    ;
+  })
+);

@@ -11,7 +11,6 @@ import {StopStore} from "../../store/stop.store";
 import {DivisionStore} from "../../store/division.store";
 import {StopGroupStore} from "../../store/stopgroup.store";
 import {TeacherStore} from "../../store/teacher.store";
-import {TeacherService} from "../../teacher.service";
 import {LoginService} from "../../login.service";
 import {StudentStore} from "../../store/student.store";
 
@@ -29,7 +28,6 @@ export class StopDetailsComponent implements OnInit {
   protected teacherStore = inject(TeacherStore);
   protected studentStore = inject(StudentStore);
   loginService = inject(LoginService);
-  teacherService = inject(TeacherService);
   private service: StopService = inject(StopService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
@@ -60,14 +58,13 @@ export class StopDetailsComponent implements OnInit {
   });
 
 
-
   teachersNotInStop = computed(() => {
     const wrongTeachers = this.teachersByStopId();
     return this.teacherStore.teachers().filter((teacher) => !wrongTeachers.includes(teacher));
   });
 
   studentsNotInStop = computed(() => {
-    const wrongStudents = this.studentsByStopId();
+    const wrongStudents = this.studentStore.getStudentsByStopId(this.stop().id);
     return this.studentStore.students().filter((student) => !wrongStudents.includes(student));
   });
 
@@ -103,13 +100,23 @@ export class StopDetailsComponent implements OnInit {
       return;
     }
     if (this.stop().id === -1) {
-      await this.service.addStop(this.stop());
+      const returnedStop = await this.service.addStop(this.stop());
+      console.log(returnedStop);
+      this.stop.set({...this.stop(), id: returnedStop.id});
     } else {
       await this.stopStore.updateStop(this.stop());
     }
 
+    this.studentStore.getStudentsByStopId(-1).forEach((student) => {
+      this.studentStore.setAssignments(student.edufsUsername);
+    })
+
+    this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
+      this.studentStore.setAssignments(student.edufsUsername);
+    })
+
     this.stop.set(this.emptyStop);
-    this.location.back();
+    //this.location.back();
   }
 
   async deleteAndGoBack() {
@@ -168,5 +175,4 @@ export class StopDetailsComponent implements OnInit {
   onStudentRemove(edufsUsername: string) {
     this.studentStore.removeStopFromStudent(edufsUsername, this.stop().id);
   }
-
 }
