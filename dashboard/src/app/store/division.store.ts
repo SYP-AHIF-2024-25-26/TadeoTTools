@@ -8,7 +8,7 @@ type DivisionState = {
 };
 
 const initialState: DivisionState = {
-  divisions: []
+  divisions: [],
 };
 
 export const DivisionStore = signalStore(

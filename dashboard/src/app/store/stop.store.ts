@@ -6,10 +6,12 @@ import {StopService} from "../stop.service";
 
 type StopState = {
   stops: Stop[];
+  loaded: boolean;
 };
 
 const initialState: StopState = {
-  stops: []
+  stops: [],
+  loaded: false,
 };
 
 export const StopStore = signalStore(
@@ -21,7 +23,8 @@ export const StopStore = signalStore(
     (async function fetchInitialStops() {
       if (initialState.stops.length == 0) {
         const stops = await stopService.getStops();
-        patchState(store, {stops});
+        console.log("Fetched stops: ", stops);
+        patchState(store, {stops: stops, loaded: true});
       }
     })();
 
