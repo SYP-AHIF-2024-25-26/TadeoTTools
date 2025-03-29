@@ -1,9 +1,9 @@
 <div class="sticky">
-  <nav class="bg-htl-orange text-white p-2 flex items-center space-x-10">
+  <nav class="bg-background-500 text-text-50 p-2 flex items-center space-x-10">
     <div class="flex space-x-10 w-full justify-start">
       <div class="text-lg">Admin Dashboard</div>
       @if(isAdmin()) {
-        <button class="justify-start" [routerLink]="['/overview']">Overview</button>
+        <button class="justify-start hover:text-lg" [routerLink]="['/overview']">Overview</button>
         <button [routerLink]="['/students']">Students</button>
         <button [routerLink]="['/stopgroups']">StopGroups</button>
         <button [routerLink]="['/stops']">Stops</button>
