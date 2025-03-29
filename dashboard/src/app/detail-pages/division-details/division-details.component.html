@@ -1,9 +1,19 @@
 <div class="m-6">
-  <h1 class="mb-4 text-4xl">Division Details</h1>
-  @if(divisionId() != -1) {
+  @if(divisionId() == -1) {
   <h4 class="text-2xl">Division ID: {{ divisionId() }}</h4>
   } @else {
-  <h4 class="text-2xl">New Division</h4>
+    <div>
+      <label for="name" class="mr-4">Name</label>
+      <input
+        class="mb-4 border rounded px-4 py-2 text-gray-700"
+        type="text"
+        [value]="name()"
+        [(ngModel)]="name"
+        name="name"
+        id="name"
+        [size]="name().length"
+      />
+    </div>
   } @if(filePreview != null) {
   <div class="mt-4">
     <p>File Preview</p>
@@ -22,18 +32,6 @@
   }
 
   <form (submit)="submitDivisionDetail()" class="mt-4">
-    <div>
-      <label for="name" class="mr-4">Name</label>
-      <input
-        class="mb-4 border rounded px-4 py-2 text-gray-700"
-        type="text"
-        [value]="name()"
-        [(ngModel)]="name"
-        name="name"
-        id="name"
-      />
-    </div>
-
     <label for="color" class="mr-4">Color</label>
     <input
       class="mb-4"
