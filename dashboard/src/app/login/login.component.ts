@@ -26,6 +26,18 @@ export class LoginComponent {
       return;
     }
     await this.keycloak.login();
+    await this.service.performCall('in-database')
+      .then((response) => {
+        if (response === 'false') {
+          this.response.set('User not in database, please contact admin');
+          this.keycloak.logout();
+          return;
+        }
+      })
+      .catch((error) => {
+        console.error('Error during login:', error);
+        this.keycloak.logout();
+      });
   }
 
   public async logout(): Promise<void> {

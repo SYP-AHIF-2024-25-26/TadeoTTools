@@ -1,9 +1,9 @@
 @if (isLoggedIn){
 <span>You are logged in</span>
-<button mat-button (click)="logout()">Logout</button>
+<button (click)="logout()">Logout</button>
 } @else {
 <span>You are not logged in</span>
-<button mat-button (click)="login()">Login</button>
+<button (click)="login()">Login</button>
 }
 
 <button (click)="goToPage()">Go to correlating page</button>

@@ -68,5 +68,12 @@ public static class UserManagementApi
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(nameof(LeoUserRole.Student));
+
+        app.MapGet("/in-database", UserManagementEndpoints.UserInDatabase)
+            .WithName(nameof(UserManagementEndpoints.UserInDatabase))
+            .WithDescription("Check if a user is in the database")
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK);
     }
 }
