@@ -21,3 +21,13 @@ export type Division = {
   name: string;
   color: string;
 };
+
+export type FeedbackQuestion = {
+  id: number;
+  question: string;
+}
+
+export type FeedbackSubmission = {
+  questionId: number;
+  answer: string;
+}
