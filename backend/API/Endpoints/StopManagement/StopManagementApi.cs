@@ -1,3 +1,4 @@
+using API.Endpoints.UserManagement;
 using Database.Repository.Functions;
 using LeoAuth;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,13 @@ public static class StopManagementApi
             .WithDescription("Get all stops that are publically available to see")
             .Produces <List<StopWithAssignmentsAndDivisionsDto>>()
             .RequireAuthorization(Setup.AdminPolicyName);
+
+        group.MapGet("stops/correlating", StopManagementEndpoints.GetCorrelatingStops)
+            .WithName(nameof(StopManagementEndpoints.GetCorrelatingStops))
+            .WithDescription("Get the correlating stops of a student")
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(nameof(LeoUserRole.Student));
 
         group.MapPost("api/stops", StopManagementEndpoints.CreateStop)
             .AddEndpointFilter(StopManagementValidations.CreateStopValidationAsync)

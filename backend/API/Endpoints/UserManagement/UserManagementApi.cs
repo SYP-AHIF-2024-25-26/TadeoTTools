@@ -37,13 +37,6 @@ public static class UserManagementApi
             );
         }).RequireAuthorization();
 
-        group.MapGet("/correlating-stops", UserManagementEndpoints.GetCorrelatingStops)
-            .WithName(nameof(UserManagementEndpoints.GetCorrelatingStops))
-            .WithDescription("Get the correlating stops of a student")
-            .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(nameof(LeoUserRole.Student));
-
         app.MapGet("/in-database", UserManagementEndpoints.UserInDatabase)
             .WithName(nameof(UserManagementEndpoints.UserInDatabase))
             .WithDescription("Check if a user is in the database")

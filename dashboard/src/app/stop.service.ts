@@ -21,7 +21,7 @@ export class StopService {
 
   public async getStopsOfStudent(): Promise<StopOfStudent[]> {
     return firstValueFrom(
-      this.httpClient.get<StopOfStudent[]>(this.baseUrl + '/api/users/correlating-stops'));
+      this.httpClient.get<StopOfStudent[]>(this.baseUrl + '/stops/correlating'));
   }
 
   async addStop(stop: Stop) {
