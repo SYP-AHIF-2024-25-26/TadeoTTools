@@ -13,7 +13,7 @@ public class StudentAssignment
 {
     [Key]
     public int Id { get; set; }
-    public string StudentId { get; set; }
+    public required string StudentId { get; set; }
     public Student? Student { get; set; }
     public int StopId { get; set; }
     public Stop? Stop { get; set; }

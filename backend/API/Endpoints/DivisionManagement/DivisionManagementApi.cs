@@ -1,6 +1,5 @@
 using Database.Entities;
 using Database.Repository.Functions;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.DivisionManagement;
 
@@ -17,7 +16,7 @@ public static class DivisionManagementApi
         group.MapPost("api/divisions", DivisionManagementEndpoints.CreateDivision)
             .AddEndpointFilter(DivisionManagementValidations.CreateDivisionValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.CreateDivision))
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status400BadRequest)
             .Produces<Division>()
             .RequireAuthorization(Setup.AdminPolicyName)
             .DisableAntiforgery();
@@ -26,7 +25,7 @@ public static class DivisionManagementApi
             .AddEndpointFilter(DivisionManagementValidations.DoesDivisionExistValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.DeleteDivisionById))
             .WithDescription("Delete a Division by its id")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
 
@@ -34,8 +33,8 @@ public static class DivisionManagementApi
             .AddEndpointFilter(DivisionManagementValidations.UpdateDivisionValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.UpdateDivision))
             .WithDescription("Update a division entity")
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
 
@@ -43,7 +42,7 @@ public static class DivisionManagementApi
             .AddEndpointFilter(DivisionManagementValidations.UpdateDivisionImageValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.UpdateDivisionImage))
             .WithDescription("Update the image of a division")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .DisableAntiforgery()
             .RequireAuthorization(Setup.AdminPolicyName);
@@ -52,8 +51,8 @@ public static class DivisionManagementApi
             .AddEndpointFilter(DivisionManagementValidations.DoesDivisionExistValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.GetImageByDivisionId))
             .WithDescription("Get Image by its division id")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-            .Produces<ProblemDetails>(StatusCodes.Status416RangeNotSatisfiable)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status416RangeNotSatisfiable)
             .Produces<byte[]>(StatusCodes.Status206PartialContent)
             .DisableAntiforgery();
 
@@ -61,7 +60,7 @@ public static class DivisionManagementApi
             .AddEndpointFilter(DivisionManagementValidations.DoesDivisionExistValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.DeleteImage))
             .WithDescription("Delete an Image of an division")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
     }

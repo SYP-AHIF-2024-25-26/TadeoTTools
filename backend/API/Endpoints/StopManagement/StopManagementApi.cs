@@ -1,7 +1,5 @@
-using API.Endpoints.UserManagement;
 using Database.Repository.Functions;
 using LeoAuth;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.StopManagement;
 
@@ -19,7 +17,7 @@ public static class StopManagementApi
         group.MapGet("stops", StopManagementEndpoints.GetPublicStops)
             .WithName(nameof(StopManagementEndpoints.GetPublicStops))
             .WithDescription("Get all stops that are publically available to see")
-            .Produces <List<StopWithAssignmentsAndDivisionsDto>>()
+            .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
             .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapGet("stops/correlating", StopManagementEndpoints.GetCorrelatingStops)
@@ -33,7 +31,7 @@ public static class StopManagementApi
             .AddEndpointFilter(StopManagementValidations.CreateStopValidationAsync)
             .WithName(nameof(StopManagementEndpoints.CreateStop))
             .WithDescription("Create a new stop")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status404NotFound)
             .Produces<StopManagementEndpoints.StopResponseDto>()
             .RequireAuthorization(Setup.AdminPolicyName);
 
@@ -41,8 +39,8 @@ public static class StopManagementApi
             .AddEndpointFilter(StopManagementValidations.UpdateStopValidationAsync)
             .WithName(nameof(StopManagementEndpoints.UpdateStop))
             .WithDescription("Update a stop")
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
@@ -51,7 +49,7 @@ public static class StopManagementApi
             .AddEndpointFilter(StopManagementValidations.DeleteStopValidationAsync)
             .WithName(nameof(StopManagementEndpoints.DeleteStop))
             .WithDescription("Delete a stop by its id")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
     }

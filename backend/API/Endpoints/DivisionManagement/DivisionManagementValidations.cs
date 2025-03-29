@@ -10,7 +10,7 @@ public static class DivisionManagementValidations
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
         var division = context.GetArgument<DivisionManagementEndpoints.AddDivisionDto>(1);
-        
+
         if (division.Name.Length > 255)
         {
             return Results.BadRequest("Division name must be less than 255 characters.");
@@ -34,7 +34,7 @@ public static class DivisionManagementValidations
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
         var dto = context.GetArgument<DivisionManagementEndpoints.UpdateDivisionDto>(1);
-        
+
         if (dto.Name.Length > 255)
         {
             return Results.BadRequest("Division name must be less than 255 characters.");
@@ -44,9 +44,9 @@ public static class DivisionManagementValidations
         {
             return Results.BadRequest("Color must be less than 8 characters.");
         }
-        
+
         var division = await dbContext.Divisions.FindAsync(dto.Id);
-        
+
         if (division == null)
         {
             return Results.NotFound();
@@ -65,7 +65,7 @@ public static class DivisionManagementValidations
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
         var dto = context.GetArgument<DivisionManagementEndpoints.UpdateDivisionImageDto>(1);
-        
+
         if (!await DivisionFunctions.DoesDivisionExistAsync(dbContext, dto.Id))
         {
             return Results.NotFound();
@@ -79,7 +79,7 @@ public static class DivisionManagementValidations
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
         var divisionId = context.GetArgument<int>(1);
-        
+
         if (!await DivisionFunctions.DoesDivisionExistAsync(dbContext, divisionId))
         {
             return Results.NotFound();

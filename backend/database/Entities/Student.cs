@@ -1,4 +1,3 @@
-using Database.Repository.Functions;
 using System.ComponentModel.DataAnnotations;
 
 namespace Database.Entities;

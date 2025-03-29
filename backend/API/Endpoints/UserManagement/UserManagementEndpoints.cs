@@ -1,7 +1,6 @@
 ﻿using Database.Entities;
 using Database.Repository;
 using LeoAuth;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints.UserManagement;
 
@@ -37,8 +36,6 @@ public class UserManagementEndpoints
 
         return data;
     }
-
-    public record CorrelatingStopsDto(string Name, Status Status, string Description, string RoomNr);
 
     public static async Task<IResult> UserInDatabase(TadeoTDbContext context, HttpContext httpContext)
     {

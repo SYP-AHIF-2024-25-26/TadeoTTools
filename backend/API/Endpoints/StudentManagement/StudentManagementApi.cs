@@ -1,5 +1,4 @@
 ﻿using Database.Repository.Functions;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.StudentManagement;
 
@@ -17,14 +16,14 @@ public static class StudentManagementApi
         group.MapPut("api/students/{id}", StudentManagementEndpoints.UpdateStudent)
             .WithName(nameof(StudentManagementEndpoints.UpdateStudent))
             .WithDescription("Update a student")
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
         group.MapPut("api/students/{id}/assignments", StudentManagementEndpoints.SetStudentAssignments)
             .WithName(nameof(StudentManagementEndpoints.SetStudentAssignments))
             .WithDescription("Set assignments for a student")
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
     }

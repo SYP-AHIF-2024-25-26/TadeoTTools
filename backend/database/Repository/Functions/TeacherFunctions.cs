@@ -3,14 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Database.Repository.Functions;
 
-public class TeacherFunctions(TadeoTDbContext context)
+public class TeacherFunctions
 {
     public static async Task<List<TeacherWithStopsDto>> GetAllTeachersAsync(TadeoTDbContext context)
     {
-        return await context.Teachers.Select(t => 
-            new TeacherWithStopsDto (
-                t.EdufsUsername, 
-                t.FirstName, 
+        return await context.Teachers.Select(t =>
+            new TeacherWithStopsDto(
+                t.EdufsUsername,
+                t.FirstName,
                 t.LastName,
                 t.AssignedStops.Select(a => a.StopId).ToArray()
                 )
@@ -24,6 +24,6 @@ public class TeacherFunctions(TadeoTDbContext context)
             .Where(t => t.EdufsUsername == edufsUsername)
             .FirstOrDefaultAsync();
     }
-    
+
     public record TeacherWithStopsDto(string EdufsUsername, string FirstName, string LastName, int[] StopAssignments);
 }

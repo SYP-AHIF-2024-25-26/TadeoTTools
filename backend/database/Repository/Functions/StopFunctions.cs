@@ -1,5 +1,4 @@
-﻿using Database.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Database.Repository.Functions;
 
