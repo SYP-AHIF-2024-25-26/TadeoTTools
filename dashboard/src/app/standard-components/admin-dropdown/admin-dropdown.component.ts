@@ -9,7 +9,6 @@ import Keycloak from "keycloak-js";
     NgClass
   ],
   templateUrl: './admin-dropdown.component.html',
-  styleUrl: './admin-dropdown.component.css'
 })
 export class AdminDropdownComponent {
   isOpen = false;

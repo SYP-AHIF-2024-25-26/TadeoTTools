@@ -5,7 +5,6 @@ import { Division } from '../../types';
     selector: 'app-filter',
     standalone: true,
     templateUrl: './filter.component.html',
-    styleUrl: './filter.component.css'
 })
 export class FilterComponent {
   @Input() elements!: Division[];

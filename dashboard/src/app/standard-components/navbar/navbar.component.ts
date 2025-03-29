@@ -1,5 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
-import {Router, RouterModule} from '@angular/router';
+import {RouterModule} from '@angular/router';
 import Keycloak from 'keycloak-js';
 import {AdminDropdownComponent} from "../admin-dropdown/admin-dropdown.component";
 import {LoginService} from "../../login.service";
@@ -9,7 +9,6 @@ import {LoginService} from "../../login.service";
   standalone: true,
   imports: [RouterModule, AdminDropdownComponent],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
   private readonly keycloak = inject(Keycloak);
@@ -22,7 +21,6 @@ export class NavbarComponent {
 
   async ngOnInit() {
     const response = await this.service.performCall('is-admin');
-
     this.isAdmin.set(response.includes('admin'));
   }
 }

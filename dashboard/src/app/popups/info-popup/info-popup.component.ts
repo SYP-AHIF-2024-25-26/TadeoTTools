@@ -7,7 +7,6 @@ import { NgClass } from '@angular/common';
     standalone: true,
     imports: [NgClass],
     templateUrl: './info-popup.component.html',
-    styleUrl: './info-popup.component.css'
 })
 export class InfoPopupComponent implements OnInit {
   @Input() info: Info | undefined;
