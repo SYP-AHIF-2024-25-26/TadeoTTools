@@ -1,4 +1,4 @@
-<div class="bg-white flex pr-10 pl-10 pt-2 top-10 flex justify-center">
+<div class="bg-white pr-10 pl-10 pt-2 top-10 flex justify-center">
   <button
     [routerLink]="['/stopgroup']"
     class="text-white p-1.5 mr-5 mt-5 bg-htl-orange appearance-none border rounded border-transparent"
@@ -51,10 +51,7 @@
               class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent"
               [routerLink]="['/stopgroup']"
               [queryParams]="{
-                id: getGroupById(sgId)?.id,
-                name: getGroupById(sgId)?.name,
-                description: getGroupById(sgId)?.description,
-                isPublic: getGroupById(sgId)?.isPublic
+                id: getGroupById(sgId)?.id
               }"
             >
               Details

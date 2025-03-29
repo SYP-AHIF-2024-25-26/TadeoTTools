@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { Division, Stop, StopGroup } from '../../types';
+import { Stop, StopGroup } from '../../types';
 import { RouterModule } from '@angular/router';
 import { FilterComponent } from '../../standard-components/filter/filter.component';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
