@@ -16,7 +16,7 @@ export class AdminService {
   async addAdmin(name: string) {
     await firstValueFrom(
       this.httpClient.post(
-        `${this.baseUrl}/api/users/admins?name=${encodeURIComponent(name)}`,
+        `${this.baseUrl}/api/admins?name=${encodeURIComponent(name)}`,
         null,
         {
           headers: { 'Content-Type': 'application/json' }
@@ -27,12 +27,12 @@ export class AdminService {
 
   async deleteAdmin(name: string) {
     await firstValueFrom(
-      this.httpClient.delete(this.baseUrl + `/api/users/admins/${name}`)
+      this.httpClient.delete(this.baseUrl + `/api/admins/${name}`)
     );
   }
 
   getAdmins(): Promise<string[]> {
     return firstValueFrom(
-      this.httpClient.get<string[]>(this.baseUrl + '/api/users/admins'));
+      this.httpClient.get<string[]>(this.baseUrl + '/api/admins'));
   }
 }

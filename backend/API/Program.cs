@@ -11,6 +11,7 @@ using Database.Repository.Functions;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using API.Endpoints.TeacherManagement;
+using API.Endpoints.AdminManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +60,7 @@ app.MapDivisionEndpoints();
 app.MapTeacherEndpoints();
 app.MapSettingsEndpoints();
 app.MapUserEndpoints();
+app.MapAdminEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
