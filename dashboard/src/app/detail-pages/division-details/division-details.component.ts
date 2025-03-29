@@ -6,7 +6,7 @@ import { BASE_URL } from '../../app.config';
 import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import {DivisionStore} from "../../store/division.store";
-import {Division} from "../../types";
+import {Division, Stop} from "../../types";
 
 @Component({
     selector: 'app-division-details',
@@ -32,10 +32,16 @@ export class DivisionDetailsComponent implements OnInit {
   async ngOnInit() {
     const params = await firstValueFrom(this.route.queryParams);
     this.divisionId.set(params['id'] || -1);
-    const division = this.divisionStore.divisions().find(d => d.id == this.divisionId());
-    if (division) {
-      this.name.set(division.name);
-      this.color.set(division.color);
+    let maybeDivision: Division | undefined = undefined;
+    while (maybeDivision === undefined) {
+      maybeDivision = this.divisionStore.divisions().find(d => d.id == this.divisionId());
+      if (maybeDivision === undefined) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+    if (maybeDivision) {
+      this.name.set(maybeDivision.name);
+      this.color.set(maybeDivision.color);
     }
     this.color.set(this.color() !== '' ? '#' + this.color().substring(1) : '');
   }

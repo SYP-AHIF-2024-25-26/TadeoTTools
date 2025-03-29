@@ -2,7 +2,7 @@ import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {StopService} from '../../stop.service';
 import {ActivatedRoute, RouterModule} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {Status, Stop, StudentAssignment} from '../../types';
+import {Status, Stop, StopGroup, StudentAssignment} from '../../types';
 import {isValid} from '../../utilfunctions';
 import {firstValueFrom} from 'rxjs';
 import {ChipComponent} from '../../standard-components/chip/chip.component';
@@ -71,7 +71,14 @@ export class StopDetailsComponent implements OnInit {
     this.isAdmin.set(response.includes('admin'));
     const params = await firstValueFrom(this.route.queryParams);
     const id = params['id'] || -1;
-    const maybeStop = this.stopStore.stops().find(s => s.id == id);
+    let maybeStop: Stop | undefined = undefined;
+    while (maybeStop === undefined) {
+      maybeStop = this.stopStore.stops().find(s => s.id == id)
+      if (maybeStop === undefined) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+    console.log("stop is: " + this.stopStore.stops());
     if (maybeStop) {
       this.stop.set(maybeStop)
     }
