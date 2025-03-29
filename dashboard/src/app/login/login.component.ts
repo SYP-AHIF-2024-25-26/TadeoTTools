@@ -8,7 +8,8 @@ import {Router} from '@angular/router';
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
 })
 export class LoginComponent {
   public readonly response: WritableSignal<string | null> = signal(null);

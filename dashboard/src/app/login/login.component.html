@@ -1,12 +1,12 @@
 @if (isLoggedIn){
 <span>You are logged in</span>
-<button class="bg-primary-50" (click)="logout()">Logout</button>
+<button (click)="logout()">Logout</button>
 } @else {
 <span>You are not logged in</span>
-<button class="bg-primary-500" (click)="login()">Login</button>
+<button (click)="login()">Login</button>
 }
 
-<button class="bg-primary-50" (click)="goToPage()">Go to correlating page</button>
+<button (click)="goToPage()">Go to correlating page</button>
 
 <div>
   <button
