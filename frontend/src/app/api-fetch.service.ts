@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { Division, Stop, StopGroup } from './types';
+import { Division, FeedbackQuestion, FeedbackSubmission, Stop, StopGroup } from './types';
 import { BASE_URL } from './app.config';
 
 @Injectable({
@@ -21,5 +21,17 @@ export class ApiFetchService {
 
   public async getStopsOfGroup(groupID: number): Promise<Stop[]> {
     return (await firstValueFrom(this.http.get<Stop[]>(this.baseURL + `/v1/stops`))).filter((stop) => stop.stopGroupIds.includes(groupID));
+  }
+
+  public async getAllFeedbackQuestions(): Promise<FeedbackQuestion[]> {
+    return (await firstValueFrom(this.http.get<FeedbackQuestion[]>(this.baseURL + '/v1/feedbacks')));
+  }
+
+  public async submitFeedback(feedbackSubmissions: FeedbackSubmission[]) {
+    await firstValueFrom(this.http.post(this.baseURL + '/v1/add-feedbacks', feedbackSubmissions, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }));
   }
 }
