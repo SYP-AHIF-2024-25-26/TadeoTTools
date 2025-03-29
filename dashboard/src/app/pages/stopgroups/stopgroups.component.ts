@@ -21,7 +21,6 @@ import {StopGroupStore} from "../../store/stopgroup.store";
     DeletePopupComponent,
   ],
   templateUrl: './stopgroups.component.html',
-  styleUrl: './stopgroups.component.css',
 })
 export class StopGroupsComponent implements OnInit {
   stopStore = inject(StopStore);

@@ -1,22 +1,18 @@
 <div class="m-6">
-  <h3 class="mb-4 text-4xl">Stop Details</h3>
-  @if (stop().id != -1) {
-    <h4 class="text-2xl">Stop ID: {{ stop().id }}</h4>
+  @if (stop().id == -1) {
+    <h4 class="text-xl">New Stop</h4>
   } @else {
-    <h4 class="text-2xl">New Stop</h4>
+    <input
+      class="mb-4 border rounded px-4 py-2 resize-x text-gray-700 text-xl"
+      type="text"
+      [value]="stop().name"
+      [(ngModel)]="stop().name"
+      name="name"
+      id="name"
+      [size]="stop().name.length || 1"
+    />
   }
   <form (submit)="submitStopDetail()" class="mt-4">
-    <div>
-      <label for="name" class="mr-4">Name</label>
-      <input
-        class="mb-4 border rounded px-4 py-2 text-gray-700"
-        type="text"
-        [value]="stop().name"
-        [(ngModel)]="stop().name"
-        name="name"
-        id="name"
-      />
-    </div>
     <div class="mb-4">
       <label for="description" class="block mb-2 text-gray-700"
       >Description</label

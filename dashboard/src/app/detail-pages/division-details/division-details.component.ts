@@ -1,6 +1,5 @@
 import {Component, inject, Input, OnInit, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DivisionService } from '../../division.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { BASE_URL } from '../../app.config';
@@ -14,7 +13,6 @@ import {Division} from "../../types";
     standalone: true,
     imports: [FormsModule, RouterModule],
     templateUrl: './division-details.component.html',
-    styleUrl: './division-details.component.css'
 })
 export class DivisionDetailsComponent implements OnInit {
   private divisionStore = inject(DivisionStore);

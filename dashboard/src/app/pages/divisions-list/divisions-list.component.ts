@@ -11,17 +11,12 @@ import {DivisionStore} from "../../store/division.store";
     standalone: true,
     imports: [RouterModule, DeletePopupComponent],
     templateUrl: './divisions-list.component.html',
-    styleUrl: './divisions-list.component.css'
 })
 export class DivisionsListComponent {
   public divisionStore = inject(DivisionStore);
-
-
-
   baseUrl = inject(BASE_URL);
   divisionIdToRemove: number = -1;
   showRemoveDivisionPopup = signal<boolean>(false);
-
 
   async deleteDivision() {
     await this.divisionStore.deleteDivision(this.divisionIdToRemove);

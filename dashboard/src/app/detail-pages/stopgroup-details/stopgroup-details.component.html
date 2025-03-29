@@ -1,22 +1,18 @@
 <div class="m-6">
-  <h1 class="mb-4 text-4xl">StopGroup Details</h1>
-  @if(stopGroupId() != -1) {
-  <h4 class="text-2xl">StopGroup ID: {{ stopGroupId() }}</h4>
-  } @else {
+  @if(stopGroupId() == -1) {
   <h4 class="text-2xl">New StopGroup</h4>
+  } @else {
+    <input
+      class="mb-4 border rounded px-4 py-2 resize-x text-gray-700 text-xl"
+      type="text"
+      [value]="name()"
+      [(ngModel)]="name"
+      name="name"
+      id="name"
+      [size]="name().length || 1"
+    />
   }
   <form (submit)="submitStopGroupDetails()" class="mt-4">
-    <div>
-      <label for="name" class="mr-4">Name</label>
-      <input
-        class="mb-4 border rounded px-4 py-2"
-        type="text"
-        [value]="name()"
-        [(ngModel)]="name"
-        name="name"
-        id="name"
-      />
-    </div>
     <div class="mb-4">
       <label for="description" class="block mb-2 text-gray-700"
         >Description</label

@@ -19,7 +19,6 @@ import {StudentStore} from "../../store/student.store";
   standalone: true,
   imports: [FormsModule, RouterModule, ChipComponent],
   templateUrl: './stop-details.component.html',
-  styleUrl: './stop-details.component.css'
 })
 export class StopDetailsComponent implements OnInit {
   private stopStore = inject(StopStore);
@@ -56,7 +55,6 @@ export class StopDetailsComponent implements OnInit {
       teacher.stopAssignments.some((assignment) => assignment == this.stop().id)
     )
   });
-
 
   teachersNotInStop = computed(() => {
     const wrongTeachers = this.teachersByStopId();

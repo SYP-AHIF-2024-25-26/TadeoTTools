@@ -1,9 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { StopService } from '../../stop.service';
 import { Division, Stop, StopGroup } from '../../types';
 import { RouterModule } from '@angular/router';
-import { StopGroupService } from '../../stopgroup.service';
-import { DivisionService } from '../../division.service';
 import { FilterComponent } from '../../standard-components/filter/filter.component';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
 import {StopStore} from "../../store/stop.store";
@@ -15,7 +12,6 @@ import {DivisionStore} from "../../store/division.store";
     standalone: true,
     imports: [RouterModule, FilterComponent, DeletePopupComponent],
     templateUrl: './stops.component.html',
-    styleUrl: './stops.component.css'
 })
 export class StopsComponent {
   private stopStore = inject(StopStore);

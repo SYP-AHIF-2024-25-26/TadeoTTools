@@ -13,7 +13,6 @@ import {RouterLink} from "@angular/router";
     RouterLink
   ],
   templateUrl: './teacher.component.html',
-  styleUrl: './teacher.component.css'
 })
 export class TeacherComponent implements OnInit {
   keycloak = inject(Keycloak)

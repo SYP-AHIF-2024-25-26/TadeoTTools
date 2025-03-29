@@ -12,7 +12,6 @@ import {StopGroup} from "../../types";
   standalone: true,
   imports: [FormsModule, RouterModule],
   templateUrl: './stopgroup-details.component.html',
-  styleUrl: './stopgroup-details.component.css'
 })
 export class StopgroupDetailsComponent implements OnInit {
   private stopGroupStore = inject(StopGroupStore);

@@ -32,7 +32,7 @@ namespace database.Migrations
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.ToTable("Admins");
+                    b.ToTable("Admins", (string)null);
                 });
 
             modelBuilder.Entity("Database.Entities.Division", b =>
@@ -59,7 +59,7 @@ namespace database.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Divisions");
+                    b.ToTable("Divisions", (string)null);
                 });
 
             modelBuilder.Entity("Database.Entities.Stop", b =>
@@ -87,7 +87,7 @@ namespace database.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Stops");
+                    b.ToTable("Stops", (string)null);
                 });
 
             modelBuilder.Entity("Database.Entities.StopGroup", b =>
@@ -117,7 +117,7 @@ namespace database.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("StopGroups");
+                    b.ToTable("StopGroups", (string)null);
                 });
 
             modelBuilder.Entity("Database.Entities.StopGroupAssignment", b =>
@@ -143,7 +143,7 @@ namespace database.Migrations
 
                     b.HasIndex("StopId");
 
-                    b.ToTable("StopGroupAssignments");
+                    b.ToTable("StopGroupAssignments", (string)null);
                 });
 
             modelBuilder.Entity("Database.Entities.StopStatistic", b =>
@@ -167,7 +167,7 @@ namespace database.Migrations
 
                     b.HasIndex("StopId");
 
-                    b.ToTable("StopStatistics");
+                    b.ToTable("StopStatistics", (string)null);
                 });
 
             modelBuilder.Entity("Database.Entities.Student", b =>
@@ -193,7 +193,7 @@ namespace database.Migrations
 
                     b.HasKey("EdufsUsername");
 
-                    b.ToTable("Students");
+                    b.ToTable("Students", (string)null);
                 });
 
             modelBuilder.Entity("Database.Entities.StudentAssignment", b =>
@@ -220,7 +220,7 @@ namespace database.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentAssignments");
+                    b.ToTable("StudentAssignments", (string)null);
                 });
 
             modelBuilder.Entity("Database.Entities.Teacher", b =>
@@ -238,7 +238,7 @@ namespace database.Migrations
 
                     b.HasKey("EdufsUsername");
 
-                    b.ToTable("Teachers");
+                    b.ToTable("Teachers", (string)null);
                 });
 
             modelBuilder.Entity("Database.Entities.TeacherAssignment", b =>
@@ -262,7 +262,7 @@ namespace database.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("TeacherAssignments");
+                    b.ToTable("TeacherAssignments", (string)null);
                 });
 
             modelBuilder.Entity("DivisionStop", b =>
@@ -277,7 +277,7 @@ namespace database.Migrations
 
                     b.HasIndex("StopsId");
 
-                    b.ToTable("DivisionStop");
+                    b.ToTable("DivisionStop", (string)null);
                 });
 
             modelBuilder.Entity("Database.Entities.StopGroupAssignment", b =>
