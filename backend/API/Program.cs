@@ -10,6 +10,7 @@ using Database.Repository;
 using Database.Repository.Functions;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using API.Endpoints.FeedbackManagement;
 using API.Endpoints.TeacherManagement;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -59,6 +60,7 @@ app.MapDivisionEndpoints();
 app.MapTeacherEndpoints();
 app.MapSettingsEndpoints();
 app.MapUserEndpoints();
+app.MapFeedbackEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
