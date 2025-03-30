@@ -1,4 +1,6 @@
+using Database.Entities;
 using Database.Repository;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints.FeedbackManagement;
@@ -35,7 +37,36 @@ public static class FeedbackManagementEndpoints
         
         return Results.Ok();
     }
+    
+    public static async Task<IResult> CreateFeedbackQuestion(CreateFeedbackQuestionDto dto, TadeoTDbContext context)
+    {
+        var question = new FeedbackQuestion
+        {
+            Question = dto.Question,
+        };
+        
+        context.FeedbackQuestions.Add(question);
+        await context.SaveChangesAsync();
+        
+        return Results.Ok();
+    }
+
+    public static async Task<IResult> DeleteFeedbackQuestion([FromRoute] int id, TadeoTDbContext context)
+    {
+        var feedbackQuestion = await context.FeedbackQuestions.FindAsync(id);
+        if (feedbackQuestion == null)
+        {
+            return Results.NotFound();
+        }
+        
+        context.FeedbackQuestions.Remove(feedbackQuestion);
+        await context.SaveChangesAsync();
+        
+        return Results.Ok();
+    }
 }
+
+public record CreateFeedbackQuestionDto(string Question);
 
 public record GetFeedbackQuestionDto(int Id, string Question);
 
