@@ -1,35 +1,72 @@
-<div>
+<div class="min-h-screen flex flex-col">
 
   <app-header [showWelcomeText]="true" />
   @if (questions().length > 0) {
-    <div class="h-full mt-8 text-gray-800 flex flex-col items-center justify-center p-4">
-      <div class="w-full max-w-md">
-        <!-- Display the current question -->
-        <h2 class="text-xl font-bold mb-4">
-          {{ questions()[currentQuestionIndex].question }}
-        </h2>
+    <!-- Main Content -->
+    <main class="flex-grow bg-gray-50 py-8">
+      <div class="container mx-auto px-4">
+        <div class="w-full max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg mt-4">
+          <h1 class="text-2xl font-bold mb-4">Feedback Fragebogen</h1>
+          <p class="text-gray-600 mb-8 font-medium text-lg">
+            Bitte beantworten Sie die folgenden Fragen. Ihr Feedback ist uns wichtig!
+          </p>
+          <!-- Progress Bar -->
+          <div class="mb-4">
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+              <div
+                class="bg-orange-500 h-2.5 rounded-full"
+                [ngStyle]="{'width': progressPercentage() + '%'}">
+              </div>
+            </div>
+            <p class="text-sm text-gray-600 mt-1">
+              Question {{ currentQuestionIndex + 1 }} of {{ questions().length }}
+            </p>
+          </div>
 
-        <!-- Input field for the answer -->
-        <form [formGroup]="form">
-          <input
-            type="text"
-            placeholder="Enter your answer"
-            formControlName="answer"
-            class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
-        </form>
+          <!-- Display current question -->
+          <h2 class="text-xl font-bold mb-4">
+            {{ questions()[currentQuestionIndex].question }}
+          </h2>
 
-        <!-- Next/Submit button -->
-        <div class="flex justify-end">
-          <button
-            (click)="nextOrSubmit()"
-            [disabled]="form.invalid"
-            class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded disabled:opacity-50">
-            {{ currentQuestionIndex === questions().length - 1 ? 'Submit' : 'Next' }}
-          </button>
+          <!-- Feedback form -->
+          <form [formGroup]="form">
+            <input
+              type="text"
+              placeholder="Enter your answer"
+              formControlName="answer"
+              class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </form>
+
+          <!-- Navigation Buttons -->
+          <div class="flex justify-between mt-2">
+            <button
+              (click)="previous()"
+              [disabled]="currentQuestionIndex === 0"
+              class="bg-gray-400 hover:bg-gray-500 hover:disabled: text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed">
+              Zurück
+            </button>
+            <button
+              (click)="nextOrSubmit()"
+              [disabled]="form.invalid"
+              class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded disabled:opacity-50">
+              {{ currentQuestionIndex === questions().length - 1 ? 'Absenden' : 'Weiter' }}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   }
 </div>
+@if (showPopup()) {
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+      <h2 class="text-2xl font-bold mb-4">Vielen Dank für Ihr Feedback!</h2>
+      <button (click)="showPopup.set(false)" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded">
+        Schließen
+      </button>
+    </div>
+  </div>
+}
+
 
