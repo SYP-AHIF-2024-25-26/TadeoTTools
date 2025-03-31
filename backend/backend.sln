@@ -5,8 +5,6 @@ VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportConsoleApp", "ImportConsoleApp\ImportConsoleApp.csproj", "{93CF6081-865E-4220-BDD9-24CBA6AAD867}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "database\Database.csproj", "{A5BF1AF1-526E-49D7-B3D7-D9F752128A40}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83387DC2-6049-489E-A9D4-F06F3A5E4F9B}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
@@ -14,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{7A3E6273-2D88-43ED-BA27-5D7DCA6BF32E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "database", "database\database.csproj", "{EA675B5E-8519-43E7-A178-DE03DB24FC1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,14 @@ Global
 		{93CF6081-865E-4220-BDD9-24CBA6AAD867}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93CF6081-865E-4220-BDD9-24CBA6AAD867}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93CF6081-865E-4220-BDD9-24CBA6AAD867}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A5BF1AF1-526E-49D7-B3D7-D9F752128A40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A5BF1AF1-526E-49D7-B3D7-D9F752128A40}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A5BF1AF1-526E-49D7-B3D7-D9F752128A40}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A5BF1AF1-526E-49D7-B3D7-D9F752128A40}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A3E6273-2D88-43ED-BA27-5D7DCA6BF32E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A3E6273-2D88-43ED-BA27-5D7DCA6BF32E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A3E6273-2D88-43ED-BA27-5D7DCA6BF32E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A3E6273-2D88-43ED-BA27-5D7DCA6BF32E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA675B5E-8519-43E7-A178-DE03DB24FC1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA675B5E-8519-43E7-A178-DE03DB24FC1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA675B5E-8519-43E7-A178-DE03DB24FC1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA675B5E-8519-43E7-A178-DE03DB24FC1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
