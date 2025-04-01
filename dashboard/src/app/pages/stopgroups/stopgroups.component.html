@@ -85,7 +85,7 @@
             <div
               class="flex flex-col m-5 p-4 shadow-xl rounded-xl"
               cdkDropList
-              [cdkDropListConnectedTo]="getDropGroups()"
+              [cdkDropListConnectedTo]="dropGroups()"
               [cdkDropListData]="group.stopIds"
               (cdkDropListDropped)="dropStop($event)"
               id="{{ 'group-' + group.id }}"
@@ -130,7 +130,7 @@
       ></app-filter>
     </div>
     <div
-      [cdkDropListConnectedTo]="getDropGroups()"
+      [cdkDropListConnectedTo]="dropGroups()"
       cdkDropList
       class="shadow-xl rounded-xl p-5 m-10 h-[80vh] overflow-x-scroll"
       id="all-stops"
@@ -159,14 +159,6 @@
         </div>
       }
     </div>
-  </div>
-  <div class="fixed bottom-4 right-4 w-96">
-    @for (info of infos(); track info) {
-      <app-info-popup
-        (deleted)="deleteInfo($event)"
-        [info]="info"
-      ></app-info-popup>
-    }
   </div>
 </div>
 @if (showRemoveStopPopup()) {
