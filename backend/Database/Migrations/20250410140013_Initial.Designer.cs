@@ -3,27 +3,24 @@ using System;
 using Database.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace database.Migrations
+namespace Database.Migrations
 {
     [DbContext(typeof(TadeoTDbContext))]
-    [Migration("20250313112236_StudentIdFix")]
-    partial class StudentIdFix
+    [Migration("20250410140013_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.13")
+                .HasAnnotation("ProductVersion", "8.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("Database.Entities.Admin", b =>
                 {
@@ -43,8 +40,6 @@ namespace database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Color")
                         .IsRequired()
@@ -71,8 +66,6 @@ namespace database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -85,20 +78,10 @@ namespace database.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("StudentEdufsUsername")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("TeacherEdufsUsername")
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
-
-                    b.HasIndex("StudentEdufsUsername");
-
-                    b.HasIndex("TeacherEdufsUsername");
 
                     b.ToTable("Stops");
                 });
@@ -108,8 +91,6 @@ namespace database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -139,8 +120,6 @@ namespace database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
@@ -164,8 +143,6 @@ namespace database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsDone")
                         .HasColumnType("tinyint(1)");
@@ -215,8 +192,6 @@ namespace database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -254,6 +229,28 @@ namespace database.Migrations
                     b.ToTable("Teachers");
                 });
 
+            modelBuilder.Entity("Database.Entities.TeacherAssignment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("StopId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TeacherId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StopId");
+
+                    b.HasIndex("TeacherId");
+
+                    b.ToTable("TeacherAssignments");
+                });
+
             modelBuilder.Entity("DivisionStop", b =>
                 {
                     b.Property<int>("DivisionsId")
@@ -267,17 +264,6 @@ namespace database.Migrations
                     b.HasIndex("StopsId");
 
                     b.ToTable("DivisionStop");
-                });
-
-            modelBuilder.Entity("Database.Entities.Stop", b =>
-                {
-                    b.HasOne("Database.Entities.Student", null)
-                        .WithMany("Stops")
-                        .HasForeignKey("StudentEdufsUsername");
-
-                    b.HasOne("Database.Entities.Teacher", null)
-                        .WithMany("Stops")
-                        .HasForeignKey("TeacherEdufsUsername");
                 });
 
             modelBuilder.Entity("Database.Entities.StopGroupAssignment", b =>
@@ -329,6 +315,25 @@ namespace database.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("Database.Entities.TeacherAssignment", b =>
+                {
+                    b.HasOne("Database.Entities.Stop", "Stop")
+                        .WithMany("TeacherAssignments")
+                        .HasForeignKey("StopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Database.Entities.Teacher", "Teacher")
+                        .WithMany("AssignedStops")
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stop");
+
+                    b.Navigation("Teacher");
+                });
+
             modelBuilder.Entity("DivisionStop", b =>
                 {
                     b.HasOne("Database.Entities.Division", null)
@@ -351,6 +356,8 @@ namespace database.Migrations
                     b.Navigation("StopGroupAssignments");
 
                     b.Navigation("StudentAssignments");
+
+                    b.Navigation("TeacherAssignments");
                 });
 
             modelBuilder.Entity("Database.Entities.StopGroup", b =>
@@ -360,14 +367,12 @@ namespace database.Migrations
 
             modelBuilder.Entity("Database.Entities.Student", b =>
                 {
-                    b.Navigation("Stops");
-
                     b.Navigation("StudentAssignments");
                 });
 
             modelBuilder.Entity("Database.Entities.Teacher", b =>
                 {
-                    b.Navigation("Stops");
+                    b.Navigation("AssignedStops");
                 });
 #pragma warning restore 612, 618
         }

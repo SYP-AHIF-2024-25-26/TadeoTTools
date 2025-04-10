@@ -20,7 +20,7 @@ builder.Logging.ClearProviders().AddConsole();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<TadeoTDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))); // ServiceLifetime Transient
+    options.UseMySQL(connectionString!)); // ServiceLifetime Transient
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddProblemDetails();
