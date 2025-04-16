@@ -1,13 +1,13 @@
-<div class="bg-white pr-10 pl-10 pt-2 top-10 flex justify-center">
+<div class="px-10 pt-2 top-10 flex justify-center">
   <button
     [routerLink]="['/stopgroup']"
-    class="text-white p-1.5 mr-5 mt-5 bg-htl-orange appearance-none border rounded border-transparent"
+    class="text-white px-4 py-2 mr-5 mt-5 bg-primary-400 hover:bg-primary-500  appearance-none border rounded border-transparent"
   >
     Add StopGroup
   </button>
   <button
     [routerLink]="['/stop']"
-    class="text-white p-1.5 mr-5 mt-5 bg-htl-orange appearance-none border rounded border-transparent"
+    class="text-white px-4 py-2 mr-5 mt-5 bg-primary-400 hover:bg-primary-500  appearance-none border rounded border-transparent"
   >
     Add Stop
   </button>
@@ -26,7 +26,7 @@
       <div class="flex flex-nowrap justify-between">
         <p>{{ stop.name }}</p>
         <button
-          class="text-white shadow-lg p-1.5 mr-5 bg-htl-orange border rounded border-transparent"
+          class="text-white shadow-lg p-1.5 mr-5 bg-primary-400 hover:bg-primary-500  border rounded border-transparent"
           [routerLink]="['/stop']"
           [queryParams]="{id: stop.id}"
         >
@@ -42,13 +42,13 @@
           <p>{{ getGroupById(sgId)?.name }}</p>
           <div>
             <button
-              class="text-white shadow-lg p-1.5 mr-5 bg-htl-orange border rounded border-transparent"
+              class="text-white shadow-lg p-1.5 mr-5 bg-primary-400 hover:bg-primary-500  border rounded border-transparent"
               (click)="selectStopgroupToRemove(stop.id, sgId)"
             >
               Remove
             </button>
             <button
-              class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent"
+              class="text-white p-1.5 my-1 bg-primary-400 hover:bg-primary-500  appearance-none border rounded border-transparent"
               [routerLink]="['/stopgroup']"
               [queryParams]="{
                 id: getGroupById(sgId)?.id

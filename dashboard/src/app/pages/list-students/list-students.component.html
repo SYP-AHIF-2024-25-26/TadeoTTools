@@ -12,13 +12,13 @@
             <!--Already approved-->
             <button class="bg-primary-400 text-white px-4 py-2 rounded mx-2 hover:bg-primary-500" (click)="changeAssignmentStatus(student, $index, Status.Pending)">Approved (undo)</button>
           }@else {
-            <button (click)="changeAssignmentStatus(student, $index, Status.Accepted)" class="bg-htl-orange text-white px-4 py-2 rounded mx-2 my-2 hover:bg-htl-orange-dark">Approve</button>
+            <button (click)="changeAssignmentStatus(student, $index, Status.Accepted)" class="bg-primary-400 hover:bg-primary-500  text-white px-4 py-2 rounded mx-2 my-2 hover:bg-primary-400 hover:bg-primary-500 -dark">Approve</button>
           }
           @if(assignment.status === 2) {
             <!--Already rejected-->
             <button class="bg-primary-400 text-white px-4 py-2 rounded mx-2 hover:bg-primary-500" (click)="changeAssignmentStatus(student, $index, Status.Pending)">Rejected (undo)</button>
           }@else {
-            <button (click)="changeAssignmentStatus(student, $index, Status.Declined)" class="bg-htl-orange text-white px-4 py-2 rounded mx-2 hover:bg-htl-orange-dark">Reject</button>
+            <button (click)="changeAssignmentStatus(student, $index, Status.Declined)" class="bg-primary-400 hover:bg-primary-500  text-white px-4 py-2 rounded mx-2 hover:bg-primary-400 hover:bg-primary-500 -dark">Reject</button>
           }
         </div>
       }

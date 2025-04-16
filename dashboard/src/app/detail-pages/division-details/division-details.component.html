@@ -57,25 +57,25 @@
       }
     </div>
     <div>
-      <button type="submit" class="bg-htl-orange p-2 mr-4 rounded text-white">
+      <button type="submit" class="bg-primary-400 hover:bg-primary-500  p-2 mr-4 rounded text-white">
         Submit
       </button>
       <button
         [routerLink]="['/divisions']"
-        class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
+        class="mt-4 mr-4 bg-primary-400 hover:bg-primary-500  p-2 rounded text-white"
       >
         Cancel
       </button>
       @if (divisionId() != -1) {
       <button
         (click)="deleteAndGoBack()"
-        class="bg-htl-orange mr-4 p-2 rounded text-white"
+        class="bg-primary-400 hover:bg-primary-500  mr-4 p-2 rounded text-white"
       >
         Delete
       </button>
       <button
         (click)="deleteImage()"
-        class="bg-htl-orange mt-4 p-2 rounded text-white"
+        class="bg-primary-400 hover:bg-primary-500  mt-4 p-2 rounded text-white"
       >
         Delete Image
       </button>

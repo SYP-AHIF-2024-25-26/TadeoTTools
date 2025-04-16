@@ -1,61 +1,60 @@
-<div class="bg-white flex justify-between pr-10 pl-10 pt-2">
-
+<div class="flex px-10 justify-between pt-2 m-4">
   <div>
     <button
       (click)="saveChanges()"
       [disabled]="!hasChanged()"
-      class="bg-htl-orange h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400"
+      class="bg-primary-400 hover:bg-primary-500 px-4 py-2 h-fit my-2 mr-2 w-fit rounded text-white disabled:bg-gray-400"
     >
       Save Changes
     </button>
     <button
       (click)="initialiseData()"
       [disabled]="!hasChanged()"
-      class="bg-htl-orange h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400"
+      class="bg-primary-400 hover:bg-primary-500 px-4 py-2 s h-fit m-2 w-fit rounded text-white disabled:bg-gray-400"
     >
       Cancel
     </button>
 
     <button
       (click)="toggleShowStops()"
-      class="bg-htl-orange h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400"
+      class="bg-primary-400 hover:bg-primary-500 h-fit px-4 py-2 m-2 w-fit rounded text-white disabled:bg-gray-400"
     >
       Collapse All
     </button>
 
     <input
       (click)="onlyPublicGroups.set(!onlyPublicGroups())"
-      class="bg-htl-orange h-fit p-1.5 m-1.5 w-fit rounded text-white disabled:bg-gray-400"
+      class="bg-primary-400 hover:bg-primary-500 h-fit px-4 py-2s m-2 w-fit rounded text-white disabled:bg-gray-400"
       type="checkbox"
       value="Show Private Groups"
       id="only-public-groups"
     >
-    <label for="only-public-groups">Show Private Groups</label>
+    <label for="only-public-groups" class="text-text-950">Show Private Groups</label>
 
   </div>
 
   <div>
     <button
       [routerLink]="['/stopgroup']"
-      class="text-white p-1.5 m-1.5 bg-htl-orange appearance-none border rounded border-transparent"
+      class="text-white px-4 py-2 m-2 bg-primary-400 hover:bg-primary-500 appearance-none border rounded border-transparent"
     >
       Add StopGroup
     </button>
 
     <button
       [routerLink]="['/stop']"
-      class="text-white p-1.5 m-1.5 bg-htl-orange appearance-none border rounded border-transparent"
+      class="text-white px-4 py-2 my-2 ml-2 bg-primary-400 hover:bg-primary-500 appearance-none border rounded border-transparent"
     >
       Add Stop
     </button>
   </div>
 </div>
 
-<div class="flex">
+<div class="flex text-text-950">
   <div (cdkDropListDropped)="dropGroup($event)" cdkDropList class="w-2/3">
     @for (group of stopGroupStore.getStopGroups(); track group) {
       @if (!onlyPublicGroups() || group.isPublic) {
-        <div class="p-5 m-10 shadow-xl rounded-xl" cdkDrag>
+        <div class="p-5 m-10 shadow-md border bg-background-100 rounded-xl" cdkDrag>
           <div class="flex justify-between">
             <div>
               <button (click)="toggleShowStop(group.id)">
@@ -69,7 +68,7 @@
               <p>{{ group.description }}</p>
             </div>
             <button
-              class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent h-12"
+              class="text-white px-4 py-2 my-1 bg-primary-400 hover:bg-primary-500 rounded h-10"
               [routerLink]="['/stopgroup']"
               [queryParams]="{
             id: group.id
@@ -80,7 +79,7 @@
           </div>
           @if (shouldStopsBeShown(group.id)) {
             <div
-              class="flex flex-col m-5 p-4 shadow-xl rounded-xl"
+              class="flex flex-col m-5 p-4 shadow-md border rounded-xl"
               cdkDropList
               [cdkDropListConnectedTo]="getDropGroups()"
               [cdkDropListData]="group.stopIds"
@@ -96,13 +95,13 @@
                   <p class="ml-5">{{ stopStore.getStopById(stopId)?.name }}</p>
                   <div>
                     <button
-                      class="text-white p-1 my-1 bg-htl-orange appearance-none border rounded border-transparent m-5"
+                      class="text-white p-1 my-1 bg-primary-400 hover:bg-primary-500 appearance-none border rounded border-transparent m-5"
                       (click)="selectStopToRemove(stopId, group)"
                     >
                       Remove
                     </button>
                     <button
-                      class="text-white p-1 my-1 bg-htl-orange appearance-none border rounded border-transparent"
+                      class="text-white p-1 my-1 bg-primary-400 hover:bg-primary-500 appearance-none border rounded border-transparent"
                       [routerLink]="['/stop']"
                       [queryParams]="{
                 id: stopId
@@ -129,18 +128,18 @@
     <div
       [cdkDropListConnectedTo]="getDropGroups()"
       cdkDropList
-      class="shadow-xl rounded-xl p-5 m-10 h-[80vh] overflow-x-scroll"
+      class="border shadow-md bg-background-100 rounded-xl p-5 m-10 h-[80vh] overflow-x-scroll"
       id="all-stops"
     >
-      <p>Unassigned Stops</p>
+      <p class="mb-3 font-semibold">Unassigned Stops</p>
       @for (stop of filteredStops(); track stop.id) {
         <div
-          class="mb-1 p-3 rounded-l cursor-grab flex items-center justify-between"
+          class="mb-1 py-3 rounded-l cursor-grab flex items-center justify-between"
           cdkDrag
         >
           <p>{{ stop.name }}</p>
           <button
-            class="text-white p-1.5 my-1 bg-htl-orange appearance-none border rounded border-transparent"
+            class="text-white p-1.5 my-1 bg-primary-400 hover:bg-primary-500 appearance-none border rounded border-transparent"
             [routerLink]="['/stop']"
             [queryParams]="{
             id: stop.id
