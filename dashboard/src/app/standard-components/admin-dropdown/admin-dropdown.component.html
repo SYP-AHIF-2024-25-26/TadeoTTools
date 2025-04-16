@@ -3,7 +3,7 @@
   <button
     (click)="toggleDropdown()"
     type="button"
-    class="inline-flex items-center justify-center gap-x-2 rounded-md bg-htl-orange px-4 py-2 text-sm font-medium text-white hover:bg-htl-orange-dark focus:outline-none"
+    class="inline-flex items-center justify-center gap-x-2 rounded-md bg-htl-orange px-4 py-2 text-sm font-medium text-text-900 hover:bg-htl-orange-dark focus:outline-none"
   >
     Admin
     <!-- Chevron Icon -->
@@ -22,13 +22,13 @@
   <!-- Dropdown Menu -->
   @if (isOpen) {
     <div
-      class="absolute right-0 z-[9999] mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+      class="absolute right-0 z-[9999] mt-2 w-40 origin-top-right rounded-md bg-background-50 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
     >
       <div class="py-1">
         @for(item of items; track $index) {
           <a
             (click)="selectItem(item)"
-            class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 cursor-pointer"
+            class="block px-4 py-2 text-sm text-text-700 hover:bg-background-100 hover:text-text-900 cursor-pointer"
           >
             {{ item }}
           </a>

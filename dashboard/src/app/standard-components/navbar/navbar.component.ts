@@ -1,8 +1,8 @@
-import {Component, inject, signal} from '@angular/core';
-import {RouterModule} from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import Keycloak from 'keycloak-js';
-import {AdminDropdownComponent} from "../admin-dropdown/admin-dropdown.component";
-import {LoginService} from "../../login.service";
+import { AdminDropdownComponent } from "../admin-dropdown/admin-dropdown.component";
+import { LoginService } from "../../login.service";
 
 @Component({
   selector: 'app-navbar',
@@ -14,6 +14,7 @@ export class NavbarComponent {
   private readonly keycloak = inject(Keycloak);
   private readonly service = inject(LoginService);
   protected isAdmin = signal(false);
+  isDarkMode = signal(false);
 
   async logout() {
     await this.keycloak.logout({ redirectUri: window.location.origin + '/login' });
@@ -22,5 +23,29 @@ export class NavbarComponent {
   async ngOnInit() {
     const response = await this.service.performCall('is-admin');
     this.isAdmin.set(response.includes('admin'));
+  }
+
+  changeDarkMode() {
+    console.log("in dark mode");
+    // if set via local storage previously
+    if (localStorage.getItem('color-theme')) {
+      if (localStorage.getItem('color-theme') === 'light') {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('color-theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('color-theme', 'light');
+      }
+
+      // if NOT set via local storage previously
+    } else {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('color-theme', 'light');
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('color-theme', 'dark');
+      }
+    }
   }
 }
