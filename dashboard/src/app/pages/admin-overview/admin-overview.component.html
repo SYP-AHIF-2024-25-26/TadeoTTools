@@ -1,25 +1,23 @@
-<div class="m-4">
-  <div class="m-4 text-lg">Welcome to the Admin Overview!</div>
-  <div>
-    <input
-      class="mb-4 border rounded px-4 py-2"
-      type="text"
-      [value]="addname()"
-      [(ngModel)]="addname"
-      name="addname"
-      id="addname"
-    />
-    <button (click)="addAdmin()" class="bg-htl-orange p-2 rounded text-white m-4">
-      Add Admin
-    </button>
+<div class="m-4 flex flex-col items-center">
+  <div class="text-2xl my-6 text-text-950">Welcome to the Admin Overview!</div>
+  <div class="w-full max-w-xl">
+    <div class="flex gap-5 my-4">
+      <input class="border rounded px-4 py-2 flex-1" type="text" [value]="addname()" [(ngModel)]="addname"
+        name="addname" id="addname" />
+      <button (click)="addAdmin()" class="bg-primary-400 hover:bg-primary-500 px-4 py-2 rounded text-white">
+        Add Admin
+      </button>
+    </div>
+  </div>
+
+  <div class="w-full max-w-xl mt-4">
+    @for(admin of admins(); track $index) {
+    <div class="mb-4 p-4 border rounded-lg shadow-md flex justify-between items-center">
+      <div class="text-lg font-semibold text-text-950">{{ admin }}</div>
+      <button (click)="deleteAdmin(admin)" class="bg-primary-400 text-white px-4 py-2 rounded hover:bg-primary-500">
+        Delete
+      </button>
+    </div>
+    }
   </div>
 </div>
-
-@for(admin of admins(); track $index) {
-  <div class="m-4 p-4 border rounded-lg shadow-md flex justify-between items-center">
-    <div class="text-lg font-semibold">{{ admin }}</div>
-    <button (click)="deleteAdmin(admin)" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-      Delete
-    </button>
-  </div>
-}

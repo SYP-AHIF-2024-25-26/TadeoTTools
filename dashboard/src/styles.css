@@ -3,6 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  @apply bg-background-50; /* Replace with your desired color */
+}
+
 @layer base {
   :root {
     --text-50: #f8ecf6;
