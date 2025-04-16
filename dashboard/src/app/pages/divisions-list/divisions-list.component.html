@@ -11,15 +11,15 @@
       </div>
       <img class="w-32 h-32 object-cover" [src]="baseUrl + '/divisions/' + division.id + '/image?timestamp=1234567890'"
         (error)="hideImage($event)" />
-      <div class="flex text-white">
+      <div class="flex text-text-950">
         <button
-          class="shadow-lg mt-4 p-1.5 my-1 bg-primary-400 hover:bg-primary-500 border rounded border-transparent"
+          class="shadow-lg mt-4 p-1.5 my-1 bg-primary-200 hover:bg-primary-300 border rounded border-transparent"
           [routerLink]="['/division']" [queryParams]="{
           id: division.id
         }">
           Details
         </button>
-        <button class="shadow-lg ml-auto mt-4 p-1.5 my-1 bg-accent-500 hover:bg-accent-600 border rounded border-transparent"
+        <button class="shadow-lg ml-auto mt-4 p-1.5 my-1 bg-accent-200 hover:bg-accent-300 border rounded border-transparent"
           (click)="showDeletePopup(division.id)">
           Delete
         </button>
@@ -27,7 +27,7 @@
     </div>
     }
   </div>
-  <button class="text-white p-1.5 mt-5 bg-primary-400 hover:bg-primary-500 border rounded border-transparent ml-12"
+  <button class="text-text-950 p-1.5 mt-5 bg-primary-200 hover:bg-primary-300 border rounded border-transparent ml-12"
     [routerLink]="['/division']">
     New Division
   </button>

@@ -6,7 +6,7 @@
         <div class="flex justify-between">
           <h1 class="font-bold"> {{stopStore.getStopById(stopId)?.name}} </h1>
           <button
-            class="text-white shadow-lg p-1.5 mr-5 bg-primary-400 hover:bg-primary-500  border rounded border-transparent"
+            class="text-white shadow-lg p-1.5 mr-5 bg-primary-200 hover:bg-primary-300  border rounded border-transparent"
             [routerLink]="['/stop']"
             [queryParams]="{id: stopId}">Details
           </button>

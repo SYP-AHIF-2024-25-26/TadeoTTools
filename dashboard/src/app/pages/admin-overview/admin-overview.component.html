@@ -4,7 +4,7 @@
     <div class="flex gap-5 my-4">
       <input class="border rounded px-4 py-2 flex-1" type="text" [value]="addname()" [(ngModel)]="addname"
         name="addname" id="addname" />
-      <button (click)="addAdmin()" class="bg-primary-400 hover:bg-primary-500 px-4 py-2 rounded text-white">
+      <button (click)="addAdmin()" class="shadow bg-primary-200 hover:bg-primary-300 px-4 py-2 rounded text-text-950">
         Add Admin
       </button>
     </div>
@@ -12,9 +12,10 @@
 
   <div class="w-full max-w-xl mt-4">
     @for(admin of admins(); track $index) {
-    <div class="mb-4 p-4 border rounded-lg shadow-md flex justify-between items-center">
+    <div class="mb-4 p-4 rounded-lg shadow shadow-secondary-200 flex justify-between items-center">
       <div class="text-lg font-semibold text-text-950">{{ admin }}</div>
-      <button (click)="deleteAdmin(admin)" class="bg-primary-400 text-white px-4 py-2 rounded hover:bg-primary-500">
+      <button (click)="deleteAdmin(admin)"
+        class="bg-primary-200 hover:bg-primary-300 text-text-950 px-4 py-2 rounded">
         Delete
       </button>
     </div>

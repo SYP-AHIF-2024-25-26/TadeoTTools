@@ -10,15 +10,15 @@
           <label for="approve-{{student.edufsUsername}}-{{assignment.stopId}}" class="ml-2">{{ assignment.stopName }}</label>
           @if(assignment.status === 1) {
             <!--Already approved-->
-            <button class="bg-primary-400 text-white px-4 py-2 rounded mx-2 hover:bg-primary-500" (click)="changeAssignmentStatus(student, $index, Status.Pending)">Approved (undo)</button>
+            <button class="bg-primary-200 text-text-950 px-4 py-2 rounded mx-2 hover:bg-primary-300" (click)="changeAssignmentStatus(student, $index, Status.Pending)">Approved (undo)</button>
           }@else {
-            <button (click)="changeAssignmentStatus(student, $index, Status.Accepted)" class="bg-primary-400 hover:bg-primary-500  text-white px-4 py-2 rounded mx-2 my-2 hover:bg-primary-400 hover:bg-primary-500 -dark">Approve</button>
+            <button (click)="changeAssignmentStatus(student, $index, Status.Accepted)" class="shadow border bg-primary-200 text-white px-4 py-2 rounded mx-2 my-2 hover:bg-primary-300">Approve</button>
           }
           @if(assignment.status === 2) {
             <!--Already rejected-->
-            <button class="bg-primary-400 text-white px-4 py-2 rounded mx-2 hover:bg-primary-500" (click)="changeAssignmentStatus(student, $index, Status.Pending)">Rejected (undo)</button>
+            <button class="bg-primary-200 text-text-950 px-4 py-2 rounded mx-2 hover:bg-primary-300" (click)="changeAssignmentStatus(student, $index, Status.Pending)">Rejected (undo)</button>
           }@else {
-            <button (click)="changeAssignmentStatus(student, $index, Status.Declined)" class="bg-primary-400 hover:bg-primary-500  text-white px-4 py-2 rounded mx-2 hover:bg-primary-400 hover:bg-primary-500 -dark">Reject</button>
+            <button (click)="changeAssignmentStatus(student, $index, Status.Declined)" class="shadow border bg-primary-200 text-white px-4 py-2 rounded mx-2 hover:bg-primary-300">Reject</button>
           }
         </div>
       }
@@ -26,8 +26,8 @@
   }
 
   <div class="flex items-center">
-    <h3 class="text-lg font-semibold">Single Assignment</h3>
-    <button (click)="autoApproveAll()" class="bg-primary-400 hover:bg-primary-500 px-4 py-2 rounded m-4 text-white">Auto Approve All</button>
+    <h3 class="text-lg font-semibold">Single Assignments</h3>
+    <button (click)="autoApproveAll()" class="bg-primary-200 hover:bg-primary-300 px-4 py-2 rounded m-4 text-text-950">Auto Approve All</button>
   </div>
 
   @for(student of singleAssignments(); track $index) {
