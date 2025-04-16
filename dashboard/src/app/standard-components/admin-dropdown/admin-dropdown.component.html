@@ -3,7 +3,7 @@
   <button
     (click)="toggleDropdown()"
     type="button"
-    class="inline-flex items-center justify-center gap-x-2 rounded-md px-4 py-2 text-sm font-medium text-text-900 focus:outline-none"
+    class="inline-flex items-center justify-center gap-x-2 rounded-md px-4 py-2 text-sm font-medium text-text-950 focus:outline-none"
   >
     Admin
     <!-- Chevron Icon -->
@@ -28,7 +28,7 @@
         @for(item of items; track $index) {
           <a
             (click)="selectItem(item)"
-            class="block px-4 py-2 text-sm text-text-700 hover:bg-background-100 hover:text-text-900 cursor-pointer"
+            class="block px-4 py-2 text-sm text-text-700 hover:bg-background-100 cursor-pointer"
           >
             {{ item }}
           </a>

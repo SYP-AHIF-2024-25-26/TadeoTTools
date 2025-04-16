@@ -21,7 +21,7 @@
   <div class="p-5 m-5">
     @for (stop of filteredStops(); track $index) {
     <div
-      class="w-100 p-6 mr-32 ml-32 shadow-xl rounded-lg m-2 text-black bg-white justify-between"
+      class="w-100 p-6 text-text-950 mx-32 mb-10 shadow-lg shadow-secondary-200 bg-background-100 rounded-lg m-2 text-black bg-white justify-between"
     >
       <div class="flex flex-nowrap justify-between">
         <p>{{ stop.name }}</p>
@@ -34,7 +34,7 @@
         </button>
       </div>
       @if(stop.stopGroupIds.length > 0) {
-      <div class="shadow-xl rounded-xl mt-5 p-5">
+      <div class="shadow-lg shadow-secondary-200 rounded-xl mt-5 p-5">
         <p class="text-xl">Stopgroups</p>
         @for(sgId of stop.stopGroupIds; track $index) { @if(getGroupById(sgId))
         {
