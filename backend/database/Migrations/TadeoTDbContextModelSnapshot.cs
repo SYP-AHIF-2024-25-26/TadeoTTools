@@ -70,16 +70,60 @@ namespace database.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Answers")
+                    b.Property<int?>("MaxRating")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MinRating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Options")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Placeholder")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Question")
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("RatingLabels")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("Required")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.HasKey("Id");
 
                     b.ToTable("FeedbackQuestions");
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackQuestionAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("FeedbackQuestionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeedbackQuestionId");
+
+                    b.ToTable("FeedbackQuestionAnswers");
                 });
 
             modelBuilder.Entity("Database.Entities.Stop", b =>
@@ -300,6 +344,17 @@ namespace database.Migrations
                     b.ToTable("DivisionStop");
                 });
 
+            modelBuilder.Entity("Database.Entities.FeedbackQuestionAnswer", b =>
+                {
+                    b.HasOne("Database.Entities.FeedbackQuestion", "FeedbackQuestion")
+                        .WithMany("FeedbackQuestionAnswers")
+                        .HasForeignKey("FeedbackQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FeedbackQuestion");
+                });
+
             modelBuilder.Entity("Database.Entities.StopGroupAssignment", b =>
                 {
                     b.HasOne("Database.Entities.StopGroup", "StopGroup")
@@ -381,6 +436,11 @@ namespace database.Migrations
                         .HasForeignKey("StopsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackQuestion", b =>
+                {
+                    b.Navigation("FeedbackQuestionAnswers");
                 });
 
             modelBuilder.Entity("Database.Entities.Stop", b =>

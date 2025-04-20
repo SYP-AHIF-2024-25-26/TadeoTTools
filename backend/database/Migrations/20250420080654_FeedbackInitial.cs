@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace database.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class FeedbackInitial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,6 +47,33 @@ namespace database.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "FeedbackQuestions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Question = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Type = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Required = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Placeholder = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Options = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MinRating = table.Column<int>(type: "int", nullable: true),
+                    MaxRating = table.Column<int>(type: "int", nullable: true),
+                    RatingLabels = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Order = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeedbackQuestions", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "StopGroups",
                 columns: table => new
                 {
@@ -62,6 +89,25 @@ namespace database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StopGroups", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Stops",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Description = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RoomNr = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Stops", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -104,35 +150,24 @@ namespace database.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Stops",
+                name: "FeedbackQuestionAnswers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "varchar(255)", nullable: false)
+                    Answer = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    RoomNr = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    StudentEdufsUsername = table.Column<string>(type: "varchar(255)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    TeacherEdufsUsername = table.Column<string>(type: "varchar(255)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    FeedbackQuestionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Stops", x => x.Id);
+                    table.PrimaryKey("PK_FeedbackQuestionAnswers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Stops_Students_StudentEdufsUsername",
-                        column: x => x.StudentEdufsUsername,
-                        principalTable: "Students",
-                        principalColumn: "EdufsUsername");
-                    table.ForeignKey(
-                        name: "FK_Stops_Teachers_TeacherEdufsUsername",
-                        column: x => x.TeacherEdufsUsername,
-                        principalTable: "Teachers",
-                        principalColumn: "EdufsUsername");
+                        name: "FK_FeedbackQuestionAnswers_FeedbackQuestions_FeedbackQuestionId",
+                        column: x => x.FeedbackQuestionId,
+                        principalTable: "FeedbackQuestions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -211,6 +246,63 @@ namespace database.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "StudentAssignments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    StudentId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    StopId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentAssignments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentAssignments_Stops_StopId",
+                        column: x => x.StopId,
+                        principalTable: "Stops",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudentAssignments_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "EdufsUsername",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "TeacherAssignments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    TeacherId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    StopId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TeacherAssignments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TeacherAssignments_Stops_StopId",
+                        column: x => x.StopId,
+                        principalTable: "Stops",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TeacherAssignments_Teachers_TeacherId",
+                        column: x => x.TeacherId,
+                        principalTable: "Teachers",
+                        principalColumn: "EdufsUsername",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Admins_Id",
                 table: "Admins",
@@ -227,6 +319,11 @@ namespace database.Migrations
                 name: "IX_DivisionStop_StopsId",
                 table: "DivisionStop",
                 column: "StopsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FeedbackQuestionAnswers_FeedbackQuestionId",
+                table: "FeedbackQuestionAnswers",
+                column: "FeedbackQuestionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StopGroupAssignments_StopGroupId",
@@ -251,19 +348,29 @@ namespace database.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Stops_StudentEdufsUsername",
-                table: "Stops",
-                column: "StudentEdufsUsername");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Stops_TeacherEdufsUsername",
-                table: "Stops",
-                column: "TeacherEdufsUsername");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_StopStatistics_StopId",
                 table: "StopStatistics",
                 column: "StopId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentAssignments_StopId",
+                table: "StudentAssignments",
+                column: "StopId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentAssignments_StudentId",
+                table: "StudentAssignments",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeacherAssignments_StopId",
+                table: "TeacherAssignments",
+                column: "StopId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeacherAssignments_TeacherId",
+                table: "TeacherAssignments",
+                column: "TeacherId");
         }
 
         /// <inheritdoc />
@@ -276,22 +383,34 @@ namespace database.Migrations
                 name: "DivisionStop");
 
             migrationBuilder.DropTable(
+                name: "FeedbackQuestionAnswers");
+
+            migrationBuilder.DropTable(
                 name: "StopGroupAssignments");
 
             migrationBuilder.DropTable(
                 name: "StopStatistics");
 
             migrationBuilder.DropTable(
+                name: "StudentAssignments");
+
+            migrationBuilder.DropTable(
+                name: "TeacherAssignments");
+
+            migrationBuilder.DropTable(
                 name: "Divisions");
+
+            migrationBuilder.DropTable(
+                name: "FeedbackQuestions");
 
             migrationBuilder.DropTable(
                 name: "StopGroups");
 
             migrationBuilder.DropTable(
-                name: "Stops");
+                name: "Students");
 
             migrationBuilder.DropTable(
-                name: "Students");
+                name: "Stops");
 
             migrationBuilder.DropTable(
                 name: "Teachers");
