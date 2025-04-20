@@ -8,27 +8,26 @@ public static class FeedbackManagementApi
     public static void MapFeedbackEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("v1");
-        group.MapGet("feedbacks", FeedbackManagementEndpoints.GetFeedbacks)
-            .WithName(nameof(FeedbackManagementEndpoints.GetFeedbacks))
-            .WithDescription("Get all feedbacks")
+        group.MapGet("feedback-questions", FeedbackManagementEndpoints.GetFeedbackQuestions)
+            .WithName(nameof(FeedbackManagementEndpoints.GetFeedbackQuestions))
+            .WithDescription("Get all feedback questions")
             .Produces<List<GetFeedbackQuestionDto>>();
+
+        group.MapGet("get-answers/{id}", FeedbackManagementEndpoints.GetAnswersOfQuestion)
+            .WithName(nameof(FeedbackManagementEndpoints.GetAnswersOfQuestion))
+            .WithDescription("Get all answers of a question")
+            .Produces<List<GetFeedbackAnswerDto>>()
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPost("add-feedbacks", FeedbackManagementEndpoints.CreateFeedback)
             .WithName(nameof(FeedbackManagementEndpoints.CreateFeedback))
             .WithDescription("Create a new feedback")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK);
 
-        group.MapPost("add-feedback-question", FeedbackManagementEndpoints.CreateFeedbackQuestion)
-            .WithName(nameof(FeedbackManagementEndpoints.CreateFeedbackQuestion))
-            .WithDescription("Create a new feedback question")
-            .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(Setup.AdminPolicyName);
-        
-        group.MapDelete("delete-feedback-question/{id}", FeedbackManagementEndpoints.DeleteFeedbackQuestion)
-            .WithName(nameof(FeedbackManagementEndpoints.DeleteFeedbackQuestion))
-            .WithDescription("Delete a feedback question by its id")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+        group.MapPost("save-questions", FeedbackManagementEndpoints.SaveFeedbackQuestions)
+            .WithName(nameof(FeedbackManagementEndpoints.SaveFeedbackQuestions))
+            .WithDescription("Saves all questions")
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
 
