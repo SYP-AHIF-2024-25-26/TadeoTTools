@@ -1,72 +1,181 @@
-<div class="min-h-screen flex flex-col">
+<!-- Header -->
+<app-header [showWelcomeText]="true"/>
+<div class="min-h-screen bg-gray-50 flex flex-col items-center p-4">
 
-  <app-header [showWelcomeText]="true" />
-  @if (questions().length > 0) {
-    <!-- Main Content -->
-    <main class="flex-grow bg-gray-50 py-8">
-      <div class="container mx-auto px-4">
-        <div class="w-full max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg mt-4">
-          <h1 class="text-2xl font-bold mb-4">Feedback Fragebogen</h1>
-          <p class="text-gray-600 mb-8 font-medium text-lg">
-            Bitte beantworten Sie die folgenden Fragen. Ihr Feedback ist uns wichtig!
-          </p>
-          <!-- Progress Bar -->
-          <div class="mb-4">
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-              <div
-                class="bg-orange-500 h-2.5 rounded-full"
-                [ngStyle]="{'width': progressPercentage() + '%'}">
-              </div>
-            </div>
-            <p class="text-sm text-gray-600 mt-1">
-              Question {{ currentQuestionIndex + 1 }} of {{ questions().length }}
-            </p>
-          </div>
 
-          <!-- Display current question -->
-          <h2 class="text-xl font-bold mb-4">
-            {{ questions()[currentQuestionIndex].question }}
-          </h2>
-
-          <!-- Feedback form -->
-          <form [formGroup]="form">
-            <input
-              type="text"
-              placeholder="Enter your answer"
-              formControlName="answer"
-              class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-orange-500"
-            />
-          </form>
-
-          <!-- Navigation Buttons -->
-          <div class="flex justify-between mt-2">
-            <button
-              (click)="previous()"
-              [disabled]="currentQuestionIndex === 0"
-              class="bg-gray-400 hover:bg-gray-500 hover:disabled: text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed">
-              Zurück
-            </button>
-            <button
-              (click)="nextOrSubmit()"
-              [disabled]="form.invalid"
-              class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded disabled:opacity-50">
-              {{ currentQuestionIndex === questions().length - 1 ? 'Absenden' : 'Weiter' }}
-            </button>
+  <!-- Feedback Form -->
+  <ng-container *ngIf="!isSubmitted; else thankYouTemplate">
+    <div class="w-full mt-4 max-w-md shadow-lg border-0 bg-white rounded-lg overflow-hidden">
+      <!-- Progress Header -->
+      <div class="p-6 pb-2">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-medium text-gray-500">Question {{ currentQuestionIndex + 1 }} of {{ questions().length }}</span>
+          <span class="text-sm font-medium text-orange-500">{{ progressPercentage }}%</span>
+        </div>
+        <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+          <div
+            class="h-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-300"
+            [style.width.%]="progressPercentage">
           </div>
         </div>
       </div>
-    </main>
-  }
-</div>
-@if (showPopup()) {
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
-      <h2 class="text-2xl font-bold mb-4">Vielen Dank für Ihr Feedback!</h2>
-      <button (click)="showPopup.set(false)" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded">
-        Schließen
-      </button>
+
+      <!-- Question Content -->
+      <div class="p-6 pt-4">
+        <h3 class="text-xl font-bold mb-6 text-gray-800">
+          {{ currentQuestion.question }}
+        </h3>
+
+        <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()">
+          <!-- Text Input Question -->
+          <ng-container *ngIf="currentQuestion.type === 'text'">
+            <input
+              type="text"
+              formControlName="answer"
+              [placeholder]="currentQuestion.placeholder || 'Enter your answer'"
+              class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              autofocus
+            />
+          </ng-container>
+
+          <!-- Multiple Choice Question -->
+          <ng-container *ngIf="currentQuestion.type === 'choice'">
+            <div class="space-y-3">
+              <div
+                *ngFor="let option of currentQuestion.options; let i = index"
+                class="flex items-center"
+              >
+                <div
+                  (click)="selectOption(option)"
+                  class="w-full flex items-center p-3 border rounded-lg cursor-pointer transition-colors"
+                  [class.bg-orange-50]="feedbackForm.get('answer')?.value === option"
+                  [class.border-orange-300]="feedbackForm.get('answer')?.value === option"
+                  [class.border-gray-200]="feedbackForm.get('answer')?.value !== option"
+                >
+                  <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center mr-3"
+                       [class.border-orange-500]="feedbackForm.get('answer')?.value === option"
+                       [class.border-gray-300]="feedbackForm.get('answer')?.value !== option">
+                    <div *ngIf="feedbackForm.get('answer')?.value === option"
+                         class="w-3 h-3 rounded-full bg-orange-500"></div>
+                  </div>
+                  <span>{{ option }}</span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Rating Question -->
+          <ng-container *ngIf="currentQuestion.type === 'rating'">
+            <div class="mb-4">
+              <div class="flex justify-between mb-2">
+                <span class="text-sm text-gray-500">
+                  {{ getRatingLabel(currentQuestion.minRating || 1) }}
+                </span>
+                <span class="text-sm text-gray-500">
+                  {{ getRatingLabel(currentQuestion.maxRating || 5) }}
+                </span>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <ng-container *ngFor="let rating of getRatingRange(); let i = index">
+                  <div
+                    (click)="selectRating(rating)"
+                    class="flex flex-col items-center cursor-pointer group"
+                  >
+                    <div
+                      class="w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-colors"
+                      [class.bg-orange-500]="feedbackForm.get('answer')?.value === rating.toString()"
+                      [class.text-white]="feedbackForm.get('answer')?.value === rating.toString()"
+                      [class.bg-gray-100]="feedbackForm.get('answer')?.value !== rating.toString()"
+                      [class.hover:bg-orange-100]="feedbackForm.get('answer')?.value !== rating.toString()"
+                    >
+                      {{ rating }}
+                    </div>
+                    <span
+                      class="text-xs text-center transition-colors"
+                      [class.text-orange-500]="feedbackForm.get('answer')?.value === rating.toString()"
+                      [class.text-gray-500]="feedbackForm.get('answer')?.value !== rating.toString()"
+                      [class.group-hover:text-orange-400]="feedbackForm.get('answer')?.value !== rating.toString()"
+                    >
+                      {{ getRatingLabel(rating) }}
+                    </span>
+                  </div>
+
+                  <!-- Divider between ratings -->
+                  <div *ngIf="i < getRatingRange().length - 1" class="flex-1 h-px bg-gray-200 self-center"></div>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Error message for required questions -->
+          <div *ngIf="showError" class="mt-2 text-red-500 text-sm">
+            {{ currentQuestion.required ? 'This question requires an answer' : '' }}
+          </div>
+        </form>
+      </div>
+
+      <!-- Form Footer -->
+      <div class="px-6 py-4 flex justify-between">
+        <button
+          type="button"
+          (click)="goToPrevious()"
+          [disabled]="currentQuestionIndex === 0"
+          class="flex items-center text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-md"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Previous
+        </button>
+
+        <button
+          type="button"
+          (click)="onSubmit()"
+          class="flex items-center bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white px-4 py-2 rounded-md"
+        >
+          <ng-container *ngIf="currentQuestionIndex === questions().length - 1; else nextButton">
+            Submit
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </ng-container>
+          <ng-template #nextButton>
+            Next
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </ng-template>
+        </button>
+      </div>
     </div>
-  </div>
-}
+  </ng-container>
 
+  <!-- Thank You Template -->
+  <ng-template #thankYouTemplate>
+    <div class="w-full max-w-md shadow-lg border-0 bg-white rounded-lg overflow-hidden text-center p-8">
+      <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <h3 class="text-2xl font-bold mb-2 text-gray-800">Thank You!</h3>
+      <p class="text-gray-600 mb-6">Your feedback has been submitted successfully.</p>
+      <button
+        (click)="resetForm()"
+        class="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white px-4 py-2 rounded-md"
+      >
+        Submit Another Response
+      </button>
 
+      <!-- Show answers summary if needed -->
+      <div *ngIf="showAnswerSummary" class="mt-8 text-left">
+        <h4 class="font-bold text-lg mb-3 text-gray-700">Your Responses:</h4>
+        <div *ngFor="let question of questions(); let i = index" class="mb-4">
+          <p class="font-medium text-gray-700">{{ question.question }}</p>
+          <p class="text-gray-600">{{ answers[i] || 'No answer provided' }}</p>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>
