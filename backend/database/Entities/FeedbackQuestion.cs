@@ -6,6 +6,14 @@ public class FeedbackQuestion
 {
     [Key]
     public int Id { get; set; }
-    public required string Question { get; set; }
-    public List<string>? Answers { get; set; } = new();
+    public string Question { get; set; }
+    public string Type { get; set; }
+    public bool Required { get; set; }
+    public string? Placeholder { get; set; }
+    public List<string>? Options { get; set; }
+    public int? MinRating { get; set; }
+    public int? MaxRating { get; set; }
+    public string? RatingLabels { get; set; }
+    public int Order { get; set; }
+    public List<FeedbackQuestionAnswer> FeedbackQuestionAnswers = [];
 }
