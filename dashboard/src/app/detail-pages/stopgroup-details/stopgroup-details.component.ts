@@ -1,11 +1,11 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {ActivatedRoute, RouterModule} from '@angular/router';
-import {isValid} from '../../utilfunctions';
-import {firstValueFrom} from 'rxjs';
-import {Location} from '@angular/common';
-import {StopGroupStore} from "../../store/stopgroup.store";
-import {StopGroup} from "../../types";
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { isValid } from '../../utilfunctions';
+import { firstValueFrom } from 'rxjs';
+import { Location } from '@angular/common';
+import { StopGroupStore } from '../../store/stopgroup.store';
+import { StopGroup } from '../../types';
 
 @Component({
   selector: 'app-stopgroup-details',
@@ -31,9 +31,9 @@ export class StopgroupDetailsComponent implements OnInit {
 
     let stopGroup: StopGroup | undefined = undefined;
     while (stopGroup === undefined) {
-      stopGroup = this.stopGroupStore.stopGroups().find(g => g.id == this.stopGroupId());
+      stopGroup = this.stopGroupStore.stopGroups().find((g) => g.id == this.stopGroupId());
       if (stopGroup === undefined) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
     this.name.set(stopGroup.name);
@@ -48,9 +48,7 @@ export class StopgroupDetailsComponent implements OnInit {
       return false;
     }
     if (!isValid(this.description(), 255)) {
-      this.errorMessage.set(
-        'Description is invalid, must be less than 255 characters'
-      );
+      this.errorMessage.set('Description is invalid, must be less than 255 characters');
       return false;
     }
     return true;

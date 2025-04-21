@@ -1,24 +1,21 @@
 <div class="m-4 flex flex-col items-center">
-  <div class="text-2xl my-6 text-text-950">Welcome to the Admin Overview!</div>
+  <div class="my-6 text-2xl text-text-950">Welcome to the Admin Overview!</div>
   <div class="w-full max-w-xl">
-    <div class="flex gap-5 my-4">
-      <input class="border rounded px-4 py-2 flex-1" type="text" [value]="addname()" [(ngModel)]="addname"
-        name="addname" id="addname" />
-      <button (click)="addAdmin()" class="shadow bg-primary-200 hover:bg-primary-300 px-4 py-2 rounded text-text-950">
-        Add Admin
-      </button>
+    <div class="my-4 flex gap-5">
+      <input class="flex-1 rounded px-4 py-2" type="text" [value]="addname()" [(ngModel)]="addname" name="addname" id="addname" />
+
+      <button (click)="addAdmin()" class="rounded bg-primary-200 px-4 py-2 text-text-950 shadow hover:bg-primary-300">Add Admin</button>
     </div>
   </div>
 
-  <div class="w-full max-w-xl mt-4">
-    @for(admin of admins(); track $index) {
-    <div class="mb-4 p-4 rounded-lg shadow-lg shadow-secondary-200 flex bg-background-100 justify-between items-center">
-      <div class="text-lg font-semibold text-text-950">{{ admin }}</div>
-      <button (click)="deleteAdmin(admin)"
-        class="bg-primary-200 hover:bg-primary-300 text-text-950 px-4 py-2 rounded">
-        Delete
-      </button>
-    </div>
+  <div class="mt-4 w-full max-w-xl">
+    @for (admin of admins(); track $index) {
+      <div
+        class="mb-4 flex items-center justify-between rounded-lg bg-background-100 p-4 shadow-lg shadow-secondary-200 dark:border dark:border-white"
+      >
+        <div class="text-lg font-semibold text-text-950">{{ admin }}</div>
+        <button (click)="deleteAdmin(admin)" class="rounded bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300">Delete</button>
+      </div>
     }
   </div>
 </div>

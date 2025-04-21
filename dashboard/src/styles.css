@@ -68,7 +68,6 @@ body {
     --accent-800: #521437;
     --accent-900: #290a1c;
     --accent-950: #14050e;
-
   }
   .dark {
     --text-50: #130710;
@@ -130,6 +129,5 @@ body {
     --accent-800: #ebadd0;
     --accent-900: #f5d6e8;
     --accent-950: #faebf3;
-
   }
 }

@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import Keycloak from 'keycloak-js';
-import { AdminDropdownComponent } from "../admin-dropdown/admin-dropdown.component";
-import { LoginService } from "../../login.service";
+import { AdminDropdownComponent } from '../admin-dropdown/admin-dropdown.component';
+import { LoginService } from '../../login.service';
 
 @Component({
   selector: 'app-navbar',

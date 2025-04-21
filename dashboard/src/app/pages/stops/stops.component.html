@@ -1,59 +1,70 @@
-<div class="px-10 pt-2 top-10 flex justify-center">
-  <button [routerLink]="['/stopgroup']"
-    class="text-text-950 px-4 py-2 mr-5 mt-5 bg-primary-200 hover:bg-primary-300  appearance-none border rounded border-transparent">
+<div class="top-10 flex justify-center px-10 pt-2">
+  <button
+    [routerLink]="['/stopgroup']"
+    class="mr-5 mt-5 appearance-none rounded border border-transparent bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300"
+  >
     Add StopGroup
   </button>
-  <button [routerLink]="['/stop']"
-    class="text-text-950 px-4 py-2 mr-5 mt-5 bg-primary-200 hover:bg-primary-300  appearance-none rounded">
+  <button [routerLink]="['/stop']" class="mr-5 mt-5 appearance-none rounded bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300">
     Add Stop
   </button>
   <app-filter [elements]="divisionStore.getDivisions()" (filter)="divisionFilter.set($event)" class="mt-5"></app-filter>
 </div>
 <div>
-  <div class="p-5 m-5">
+  <div class="m-5 p-5">
     @for (stop of filteredStops(); track $index) {
-    <div
-      class="w-100 bg-background-100 border border-transparents p-6 text-text-950 mx-32 mb-10 shadow-lg shadow-secondary-200 rounded-lg m-2 justify-between">
-      <div class="flex flex-nowrap justify-between">
-        <p class="font-bold">{{stop.name}}</p>
-        <button
-          class="text-text-950 shadow-lg p-1.5 mr-5 bg-primary-200 hover:bg-primary-300  border rounded border-transparent"
-          [routerLink]="['/stop']" [queryParams]="{id: stop.id}">
-          Details
-        </button>
-      </div>
-      @if(stop.stopGroupIds.length > 0) {
-      <div class="shadow-lg shadow-secondary-200 rounded-xl mt-5 p-5">
-        <p class="text-xl">Stopgroups</p>
-        @for(sgId of stop.stopGroupIds; track $index) { @if(getGroupById(sgId))
-        {
-        <div class="pt-5 pl-5 flex flex-nowrap justify-between">
-          <p>{{ getGroupById(sgId)?.name }}</p>
-          <div>
-            <button
-              class="text-text-950 shadow-lg p-1.5 mr-5 bg-accent-200 hover:bg-accent-300  border rounded border-transparent"
-              (click)="selectStopgroupToRemove(stop.id, sgId)">
-              Remove
-            </button>
-            <button
-              class="text-text-950 p-1.5 my-1 bg-primary-200 hover:bg-primary-300  appearance-none border rounded border-transparent"
-              [routerLink]="['/stopgroup']" [queryParams]="{
-                id: getGroupById(sgId)?.id
-              }">
-              Details
-            </button>
-          </div>
+      <div
+        class="w-100 border-transparents m-2 mx-32 mb-10 justify-between rounded-lg border bg-background-100 p-6 text-text-950 shadow-lg shadow-secondary-200"
+      >
+        <div class="flex flex-nowrap justify-between">
+          <p class="font-bold">{{ stop.name }}</p>
+          <button
+            class="mr-5 rounded border border-transparent bg-primary-200 p-1.5 text-text-950 shadow-lg hover:bg-primary-300"
+            [routerLink]="['/stop']"
+            [queryParams]="{ id: stop.id }"
+          >
+            Details
+          </button>
         </div>
-        } }
+        @if (stop.stopGroupIds.length > 0) {
+          <div class="mt-5 rounded-xl p-5 shadow-lg shadow-secondary-200">
+            <p class="text-xl">Stopgroups</p>
+            @for (sgId of stop.stopGroupIds; track $index) {
+              @if (getGroupById(sgId)) {
+                <div class="flex flex-nowrap justify-between pl-5 pt-5">
+                  <p>{{ getGroupById(sgId)?.name }}</p>
+                  <div>
+                    <button
+                      class="mr-5 rounded border border-transparent bg-accent-200 p-1.5 text-text-950 shadow-lg hover:bg-accent-300"
+                      (click)="selectStopgroupToRemove(stop.id, sgId)"
+                    >
+                      Remove
+                    </button>
+                    <button
+                      class="my-1 appearance-none rounded border border-transparent bg-primary-200 p-1.5 text-text-950 hover:bg-primary-300"
+                      [routerLink]="['/stopgroup']"
+                      [queryParams]="{
+                        id: getGroupById(sgId)?.id,
+                      }"
+                    >
+                      Details
+                    </button>
+                  </div>
+                </div>
+              }
+            }
+          </div>
+        }
       </div>
-      }
-    </div>
     }
   </div>
 </div>
 
 @if (showRemoveStopgroupPopup()) {
-<app-delete-popup [title]="'Remove Stopgroup'"
-  [message]="'Are you sure you want to remove this stop from the stop group?'"
-  (cancel)="showRemoveStopgroupPopup.set(false)" (removeConfirmed)="removeStopgroup()" />
+  <app-delete-popup
+    [title]="'Remove Stopgroup'"
+    [message]="'Are you sure you want to remove this stop from the stop group?'"
+    (cancel)="showRemoveStopgroupPopup.set(false)"
+    (removeConfirmed)="removeStopgroup()"
+  />
 }

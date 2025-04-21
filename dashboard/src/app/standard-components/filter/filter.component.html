@@ -1,11 +1,14 @@
-<form class="max-w-sm mx-auto">
-  <label for="divisions" class="block mb-2 text-sm font-medium text-text-950"></label>
-  <select id="divisions" (change)="onFilterChange($event)"
-    class="bg-primary-200 hover:bg-primary-300 text-text-950 text-sm rounded-lg block w-full p-2.5">
+<form class="mx-auto max-w-sm">
+  <label for="divisions" class="mb-2 block text-sm font-medium text-text-950"></label>
+  <select
+    id="divisions"
+    (change)="onFilterChange($event)"
+    class="block w-full rounded-lg bg-primary-200 p-2.5 text-sm text-text-950 hover:bg-primary-300"
+  >
     <option value="0" selected>Filter by Division</option>
 
-    @for(element of elements; track element.id) {
-    <option class="text-text-700 hover:bg-background-50" value="{{ element.id }}">{{ element.name }}</option>
+    @for (element of elements; track element.id) {
+      <option class="text-text-700 hover:bg-background-50" value="{{ element.id }}">{{ element.name }}</option>
     }
   </select>
 </form>

@@ -14,36 +14,25 @@ export class StopService {
   constructor() {}
 
   public async getStops(): Promise<Stop[]> {
-    return firstValueFrom(
-      this.httpClient.get<Stop[]>(this.baseUrl + '/api/stops')
-    );
+    return firstValueFrom(this.httpClient.get<Stop[]>(this.baseUrl + '/api/stops'));
   }
 
   public async getStopsOfStudent(): Promise<StopOfStudent[]> {
-    return firstValueFrom(
-      this.httpClient.get<StopOfStudent[]>(this.baseUrl + '/stops/correlating'));
+    return firstValueFrom(this.httpClient.get<StopOfStudent[]>(this.baseUrl + '/stops/correlating'));
   }
 
   async addStop(stop: Stop) {
-    return await firstValueFrom(
-      this.httpClient.post<Stop>(this.baseUrl + '/api/stops', stop)
-    );
+    return await firstValueFrom(this.httpClient.post<Stop>(this.baseUrl + '/api/stops', stop));
   }
 
   async updateStop(stop: StopWithoutOrders) {
-    await firstValueFrom(
-      this.httpClient.put(this.baseUrl + `/api/stops`, stop)
-    );
+    await firstValueFrom(this.httpClient.put(this.baseUrl + `/api/stops`, stop));
   }
   async updateStopWithoutOrder(stop: StopWithoutOrders) {
-    await firstValueFrom(
-      this.httpClient.put(this.baseUrl + `/api/stops?updateOrder=false`, stop)
-    );
+    await firstValueFrom(this.httpClient.put(this.baseUrl + `/api/stops?updateOrder=false`, stop));
   }
 
   async deleteStop(id: number) {
-    await firstValueFrom(
-      this.httpClient.delete(this.baseUrl + `/api/stops/${id}`)
-    );
+    await firstValueFrom(this.httpClient.delete(this.baseUrl + `/api/stops/${id}`));
   }
 }

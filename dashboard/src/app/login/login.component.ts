@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, WritableSignal, } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginService } from '../login.service';
 import Keycloak from 'keycloak-js';
@@ -38,7 +38,8 @@ export class LoginComponent implements OnInit {
       console.warn('No token received after login');
       return;
     }
-    await this.service.performCall('in-database')
+    await this.service
+      .performCall('in-database')
       .then((response) => {
         if (response === 'false') {
           this.response.set('User not in database, please contact admin');

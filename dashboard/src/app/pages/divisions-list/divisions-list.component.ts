@@ -4,13 +4,13 @@ import { Division } from '../../types';
 import { RouterModule } from '@angular/router';
 import { BASE_URL } from '../../app.config';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
-import {DivisionStore} from "../../store/division.store";
+import { DivisionStore } from '../../store/division.store';
 
 @Component({
-    selector: 'app-divisions-list',
-    standalone: true,
-    imports: [RouterModule, DeletePopupComponent],
-    templateUrl: './divisions-list.component.html',
+  selector: 'app-divisions-list',
+  standalone: true,
+  imports: [RouterModule, DeletePopupComponent],
+  templateUrl: './divisions-list.component.html',
 })
 export class DivisionsListComponent {
   public divisionStore = inject(DivisionStore);

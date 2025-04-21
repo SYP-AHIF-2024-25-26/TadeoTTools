@@ -1,9 +1,9 @@
 <div class="m-6">
-  @if(stopGroupId() == -1) {
-  <h4 class="text-2xl">New StopGroup</h4>
+  @if (stopGroupId() == -1) {
+    <h4 class="text-2xl">New StopGroup</h4>
   } @else {
     <input
-      class="mb-4 border rounded px-4 py-2 resize-x text-gray-700 text-xl"
+      class="mb-4 resize-x rounded border px-4 py-2 text-xl text-gray-700"
       type="text"
       [value]="name()"
       [(ngModel)]="name"
@@ -14,11 +14,9 @@
   }
   <form (submit)="submitStopGroupDetails()" class="mt-4">
     <div class="mb-4">
-      <label for="description" class="block mb-2 text-gray-700"
-        >Description</label
-      >
+      <label for="description" class="mb-2 block text-gray-700">Description</label>
       <textarea
-        class="border rounded px-4 py-2 text-gray-700 w-full"
+        class="w-full rounded border px-4 py-2 text-gray-700"
         [value]="description()"
         [(ngModel)]="description"
         name="description"
@@ -28,39 +26,19 @@
     </div>
     <div>
       <label for="isPublic" class="mr-4">Is public?</label>
-      <input
-        class="mb-4 border rounded px-4 py-2"
-        type="checkbox"
-        id="isPublic"
-        [(ngModel)]="isPublic"
-        name="isPublic"
-      />
+      <input class="mb-4 rounded border px-4 py-2" type="checkbox" id="isPublic" [(ngModel)]="isPublic" name="isPublic" />
     </div>
 
     @if (errorMessage() != null) {
-    <p class="text-red-700">{{ errorMessage() }}</p>
+      <p class="text-red-700">{{ errorMessage() }}</p>
     }
     <div>
-      <button type="submit" class="bg-primary-200 hover:bg-primary-300  p-2 rounded text-white">
-        Submit
-      </button>
+      <button type="submit" class="rounded bg-primary-200 p-2 text-white hover:bg-primary-300">Submit</button>
 
-      <button
-        (click)="goBack()"
-        type="button"
-        class="bg-primary-200 hover:bg-primary-300  ml-4 p-2 rounded text-white"
-      >
-        Cancel
-      </button>
+      <button (click)="goBack()" type="button" class="ml-4 rounded bg-primary-200 p-2 text-white hover:bg-primary-300">Cancel</button>
 
       @if (stopGroupId() != -1) {
-      <button
-        (click)="deleteAndGoBack()"
-        type="button"
-        class="mt-4 ml-4 bg-primary-200 hover:bg-primary-300  p-2 rounded text-white"
-      >
-        Delete
-      </button>
+        <button (click)="deleteAndGoBack()" type="button" class="ml-4 mt-4 rounded bg-primary-200 p-2 text-white hover:bg-primary-300">Delete</button>
       }
     </div>
   </form>

@@ -1,18 +1,18 @@
-import {Component, inject, Input, OnInit, signal} from '@angular/core';
+import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { BASE_URL } from '../../app.config';
 import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
-import {DivisionStore} from "../../store/division.store";
-import {Division, Stop} from "../../types";
+import { DivisionStore } from '../../store/division.store';
+import { Division, Stop } from '../../types';
 
 @Component({
-    selector: 'app-division-details',
-    standalone: true,
-    imports: [FormsModule, RouterModule],
-    templateUrl: './division-details.component.html',
+  selector: 'app-division-details',
+  standalone: true,
+  imports: [FormsModule, RouterModule],
+  templateUrl: './division-details.component.html',
 })
 export class DivisionDetailsComponent implements OnInit {
   private divisionStore = inject(DivisionStore);
@@ -34,9 +34,9 @@ export class DivisionDetailsComponent implements OnInit {
     this.divisionId.set(params['id'] || -1);
     let maybeDivision: Division | undefined = undefined;
     while (maybeDivision === undefined) {
-      maybeDivision = this.divisionStore.divisions().find(d => d.id == this.divisionId());
+      maybeDivision = this.divisionStore.divisions().find((d) => d.id == this.divisionId());
       if (maybeDivision === undefined) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
     if (maybeDivision) {
@@ -52,16 +52,9 @@ export class DivisionDetailsComponent implements OnInit {
     this.errorMessage.set(null);
 
     if (file) {
-      const validFileTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/jpg',
-        'image/svg+xml',
-      ];
+      const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/svg+xml'];
       if (!validFileTypes.includes(file.type)) {
-        this.errorMessage.set(
-          'Invalid file type. Please upload a JPG, JPEG, or PNG file.'
-        );
+        this.errorMessage.set('Invalid file type. Please upload a JPG, JPEG, or PNG file.');
         this.selectedFile = null;
         return;
       }
@@ -88,7 +81,7 @@ export class DivisionDetailsComponent implements OnInit {
     if (!this.isInputValid()) {
       return;
     }
-    const division : Division = {
+    const division: Division = {
       id: this.divisionId(),
       name: this.name(),
       color: this.color(),
@@ -99,10 +92,7 @@ export class DivisionDetailsComponent implements OnInit {
       await this.divisionStore.updateDivision(division);
     }
     if (this.selectedFile) {
-      await this.divisionStore.updateDivisionImg(
-        this.divisionId(),
-        this.selectedFile
-      );
+      await this.divisionStore.updateDivisionImg(this.divisionId(), this.selectedFile);
     }
     this.selectedFile = null;
     this.filePreview = null;

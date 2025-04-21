@@ -1,9 +1,9 @@
 export type StudentAssignment = {
-  studentId: string,
-  stopId: number,
-  stopName: string,
-  status: Status
-}
+  studentId: string;
+  stopId: number;
+  stopName: string;
+  status: Status;
+};
 
 export type Student = {
   edufsUsername: string;
@@ -12,7 +12,7 @@ export type Student = {
   studentClass: string;
   department: string;
   studentAssignments: StudentAssignment[];
-}
+};
 
 export type Stop = {
   id: number;
@@ -29,19 +29,19 @@ export type Teacher = {
   firstName: string;
   lastName: string;
   stopAssignments: number[];
-}
+};
 
 export type StopOfStudent = {
   name: string;
-  status: Status,
+  status: Status;
   description: string;
   roomNr: string;
-}
+};
 
 export enum Status {
   Pending,
   Accepted,
-  Declined
+  Declined,
 }
 
 export type StopWithoutOrders = {
@@ -74,6 +74,6 @@ export type Info = {
 };
 
 export type StopsShownInStopGroup = {
-  stopGroupId: number,
-  isShown: boolean
-}
+  stopGroupId: number;
+  isShown: boolean;
+};

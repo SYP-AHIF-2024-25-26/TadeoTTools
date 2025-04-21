@@ -1,21 +1,33 @@
 <div class="flex justify-center">
   <div
-    class="inline-flex items-center m-6 flex-col text-text-950 bg-background-100 rounded-lg p-4 shadow-lg shadow-secondary-200">
-    @if(divisionId() == -1) {
-    <h4 class="text-2xl">New Division</h4>
+    class="m-6 inline-flex flex-col items-center rounded-lg bg-background-100 p-4 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-white"
+  >
+    @if (divisionId() == -1) {
+      <h4 class="text-2xl">New Division</h4>
     } @else {
-    <input class="mb-4 border rounded px-4 py-2 text-text-950 bg-primary-200" type="text" [value]="name()"
-      [(ngModel)]="name" name="name" id="name" [size]="name().length" />
-    } @if(filePreview != null) {
-    <div class="mt-4">
-      <p>File Preview</p>
-      <img class="w-32 h-32 object-cover" [src]="filePreview" alt="File preview" />
-    </div>
-    } @else {
-    <img class="w-32 h-32 object-cover" [src]="baseUrl + '/divisions/' + divisionId() + '/image?timestamp=1234567890'"
-      alt="Division Picture will load here" />
+      <input
+        class="mb-4 rounded bg-primary-200 px-4 py-2 text-text-950"
+        type="text"
+        [value]="name()"
+        [(ngModel)]="name"
+        name="name"
+        id="name"
+        [size]="name().length"
+      />
     }
-    <form (submit)="submitDivisionDetail()" class="items-center flex-col flex">
+    @if (filePreview != null) {
+      <div class="mt-4">
+        <p>File Preview</p>
+        <img class="h-32 w-32 object-cover" [src]="filePreview" alt="File preview" />
+      </div>
+    } @else {
+      <img
+        class="h-32 w-32 object-cover"
+        [src]="baseUrl + '/divisions/' + divisionId() + '/image?timestamp=1234567890'"
+        alt="Division Picture will load here"
+      />
+    }
+    <form (submit)="submitDivisionDetail()" class="flex flex-col items-center">
       <div>
         <label for="color" class="mr-4">Color</label>
         <input class="mb-4" type="color" [value]="color()" [(ngModel)]="color" name="color" id="color" />
@@ -23,27 +35,18 @@
       </div>
 
       <div>
-        <input class="rounded py-2 " type="file" id="file" accept=".jpg, .jpeg, .png, .svg"
-          (change)="onFileChange($event)" />
+        <input class="rounded py-2" type="file" id="file" accept=".jpg, .jpeg, .png, .svg" (change)="onFileChange($event)" />
 
         @if (errorMessage() != null) {
-        <p class="text-red-700">{{ errorMessage() }}</p>
+          <p class="text-red-700">{{ errorMessage() }}</p>
         }
       </div>
       <div>
-        <button type="submit" class="bg-primary-200 hover:bg-primary-300  p-2 mr-4 rounded">
-          Submit
-        </button>
-        <button [routerLink]="['/divisions']" class="mt-4 mr-4 bg-primary-200 hover:bg-primary-300  p-2 rounded">
-          Cancel
-        </button>
+        <button type="submit" class="mr-4 rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
+        <button [routerLink]="['/divisions']" class="mr-4 mt-4 rounded bg-gray-400 p-2">Cancel</button>
         @if (divisionId() != -1) {
-        <button (click)="deleteAndGoBack()" class="bg-primary-200 hover:bg-primary-300  mr-4 p-2 rounded">
-          Delete
-        </button>
-        <button (click)="deleteImage()" class="bg-primary-200 hover:bg-primary-300  mt-4 p-2 rounded text-text-950">
-          Delete Image
-        </button>
+          <button (click)="deleteAndGoBack()" class="hover:bg-accents-300 mr-4 rounded bg-accent-200 p-2">Delete</button>
+          <button (click)="deleteImage()" class="bg-accents-200 mt-4 rounded p-2 text-text-950 hover:bg-accent-300">Delete Image</button>
         }
       </div>
     </form>
