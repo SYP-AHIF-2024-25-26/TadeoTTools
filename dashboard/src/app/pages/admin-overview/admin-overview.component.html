@@ -12,7 +12,7 @@
 
   <div class="w-full max-w-xl mt-4">
     @for(admin of admins(); track $index) {
-    <div class="mb-4 p-4 rounded-lg shadow shadow-secondary-200 flex justify-between items-center">
+    <div class="mb-4 p-4 rounded-lg shadow-lg shadow-secondary-200 flex bg-background-100 justify-between items-center">
       <div class="text-lg font-semibold text-text-950">{{ admin }}</div>
       <button (click)="deleteAdmin(admin)"
         class="bg-primary-200 hover:bg-primary-300 text-text-950 px-4 py-2 rounded">
