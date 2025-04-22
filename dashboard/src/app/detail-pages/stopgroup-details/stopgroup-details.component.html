@@ -1,45 +1,49 @@
-<div class="m-6">
-  @if (stopGroupId() == -1) {
-    <h4 class="text-2xl">New StopGroup</h4>
-  } @else {
-    <input
-      class="mb-4 resize-x rounded border px-4 py-2 text-xl text-gray-700"
-      type="text"
-      [value]="name()"
-      [(ngModel)]="name"
-      name="name"
-      id="name"
-      [size]="name().length || 1"
-    />
-  }
-  <form (submit)="submitStopGroupDetails()" class="mt-4">
-    <div class="mb-4">
-      <label for="description" class="mb-2 block text-gray-700">Description</label>
-      <textarea
-        class="w-full rounded border px-4 py-2 text-gray-700"
-        [value]="description()"
-        [(ngModel)]="description"
-        name="description"
-        id="description"
-        rows="4"
-      ></textarea>
-    </div>
-    <div>
-      <label for="isPublic" class="mr-4">Is public?</label>
-      <input class="mb-4 rounded border px-4 py-2" type="checkbox" id="isPublic" [(ngModel)]="isPublic" name="isPublic" />
-    </div>
-
-    @if (errorMessage() != null) {
-      <p class="text-red-700">{{ errorMessage() }}</p>
+<div class="flex justify-center">
+  <div
+    class="m-6 inline-flex flex-col items-center rounded-lg bg-background-100 p-4 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-white"
+  >
+    @if (stopGroupId() == -1) {
+      <h4 class="text-2xl">New StopGroup</h4>
+    } @else {
+      <input
+        class="text-text-950 mb-4 resize-x rounded border bg-primary-200 px-4 py-2 text-xl"
+        type="text"
+        [value]="name()"
+        [(ngModel)]="name"
+        name="name"
+        id="name"
+        [size]="name().length || 1"
+      />
     }
-    <div>
-      <button type="submit" class="rounded bg-primary-200 p-2 text-white hover:bg-primary-300">Submit</button>
+    <form (submit)="submitStopGroupDetails()" class="mt-4">
+      <div class="mb-4">
+        <label for="description" class="mb-2 block">Description</label>
+        <textarea
+          class="text-text-95 w-full rounded border bg-primary-200 px-4 py-2"
+          [value]="description()"
+          [(ngModel)]="description"
+          name="description"
+          id="description"
+          rows="4"
+        ></textarea>
+      </div>
+      <div>
+        <label for="isPublic" class="mr-4">Is public?</label>
+        <input class="mb-4 rounded border px-4 py-2" type="checkbox" id="isPublic" [(ngModel)]="isPublic" name="isPublic" />
+      </div>
 
-      <button (click)="goBack()" type="button" class="ml-4 rounded bg-primary-200 p-2 text-white hover:bg-primary-300">Cancel</button>
-
-      @if (stopGroupId() != -1) {
-        <button (click)="deleteAndGoBack()" type="button" class="ml-4 mt-4 rounded bg-primary-200 p-2 text-white hover:bg-primary-300">Delete</button>
+      @if (errorMessage() != null) {
+        <p class="text-red-700">{{ errorMessage() }}</p>
       }
-    </div>
-  </form>
+      <div>
+        <button type="submit" class="rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
+
+        <button (click)="goBack()" type="button" class="ml-4 rounded bg-gray-400 p-2 hover:bg-gray-500">Cancel</button>
+
+        @if (stopGroupId() != -1) {
+          <button (click)="deleteAndGoBack()" type="button" class="ml-4 mt-4 rounded bg-accent-200 p-2 hover:bg-accent-300">Delete</button>
+        }
+      </div>
+    </form>
+  </div>
 </div>

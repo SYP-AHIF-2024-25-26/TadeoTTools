@@ -43,10 +43,10 @@
       </div>
       <div>
         <button type="submit" class="mr-4 rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
-        <button [routerLink]="['/divisions']" class="mr-4 mt-4 rounded bg-gray-400 p-2">Cancel</button>
+        <button [routerLink]="['/divisions']" class="mr-4 mt-4 rounded bg-gray-400 hover:bg-gray-500 p-2">Cancel</button>
         @if (divisionId() != -1) {
-          <button (click)="deleteAndGoBack()" class="hover:bg-accents-300 mr-4 rounded bg-accent-200 p-2">Delete</button>
-          <button (click)="deleteImage()" class="bg-accents-200 mt-4 rounded p-2 text-text-950 hover:bg-accent-300">Delete Image</button>
+          <button (click)="deleteAndGoBack()" class="hover:bg-accent-300 mr-4 rounded bg-accent-200 p-2">Delete</button>
+          <button (click)="deleteImage()" class="bg-accent-200 mt-4 rounded p-2 text-text-950 hover:bg-accent-300">Delete Image</button>
         }
       </div>
     </form>

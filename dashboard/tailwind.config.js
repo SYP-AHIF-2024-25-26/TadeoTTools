@@ -75,5 +75,9 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
+  daisyui: {
+    base: false,
+    themes: false,
+  },
 };

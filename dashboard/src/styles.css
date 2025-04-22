@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-background-50; /* Replace with your desired color */
+  @apply bg-background-50;
 }
 
 @layer base {

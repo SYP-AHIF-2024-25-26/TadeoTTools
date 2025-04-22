@@ -19,7 +19,7 @@
         <div class="flex flex-nowrap justify-between">
           <p class="font-bold">{{ stop.name }}</p>
           <button
-            class="mr-5 rounded border border-transparent bg-primary-200 p-1.5 text-text-950 shadow-lg hover:bg-primary-300"
+            class="mr-5 rounded bg-primary-200 px-4 py-2 text-text-950 shadow-lg hover:bg-primary-300"
             [routerLink]="['/stop']"
             [queryParams]="{ id: stop.id }"
           >
@@ -27,7 +27,7 @@
           </button>
         </div>
         @if (stop.stopGroupIds.length > 0) {
-          <div class="mt-5 rounded-xl p-5 shadow-lg shadow-secondary-200">
+          <div class="mt-5 rounded-xl p-5 shadow-lg shadow-secondary-200 dark:border dark:border-white">
             <p class="text-xl">Stopgroups</p>
             @for (sgId of stop.stopGroupIds; track $index) {
               @if (getGroupById(sgId)) {
@@ -35,13 +35,13 @@
                   <p>{{ getGroupById(sgId)?.name }}</p>
                   <div>
                     <button
-                      class="mr-5 rounded border border-transparent bg-accent-200 p-1.5 text-text-950 shadow-lg hover:bg-accent-300"
+                      class="mr-5 rounded border border-transparent bg-accent-200 px-2 py-1 text-text-950 shadow-lg hover:bg-accent-300"
                       (click)="selectStopgroupToRemove(stop.id, sgId)"
                     >
                       Remove
                     </button>
                     <button
-                      class="my-1 appearance-none rounded border border-transparent bg-primary-200 p-1.5 text-text-950 hover:bg-primary-300"
+                      class="my-1 appearance-none rounded border border-transparent bg-primary-200 px-2 py-1 text-text-950 hover:bg-primary-300"
                       [routerLink]="['/stopgroup']"
                       [queryParams]="{
                         id: getGroupById(sgId)?.id,
