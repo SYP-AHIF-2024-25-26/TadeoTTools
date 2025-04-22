@@ -1,8 +1,9 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
-  darkMode: 'class', // 👈 this is required for class-based dark mode
+  darkMode: 'class', 
   content: [
-    './src/**/*.{html,ts}', // Ensure it includes your Angular files
+    './src/**/*.{html,ts}', 
   ],
   theme: {
     extend: {
@@ -78,6 +79,51 @@ module.exports = {
   plugins: [require("daisyui")],
   daisyui: {
     base: false,
-    themes: false,
+    themes: [{
+      light: {
+        "base-100": "#f8ecf3",
+        "base-200": "#f1dae7",
+        "base-300": "#e4b4cf",
+        neutral: "#bd42a4",
+        "neutral-focus": "#973583",
+        primary: "#8882e3",
+        "primary-focus": "#6058da",
+        secondary: "#e085c6",
+        "secondary-focus": "#d55db3",
+        accent: "#e085b9",
+        "accent-focus": "#d65ca1",
+        "info": "#3abff8",
+        "success": "#22c55e",
+        "warning": "#facc15",
+        "error": "#ef4444",
+        "base-content": "#130710", 
+        "neutral-content": "#130710",
+        "primary-content": "#130710", 
+        "secondary-content": "#130710", 
+        "accent-content": "#130710"
+      },
+      darkCustom: {
+        "base-100": "#13070e",
+        "base-200": "#250e1b",
+        "base-300": "#4b1b36",
+        neutral: "#bd42a4",
+        "neutral-focus": "#ca68b6",
+        primary: "#221c7d",
+        "primary-focus": "#2d25a7",
+        secondary: "#7a1f60",
+        "secondary-focus": "#cb34a0",
+        accent: "#7a1f53",
+        "accent-focus": "#a3296e",
+        "info": "#3abff8",
+        "success": "#22c55e",
+        "warning": "#facc15",
+        "error": "#ef4444",
+        "base-content": "#f8ecf6", 
+        "neutral-content": "#f8ecf6",
+        "primary-content": "#f8ecf6", 
+        "secondary-content": "#f8ecf6", 
+        "accent-content": "#f8ecf6"
+      }
+    }],
   },
 };

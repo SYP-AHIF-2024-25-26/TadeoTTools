@@ -26,21 +26,28 @@ export class NavbarComponent {
   }
 
   changeDarkMode() {
+    const html = document.documentElement;
+
+      html.removeAttribute('data-theme'); // Or set to your default theme
     if (localStorage.getItem('color-theme')) {
       if (localStorage.getItem('color-theme') === 'light') {
         document.documentElement.classList.add('dark');
         localStorage.setItem('color-theme', 'dark');
+        html.setAttribute('data-theme', 'darkCustom');
       } else {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('color-theme', 'light');
+        html.removeAttribute('data-theme'); 
       }
     } else {
       if (document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('color-theme', 'light');
+        html.removeAttribute('data-theme'); 
       } else {
         document.documentElement.classList.add('dark');
         localStorage.setItem('color-theme', 'dark');
+        html.setAttribute('data-theme', 'darkCustom');
       }
     }
   }

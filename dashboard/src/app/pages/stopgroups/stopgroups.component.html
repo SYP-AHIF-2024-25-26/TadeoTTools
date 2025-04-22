@@ -3,21 +3,21 @@
     <button
       (click)="saveChanges()"
       [disabled]="!hasChanged()"
-      class="my-2 mr-2 h-fit w-fit rounded bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300 disabled:bg-gray-400"
+      class="my-2 mr-2 btn btn-primary !text-text-900 disabled:btn-disabled"
     >
       Save Changes
     </button>
     <button
       (click)="initialiseData()"
       [disabled]="!hasChanged()"
-      class="s m-2 h-fit w-fit rounded bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300 disabled:bg-gray-400"
+      class="m-2 btn btn-primary !text-text-950  disabled:btn-disabled"
     >
       Cancel
     </button>
 
     <button
       (click)="toggleShowStops()"
-      class="m-2 h-fit w-fit rounded bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300 disabled:bg-gray-400"
+      class="m-2 btn btn-primary disabled:btn-disabled"
     >
       Collapse All
     </button>

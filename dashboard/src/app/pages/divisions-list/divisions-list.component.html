@@ -1,4 +1,4 @@
-<div class="m-4 flex h-screen w-full flex-col items-center text-text-950">
+<div class="m-4 flex h-screen w-full flex-col items-center">
   <div class="mx-10 flex flex-wrap gap-5">
     @for (division of divisionStore.getDivisions(); track $index) {
       <div
@@ -6,7 +6,7 @@
       >
         <div class="flex flex-nowrap justify-evenly">
           <div class="flex w-3/4">
-            <p class="font-bold">{{ division.name }}</p>
+            <p class="font-bold text-text-950">{{ division.name }}</p>
           </div>
           <div class="m-auto h-8 w-8 self-end justify-self-end rounded-md" [style.background-color]="division.color"></div>
         </div>
@@ -17,7 +17,7 @@
         />
         <div class="flex">
           <button
-            class="my-1 mt-4 rounded bg-primary-200 p-2 shadow-lg hover:bg-primary-300"
+            class="mb-1 mt-4 btn btn-primary btn-outline shadow-lg"
             [routerLink]="['/division']"
             [queryParams]="{
               id: division.id,
@@ -25,14 +25,14 @@
           >
             Details
           </button>
-          <button class="my-1 ml-auto mt-4 rounded bg-accent-200 p-2 shadow-lg hover:bg-accent-300" (click)="showDeletePopup(division.id)">
+          <button class="my-1 ml-auto mt-4 shadow-lg btn btn-outline btn-error" (click)="showDeletePopup(division.id)">
             Delete
           </button>
         </div>
       </div>
     }
   </div>
-  <button class="ml-12 mt-5 rounded border border-transparent bg-primary-200 p-2 hover:bg-primary-300" [routerLink]="['/division']">
+  <button class="ml-12 mt-7 btn btn-primary" [routerLink]="['/division']">
     New Division
   </button>
 </div>
