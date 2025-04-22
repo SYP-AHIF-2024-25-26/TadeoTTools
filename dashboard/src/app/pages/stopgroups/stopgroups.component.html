@@ -10,7 +10,7 @@
     <button
       (click)="initialiseData()"
       [disabled]="!hasChanged()"
-      class="m-2 btn btn-primary !text-text-950  disabled:btn-disabled"
+      class="m-2 btn btn-primary !text-text-950 disabled:btn-disabled"
     >
       Cancel
     </button>
@@ -24,7 +24,7 @@
 
     <input
       (click)="onlyPublicGroups.set(!onlyPublicGroups())"
-      class="py-2s m-2 h-fit w-fit rounded bg-primary-200 px-4 text-text-950 hover:bg-primary-300 disabled:bg-gray-400"
+      class="p-2 m-2"
       type="checkbox"
       value="Show Private Groups"
       id="only-public-groups"
@@ -35,14 +35,14 @@
   <div>
     <button
       [routerLink]="['/stopgroup']"
-      class="m-2 appearance-none rounded border border-transparent bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300"
+      class="m-2 btn btn-primary"
     >
       Add StopGroup
     </button>
 
     <button
       [routerLink]="['/stop']"
-      class="my-2 ml-2 appearance-none rounded border border-transparent bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300"
+      class="my-2 ml-2 btn btn-primary"
     >
       Add Stop
     </button>
@@ -67,7 +67,7 @@
               <p>{{ group.description }}</p>
             </div>
             <button
-              class="my-1 h-10 rounded bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300"
+              class="my-1 h-10 btn btn-primary"
               [routerLink]="['/stopgroup']"
               [queryParams]="{
                 id: group.id,
@@ -91,13 +91,13 @@
                   <p class="ml-5">{{ stopStore.getStopById(stopId)?.name }}</p>
                   <div>
                     <button
-                      class="m-5 my-1 appearance-none rounded border border-transparent bg-primary-200 px-2 py-1 text-text-950 hover:bg-primary-300"
+                      class="m-5 my-1 btn btn-error btn-outline"
                       (click)="selectStopToRemove(stopId, group)"
                     >
                       Remove
                     </button>
                     <button
-                      class="my-1 appearance-none rounded border border-transparent bg-primary-200 px-2 py-1 text-text-950 hover:bg-primary-300"
+                      class="my-1 btn btn-secondary"
                       [routerLink]="['/stop']"
                       [queryParams]="{
                         id: stopId,
@@ -115,21 +115,22 @@
     }
   </div>
   <div class="w-1/3">
-    <div>
-      <app-filter (filter)="divisionFilter.set($event)" [elements]="divisionStore.getDivisions()"></app-filter>
-    </div>
+
     <div
       [cdkDropListConnectedTo]="getDropGroups()"
       cdkDropList
       class="m-10 h-[80vh] overflow-x-scroll rounded-xl bg-background-100 p-5 shadow-lg shadow-secondary-200 dark:border dark:border-white"
       id="all-stops"
     >
+    <div class="flex">
       <p class="mb-3 font-semibold">Unassigned Stops</p>
+      <app-filter (filter)="divisionFilter.set($event)" [elements]="divisionStore.getDivisions()"></app-filter>
+    </div>
       @for (stop of filteredStops(); track stop.id) {
-        <div class="mb-1 flex cursor-grab items-center justify-between rounded-l py-3" cdkDrag>
-          <p>{{ stop.name }}</p>
+        <div class="mb-1 flex cursor-grab items-start gap-2 rounded-l py-3" cdkDrag>
+          <p class="flex-1 break-words text-left">{{ stop.name }}</p>
           <button
-            class="my-1 appearance-none rounded border border-transparent bg-primary-200 px-2 py-1 text-text-950 hover:bg-primary-300"
+            class="my-1 btn btn-secondary"
             [routerLink]="['/stop']"
             [queryParams]="{
               id: stop.id,
