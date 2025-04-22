@@ -1,14 +1,14 @@
-<div class="top-10 flex justify-center px-10 pt-2">
+<div class="top-10 flex justify-center px-10 pt-2 mt-5">
   <button
     [routerLink]="['/stopgroup']"
-    class="mr-5 mt-5 appearance-none rounded border border-transparent bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300"
+    class="mr-5 btn btn-primary"
   >
     Add StopGroup
   </button>
-  <button [routerLink]="['/stop']" class="mr-5 mt-5 appearance-none rounded bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300">
+  <button [routerLink]="['/stop']" class="mr-5 btn btn-primary">
     Add Stop
   </button>
-  <app-filter [elements]="divisionStore.getDivisions()" (filter)="divisionFilter.set($event)" class="mt-5"></app-filter>
+  <app-filter [elements]="divisionStore.getDivisions()" (filter)="divisionFilter.set($event)"></app-filter>
 </div>
 <div>
   <div class="m-5 p-5">
@@ -19,7 +19,7 @@
         <div class="flex flex-nowrap justify-between">
           <p class="font-bold">{{ stop.name }}</p>
           <button
-            class="mr-5 rounded bg-primary-200 px-4 py-2 text-text-950 shadow-lg hover:bg-primary-300"
+            class="mr-5 btn btn-primary"
             [routerLink]="['/stop']"
             [queryParams]="{ id: stop.id }"
           >
@@ -35,13 +35,13 @@
                   <p>{{ getGroupById(sgId)?.name }}</p>
                   <div>
                     <button
-                      class="mr-5 rounded border border-transparent bg-accent-200 px-2 py-1 text-text-950 shadow-lg hover:bg-accent-300"
+                      class="mr-5 btn btn-outline btn-error shadow-lg"
                       (click)="selectStopgroupToRemove(stop.id, sgId)"
                     >
                       Remove
                     </button>
                     <button
-                      class="my-1 appearance-none rounded border border-transparent bg-primary-200 px-2 py-1 text-text-950 hover:bg-primary-300"
+                      class="my-1 btn btn-primary"
                       [routerLink]="['/stopgroup']"
                       [queryParams]="{
                         id: getGroupById(sgId)?.id,
