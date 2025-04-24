@@ -1,12 +1,10 @@
-import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { BASE_URL } from '../../app.config';
 import { isValid } from '../../utilfunctions';
-import { firstValueFrom } from 'rxjs';
 import { DivisionStore } from '../../store/division.store';
-import { Division, Stop } from '../../types';
+import { Division } from '../../types';
 
 @Component({
   selector: 'app-division-details',
@@ -16,12 +14,21 @@ import { Division, Stop } from '../../types';
 })
 export class DivisionDetailsComponent implements OnInit {
   private divisionStore = inject(DivisionStore);
-  private route: ActivatedRoute = inject(ActivatedRoute);
-  private router: Router = inject(Router);
+
+  @Input() id: number = -1;
+  @Output() removeConfirmed = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
+
+  confirmRemove() {
+    this.removeConfirmed.emit();
+  }
+
+  cancelPopup() {
+    this.cancel.emit();
+  }
 
   baseUrl = inject(BASE_URL);
 
-  divisionId = signal<number>(-1);
   name = signal<string>('');
   color = signal<string>('');
 
@@ -30,11 +37,9 @@ export class DivisionDetailsComponent implements OnInit {
   filePreview: string | ArrayBuffer | null = null;
 
   async ngOnInit() {
-    const params = await firstValueFrom(this.route.queryParams);
-    this.divisionId.set(params['id'] || -1);
     let maybeDivision: Division | undefined = undefined;
     while (maybeDivision === undefined) {
-      maybeDivision = this.divisionStore.divisions().find((d) => d.id == this.divisionId());
+      maybeDivision = this.divisionStore.divisions().find((d) => d.id == this.id);
       if (maybeDivision === undefined) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
@@ -82,31 +87,31 @@ export class DivisionDetailsComponent implements OnInit {
       return;
     }
     const division: Division = {
-      id: this.divisionId(),
+      id: this.id,
       name: this.name(),
       color: this.color(),
     };
-    if (this.divisionId() === -1) {
+    if (this.id === -1) {
       await this.divisionStore.addDivision(division, this.selectedFile);
     } else {
       await this.divisionStore.updateDivision(division);
     }
     if (this.selectedFile) {
-      await this.divisionStore.updateDivisionImg(this.divisionId(), this.selectedFile);
+      await this.divisionStore.updateDivisionImg(this.id, this.selectedFile);
     }
     this.selectedFile = null;
     this.filePreview = null;
-    await this.router.navigate(['/divisions']);
+    this.cancel.emit();
   }
 
   async deleteAndGoBack() {
-    await this.divisionStore.deleteDivision(this.divisionId());
-    await this.router.navigate(['/divisions']);
+    await this.divisionStore.deleteDivision(this.id);
+    this.cancel.emit();
   }
 
   async deleteImage() {
     this.selectedFile = null;
     this.filePreview = null;
-    await this.divisionStore.deleteDivisionImg(this.divisionId());
+    await this.divisionStore.deleteDivisionImg(this.id);
   }
 }

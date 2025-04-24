@@ -1,20 +1,16 @@
-<div class="flex justify-center">
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
   <div
-    class="m-6 inline-flex flex-col items-center rounded-lg bg-background-100 p-4 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-white"
+    class="m-6 p-8 inline-flex flex-col items-center rounded-lg bg-background-100 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-white"
   >
-    @if (divisionId() == -1) {
-      <h4 class="text-2xl">New Division</h4>
-    } @else {
-      <input
-        class="mb-4 rounded bg-primary-200 px-4 py-2 text-text-950"
-        type="text"
-        [value]="name()"
-        [(ngModel)]="name"
-        name="name"
-        id="name"
-        [size]="name().length"
-      />
-    }
+    <h4 class="text-2xl mb-3">New Division</h4>
+    <input
+      class="mb-4 rounded bg-primary-200 px-4 py-2 text-text-950 input"
+      type="text"
+      [value]="name()"
+      [(ngModel)]="name"
+      name="name"
+      id="name"
+    />
     @if (filePreview != null) {
       <div class="mt-4">
         <p>File Preview</p>
@@ -23,7 +19,7 @@
     } @else {
       <img
         class="h-32 w-32 object-cover"
-        [src]="baseUrl + '/divisions/' + divisionId() + '/image?timestamp=1234567890'"
+        [src]="baseUrl + '/divisions/' + id + '/image?timestamp=1234567890'"
         alt="Division Picture will load here"
       />
     }
@@ -43,8 +39,8 @@
       </div>
       <div>
         <button type="submit" class="mr-4 rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
-        <button [routerLink]="['/divisions']" class="mr-4 mt-4 rounded bg-gray-400 hover:bg-gray-500 p-2">Cancel</button>
-        @if (divisionId() != -1) {
+        <button (click)="cancelPopup()" class="mr-4 mt-4 rounded bg-gray-400 hover:bg-gray-500 p-2">Cancel</button>
+        @if (id != -1) {
           <button (click)="deleteAndGoBack()" class="hover:bg-accent-300 mr-4 rounded bg-accent-200 p-2">Delete</button>
           <button (click)="deleteImage()" class="bg-accent-200 mt-4 rounded p-2 text-text-950 hover:bg-accent-300">Delete Image</button>
         }

@@ -32,16 +32,23 @@
       </div>
     }
   </div>
-  <button class="ml-12 mt-7 btn btn-primary" [routerLink]="['/division']">
+  <button class="ml-12 mt-7 btn btn-primary" (click)="showDivisionPopUp(-1)">
     New Division
   </button>
 </div>
 
-@if (showRemoveDivisionPopup()) {
+@if (showRemoveDivisionPopUp()) {
   <app-delete-popup
     [title]="'Delete Division'"
     [message]="'Are you sure you want to delete this division?'"
-    (cancel)="showRemoveDivisionPopup.set(false)"
+    (cancel)="showRemoveDivisionPopUp.set(false)"
     (removeConfirmed)="deleteDivision()"
   />
+}
+@if (showDivisionDetailPopUp()) {
+      <app-division-details
+        [id]="-1"
+        (cancel)="showDivisionDetailPopUp.set(false)"
+      />
+    
 }
