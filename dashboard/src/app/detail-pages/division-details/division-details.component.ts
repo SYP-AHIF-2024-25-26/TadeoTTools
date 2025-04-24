@@ -37,6 +37,7 @@ export class DivisionDetailsComponent implements OnInit {
   filePreview: string | ArrayBuffer | null = null;
 
   async ngOnInit() {
+    console.log(this.id);
     let maybeDivision: Division | undefined = undefined;
     while (maybeDivision === undefined) {
       maybeDivision = this.divisionStore.divisions().find((d) => d.id == this.id);

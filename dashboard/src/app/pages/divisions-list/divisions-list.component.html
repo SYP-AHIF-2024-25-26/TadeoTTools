@@ -18,10 +18,7 @@
         <div class="flex">
           <button
             class="mb-1 mt-4 btn btn-primary shadow-lg"
-            [routerLink]="['/division']"
-            [queryParams]="{
-              id: division.id,
-            }"
+            (click)="showDivisionPopUp(division.id)"
           >
             Details
           </button>
@@ -46,9 +43,8 @@
   />
 }
 @if (showDivisionDetailPopUp()) {
-      <app-division-details
-        [id]="-1"
-        (cancel)="showDivisionDetailPopUp.set(false)"
-      />
-    
+  <app-division-details
+    [id]="divisionIdDetail"
+    (cancel)="showDivisionDetailPopUp.set(false)"
+  />
 }
