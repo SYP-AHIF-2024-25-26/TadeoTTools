@@ -1,8 +1,7 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { isValid } from '../../utilfunctions';
-import { firstValueFrom } from 'rxjs';
 import { Location } from '@angular/common';
 import { StopGroupStore } from '../../store/stopgroup.store';
 import { StopGroup } from '../../types';
@@ -15,10 +14,15 @@ import { StopGroup } from '../../types';
 })
 export class StopgroupDetailsComponent implements OnInit {
   private stopGroupStore = inject(StopGroupStore);
-  private route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
 
-  stopGroupId = signal<number>(-1);
+  @Input() id: number = -1;
+  @Output() cancel = new EventEmitter<void>();
+
+  cancelPopup() {
+    this.cancel.emit();
+  }
+  
   name = signal<string>('');
   description = signal<string>('');
   isPublic = signal<boolean>(false);
@@ -26,12 +30,9 @@ export class StopgroupDetailsComponent implements OnInit {
   errorMessage = signal<string>('');
 
   async ngOnInit() {
-    const params = await firstValueFrom(this.route.queryParams);
-    this.stopGroupId.set(params['id'] || -1);
-
     let stopGroup: StopGroup | undefined = undefined;
     while (stopGroup === undefined) {
-      stopGroup = this.stopGroupStore.stopGroups().find((g) => g.id == this.stopGroupId());
+      stopGroup = this.stopGroupStore.stopGroups().find((g) => g.id == this.id);
       if (stopGroup === undefined) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
@@ -56,26 +57,26 @@ export class StopgroupDetailsComponent implements OnInit {
 
   async submitStopGroupDetails() {
     const stopGroup: StopGroup = {
-      id: this.stopGroupId(),
+      id: this.id,
       name: this.name(),
       description: this.description(),
       isPublic: this.isPublic(),
       stopIds: this.stopIds(),
     };
-    if (this.stopGroupId() === -1) {
+    if (this.id === -1) {
       await this.stopGroupStore.addStopGroup(stopGroup);
     } else {
       await this.stopGroupStore.updateStopGroup(stopGroup);
     }
-    this.location.back();
+    this.cancel.emit();
   }
 
   async deleteAndGoBack() {
-    await this.stopGroupStore.deleteStopGroup(this.stopGroupId());
-    this.location.back();
+    await this.stopGroupStore.deleteStopGroup(this.id);
+    this.cancel.emit();
   }
 
   goBack() {
-    this.location.back();
+    this.cancel.emit();
   }
 }

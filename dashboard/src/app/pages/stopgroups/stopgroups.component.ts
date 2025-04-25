@@ -8,11 +8,12 @@ import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.com
 import { StopStore } from '../../store/stop.store';
 import { DivisionStore } from '../../store/division.store';
 import { StopGroupStore } from '../../store/stopgroup.store';
+import { StopgroupDetailsComponent } from '../../detail-pages/stopgroup-details/stopgroup-details.component';
 
 @Component({
   selector: 'app-stopgroups',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, RouterLink, InfoPopupComponent, FilterComponent, DeletePopupComponent],
+  imports: [CdkDropList, CdkDrag, RouterLink, InfoPopupComponent, FilterComponent, DeletePopupComponent, StopgroupDetailsComponent],
   templateUrl: './stopgroups.component.html',
 })
 export class StopGroupsComponent implements OnInit {
@@ -24,14 +25,17 @@ export class StopGroupsComponent implements OnInit {
   infos = signal<Info[]>([]);
 
   stopIdToRemove: number = -1;
+  groupIdDetail: number = -1;
   stopGroupToRemoveFrom: StopGroup | undefined = undefined;
 
   showStopsForStopGroup = signal<StopsShownInStopGroup[]>([]);
   showRemoveStopPopup = signal<boolean>(false);
   showRemoveGroupPopup = signal<boolean>(false);
   onlyPublicGroups = signal<boolean>(false);
+  showGroupDetailPopUp = signal<boolean>(false);
 
   divisionFilter = signal<number>(0);
+
 
   filteredStops = computed(() => this.filterStopsByDivisionId(this.divisionFilter()));
 
@@ -146,6 +150,10 @@ export class StopGroupsComponent implements OnInit {
       this.showRemoveStopPopup.set(false);
       this.hasChanged.set(true);
     }
+  }
+  showGroupPopUp(id: number): void {
+    this.groupIdDetail = id;
+    this.showGroupDetailPopUp.set(true);
   }
 
   deleteGroup() {}

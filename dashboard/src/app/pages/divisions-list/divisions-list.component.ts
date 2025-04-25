@@ -1,6 +1,4 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { DivisionService } from '../../division.service';
-import { Division } from '../../types';
 import { RouterModule } from '@angular/router';
 import { BASE_URL } from '../../app.config';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';

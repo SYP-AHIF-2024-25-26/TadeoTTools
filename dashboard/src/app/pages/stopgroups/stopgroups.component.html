@@ -164,3 +164,9 @@
     (removeConfirmed)="deleteGroup()"
   />
 }
+@if (showGroupDetailPopUp()) {
+  <app-stopgroup-details
+    [id]="groupIdDetail"
+    (cancel)="showGroupDetailPopUp.set(false)"
+  />
+}

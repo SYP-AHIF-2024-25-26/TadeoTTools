@@ -2,7 +2,7 @@
   <div
     class="m-6 inline-flex flex-col items-center rounded-lg bg-background-100 p-4 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-white"
   >
-    @if (stopGroupId() == -1) {
+    @if (id == -1) {
       <h4 class="text-2xl">New StopGroup</h4>
     } @else {
       <input
@@ -40,7 +40,7 @@
 
         <button (click)="goBack()" type="button" class="ml-4 rounded bg-gray-400 p-2 hover:bg-gray-500">Cancel</button>
 
-        @if (stopGroupId() != -1) {
+        @if (id != -1) {
           <button (click)="deleteAndGoBack()" type="button" class="ml-4 mt-4 rounded bg-accent-200 p-2 hover:bg-accent-300">Delete</button>
         }
       </div>
