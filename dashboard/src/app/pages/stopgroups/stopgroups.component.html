@@ -34,7 +34,7 @@
 
   <div>
     <button
-      [routerLink]="['/stopgroup']"
+      (click)="showGroupPopUp(-1)"
       class="m-2 btn btn-primary"
     >
       Add StopGroup
@@ -68,10 +68,7 @@
             </div>
             <button
               class="my-1 h-10 btn btn-primary"
-              [routerLink]="['/stopgroup']"
-              [queryParams]="{
-                id: group.id,
-              }"
+              (click)="showGroupPopUp(group.id)"
             >
               Details
             </button>

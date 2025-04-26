@@ -1,6 +1,6 @@
 <div class="top-10 flex justify-center px-10 pt-2 mt-5">
   <button
-    [routerLink]="['/stopgroup']"
+    (click)="showGroupPopUp(-1)"
     class="mr-5 btn btn-primary"
   >
     Add StopGroup
@@ -42,10 +42,7 @@
                     </button>
                     <button
                       class="my-1 btn btn-primary"
-                      [routerLink]="['/stopgroup']"
-                      [queryParams]="{
-                        id: getGroupById(sgId)?.id,
-                      }"
+                      (click)="showGroupPopUp(sgId)"
                     >
                       Details
                     </button>
@@ -66,5 +63,12 @@
     [message]="'Are you sure you want to remove this stop from the stop group?'"
     (cancel)="showRemoveStopgroupPopup.set(false)"
     (removeConfirmed)="removeStopgroup()"
+  />
+}
+
+@if (showGroupDetailPopUp()) {
+  <app-stopgroup-details
+    [id]="groupIdDetail"
+    (cancel)="showGroupDetailPopUp.set(false)"
   />
 }

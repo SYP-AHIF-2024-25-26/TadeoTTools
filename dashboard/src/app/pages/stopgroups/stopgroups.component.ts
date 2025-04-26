@@ -25,14 +25,15 @@ export class StopGroupsComponent implements OnInit {
   infos = signal<Info[]>([]);
 
   stopIdToRemove: number = -1;
-  groupIdDetail: number = -1;
   stopGroupToRemoveFrom: StopGroup | undefined = undefined;
 
   showStopsForStopGroup = signal<StopsShownInStopGroup[]>([]);
   showRemoveStopPopup = signal<boolean>(false);
   showRemoveGroupPopup = signal<boolean>(false);
   onlyPublicGroups = signal<boolean>(false);
+  
   showGroupDetailPopUp = signal<boolean>(false);
+  groupIdDetail: number = -1;
 
   divisionFilter = signal<number>(0);
 
@@ -76,7 +77,6 @@ export class StopGroupsComponent implements OnInit {
   }
 
   toggleShowStop(stopGroupId: number) {
-    console.log(this.showStopsForStopGroup());
     let showStops = this.showStopsForStopGroup().find((s) => s.stopGroupId === stopGroupId);
     showStops!.isShown = !showStops?.isShown;
   }
@@ -92,7 +92,6 @@ export class StopGroupsComponent implements OnInit {
   }
 
   deleteInfo(index: number) {
-    console.log('Deleting info with index: ' + index);
     this.infos.update((infos) => infos.filter((info) => info.id !== index));
   }
 
@@ -126,7 +125,6 @@ export class StopGroupsComponent implements OnInit {
       return this.stopStore.stops();
     }
     this.stopStore.stops().forEach((stop) => console.log(stop));
-    console.log('Filtering stops by divisionId: ' + divisionId);
     return this.stopStore.stops().filter((stop) => Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId));
   }
 
