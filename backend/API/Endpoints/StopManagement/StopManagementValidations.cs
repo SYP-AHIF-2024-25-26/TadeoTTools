@@ -10,7 +10,7 @@ public static class StopManagementValidations
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
         var createStopDto = context.GetArgument<StopManagementEndpoints.CreateStopRequestDto>(1);
-        
+
         foreach (var divisionId in createStopDto.DivisionIds)
         {
             var division = await dbContext.Divisions.FindAsync(divisionId);
@@ -27,7 +27,7 @@ public static class StopManagementValidations
         EndpointFilterDelegate next)
     {
         var updateStopDto = context.GetArgument<StopManagementEndpoints.UpdateStopRequestDto>(1);
-        
+
         if (updateStopDto.Name.Length == 50)
         {
             return Results.BadRequest("Name must be 50 characters or less.");

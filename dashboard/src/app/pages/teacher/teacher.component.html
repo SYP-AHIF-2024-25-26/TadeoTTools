@@ -1,14 +1,16 @@
 @if (teacher()) {
-  <h1 class="font-semibold text-xl p-10">Your stops: </h1>
+  <h1 class="p-10 text-xl font-semibold">Your stops:</h1>
   @for (stopId of teacher()?.stopAssignments; track $index) {
     @if (stopStore.getStopById(stopId)) {
-      <div class="p-10 rounded-lg border shadow-lg m-2 text-black bg-white">
+      <div class="m-2 rounded-lg border bg-white p-10 text-black shadow-lg">
         <div class="flex justify-between">
-          <h1 class="font-bold"> {{stopStore.getStopById(stopId)?.name}} </h1>
+          <h1 class="font-bold">{{ stopStore.getStopById(stopId)?.name }}</h1>
           <button
-            class="text-white shadow-lg p-1.5 mr-5 bg-htl-orange border rounded border-transparent"
+            class="mr-5 rounded border border-transparent bg-primary-200 p-1.5 text-white shadow-lg hover:bg-primary-300"
             [routerLink]="['/stop']"
-            [queryParams]="{id: stopId}">Details
+            [queryParams]="{ id: stopId }"
+          >
+            Details
           </button>
         </div>
       </div>

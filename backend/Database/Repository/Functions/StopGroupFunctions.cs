@@ -37,11 +37,11 @@ public class StopGroupFunctions
            )).ToArrayAsync();
     }
 
-    public async Task<bool> DoesStopGroupExistAsync(TadeoTDbContext context, int id)
+    public static async Task<bool> DoesStopGroupExistAsync(TadeoTDbContext context, int id)
     {
         return await context.StopGroups.SingleOrDefaultAsync(sg => sg.Id == id) != null;
     }
-    
+
     public record StopGroupWithStops(int Id, string Name, string Description, int Rank, bool IsPublic, int[] StopIds);
     public record StopGroupWithStopsPublic(int Id, string Name, string Description, int Rank, int[] StopIds);
 }

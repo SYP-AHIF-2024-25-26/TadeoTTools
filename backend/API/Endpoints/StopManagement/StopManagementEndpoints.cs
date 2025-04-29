@@ -1,18 +1,41 @@
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
+using LeoAuth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints.StopManagement;
 
 public static class StopManagementEndpoints
-{ 
+{
     public static async Task<IResult> GetAllStops(TadeoTDbContext context)
     {
         return Results.Ok(await StopFunctions.GetAllStopsAsync(context));
     }
-    
+
+    public static async Task<IResult> GetCorrelatingStops(TadeoTDbContext context, HttpContext httpContext)
+    {
+        var userInfo = httpContext.User.GetLeoUserInformation();
+
+        return await userInfo.Match(
+            async user =>
+            {
+                var username = user.Username.Match(u => u, _ => string.Empty);
+                if (string.IsNullOrEmpty(username))
+                    return Results.BadRequest("Username not found");
+
+                var studentAssignments = await context.StudentAssignments
+                    .Where(sa => sa.Student!.EdufsUsername == username)
+                    .Select(sa => new CorrelatingStopsDto(sa.Stop!.Name, sa.Status, sa.Stop.Description, sa.Stop.RoomNr))
+                    .ToListAsync();
+
+                return Results.Ok(studentAssignments);
+            },
+            _ => Task.FromResult(Results.BadRequest("User information not found"))
+        );
+    }
+
     public static async Task<IResult> GetPublicStops(TadeoTDbContext context)
     {
         var stops = await context.Stops
@@ -20,7 +43,7 @@ public static class StopManagementEndpoints
             .Include(stop => stop.StopGroupAssignments)
             .Where(stop => stop.StopGroupAssignments.Any(a => a.StopGroup!.IsPublic))
             .ToListAsync();
-        
+
         return Results.Ok(stops.Select(stop => new StopWithGroupAssignmentsAndDivisionsDto(
             stop.Id,
             stop.Name,
@@ -31,7 +54,7 @@ public static class StopManagementEndpoints
             stop.StopGroupAssignments.Select(a => a.Order).ToArray()
         )).ToList());
     }
-    
+
     public record StopWithGroupAssignmentsAndDivisionsDto(
         int Id,
         string Name,
@@ -41,7 +64,7 @@ public static class StopManagementEndpoints
         int[] StopGroupIds,
         int[] Orders
     );
-    
+
     public static async Task<IResult> CreateStop(TadeoTDbContext context, CreateStopRequestDto createStopDto)
     {
         var stop = new Stop
@@ -78,7 +101,7 @@ public static class StopManagementEndpoints
         return Results.Ok(new StopResponseDto(stop.Id, stop.Name, stop.Description, stop.RoomNr,
             createStopDto.DivisionIds, createStopDto.StopGroupIds));
     }
-    
+
     public static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto, bool? updateOrder = true)
     {
 
@@ -119,7 +142,7 @@ public static class StopManagementEndpoints
         await context.SaveChangesAsync();
         return Results.Ok();
     }
-    
+
     public static async Task<IResult> DeleteStop(TadeoTDbContext context, [FromRoute] int stopId)
     {
         var stop = await context.Stops.FindAsync(stopId);
@@ -151,5 +174,11 @@ public static class StopManagementEndpoints
         string RoomNr,
         int[] DivisionIds,
         int[] StopGroupIds
+    );
+    public record CorrelatingStopsDto(
+        string Name,
+        Status Status,
+        string Description,
+        string RoomNr
     );
 }

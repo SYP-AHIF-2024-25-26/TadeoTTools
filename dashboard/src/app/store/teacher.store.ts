@@ -1,7 +1,7 @@
-import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
-import {Teacher} from "../types";
-import {inject} from "@angular/core";
-import {TeacherService} from "../teacher.service";
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { Teacher } from '../types';
+import { inject } from '@angular/core';
+import { TeacherService } from '../teacher.service';
 
 type TeacherState = {
   teachers: Teacher[];
@@ -10,11 +10,11 @@ type TeacherState = {
 
 const initialState: TeacherState = {
   teachers: [],
-  loaded: false
+  loaded: false,
 };
 
 export const TeacherStore = signalStore(
-  {providedIn: "root"},
+  { providedIn: 'root' },
   withState(initialState),
   withMethods((store) => {
     const teacherService = inject(TeacherService);
@@ -22,7 +22,7 @@ export const TeacherStore = signalStore(
     (async function fetchInitialTeachers() {
       if (initialState.teachers.length == 0) {
         const teachers = await teacherService.getTeachers();
-        patchState(store, {teachers, loaded: true});
+        patchState(store, { teachers, loaded: true });
       }
     })();
 
@@ -34,7 +34,7 @@ export const TeacherStore = signalStore(
         return store.teachers().find((teacher) => teacher.edufsUsername === id);
       },
       getTeachersByStopId(stopId: number): Teacher[] {
-        console.log(store.teachers().map(t => t.edufsUsername));
+        console.log(store.teachers().map((t) => t.edufsUsername));
         return store.teachers().filter((teacher) => {
           if (teacher.stopAssignments) {
             return teacher.stopAssignments.some((assignment) => assignment === stopId);
@@ -58,7 +58,7 @@ export const TeacherStore = signalStore(
             teacher.stopAssignments = [];
           }
           teacher.stopAssignments.push(stopId);
-          patchState(store, {teachers: [...store.teachers().filter((teacher) => teacher.edufsUsername !== edufsUsername), teacher]});
+          patchState(store, { teachers: [...store.teachers().filter((teacher) => teacher.edufsUsername !== edufsUsername), teacher] });
         }
         return store.teachers();
       },
@@ -66,7 +66,7 @@ export const TeacherStore = signalStore(
         const teacher = store.teachers().find((teacher) => teacher.edufsUsername === edufsUsername);
         if (teacher) {
           teacher.stopAssignments = teacher.stopAssignments.filter((assignment) => assignment !== stopId);
-          patchState(store, {teachers: [...store.teachers().filter((teacher) => teacher.edufsUsername !== edufsUsername), teacher]});
+          patchState(store, { teachers: [...store.teachers().filter((teacher) => teacher.edufsUsername !== edufsUsername), teacher] });
         }
         console.log(store.teachers());
       },
@@ -75,7 +75,7 @@ export const TeacherStore = signalStore(
         this.getTeachersByStopId(stopId).forEach((teacher) => {
           teacherService.assignStopToTeacher(teacher.edufsUsername, stopId);
         });
-      }
+      },
     };
   })
 );

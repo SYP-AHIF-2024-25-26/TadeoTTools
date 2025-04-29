@@ -1,5 +1,4 @@
-﻿using Database.Repository.Functions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace Database.Entities;

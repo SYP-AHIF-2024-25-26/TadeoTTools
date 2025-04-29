@@ -9,10 +9,9 @@ public static class StopGroupManagementValidations
         EndpointFilterDelegate next)
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
-        var groups = context.GetArgument<StopGroupFunctions>(1);
         var groupId = context.GetArgument<int>(2);
         
-        if (!await groups.DoesStopGroupExistAsync(dbContext, groupId))
+        if (!await StopGroupFunctions.DoesStopGroupExistAsync(dbContext, groupId))
         {
             return Results.NotFound();
         }

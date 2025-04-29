@@ -1,5 +1,4 @@
 using Database.Repository.Functions;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.TeacherManagement;
 
@@ -16,7 +15,7 @@ public static class TeacherManagementApi
         group.MapPut("teachers/{id}/assignments", TeacherManagementEndpoints.SetTeacherAssignments)
             .WithName(nameof(TeacherManagementEndpoints.SetTeacherAssignments))
             .WithDescription("Set assignments for a teacher")
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK);
         //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
     }

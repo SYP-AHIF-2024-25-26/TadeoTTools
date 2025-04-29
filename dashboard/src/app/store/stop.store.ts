@@ -1,19 +1,20 @@
-import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
-import {Stop, StopWithoutOrders} from "../types";
-import {inject} from "@angular/core";
-import {StopService} from "../stop.service";
-
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { Stop, StopWithoutOrders } from '../types';
+import { inject } from '@angular/core';
+import { StopService } from '../stop.service';
 
 type StopState = {
   stops: Stop[];
+  loaded: boolean;
 };
 
 const initialState: StopState = {
-  stops: []
+  stops: [],
+  loaded: false,
 };
 
 export const StopStore = signalStore(
-  {providedIn: "root"},
+  { providedIn: 'root' },
   withState(initialState),
   withMethods((store) => {
     const stopService = inject(StopService);
@@ -21,7 +22,8 @@ export const StopStore = signalStore(
     (async function fetchInitialStops() {
       if (initialState.stops.length == 0) {
         const stops = await stopService.getStops();
-        patchState(store, {stops});
+        console.log('Fetched stops: ', stops);
+        patchState(store, { stops: stops, loaded: true });
       }
     })();
 
@@ -30,20 +32,18 @@ export const StopStore = signalStore(
         const stop = await stopService.addStop(stopToAdd);
         console.log(stop);
         patchState(store, {
-          stops: [...store.stops(), stop]
+          stops: [...store.stops(), stop],
         });
       },
       async updateStop(stopToUpdate: Stop) {
         patchState(store, {
-          stops: store.stops().map((stop) =>
-            stop.id === stopToUpdate.id ? stopToUpdate : stop
-          )
+          stops: store.stops().map((stop) => (stop.id === stopToUpdate.id ? stopToUpdate : stop)),
         });
         await stopService.updateStop(stopToUpdate as StopWithoutOrders);
       },
       async deleteStop(stopIdToDelete: number) {
         patchState(store, {
-          stops: store.stops().filter((stop) => stop.id !== stopIdToDelete)
+          stops: store.stops().filter((stop) => stop.id !== stopIdToDelete),
         });
         await stopService.deleteStop(stopIdToDelete);
       },
@@ -57,11 +57,8 @@ export const StopStore = signalStore(
         if (divisionId === 0) {
           return store.stops();
         }
-        return store.stops().filter(
-          (stop) =>
-            Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId)
-        );
-      }
+        return store.stops().filter((stop) => Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId));
+      },
     };
   })
 );

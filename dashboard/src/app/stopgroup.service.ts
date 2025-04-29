@@ -14,32 +14,22 @@ export class StopGroupService {
   baseUrl = inject(BASE_URL);
 
   async getStopGroups(): Promise<StopGroup[]> {
-    return firstValueFrom(
-      this.httpClient.get<StopGroup[]>(this.baseUrl + '/api/groups')
-    );
+    return firstValueFrom(this.httpClient.get<StopGroup[]>(this.baseUrl + '/api/groups'));
   }
 
   updateStopGroupOrder(stopGroups: number[]) {
-    firstValueFrom(
-      this.httpClient.put(this.baseUrl + `/api/groups/order`, stopGroups)
-    );
+    firstValueFrom(this.httpClient.put(this.baseUrl + `/api/groups/order`, stopGroups));
   }
 
   async addStopGroup(stopGroup: StopGroup) {
-    return await firstValueFrom(
-      this.httpClient.post<StopGroup>(this.baseUrl + '/api/groups', stopGroup)
-    );
+    return await firstValueFrom(this.httpClient.post<StopGroup>(this.baseUrl + '/api/groups', stopGroup));
   }
 
   async updateStopGroup(stopGroup: StopGroup) {
-    await firstValueFrom(
-      this.httpClient.put(this.baseUrl + `/api/groups`, stopGroup)
-    );
+    await firstValueFrom(this.httpClient.put(this.baseUrl + `/api/groups`, stopGroup));
   }
 
   async deleteStopGroup(stopGroupID: number) {
-    await firstValueFrom(
-      this.httpClient.delete(this.baseUrl + `/api/groups/${stopGroupID}`)
-    );
+    await firstValueFrom(this.httpClient.delete(this.baseUrl + `/api/groups/${stopGroupID}`));
   }
 }

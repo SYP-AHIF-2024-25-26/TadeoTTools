@@ -1,8 +1,8 @@
 <div class="sticky">
-  <nav class="bg-htl-orange text-white p-2 flex items-center space-x-10">
-    <div class="flex space-x-10 w-full justify-start">
+  <nav class="flex items-center space-x-10 bg-background-200 p-2 text-text-900">
+    <div class="flex w-full justify-start space-x-10">
       <div class="text-lg">Admin Dashboard</div>
-      @if(isAdmin()) {
+      @if (isAdmin()) {
         <button class="justify-start" [routerLink]="['/overview']">Overview</button>
         <button [routerLink]="['/students']">Students</button>
         <button [routerLink]="['/stopgroups']">StopGroups</button>
@@ -11,12 +11,16 @@
         <button [routerLink]="['/feedback']">Feedback</button>
       }
     </div>
+    <label class="inline-flex cursor-pointer items-center">
+      <input type="checkbox" value="" class="peer sr-only" (click)="changeDarkMode()" />
+      <div
+        class="peer relative h-6 w-11 rounded-full bg-background-300 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-background-50 after:transition-all after:content-[''] peer-checked:bg-background-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-background-300 rtl:peer-checked:after:-translate-x-full"
+      ></div>
+      <span class="ms-3">Dark</span>
+    </label>
     @if (!isAdmin()) {
-      <button (click)="logout()" class="justify-start">
-        Logout
-      </button>
-    }
-    @else {
+      <button (click)="logout()" class="justify-start">Logout</button>
+    } @else {
       <app-admin-dropdown />
     }
   </nav>

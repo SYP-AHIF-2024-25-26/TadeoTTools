@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using API.Endpoints.FeedbackManagement;
 using API.Endpoints.TeacherManagement;
+using API.Endpoints.AdminManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,9 +21,10 @@ builder.Logging.ClearProviders().AddConsole();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<TadeoTDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))); // ServiceLifetime Transient
+    options.UseMySQL(connectionString!)); // ServiceLifetime Transient
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddProblemDetails();
 
 builder.Services.AddScoped<DivisionFunctions>();
 builder.Services.AddScoped<StopGroupFunctions>();
@@ -61,6 +63,7 @@ app.MapTeacherEndpoints();
 app.MapSettingsEndpoints();
 app.MapUserEndpoints();
 app.MapFeedbackEndpoints();
+app.MapAdminEndpoints();
 
 if (app.Environment.IsDevelopment())
 {

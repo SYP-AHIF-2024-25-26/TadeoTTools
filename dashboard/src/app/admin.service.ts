@@ -7,7 +7,6 @@ import { firstValueFrom } from 'rxjs';
   providedIn: 'root',
 })
 export class AdminService {
-
   httpClient = inject(HttpClient);
   baseUrl = inject(BASE_URL);
 
@@ -15,24 +14,17 @@ export class AdminService {
 
   async addAdmin(name: string) {
     await firstValueFrom(
-      this.httpClient.post(
-        `${this.baseUrl}/api/users/admins?name=${encodeURIComponent(name)}`,
-        null,
-        {
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
+      this.httpClient.post(`${this.baseUrl}/api/admins?name=${encodeURIComponent(name)}`, null, {
+        headers: { 'Content-Type': 'application/json' },
+      })
     );
   }
 
   async deleteAdmin(name: string) {
-    await firstValueFrom(
-      this.httpClient.delete(this.baseUrl + `/api/users/admins/${name}`)
-    );
+    await firstValueFrom(this.httpClient.delete(this.baseUrl + `/api/admins/${name}`));
   }
 
   getAdmins(): Promise<string[]> {
-    return firstValueFrom(
-      this.httpClient.get<string[]>(this.baseUrl + '/api/users/admins'));
+    return firstValueFrom(this.httpClient.get<string[]>(this.baseUrl + '/api/admins'));
   }
 }
