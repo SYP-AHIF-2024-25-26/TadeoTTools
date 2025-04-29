@@ -1,4 +1,3 @@
-using Database.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.FeedbackManagement;
@@ -13,7 +12,7 @@ public static class FeedbackManagementApi
             .WithDescription("Get all feedback questions")
             .Produces<List<GetFeedbackQuestionDto>>();
 
-        group.MapGet("get-answers/{id}", FeedbackManagementEndpoints.GetAnswersOfQuestion)
+        group.MapGet("get-answers/{id:int}", FeedbackManagementEndpoints.GetAnswersOfQuestion)
             .WithName(nameof(FeedbackManagementEndpoints.GetAnswersOfQuestion))
             .WithDescription("Get all answers of a question")
             .Produces<List<GetFeedbackAnswerDto>>()
