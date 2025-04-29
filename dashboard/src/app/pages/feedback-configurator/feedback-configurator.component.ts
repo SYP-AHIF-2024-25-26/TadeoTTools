@@ -33,8 +33,6 @@ export type FeedbackQuestion = {
     CdkDropList,
     ReactiveFormsModule,
     CdkDragHandle,
-    NgIf,
-    NgForOf,
     CdkDrag
   ]
 })
