@@ -11,7 +11,7 @@ public static class FeedbackManagementEndpoints
     {
         var questions = await context.FeedbackQuestions
             .Select(f => new GetFeedbackQuestionDto(f.Id, f.Question, f.Type.ToString(), f.Required, f.Placeholder,
-                f.Options != null ? f.Options.ToArray() : null, f.MinRating, f.MaxRating, f.RatingLabels, f.Order))
+                f.Options != null ? f.Options.Select(o => o.Value).ToArray() : null, f.MinRating, f.MaxRating, f.RatingLabels, f.Order))
             .ToListAsync();
         
         var sortedQuestions = questions.OrderBy(q => q.Order).ToList();
@@ -87,7 +87,10 @@ public static class FeedbackManagementEndpoints
             existingQuestion.Type = dto.Type.ToLower();
             existingQuestion.Required = dto.Required;
             existingQuestion.Placeholder = dto.Placeholder;
-            existingQuestion.Options = dto.Options?.ToList();
+            existingQuestion.Options = dto.Options?.Select(o => new FeedbackOption
+            {
+                Value = o
+            }).ToList();
             existingQuestion.MinRating = dto.MinRating;
             existingQuestion.MaxRating = dto.MaxRating;
             existingQuestion.RatingLabels = dto.RatingLabels;
@@ -103,7 +106,10 @@ public static class FeedbackManagementEndpoints
             Type = dto.Type.ToLower(),
             Required = dto.Required,
             Placeholder = dto.Placeholder,
-            Options = dto.Options?.ToList(),
+            Options = dto.Options?.Select(o => new FeedbackOption
+            {
+                Value = o
+            }).ToList(),
             MinRating = dto.MinRating,
             MaxRating = dto.MaxRating,
             RatingLabels = dto.RatingLabels,

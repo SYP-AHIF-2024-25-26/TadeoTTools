@@ -1,4 +1,4 @@
-import { Component, inject, type OnInit, signal } from '@angular/core';
+import { Component, computed, inject, type OnInit, signal } from '@angular/core';
 import { FormBuilder, type FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgForOf, NgIf } from '@angular/common';
 import { FeedbackQuestion, FeedbackSubmission } from '../types';
@@ -23,7 +23,7 @@ export class FeedbackComponent implements OnInit{
   answers: Record<number, string> = {}
   showError = false
   showAnswerSummary = false // Set to true if you want to show answers in the thank you screen
-
+  feedbackAlreadySubmitted = computed(() => localStorage.getItem("feedbackSubmitted") === "true")
   questions = signal<FeedbackQuestion[]>([])
 
 
@@ -103,6 +103,8 @@ export class FeedbackComponent implements OnInit{
         questionId: question.id,
         answer: this.answers[index] || "",
       } as FeedbackSubmission)));
+
+      localStorage.setItem("feedbackSubmitted", "true")
     }
   }
 
@@ -125,16 +127,6 @@ export class FeedbackComponent implements OnInit{
       this.showError = false
     }
   }
-
-  resetForm(): void {
-    this.isSubmitted = false
-    this.currentQuestionIndex = 0
-    this.answers = {}
-    this.feedbackForm.reset()
-    this.showError = false
-    this.updateFormValidators()
-  }
-
   // Helper methods for different question types
 
   selectOption(option: string): void {
@@ -168,4 +160,6 @@ export class FeedbackComponent implements OnInit{
 
     return rating.toString()
   }
+
+  protected readonly localStorage = localStorage;
 }

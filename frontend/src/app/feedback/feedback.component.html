@@ -2,9 +2,9 @@
 <app-header [showWelcomeText]="true"/>
 <div class="min-h-screen bg-gray-50 flex flex-col items-center p-4">
 
-
+@if (!feedbackAlreadySubmitted() && !isSubmitted) {
   <!-- Feedback Form -->
-  <ng-container *ngIf="!isSubmitted; else thankYouTemplate">
+  <ng-container>
     <div class="w-full mt-4 max-w-md shadow-lg border-0 bg-white rounded-lg overflow-hidden">
       <!-- Progress Header -->
       <div class="p-6 pb-2">
@@ -150,9 +150,9 @@
       </div>
     </div>
   </ng-container>
-
+} @else {
   <!-- Thank You Template -->
-  <ng-template #thankYouTemplate>
+  <ng-container>
     <div class="w-full max-w-md shadow-lg border-0 bg-white rounded-lg overflow-hidden text-center p-8">
       <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -161,12 +161,6 @@
       </div>
       <h3 class="text-2xl font-bold mb-2 text-gray-800">Thank You!</h3>
       <p class="text-gray-600 mb-6">Your feedback has been submitted successfully.</p>
-      <button
-        (click)="resetForm()"
-        class="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white px-4 py-2 rounded-md"
-      >
-        Submit Another Response
-      </button>
 
       <!-- Show answers summary if needed -->
       <div *ngIf="showAnswerSummary" class="mt-8 text-left">
@@ -177,5 +171,6 @@
         </div>
       </div>
     </div>
-  </ng-template>
+  </ng-container>
+}
 </div>

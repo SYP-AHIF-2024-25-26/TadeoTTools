@@ -3,27 +3,24 @@ using System;
 using Database.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace database.Migrations
+namespace Database.Migrations
 {
     [DbContext(typeof(TadeoTDbContext))]
-    [Migration("20250420080654_FeedbackInitial")]
-    partial class FeedbackInitial
+    [Migration("20250429074854_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.13")
+                .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("Database.Entities.Admin", b =>
                 {
@@ -44,8 +41,6 @@ namespace database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -65,22 +60,37 @@ namespace database.Migrations
                     b.ToTable("Divisions");
                 });
 
+            modelBuilder.Entity("Database.Entities.FeedbackOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("FeedbackQuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeedbackQuestionId");
+
+                    b.ToTable("FeedbackOptions");
+                });
+
             modelBuilder.Entity("Database.Entities.FeedbackQuestion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int?>("MaxRating")
                         .HasColumnType("int");
 
                     b.Property<int?>("MinRating")
                         .HasColumnType("int");
-
-                    b.Property<string>("Options")
-                        .HasColumnType("longtext");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -113,8 +123,6 @@ namespace database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Answer")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -134,8 +142,6 @@ namespace database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -162,8 +168,6 @@ namespace database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -193,8 +197,6 @@ namespace database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
@@ -218,8 +220,6 @@ namespace database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsDone")
                         .HasColumnType("tinyint(1)");
@@ -269,8 +269,6 @@ namespace database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -314,8 +312,6 @@ namespace database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("StopId")
                         .HasColumnType("int");
 
@@ -345,6 +341,17 @@ namespace database.Migrations
                     b.HasIndex("StopsId");
 
                     b.ToTable("DivisionStop");
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackOption", b =>
+                {
+                    b.HasOne("Database.Entities.FeedbackQuestion", "FeedbackQuestion")
+                        .WithMany("Options")
+                        .HasForeignKey("FeedbackQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FeedbackQuestion");
                 });
 
             modelBuilder.Entity("Database.Entities.FeedbackQuestionAnswer", b =>
@@ -444,6 +451,8 @@ namespace database.Migrations
             modelBuilder.Entity("Database.Entities.FeedbackQuestion", b =>
                 {
                     b.Navigation("FeedbackQuestionAnswers");
+
+                    b.Navigation("Options");
                 });
 
             modelBuilder.Entity("Database.Entities.Stop", b =>
