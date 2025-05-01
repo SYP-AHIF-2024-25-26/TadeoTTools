@@ -9,5 +9,5 @@ import { CountdownComponent } from '../countdown/countdown.component';
   styleUrl: './next-year-page.component.css',
 })
 export class NextYearPageComponent {
-  protected targetDate: Date = new Date(2025, 11, 21, 0, 0, 0, 0);
+  protected targetDate: Date = new Date(2025, 10, 21, 0, 0, 0, 0);
 }
