@@ -31,7 +31,7 @@ public class TadeoTDbContextFactory : IDesignTimeDbContextFactory<TadeoTDbContex
     public TadeoTDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<TadeoTDbContext>();
-        optionsBuilder.UseMySQL(GetConnectionString()); //ServerVersion.AutoDetect(GetConnectionString()));
+        optionsBuilder.UseMySQL(GetConnectionString());
 
         return new TadeoTDbContext(optionsBuilder.Options);
     }

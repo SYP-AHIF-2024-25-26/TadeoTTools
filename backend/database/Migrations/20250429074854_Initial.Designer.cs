@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(TadeoTDbContext))]
-    [Migration("20250410140013_Initial")]
+    [Migration("20250429074854_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -19,7 +19,7 @@ namespace Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.15")
+                .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Database.Entities.Admin", b =>
@@ -58,6 +58,83 @@ namespace Database.Migrations
                         .IsUnique();
 
                     b.ToTable("Divisions");
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("FeedbackQuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeedbackQuestionId");
+
+                    b.ToTable("FeedbackOptions");
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxRating")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MinRating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Placeholder")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RatingLabels")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("Required")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FeedbackQuestions");
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackQuestionAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("FeedbackQuestionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeedbackQuestionId");
+
+                    b.ToTable("FeedbackQuestionAnswers");
                 });
 
             modelBuilder.Entity("Database.Entities.Stop", b =>
@@ -266,6 +343,28 @@ namespace Database.Migrations
                     b.ToTable("DivisionStop");
                 });
 
+            modelBuilder.Entity("Database.Entities.FeedbackOption", b =>
+                {
+                    b.HasOne("Database.Entities.FeedbackQuestion", "FeedbackQuestion")
+                        .WithMany("Options")
+                        .HasForeignKey("FeedbackQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FeedbackQuestion");
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackQuestionAnswer", b =>
+                {
+                    b.HasOne("Database.Entities.FeedbackQuestion", "FeedbackQuestion")
+                        .WithMany("FeedbackQuestionAnswers")
+                        .HasForeignKey("FeedbackQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FeedbackQuestion");
+                });
+
             modelBuilder.Entity("Database.Entities.StopGroupAssignment", b =>
                 {
                     b.HasOne("Database.Entities.StopGroup", "StopGroup")
@@ -347,6 +446,13 @@ namespace Database.Migrations
                         .HasForeignKey("StopsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackQuestion", b =>
+                {
+                    b.Navigation("FeedbackQuestionAnswers");
+
+                    b.Navigation("Options");
                 });
 
             modelBuilder.Entity("Database.Entities.Stop", b =>

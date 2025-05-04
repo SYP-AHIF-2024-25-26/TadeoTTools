@@ -10,6 +10,7 @@ import { StudentComponent } from './pages/student/student.component';
 import { TeacherComponent } from './pages/teacher/teacher.component';
 import { AdminOverviewComponent } from './pages/admin-overview/admin-overview.component';
 import { ListStudentsComponent } from './pages/list-students/list-students.component';
+import {FeedbackConfiguratorComponent} from "./pages/feedback-configurator/feedback-configurator.component";
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -23,5 +24,6 @@ export const routes: Routes = [
   { path: 'teacher', component: TeacherComponent },
   { path: 'overview', component: AdminOverviewComponent },
   { path: 'students', component: ListStudentsComponent },
+  { path: 'feedback', component: FeedbackConfiguratorComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

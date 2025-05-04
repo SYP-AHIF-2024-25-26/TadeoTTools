@@ -44,6 +44,27 @@ namespace Database.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "FeedbackQuestions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Question = table.Column<string>(type: "longtext", nullable: false),
+                    Type = table.Column<string>(type: "longtext", nullable: false),
+                    Required = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Placeholder = table.Column<string>(type: "longtext", nullable: true),
+                    MinRating = table.Column<int>(type: "int", nullable: true),
+                    MaxRating = table.Column<int>(type: "int", nullable: true),
+                    RatingLabels = table.Column<string>(type: "longtext", nullable: true),
+                    Order = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeedbackQuestions", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "StopGroups",
                 columns: table => new
                 {
@@ -103,6 +124,48 @@ namespace Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Teachers", x => x.EdufsUsername);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "FeedbackOptions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Value = table.Column<string>(type: "longtext", nullable: false),
+                    FeedbackQuestionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeedbackOptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FeedbackOptions_FeedbackQuestions_FeedbackQuestionId",
+                        column: x => x.FeedbackQuestionId,
+                        principalTable: "FeedbackQuestions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "FeedbackQuestionAnswers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Answer = table.Column<string>(type: "longtext", nullable: false),
+                    FeedbackQuestionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeedbackQuestionAnswers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FeedbackQuestionAnswers_FeedbackQuestions_FeedbackQuestionId",
+                        column: x => x.FeedbackQuestionId,
+                        principalTable: "FeedbackQuestions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -254,6 +317,16 @@ namespace Database.Migrations
                 column: "StopsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FeedbackOptions_FeedbackQuestionId",
+                table: "FeedbackOptions",
+                column: "FeedbackQuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FeedbackQuestionAnswers_FeedbackQuestionId",
+                table: "FeedbackQuestionAnswers",
+                column: "FeedbackQuestionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StopGroupAssignments_StopGroupId",
                 table: "StopGroupAssignments",
                 column: "StopGroupId");
@@ -311,6 +384,12 @@ namespace Database.Migrations
                 name: "DivisionStop");
 
             migrationBuilder.DropTable(
+                name: "FeedbackOptions");
+
+            migrationBuilder.DropTable(
+                name: "FeedbackQuestionAnswers");
+
+            migrationBuilder.DropTable(
                 name: "StopGroupAssignments");
 
             migrationBuilder.DropTable(
@@ -324,6 +403,9 @@ namespace Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "Divisions");
+
+            migrationBuilder.DropTable(
+                name: "FeedbackQuestions");
 
             migrationBuilder.DropTable(
                 name: "StopGroups");
