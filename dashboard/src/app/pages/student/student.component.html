@@ -1,13 +1,17 @@
 <div class="m-6">
-  <h2 class="my-8 text-3xl font-bold text-gray-800">Welcome to the TadeoT Stop Management!</h2>
-  <div class="mb-6 text-xl text-gray-700">Here are your possible stops:</div>
+  <h2 class="my-8 text-3xl font-bold text-gray-800 text-center">
+    Welcome to the TadeoT Stop Management!
+  </h2>
+  <div class="mb-6 text-xl text-gray-700 text-center">
+    Here are your possible stops:
+  </div>
 
   @for (stop of stops(); track $index) {
-    <div class="m-4 flex flex-col gap-4 rounded-2xl border p-6 shadow-xl">
-      <h3 class="text-2xl font-semibold">{{ stop.name }}</h3>
-      <p class="text-lg">📌 <span class="font-medium">Description:</span> {{ stop.description }}</p>
-      <p class="text-lg">🏠 <span class="font-medium">Room Number:</span> {{ stop.roomNr }}</p>
-      <p class="text-lg">📊 <span class="font-medium">Status:</span> {{ getStatusName(stop.status) }}</p>
+    <div class="mt-10 flex flex-col gap-4 rounded-2xl border p-6 shadow-xl w-2/3 ml-auto mr-auto">
+      <h3 class="text-2xl font-semibold text-center">{{ stop.name }}</h3>
+      <p class="text-lg">📌 <span class="font-medium">Description:</span><br/> {{ stop.description }}</p>
+      <p class="text-lg">🏠 <span class="font-medium">Room Number:</span><br/> {{ stop.roomNr }}</p>
+      <p class="text-lg">📊 <span class="font-medium">Status:</span><br/> {{ getStatusName(stop.status) }}</p>
     </div>
   }
 </div>
