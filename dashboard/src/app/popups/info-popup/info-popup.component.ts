@@ -3,11 +3,10 @@ import { Info } from '../../types';
 import { NgClass } from '@angular/common';
 
 @Component({
-    selector: 'app-info-popup',
-    standalone: true,
-    imports: [NgClass],
-    templateUrl: './info-popup.component.html',
-    styleUrl: './info-popup.component.css'
+  selector: 'app-info-popup',
+  standalone: true,
+  imports: [NgClass],
+  templateUrl: './info-popup.component.html',
 })
 export class InfoPopupComponent implements OnInit {
   @Input() info: Info | undefined;

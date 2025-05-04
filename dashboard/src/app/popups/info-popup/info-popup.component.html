@@ -1,13 +1,13 @@
 @if (info != null) {
   <div
     id="content"
-    class="flex justify-between text-white py-2 px-4 mt-2 rounded-lg"
+    class="mt-2 flex justify-between rounded-lg px-4 py-2 text-white"
     [ngClass]="{
-    'bg-blue-500': info.type === 'info',
-    'bg-red-500': info.type === 'error'
-  }"
+      'bg-blue-500': info.type === 'info',
+      'bg-red-500': info.type === 'error',
+    }"
   >
-    <p class="mr-20">{{ info.message }}</p>
+    {{ info.message }}
     <button class="text-white" (click)="closePopup()">X</button>
   </div>
 }

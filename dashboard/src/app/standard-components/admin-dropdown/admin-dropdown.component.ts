@@ -1,15 +1,12 @@
-import {Component, inject} from '@angular/core';
-import {NgClass} from "@angular/common";
-import {Router} from "@angular/router";
-import Keycloak from "keycloak-js";
+import { Component, inject } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { Router } from '@angular/router';
+import Keycloak from 'keycloak-js';
 
 @Component({
   selector: 'app-admin-dropdown',
-  imports: [
-    NgClass
-  ],
+  imports: [NgClass],
   templateUrl: './admin-dropdown.component.html',
-  styleUrl: './admin-dropdown.component.css'
 })
 export class AdminDropdownComponent {
   isOpen = false;

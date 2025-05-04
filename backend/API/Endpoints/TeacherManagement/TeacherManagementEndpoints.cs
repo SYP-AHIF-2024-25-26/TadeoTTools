@@ -1,9 +1,7 @@
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints.TeacherManagement;
 
@@ -21,7 +19,7 @@ public static class TeacherManagementEndpoints
         {
             return Results.NotFound("Teacher not found");
         }
-        
+
         teacher.AssignedStops.Clear();
         teacher.AssignedStops.AddRange(assignments);
         await context.SaveChangesAsync();

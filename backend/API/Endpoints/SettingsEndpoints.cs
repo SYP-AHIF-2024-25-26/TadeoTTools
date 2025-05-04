@@ -1,5 +1,4 @@
 using Database.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints;
 

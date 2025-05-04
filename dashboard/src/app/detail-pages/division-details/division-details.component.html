@@ -1,87 +1,52 @@
-<div class="m-6">
-  <h1 class="mb-4 text-4xl">Division Details</h1>
-  @if(divisionId() != -1) {
-  <h4 class="text-2xl">Division ID: {{ divisionId() }}</h4>
-  } @else {
-  <h4 class="text-2xl">New Division</h4>
-  } @if(filePreview != null) {
-  <div class="mt-4">
-    <p>File Preview</p>
-    <img
-      class="w-32 h-32 object-cover"
-      [src]="filePreview"
-      alt="File preview"
-    />
-  </div>
-  } @else {
-  <img
-    class="w-32 h-32 object-cover"
-    [src]="baseUrl + '/divisions/' + divisionId() + '/image?timestamp=1234567890'"
-    alt="Division Picture will load here"
-  />
-  }
-
-  <form (submit)="submitDivisionDetail()" class="mt-4">
-    <div>
-      <label for="name" class="mr-4">Name</label>
-      <input
-        class="mb-4 border rounded px-4 py-2 text-gray-700"
-        type="text"
-        [value]="name()"
-        [(ngModel)]="name"
-        name="name"
-        id="name"
-      />
-    </div>
-
-    <label for="color" class="mr-4">Color</label>
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+  <div
+    class="m-6 p-8 inline-flex flex-col items-center rounded-lg bg-background-100 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-white"
+  >
+    @if(id == -1) {
+      <h4 class="text-2xl mb-3">New Division</h4>
+    }
     <input
-      class="mb-4"
-      type="color"
-      [value]="color()"
-      [(ngModel)]="color"
-      name="color"
-      id="color"
+      class="mb-4 rounded bg-primary-200 px-4 py-2 text-text-950 input"
+      type="text"
+      [value]="name()"
+      [(ngModel)]="name"
+      name="name"
+      id="name"
     />
-    <div class="w-100 h-100" [style.backgroundColor]="color()"></div>
-    <div>
-      <label for="file" class="mr-4">Upload Image</label>
-      <input
-        class="mb-4 border rounded px-4 py-2 text-gray-700"
-        type="file"
-        id="file"
-        accept=".jpg, .jpeg, .png, .svg"
-        (change)="onFileChange($event)"
+    @if (filePreview != null) {
+      <div class="mt-4">
+        <p>File Preview</p>
+        <img class="h-32 w-32 object-cover" [src]="filePreview" alt="File preview" />
+      </div>
+    } @else {
+      <img
+        class="h-32 w-32 object-cover"
+        [src]="baseUrl + '/divisions/' + id + '/image?timestamp=1234567890'"
+        alt="Division Picture will load here"
       />
+    }
+    <form (submit)="submitDivisionDetail()" class="flex flex-col items-center">
+      <div>
+        <label for="color" class="mr-4">Color</label>
+        <input class="mb-4" type="color" [value]="color()" [(ngModel)]="color" name="color" id="color" />
+        <div class="w-100 h-100" [style.backgroundColor]="color()"></div>
+      </div>
 
-      @if (errorMessage() != null) {
-      <p class="text-red-700">{{ errorMessage() }}</p>
-      }
-    </div>
-    <div>
-      <button type="submit" class="bg-htl-orange p-2 mr-4 rounded text-white">
-        Submit
-      </button>
-      <button
-        [routerLink]="['/divisions']"
-        class="mt-4 mr-4 bg-htl-orange p-2 rounded text-white"
-      >
-        Cancel
-      </button>
-      @if (divisionId() != -1) {
-      <button
-        (click)="deleteAndGoBack()"
-        class="bg-htl-orange mr-4 p-2 rounded text-white"
-      >
-        Delete
-      </button>
-      <button
-        (click)="deleteImage()"
-        class="bg-htl-orange mt-4 p-2 rounded text-white"
-      >
-        Delete Image
-      </button>
-      }
-    </div>
-  </form>
+      <div>
+        <input class="rounded py-2" type="file" id="file" accept=".jpg, .jpeg, .png, .svg" (change)="onFileChange($event)" />
+
+        @if (errorMessage() != null) {
+          <p class="text-red-700">{{ errorMessage() }}</p>
+        }
+      </div>
+      <div>
+        <button type="submit" class="mr-4 rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
+        <button (click)="cancelPopup()" class="mr-4 mt-4 rounded bg-gray-400 hover:bg-gray-500 p-2">Cancel</button>
+        @if (id != -1) {
+          <button (click)="deleteAndGoBack()" class="hover:bg-accent-300 mr-4 rounded bg-accent-200 p-2">Delete</button>
+          <button (click)="deleteImage()" class="bg-accent-200 mt-4 rounded p-2 text-text-950 hover:bg-accent-300">Delete Image</button>
+        }
+      </div>
+    </form>
+  </div>
 </div>

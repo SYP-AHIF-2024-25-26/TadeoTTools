@@ -1,7 +1,7 @@
 services:
-  tadeot-my-sql:
+  db:
     image: mysql:latest
-    container_name: tadeot-mysql
+    container_name: db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: test
@@ -9,50 +9,47 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: test
     ports:
-      - 4100:3306
+      - "3306:3306"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
       timeout: 5s
       retries: 5
     volumes:
-      - tadeot-data:/var/lib/mysql
+      - db_data:/var/lib/mysql
     networks:
-      - tadeot-tools-network
-
+      - backend-network
+  
   adminer:
     image: adminer
     container_name: tadeot-tools-adminer
     restart: always
     ports:
-      - 8080:8080
+      - "8080:8080"
     links:
-      - tadeot-my-sql
+      - db
     networks:
-      - tadeot-tools-network
+      - backend-network
 
-  api:
-    container_name: tadeot-tools-api
-    restart: always
-    links:
-      - tadeot-my-sql
-    depends_on:
-      - tadeot-my-sql
-    image: birgitschroeder/tadeot-tools-api:latest
+  backend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile:  Dockerfile
+    container_name: backend-app
+    restart: always
     ports:
-      - 5000:8080
+      - "5001:8080"
+    depends_on:
+      - db
     networks:
-      - tadeot-tools-network
+      - backend-network
 
 volumes:
-  tadeot-data:
+  db_data:
 
 networks:
-  tadeot-tools-network:
-    driver: bridge  
+  backend-network:
+    driver: bridge
     external: false
     ipam:
       config:

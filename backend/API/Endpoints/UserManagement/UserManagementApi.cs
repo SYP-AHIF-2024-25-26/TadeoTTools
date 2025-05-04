@@ -1,8 +1,4 @@
 ﻿using LeoAuth;
-using Database.Repository;
-using System.Security.Cryptography.X509Certificates;
-using API.Endpoints.StopGroupManagement;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.UserManagement;
 
@@ -41,32 +37,11 @@ public static class UserManagementApi
             );
         }).RequireAuthorization();
 
-        group.MapPost("/admins", UserManagementEndpoints.AddAdmin)
-            .WithName(nameof(UserManagementEndpoints.AddAdmin))
-            .WithDescription("Add an admin")
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(Setup.AdminPolicyName);
-
-        group.MapDelete("/admins/{name}", UserManagementEndpoints.DeleteAdmin)
-            .WithName(nameof(UserManagementEndpoints.DeleteAdmin))
-            .WithDescription("Delete an admin")
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(Setup.AdminPolicyName);
-
-        group.MapGet("/admins", UserManagementEndpoints.GetAllAdmins)
-            .WithName(nameof(UserManagementEndpoints.GetAllAdmins))
-            .WithDescription("Get all admins")
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(Setup.AdminPolicyName);
-
-        group.MapGet("/correlating-stops", UserManagementEndpoints.GetCorrelatingStops)
-            .WithName(nameof(UserManagementEndpoints.GetCorrelatingStops))
-            .WithDescription("Get the correlating stops of a student")
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(nameof(LeoUserRole.Student));
+        app.MapGet("/in-database", UserManagementEndpoints.UserInDatabase)
+            .WithName(nameof(UserManagementEndpoints.UserInDatabase))
+            .WithDescription("Check if a user is in the database")
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK);
     }
 }

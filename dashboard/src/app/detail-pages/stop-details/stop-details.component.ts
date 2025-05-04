@@ -1,25 +1,24 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {StopService} from '../../stop.service';
-import {ActivatedRoute, RouterModule} from '@angular/router';
-import {FormsModule} from '@angular/forms';
-import {Status, Stop, StopGroup, StudentAssignment} from '../../types';
-import {isValid} from '../../utilfunctions';
-import {firstValueFrom} from 'rxjs';
-import {ChipComponent} from '../../standard-components/chip/chip.component';
-import {Location} from '@angular/common';
-import {StopStore} from "../../store/stop.store";
-import {DivisionStore} from "../../store/division.store";
-import {StopGroupStore} from "../../store/stopgroup.store";
-import {TeacherStore} from "../../store/teacher.store";
-import {LoginService} from "../../login.service";
-import {StudentStore} from "../../store/student.store";
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { StopService } from '../../stop.service';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Status, Stop, StopGroup, StudentAssignment } from '../../types';
+import { isValid } from '../../utilfunctions';
+import { firstValueFrom } from 'rxjs';
+import { ChipComponent } from '../../standard-components/chip/chip.component';
+import { Location } from '@angular/common';
+import { StopStore } from '../../store/stop.store';
+import { DivisionStore } from '../../store/division.store';
+import { StopGroupStore } from '../../store/stopgroup.store';
+import { TeacherStore } from '../../store/teacher.store';
+import { LoginService } from '../../login.service';
+import { StudentStore } from '../../store/student.store';
 
 @Component({
   selector: 'app-stop-details',
   standalone: true,
   imports: [FormsModule, RouterModule, ChipComponent],
   templateUrl: './stop-details.component.html',
-  styleUrl: './stop-details.component.css'
 })
 export class StopDetailsComponent implements OnInit {
   private stopStore = inject(StopStore);
@@ -40,21 +39,17 @@ export class StopDetailsComponent implements OnInit {
     divisionIds: [],
     stopGroupIds: [],
     teachers: [],
-    orders: []
+    orders: [],
   };
   stop = signal<Stop>(this.emptyStop);
   isAdmin = signal(false);
 
-  inactiveDivisions = computed(() =>
-    this.divisionStore.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id))
-  );
+  inactiveDivisions = computed(() => this.divisionStore.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id)));
 
   errorMessage = signal<string | null>(null);
 
   teachersByStopId = computed(() => {
-    return this.teacherStore.teachers().filter((teacher) =>
-      teacher.stopAssignments.some((assignment) => assignment == this.stop().id)
-    )
+    return this.teacherStore.teachers().filter((teacher) => teacher.stopAssignments.some((assignment) => assignment == this.stop().id));
   });
 
   teachersNotInStop = computed(() => {
@@ -74,14 +69,14 @@ export class StopDetailsComponent implements OnInit {
     const id = params['id'] || -1;
     let maybeStop: Stop | undefined = undefined;
     while (maybeStop === undefined) {
-      maybeStop = this.stopStore.stops().find(s => s.id == id)
+      maybeStop = this.stopStore.stops().find((s) => s.id == id);
       if (maybeStop === undefined) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
-    console.log("stop is: " + this.stopStore.stops());
+    console.log('stop is: ' + this.stopStore.stops());
     if (maybeStop) {
-      this.stop.set(maybeStop)
+      this.stop.set(maybeStop);
     }
   }
 
@@ -108,18 +103,18 @@ export class StopDetailsComponent implements OnInit {
     if (this.stop().id === -1) {
       const returnedStop = await this.service.addStop(this.stop());
       console.log(returnedStop);
-      this.stop.set({...this.stop(), id: returnedStop.id});
+      this.stop.set({ ...this.stop(), id: returnedStop.id });
     } else {
       await this.stopStore.updateStop(this.stop());
     }
 
     this.studentStore.getStudentsByStopId(-1).forEach((student) => {
       this.studentStore.setAssignments(student.edufsUsername);
-    })
+    });
 
     this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
       this.studentStore.setAssignments(student.edufsUsername);
-    })
+    });
 
     this.stop.set(this.emptyStop);
     //this.location.back();
@@ -139,10 +134,7 @@ export class StopDetailsComponent implements OnInit {
   async onDivisionSelect($event: Event) {
     const target = $event.target as HTMLSelectElement;
     const divisionId = parseInt(target.value);
-    if (
-      !this.stop().divisionIds.includes(divisionId) &&
-      this.divisionStore.divisions().find((d) => d.id === divisionId)
-    ) {
+    if (!this.stop().divisionIds.includes(divisionId) && this.divisionStore.divisions().find((d) => d.id === divisionId)) {
       this.stop.update((stop) => {
         stop.divisionIds = [divisionId, ...stop.divisionIds];
         return stop;
@@ -156,7 +148,7 @@ export class StopDetailsComponent implements OnInit {
     const assignment = {
       studentId: edufsUsername,
       stopId: this.stop().id,
-      status: Status.Pending
+      status: Status.Pending,
     } as StudentAssignment;
     await this.studentStore.addStopToStudent(assignment);
   }

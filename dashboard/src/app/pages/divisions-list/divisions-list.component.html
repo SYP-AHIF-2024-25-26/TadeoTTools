@@ -1,58 +1,50 @@
-<div class="w-full h-screen">
-  <button
-    class="text-white p-1.5 mb-2 bg-htl-orange border rounded border-transparent ml-12"
-    [routerLink]="['/division']"
-  >
-    New Division
-  </button>
-  <div class="flex gap-4 flex-wrap mx-10">
+<div class="m-4 flex h-screen w-full flex-col items-center">
+  <div class="mx-10 flex flex-wrap gap-5">
     @for (division of divisionStore.getDivisions(); track $index) {
-    <div
-      class="w-64 p-6 border rounded-lg m-2 text-black bg-white flex flex-wrap flex-col justify-between"
-    >
-      <div class="flex flex-nowrap justify-evenly">
-        <div class="flex w-3/4">
-          <p>{{ division.name }}</p>
+      <div
+        class="m-2 flex w-64 flex-col flex-wrap justify-between rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-white"
+      >
+        <div class="flex flex-nowrap justify-evenly">
+          <div class="flex w-3/4">
+            <p class="font-bold text-text-950">{{ division.name }}</p>
+          </div>
+          <div class="m-auto h-8 w-8 self-end justify-self-end rounded-md" [style.background-color]="division.color"></div>
         </div>
-        <div
-          class="w-8 h-8 rounded-md m-auto mr-4 justify-self-end self-end"
-          [style.background-color]="division.color"
-        ></div>
+        <img
+          class="h-32 w-32 object-cover"
+          [src]="baseUrl + '/divisions/' + division.id + '/image?timestamp=1234567890'"
+          (error)="hideImage($event)"
+        />
+        <div class="flex">
+          <button
+            class="mb-1 mt-4 btn btn-primary shadow-lg"
+            (click)="showDivisionPopUp(division.id)"
+          >
+            Details
+          </button>
+          <button class="my-1 ml-auto mt-4 shadow-lg btn btn-outline btn-error" (click)="showDeletePopup(division.id)">
+            Delete
+          </button>
+        </div>
       </div>
-      <img
-        class="w-32 h-32 object-cover"
-        [src]="baseUrl + '/divisions/' + division.id + '/image?timestamp=1234567890'"
-        (error)="hideImage($event)"
-      />
-      <div class="flex">
-        <button
-          class="text-white shadow-lg mt-4 p-1.5 my-1 bg-htl-orange border rounded border-transparent"
-          (click)="showDeletePopup(division.id)"
-        >
-          Delete
-        </button>
-        <button
-          class="text-white shadow-lg ml-4 mt-4 p-1.5 my-1 bg-htl-orange border rounded border-transparent"
-          [routerLink]="['/division']"
-          [queryParams]="{
-            id: division.id,
-            name: division.name,
-            color: division.color
-          }"
-        >
-          Details
-        </button>
-      </div>
-    </div>
     }
   </div>
+  <button class="ml-12 mt-7 btn btn-primary" (click)="showDivisionPopUp(-1)">
+    New Division
+  </button>
 </div>
 
-@if (showRemoveDivisionPopup()) {
-<app-delete-popup
-  [title]="'Delete Division'"
-  [message]="'Are you sure you want to delete this division?'"
-  (cancel)="showRemoveDivisionPopup.set(false)"
-  (removeConfirmed)="deleteDivision()"
-/>
+@if (showRemoveDivisionPopUp()) {
+  <app-delete-popup
+    [title]="'Delete Division'"
+    [message]="'Are you sure you want to delete this division?'"
+    (cancel)="showRemoveDivisionPopUp.set(false)"
+    (removeConfirmed)="deleteDivision()"
+  />
+}
+@if (showDivisionDetailPopUp()) {
+  <app-division-details
+    [id]="divisionIdDetail"
+    (cancel)="showDivisionDetailPopUp.set(false)"
+  />
 }
