@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-    selector: 'app-delete-popup',
-    templateUrl: './delete-popup.component.html',
-    standalone: true
+  selector: 'app-delete-popup',
+  templateUrl: './delete-popup.component.html',
+  standalone: true,
 })
 export class DeletePopupComponent {
   @Input() title: string = 'Default Title';

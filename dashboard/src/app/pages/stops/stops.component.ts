@@ -3,15 +3,16 @@ import { Stop, StopGroup } from '../../types';
 import { RouterModule } from '@angular/router';
 import { FilterComponent } from '../../standard-components/filter/filter.component';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
-import {StopStore} from "../../store/stop.store";
-import {StopGroupStore} from "../../store/stopgroup.store";
-import {DivisionStore} from "../../store/division.store";
+import { StopStore } from '../../store/stop.store';
+import { StopGroupStore } from '../../store/stopgroup.store';
+import { DivisionStore } from '../../store/division.store';
+import { StopgroupDetailsComponent } from '../../detail-pages/stopgroup-details/stopgroup-details.component';
 
 @Component({
-    selector: 'app-stops',
-    standalone: true,
-    imports: [RouterModule, FilterComponent, DeletePopupComponent],
-    templateUrl: './stops.component.html',
+  selector: 'app-stops',
+  standalone: true,
+  imports: [RouterModule, FilterComponent, DeletePopupComponent, StopgroupDetailsComponent],
+  templateUrl: './stops.component.html',
 })
 export class StopsComponent {
   private stopStore = inject(StopStore);
@@ -24,10 +25,10 @@ export class StopsComponent {
   stopGroupIdToRemove: number = -1;
   stopIdFromRemove: number = -1;
 
-  filteredStops = computed(() =>
-    this.stopStore.filterStopsByDivisionId(this.divisionFilter())
-  );
+  showGroupDetailPopUp = signal<boolean>(false);
+  groupIdDetail: number = -1;
 
+  filteredStops = computed(() => this.stopStore.filterStopsByDivisionId(this.divisionFilter()));
 
   async deleteStop(stopId: number) {
     await this.stopStore.deleteStop(stopId);
@@ -48,5 +49,10 @@ export class StopsComponent {
     stopToUpdate.stopGroupIds = stopToUpdate.stopGroupIds.filter((sgId) => sgId !== this.stopGroupIdToRemove);
     await this.stopStore.updateStop(stopToUpdate);
     this.showRemoveStopgroupPopup.set(false);
+  }
+
+  showGroupPopUp(id: number): void {
+    this.groupIdDetail = id;
+    this.showGroupDetailPopUp.set(true);
   }
 }

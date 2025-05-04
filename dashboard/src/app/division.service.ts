@@ -14,20 +14,15 @@ export class DivisionService {
   constructor() {}
 
   public async getDivisions(): Promise<Division[]> {
-    return firstValueFrom(
-      this.httpClient.get<Division[]>(this.baseUrl + '/divisions')
-    );
+    return firstValueFrom(this.httpClient.get<Division[]>(this.baseUrl + '/divisions'));
   }
 
   async addDivision(division: { name: string; color: string }): Promise<Division> {
     return await firstValueFrom(
-      this.httpClient.post<Division>(
-        `${this.baseUrl}/api/divisions`,
-        {
-          name: division.name,
-          color: division.color,
-        }
-      )
+      this.httpClient.post<Division>(`${this.baseUrl}/api/divisions`, {
+        name: division.name,
+        color: division.color,
+      })
     );
   }
 
@@ -35,27 +30,17 @@ export class DivisionService {
     const formData = new FormData();
     formData.append('id', id.toString());
     formData.append('image', image);
-    await firstValueFrom(
-      this.httpClient.put(`${this.baseUrl}/api/divisions/image`, formData)
-    );
+    await firstValueFrom(this.httpClient.put(`${this.baseUrl}/api/divisions/image`, formData));
   }
 
   async updateDivision(division: Division): Promise<void> {
-    await firstValueFrom(
-      this.httpClient.put(`${this.baseUrl}/api/divisions`, division)
-    );
+    await firstValueFrom(this.httpClient.put(`${this.baseUrl}/api/divisions`, division));
   }
 
   async deleteDivision(divisionId: number): Promise<void> {
-    await firstValueFrom(
-      this.httpClient.delete(`${this.baseUrl}/api/divisions/${divisionId}`)
-    );
+    await firstValueFrom(this.httpClient.delete(`${this.baseUrl}/api/divisions/${divisionId}`));
   }
   async deleteDivisionImg(divisionId: number): Promise<void> {
-    await firstValueFrom(
-      this.httpClient.delete(
-        `${this.baseUrl}/api/divisions/${divisionId}/image`
-      )
-    );
+    await firstValueFrom(this.httpClient.delete(`${this.baseUrl}/api/divisions/${divisionId}/image`));
   }
 }

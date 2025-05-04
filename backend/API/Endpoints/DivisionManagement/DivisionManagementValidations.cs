@@ -52,7 +52,7 @@ public static class DivisionManagementValidations
             return Results.NotFound();
         }
 
-        if (dbContext.Divisions.Any(d => d.Name == dto.Name))
+        if (dbContext.Divisions.Any(d => d.Name == dto.Name && d.Id != dto.Id))
         {
             return Results.BadRequest("Division name already exists.");
         }

@@ -2,10 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgStyle } from '@angular/common';
 
 @Component({
-    selector: 'app-chip',
-    standalone: true,
-    imports: [NgStyle],
-    templateUrl: './chip.component.html',
+  selector: 'app-chip',
+  standalone: true,
+  imports: [NgStyle],
+  templateUrl: './chip.component.html',
 })
 export class ChipComponent {
   @Input() id: string = '';

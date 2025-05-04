@@ -12,15 +12,17 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using API.Endpoints.TeacherManagement;
 using API.Endpoints.AdminManagement;
+using API.Endpoints.FeedbackManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders().AddConsole();
 
+Thread.Sleep(3000);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<TadeoTDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))); // ServiceLifetime Transient
+    options.UseMySQL(connectionString!)); // ServiceLifetime Transient
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddProblemDetails();
@@ -62,12 +64,15 @@ app.MapTeacherEndpoints();
 app.MapSettingsEndpoints();
 app.MapUserEndpoints();
 app.MapAdminEndpoints();
+app.MapFeedbackEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.Map("ping", () => Results.Ok("pong"));
 
 var basePath = "";
 if (app.Environment.IsProduction())

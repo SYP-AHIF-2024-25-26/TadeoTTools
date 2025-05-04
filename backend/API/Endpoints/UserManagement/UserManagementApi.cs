@@ -6,7 +6,7 @@ public static class UserManagementApi
 {
     public static void MapUserEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("v1/api/users");
+        var group = app.MapGroup("v1/users");
 
         group.MapGet("/at-least-logged-in", () =>
             Results.Ok("You are at least logged in")
@@ -37,7 +37,7 @@ public static class UserManagementApi
             );
         }).RequireAuthorization();
 
-        app.MapGet("/in-database", UserManagementEndpoints.UserInDatabase)
+        group.MapGet("/in-database", UserManagementEndpoints.UserInDatabase)
             .WithName(nameof(UserManagementEndpoints.UserInDatabase))
             .WithDescription("Check if a user is in the database")
             .Produces(StatusCodes.Status400BadRequest)

@@ -2,9 +2,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Division } from '../../types';
 
 @Component({
-    selector: 'app-filter',
-    standalone: true,
-    templateUrl: './filter.component.html',
+  selector: 'app-filter',
+  standalone: true,
+  templateUrl: './filter.component.html',
 })
 export class FilterComponent {
   @Input() elements!: Division[];
