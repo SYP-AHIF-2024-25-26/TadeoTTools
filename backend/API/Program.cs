@@ -10,6 +10,7 @@ using Database.Repository;
 using Database.Repository.Functions;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using System.Xml;
 using API.Endpoints.TeacherManagement;
 using API.Endpoints.AdminManagement;
 
@@ -17,12 +18,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders().AddConsole();
 
+Thread.Sleep(3000);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine("This is the current ConnectionString: " + connectionString);
 
 builder.Services.AddDbContext<TadeoTDbContext>(options =>
-    options.UseMySQL(connectionString!)); // ServiceLifetime Transient
+    options.UseMySQL(connectionString!));
 
-builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddProblemDetails();
 
 builder.Services.AddScoped<DivisionFunctions>();
@@ -41,7 +45,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(Setup.CorsPolicyName,
         policyBuilder =>
         {
-            policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:4300", "http://localhost:51566", "http://localhost:5005");
+            policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:4300", "http://localhost:51566",
+                "http://localhost:5005");
             policyBuilder.AllowAnyHeader();
             policyBuilder.AllowAnyMethod();
             policyBuilder.AllowCredentials();
@@ -69,12 +74,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+Console.WriteLine("new version of this app is running!");
+app.Map("ping", () => Results.Ok("pong"));
+// TODO: Add back in
+/*
 var basePath = "";
 if (app.Environment.IsProduction())
 {
     basePath = "/tadeot-tools-backend";
     app.UsePathBase(basePath + "/");
-}
+}*/
 
 app.UseCors(Setup.CorsPolicyName);
 
@@ -92,7 +101,8 @@ try
     {
         app.Logger.LogInformation("Importing data ...");
         await CsvImporter.ImportCsvFileAsync("TdoT_Stationsplanung_2025.csv", context);
-    } else
+    }
+    else
     {
         app.Logger.LogInformation("Database already contains data.");
     }
@@ -110,9 +120,12 @@ try
         // Teachers.csv just for testing purposes right now
         await CsvImporter.ImportTeachersAsync("Teachers.csv", context);
     }
-} catch (Exception e)
+}
+catch (Exception e)
 {
     app.Logger.LogError(e.Message);
 }
+
+Console.WriteLine("App is running!");
 
 app.Run();

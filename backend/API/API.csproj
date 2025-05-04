@@ -34,4 +34,13 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Students.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Teachers.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
