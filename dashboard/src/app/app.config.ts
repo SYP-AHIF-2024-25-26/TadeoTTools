@@ -4,7 +4,7 @@ import {
   provideExperimentalZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
 
@@ -20,6 +20,7 @@ import {
 const authTokenCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
   urlPattern: /^(http:\/\/localhost:5000)(\/.*)?$/i
 });
+
 const keycloakProvider = provideKeycloak({
   config: {
     url: 'https://auth.htl-leonding.ac.at', // URL of the Keycloak server
@@ -27,11 +28,14 @@ const keycloakProvider = provideKeycloak({
     clientId: 'htlleonding-service' // Client ID for the application in Keycloak,
   },
   initOptions: {
-    onLoad: 'check-sso', // Action to take on load
+    onLoad: 'login-required', // Action to take on load (check-sso)
     //enableLogging: true, // Enables logging
     // IMPORTANT: implicit flow is no longer recommended, but using standard flow leads to a 401 at the keycloak server
     // when retrieving the token with the access code - we leave it like this for the moment until a solution is found
-    flow: 'standard' // maybe implicit
+    flow: 'standard', // maybe implicit
+    enableLogging: true,
+    checkLoginIframe: true,
+    checkLoginIframeInterval: 10
   },
   providers: [
     {
@@ -47,6 +51,9 @@ export const appConfig: ApplicationConfig = {
     provideExperimentalZonelessChangeDetection(),
     { provide: BASE_URL, useValue: environment.apiBaseUrl },
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([includeBearerTokenInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([includeBearerTokenInterceptor]),
+    ),
   ],
 };
