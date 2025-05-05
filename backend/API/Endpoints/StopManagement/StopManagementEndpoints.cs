@@ -168,7 +168,7 @@ public static class StopManagementEndpoints
         int[] StopGroupIds
     );
     public record StopResponseDto(
-        int StopId,
+        int Id,
         string Name,
         string Description,
         string RoomNr,

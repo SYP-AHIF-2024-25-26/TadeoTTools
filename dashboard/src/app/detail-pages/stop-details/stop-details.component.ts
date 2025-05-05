@@ -102,17 +102,14 @@ export class StopDetailsComponent implements OnInit {
     }
     if (this.stop().id === -1) {
       const returnedStop = await this.service.addStop(this.stop());
-      console.log(returnedStop);
       this.stop.set({ ...this.stop(), id: returnedStop.id });
+      this.studentStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
     } else {
       await this.stopStore.updateStop(this.stop());
     }
 
-    this.studentStore.getStudentsByStopId(-1).forEach((student) => {
-      this.studentStore.setAssignments(student.edufsUsername);
-    });
-
     this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
+      console.log(student.firstName + ' ' + student.lastName);
       this.studentStore.setAssignments(student.edufsUsername);
     });
 
@@ -151,6 +148,7 @@ export class StopDetailsComponent implements OnInit {
       status: Status.Pending,
     } as StudentAssignment;
     await this.studentStore.addStopToStudent(assignment);
+    console.log(this.studentStore.getStudentsByStopId(this.stop().id));
   }
 
   async onTeacherSelect($event: Event) {
@@ -172,5 +170,6 @@ export class StopDetailsComponent implements OnInit {
 
   onStudentRemove(edufsUsername: string) {
     this.studentStore.removeStopFromStudent(edufsUsername, this.stop().id);
+    console.log(this.studentStore.getStudentsByStopId(this.stop().id));
   }
 }
