@@ -2,11 +2,10 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { StopService } from '../../stop.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Status, Stop, StopGroup, StudentAssignment } from '../../types';
+import { Status, Stop, StudentAssignment } from '../../types';
 import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
-import { ChipComponent } from '../../standard-components/chip/chip.component';
-import { Location } from '@angular/common';
+import { Location, NgClass } from '@angular/common';
 import { StopStore } from '../../store/stop.store';
 import { DivisionStore } from '../../store/division.store';
 import { StopGroupStore } from '../../store/stopgroup.store';
@@ -17,7 +16,7 @@ import { StudentStore } from '../../store/student.store';
 @Component({
   selector: 'app-stop-details',
   standalone: true,
-  imports: [FormsModule, RouterModule, ChipComponent],
+  imports: [FormsModule, RouterModule, NgClass],
   templateUrl: './stop-details.component.html',
 })
 export class StopDetailsComponent implements OnInit {
@@ -43,40 +42,119 @@ export class StopDetailsComponent implements OnInit {
   };
   stop = signal<Stop>(this.emptyStop);
   isAdmin = signal(false);
+  selectedClass = signal<string>('all');
+  studentFilterText = signal<string>('');
+  teacherFilterText = signal<string>('');
 
   inactiveDivisions = computed(() => this.divisionStore.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id)));
 
   errorMessage = signal<string | null>(null);
 
-  teachersByStopId = computed(() => {
-    return this.teacherStore.teachers().filter((teacher) => teacher.stopAssignments.some((assignment) => assignment == this.stop().id));
+  // Section expansion states
+  expandedSections = signal<{[key: string]: boolean}>({
+    info: true,
+    students: true,
+    teachers: true,
+    stopGroups: true,
+    divisions: true
+  });
+
+  toggleSection(section: string) {
+    this.expandedSections.update(sections => {
+      return { ...sections, [section]: !sections[section] };
+    });
+  }
+
+  teachersAssignedToStop = computed(() => {
+    return this.teacherStore.teachers().filter((teacher) =>
+      teacher.stopAssignments.some((assignment) => assignment == this.stop().id)
+    );
+  });
+
+  teachersAvailableForAssignment = computed(() => {
+    const assignedTeachers = this.teachersAssignedToStop();
+    return this.teacherStore.teachers().filter((teacher) => !assignedTeachers.includes(teacher));
   });
 
   teachersNotInStop = computed(() => {
-    const wrongTeachers = this.teachersByStopId();
-    return this.teacherStore.teachers().filter((teacher) => !wrongTeachers.includes(teacher));
+    let filteredTeachers = this.teachersAvailableForAssignment();
+
+    if (this.teacherFilterText().trim() !== '') {
+      const searchText = this.teacherFilterText().toLowerCase().trim();
+      filteredTeachers = filteredTeachers.filter(teacher =>
+        teacher.firstName.toLowerCase().includes(searchText) ||
+        teacher.lastName.toLowerCase().includes(searchText) ||
+        teacher.edufsUsername.toLowerCase().includes(searchText)
+      );
+    }
+
+    return filteredTeachers;
+  });
+
+  availableClasses = computed(() => {
+    const classes = this.studentStore.students().map(student => student.studentClass);
+    return ['all', ...new Set(classes)].filter(Boolean);
   });
 
   studentsNotInStop = computed(() => {
     const wrongStudents = this.studentStore.getStudentsByStopId(this.stop().id);
-    return this.studentStore.students().filter((student) => !wrongStudents.includes(student));
+    let filteredStudents = this.studentStore.students().filter((student) => !wrongStudents.includes(student));
+
+    if (this.selectedClass() !== 'all') {
+      filteredStudents = filteredStudents.filter(student => student.studentClass === this.selectedClass());
+    }
+
+    if (this.studentFilterText().trim() !== '') {
+      const searchText = this.studentFilterText().toLowerCase().trim();
+      filteredStudents = filteredStudents.filter(student =>
+        student.firstName.toLowerCase().includes(searchText) ||
+        student.lastName.toLowerCase().includes(searchText) ||
+        student.edufsUsername.toLowerCase().includes(searchText)
+      );
+    }
+
+    return filteredStudents;
   });
 
   async ngOnInit() {
-    const response = await this.loginService.performCall('is-admin');
-    this.isAdmin.set(response.includes('admin'));
-    const params = await firstValueFrom(this.route.queryParams);
-    const id = params['id'] || -1;
-    let maybeStop: Stop | undefined = undefined;
-    while (maybeStop === undefined) {
-      maybeStop = this.stopStore.stops().find((s) => s.id == id);
-      if (maybeStop === undefined) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+    try {
+      // Check if user is admin
+      const response = await this.loginService.performCall('is-admin');
+      this.isAdmin.set(response.includes('admin'));
+
+      // Get stop ID from route parameters
+      const params = await firstValueFrom(this.route.queryParams);
+      const id = params['id'] || -1;
+
+      // If this is a new stop (id = -1), no need to fetch existing stop
+      if (id === -1) {
+        return;
       }
-    }
-    console.log('stop is: ' + this.stopStore.stops());
-    if (maybeStop) {
-      this.stop.set(maybeStop);
+
+      // Try to find the stop with a timeout to prevent infinite waiting
+      const maxWaitTimeMs = 5000; // 5 seconds timeout
+      const pollIntervalMs = 100;
+      const maxAttempts = maxWaitTimeMs / pollIntervalMs;
+
+      let attempts = 0;
+      let foundStop: Stop | undefined;
+
+      while (attempts < maxAttempts) {
+        foundStop = this.stopStore.getStopById(Number(id));
+        if (foundStop) {
+          this.stop.set(foundStop);
+          break;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, pollIntervalMs));
+        attempts++;
+      }
+
+      if (!foundStop) {
+        this.errorMessage.set(`Could not find stop with ID ${id} after ${maxWaitTimeMs/1000} seconds`);
+      }
+    } catch (error) {
+      this.errorMessage.set(`Error initializing component: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -101,23 +179,31 @@ export class StopDetailsComponent implements OnInit {
       return;
     }
     if (this.stop().id === -1) {
+      // Store teachers assigned to the temporary stop
+      const tempAssignedTeachers = this.teachersAssignedToStop();
+
       const returnedStop = await this.service.addStop(this.stop());
-      console.log(returnedStop);
       this.stop.set({ ...this.stop(), id: returnedStop.id });
+
+      this.studentStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
+      console.log(this.teacherStore.getTeachersByStopId(returnedStop.id));
+      this.teacherStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
+      console.log(this.teacherStore.getTeachersByStopId(returnedStop.id));
+
     } else {
       await this.stopStore.updateStop(this.stop());
     }
 
-    this.studentStore.getStudentsByStopId(-1).forEach((student) => {
+    this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
+      console.log(student.firstName + ' ' + student.lastName);
       this.studentStore.setAssignments(student.edufsUsername);
     });
 
-    this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
-      this.studentStore.setAssignments(student.edufsUsername);
-    });
+    // Save teacher assignments to the backend
+    await this.teacherStore.setAssignments(this.stop().id);
 
     this.stop.set(this.emptyStop);
-    //this.location.back();
+    this.location.go('/stops');
   }
 
   async deleteAndGoBack() {
@@ -142,15 +228,26 @@ export class StopDetailsComponent implements OnInit {
     }
   }
 
-  async onStudentSelect($event: Event) {
+  onClassSelect($event: Event) {
     const target = $event.target as HTMLSelectElement;
-    const edufsUsername = target.value;
+    this.selectedClass.set(target.value);
+  }
+
+  async onStudentClick(edufsUsername: string) {
     const assignment = {
       studentId: edufsUsername,
       stopId: this.stop().id,
       status: Status.Pending,
     } as StudentAssignment;
     await this.studentStore.addStopToStudent(assignment);
+    console.log(this.studentStore.getStudentsByStopId(this.stop().id));
+  }
+
+  // Keep for backward compatibility
+  async onStudentSelect($event: Event) {
+    const target = $event.target as HTMLSelectElement;
+    const edufsUsername = target.value;
+    await this.onStudentClick(edufsUsername);
   }
 
   async onTeacherSelect($event: Event) {
@@ -172,5 +269,16 @@ export class StopDetailsComponent implements OnInit {
 
   onStudentRemove(edufsUsername: string) {
     this.studentStore.removeStopFromStudent(edufsUsername, this.stop().id);
+    console.log(this.studentStore.getStudentsByStopId(this.stop().id));
+  }
+
+  resetFilters() {
+    this.selectedClass.set('all');
+    this.studentFilterText.set('');
+    this.teacherFilterText.set('');
+  }
+
+  async onTeacherClick(edufsUsername: string) {
+    await this.teacherStore.addStopToTeacher(edufsUsername, this.stop().id);
   }
 }
