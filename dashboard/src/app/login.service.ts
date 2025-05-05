@@ -15,7 +15,7 @@ export class LoginService {
   constructor() {}
 
   public performCall(action: string): Promise<string> {
-    const route = this.baseUrl + `/api/users/${action}`;
+    const route = this.baseUrl + `/users/${action}`;
     return firstValueFrom(
       this.httpClient.get(route, { responseType: 'text' }).pipe(catchError((err: HttpErrorResponse) => of(`Backend says no: ${err.status}`)))
     );

@@ -1,6 +1,5 @@
 import { Component, computed, inject, type OnInit, signal } from '@angular/core';
 import { FormBuilder, type FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgForOf, NgIf } from '@angular/common';
 import { FeedbackQuestion, FeedbackSubmission } from '../types';
 import { ApiFetchService } from '../api-fetch.service';
 import { HeaderComponent } from '../header/header.component';
@@ -9,8 +8,6 @@ import { HeaderComponent } from '../header/header.component';
   selector: 'app-feedback',
   imports: [
     ReactiveFormsModule,
-    NgForOf,
-    NgIf,
     HeaderComponent,
   ],
   templateUrl: './feedback.component.html',
@@ -18,13 +15,17 @@ import { HeaderComponent } from '../header/header.component';
 })
 export class FeedbackComponent implements OnInit{
   feedbackForm!: FormGroup
-  currentQuestionIndex = 0
-  isSubmitted = false
-  answers: Record<number, string> = {}
-  showError = false
-  showAnswerSummary = false // Set to true if you want to show answers in the thank you screen
+  currentQuestionIndex = signal<number>(0)
+  isSubmitted = signal<boolean>(false)
+  answers = signal<Record<number, string>>({})
+  showError = signal<boolean>(false)
+  showAnswerSummary = signal<boolean>(false) // Set to true if you want to show answers in the thank you screen
   feedbackAlreadySubmitted = computed(() => localStorage.getItem("feedbackSubmitted") === "true")
   questions = signal<FeedbackQuestion[]>([])
+
+  // Computed signals
+  currentQuestion = computed<FeedbackQuestion>(() => this.questions()[this.currentQuestionIndex()])
+  progressPercentage = computed<number>(() => Math.round((this.currentQuestionIndex() / this.questions().length) * 100))
 
 
   private fb: FormBuilder = inject(FormBuilder)
@@ -32,12 +33,13 @@ export class FeedbackComponent implements OnInit{
 
   async ngOnInit(): Promise<void> {
     this.feedbackForm = this.fb.group({
-      answer: ["", this.currentQuestion?.required ? Validators.required : []],
+      answer: ["", this.currentQuestion()?.required ? Validators.required : []],
     })
     // Initialize the form with any saved answer for the current question
-    if (this.answers[this.currentQuestionIndex]) {
+    const answersValue = this.answers();
+    if (answersValue[this.currentQuestionIndex()]) {
       this.feedbackForm.patchValue({
-        answer: this.answers[this.currentQuestionIndex],
+        answer: answersValue[this.currentQuestionIndex()],
       })
     }
 
@@ -45,14 +47,6 @@ export class FeedbackComponent implements OnInit{
 
     // Update validators based on current question
     this.updateFormValidators()
-  }
-
-  get currentQuestion(): FeedbackQuestion {
-    return this.questions()[this.currentQuestionIndex]
-  }
-
-  get progressPercentage(): number {
-    return Math.round((this.currentQuestionIndex / this.questions().length) * 100)
   }
 
   async loadQuestions(): Promise<void> {
@@ -63,9 +57,9 @@ export class FeedbackComponent implements OnInit{
   }
 
   updateFormValidators(): void {
-    const currentQuestion = this.currentQuestion
+    const currentQuestionValue = this.currentQuestion()
 
-    if (currentQuestion.required) {
+    if (currentQuestionValue.required) {
       this.feedbackForm.get("answer")?.setValidators(Validators.required)
     } else {
       this.feedbackForm.get("answer")?.clearValidators()
@@ -75,33 +69,36 @@ export class FeedbackComponent implements OnInit{
   }
 
   async onSubmit(): Promise<void> {
-    this.showError = false
+    this.showError.set(false)
 
     // Check if answer is required but empty
-    if (this.currentQuestion.required && !this.feedbackForm.get("answer")?.value) {
-      this.showError = true
+    if (this.currentQuestion().required && !this.feedbackForm.get("answer")?.value) {
+      this.showError.set(true)
       return
     }
 
     // Save the current answer
-    this.answers[this.currentQuestionIndex] = this.feedbackForm.get("answer")?.value || ""
+    const currentIndex = this.currentQuestionIndex();
+    const answersValue = this.answers();
+    answersValue[currentIndex] = this.feedbackForm.get("answer")?.value || "";
+    this.answers.set(answersValue);
 
-    if (this.currentQuestionIndex < this.questions().length - 1) {
+    if (currentIndex < this.questions().length - 1) {
       // Move to next question
-      this.currentQuestionIndex++
+      this.currentQuestionIndex.set(currentIndex + 1);
 
       // Update validators for the new question
       this.updateFormValidators()
 
       // Set the form value to any previously saved answer for this question
       this.feedbackForm.patchValue({
-        answer: this.answers[this.currentQuestionIndex] || "",
+        answer: answersValue[this.currentQuestionIndex()] || "",
       })
     } else {
-      this.isSubmitted = true
+      this.isSubmitted.set(true);
       await this.apiFetchService.submitFeedback(this.questions().map((question, index) => ({
         questionId: question.id,
-        answer: this.answers[index] || "",
+        answer: answersValue[index] || "",
       } as FeedbackSubmission)));
 
       localStorage.setItem("feedbackSubmitted", "true")
@@ -109,22 +106,25 @@ export class FeedbackComponent implements OnInit{
   }
 
   goToPrevious(): void {
-    if (this.currentQuestionIndex > 0) {
+    const currentIndex = this.currentQuestionIndex();
+    if (currentIndex > 0) {
       // Save current answer before going back
-      this.answers[this.currentQuestionIndex] = this.feedbackForm.get("answer")?.value || ""
+      const answersValue = this.answers();
+      answersValue[currentIndex] = this.feedbackForm.get("answer")?.value || "";
+      this.answers.set(answersValue);
 
       // Go to previous question
-      this.currentQuestionIndex--
+      this.currentQuestionIndex.set(currentIndex - 1);
 
       // Update validators for the new question
       this.updateFormValidators()
 
       // Set the form value to the saved answer for this question
       this.feedbackForm.patchValue({
-        answer: this.answers[this.currentQuestionIndex] || "",
+        answer: answersValue[this.currentQuestionIndex()] || "",
       })
 
-      this.showError = false
+      this.showError.set(false);
     }
   }
   // Helper methods for different question types
@@ -142,24 +142,25 @@ export class FeedbackComponent implements OnInit{
   }
 
   getRatingRange(): number[] {
-    const min = this.currentQuestion.minRating || 1
-    const max = this.currentQuestion.maxRating || 5
-    return Array.from({ length: max - min + 1 }, (_, i) => min + i)
+    const currentQuestionValue = this.currentQuestion();
+    const min = currentQuestionValue.minRating || 1;
+    const max = currentQuestionValue.maxRating || 5;
+    return Array.from({ length: max - min + 1 }, (_, i) => min + i);
   }
 
   getRatingLabel(rating: number): string {
-    if (!this.currentQuestion.ratingLabels) return rating.toString()
+    const currentQuestionValue = this.currentQuestion();
+    if (!currentQuestionValue.ratingLabels) return rating.toString();
 
-    const labels = this.currentQuestion.ratingLabels.split(",").map((label) => label.trim())
-    const min = this.currentQuestion.minRating || 1
-    const index = rating - min
+    const labels = currentQuestionValue.ratingLabels.split(",").map((label) => label.trim());
+    const min = currentQuestionValue.minRating || 1;
+    const index = rating - min;
 
     if (index >= 0 && index < labels.length) {
-      return labels[index]
+      return labels[index];
     }
 
-    return rating.toString()
+    return rating.toString();
   }
 
-  protected readonly localStorage = localStorage;
 }

@@ -1,15 +1,10 @@
-<div class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+<div class="min-h-screen">
   <div class="container mx-auto px-4 py-8">
     <!-- Header -->
     <header class="mb-8">
       <div class="flex items-center justify-between">
         <div class="flex items-center">
-          <div class="w-10 h-10 relative mr-3">
-            <div class="absolute top-0 left-0 w-5 h-5 bg-blue-500 transform rotate-45"></div>
-            <div class="absolute bottom-0 left-0 w-5 h-5 bg-red-500 transform -rotate-45"></div>
-            <div class="absolute right-0 top-1/2 w-5 h-5 bg-orange-500 transform -translate-y-1/2"></div>
-          </div>
-          <h1 class="text-2xl font-bold text-gray-800">Feedback Configurator</h1>
+          <h1 class="text-2xl font-bold text-text-950">Feedback Configurator</h1>
         </div>
         <div class="flex flex-row space-x-4">
           <button
@@ -24,7 +19,7 @@
           </button>
           <button
             (click)="saveQuestions()"
-            class="px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-md text-white flex items-center"
+            class="btn btn-primary"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
@@ -42,7 +37,7 @@
               type="text"
               id="formTitle"
               [ngModel]="formTitle()" (ngModelChange)="formTitle.set($event)"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
               placeholder="Enter form title"
             >
           </div>
@@ -52,7 +47,7 @@
               type="text"
               id="formSubtitle"
               [ngModel]="formSubtitle()" (ngModelChange)="formSubtitle.set($event)"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
               placeholder="Enter form subtitle"
             >
           </div>
@@ -72,18 +67,6 @@
           <!-- Embedded Form Preview -->
           <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
             <header class="w-full max-w-md mx-auto flex flex-col items-center mb-8">
-              <div class="flex items-center mb-4">
-                <div class="w-12 h-12 relative">
-                  <div class="absolute top-0 left-0 w-6 h-6 bg-blue-500 transform rotate-45"></div>
-                  <div class="absolute bottom-0 left-0 w-6 h-6 bg-red-500 transform -rotate-45"></div>
-                  <div class="absolute right-0 top-1/2 w-6 h-6 bg-orange-500 transform -translate-y-1/2"></div>
-                </div>
-                <div class="ml-3">
-                  <h1 class="text-2xl font-bold">HTL Leonding</h1>
-                  <p class="text-xs text-gray-600">next level</p>
-                </div>
-              </div>
-
               <h2 class="text-3xl font-bold text-center bg-gradient-to-r from-red-700 to-orange-500 bg-clip-text text-transparent">
                 {{ formTitle() || 'Willkommen am' }}<br />
                 {{ formSubtitle() || 'Tag der offenen Tür!' }}
@@ -117,7 +100,7 @@
                     type="text"
                     [ngModel]="previewAnswer()" (ngModelChange)="previewAnswer.set($event)"
                     [placeholder]="currentPreviewQuestion()?.placeholder || 'Enter your answer'"
-                    class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-400"
                   >
                 }
 
@@ -237,7 +220,7 @@
           <h2 class="text-lg font-semibold text-gray-800">Questions</h2>
           <button
             (click)="addNewQuestion()"
-            class="px-3 py-2 bg-orange-500 hover:bg-orange-600 rounded-md text-white text-sm flex items-center"
+            class="px-3 py-2 bg-primary-300 hover:bg-primary-400 rounded-md text-text-950 text-sm flex items-center"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -255,7 +238,7 @@
           @for (question of questions(); track question; let i = $index) {
             <div
               cdkDrag
-              class="border border-gray-200 rounded-lg p-4 bg-white hover:border-orange-200 transition-colors cursor-move flex items-center"
+              class="border border-gray-200 rounded-lg p-4 bg-white hover:border-primary-200 transition-colors cursor-move flex items-center"
             >
               <!-- Drag Handle -->
               <div cdkDragHandle class="mr-3 text-gray-400 hover:text-gray-600 cursor-grab">
@@ -265,7 +248,7 @@
               </div>
 
               <!-- Question Number -->
-              <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-medium mr-3">
+              <div class="w-8 h-8 rounded-full bg-primary-100 text-black flex items-center justify-center font-medium mr-3">
                 {{ i + 1 }}
               </div>
 
@@ -313,7 +296,7 @@
               <p class="text-gray-500 mb-4">No questions added yet</p>
               <button
                 (click)="addNewQuestion()"
-                class="px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-md text-white inline-flex items-center"
+                class="btn btn-primary"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -348,7 +331,7 @@
                 type="text"
                 id="question"
                 formControlName="question"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
                 placeholder="Enter your question"
               >
               @if (questionForm.get('question')?.invalid && questionForm.get('question')?.touched) {
@@ -363,7 +346,7 @@
               <select
                 id="type"
                 formControlName="type"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
               >
                 <option value="text">Text Input</option>
                 <option value="choice">Multiple Choice</option>
@@ -381,7 +364,7 @@
                       <input
                         [formControlName]="i"
                         type="text"
-                        class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
                         placeholder="Option {{ i + 1 }}"
                       >
                       @if (optionsArray.controls.length > 1) {
@@ -401,7 +384,7 @@
                 <button
                   type="button"
                   (click)="addOption()"
-                  class="mt-2 px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 text-sm flex items-center"
+                  class="mt-2 px-3 py-1 bg-slate-200 hover:bg-slate-300 rounded-md text-gray-700 text-sm flex items-center"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -424,7 +407,7 @@
                       formControlName="minRating"
                       min="0"
                       max="10"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
                     >
                   </div>
                   <div class="flex-1">
@@ -435,7 +418,7 @@
                       formControlName="maxRating"
                       min="1"
                       max="10"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
                     >
                   </div>
                 </div>
@@ -445,7 +428,7 @@
                     type="text"
                     id="ratingLabels"
                     formControlName="ratingLabels"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
                     placeholder="Poor, Average, Excellent"
                   >
                 </div>
@@ -458,14 +441,14 @@
                 type="text"
                 id="placeholder"
                 formControlName="placeholder"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
                 placeholder="e.g., Enter your answer"
               >
             </div>
 
             <div class="mb-4">
               <label class="flex items-center">
-                <input type="checkbox" formControlName="required" class="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded">
+                <input type="checkbox" formControlName="required" class="h-4 w-4 text-orange-500 focus:ring-primary-400 border-gray-300 rounded">
                 <span class="ml-2 text-sm text-gray-700">Required question</span>
               </label>
             </div>
@@ -474,14 +457,14 @@
               <button
                 type="button"
                 (click)="closeQuestionEditor()"
-                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                class="px-4 py-2 border bg-slate-200 rounded-md text-gray-700 hover:bg-slate-300"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 [disabled]="questionForm.invalid"
-                class="px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-md text-white disabled:opacity-50"
+                class="px-4 py-2 bg-primary-300 hover:bg-primary-400 rounded-md text-white disabled:opacity-50"
               >
                 Save Question
               </button>

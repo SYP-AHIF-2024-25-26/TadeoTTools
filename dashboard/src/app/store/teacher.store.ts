@@ -76,6 +76,16 @@ export const TeacherStore = signalStore(
           teacherService.assignStopToTeacher(teacher.edufsUsername, stopId);
         });
       },
+      setStopIdForAssignmentsOnNewStop(stopId: number) {
+        store.teachers().forEach((teacher) => {
+          teacher.stopAssignments.forEach((assignment) => {
+            if (assignment === -1) {
+              assignment = stopId;
+            }
+          });
+        });
+        patchState(store, { teachers: [...store.teachers()] });
+      },
     };
   })
 );
