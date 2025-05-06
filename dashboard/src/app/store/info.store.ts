@@ -9,7 +9,6 @@ type InfoState = {
 
 const initialState: InfoState = {
   infos: [
-    {id: 1, type: "info", message: "test info"} as Info,
   ]
 };
 

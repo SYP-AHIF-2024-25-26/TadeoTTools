@@ -290,3 +290,30 @@
     </div>
   </form>
 </div>
+
+@if (showRemoveDivisionPopup()) {
+  <app-delete-popup
+    [title]="'Remove Division'"
+    [message]="'Are you sure you want to remove this division from the stop?'"
+    (cancel)="showRemoveDivisionPopup.set(false)"
+    (removeConfirmed)="confirmDivisionRemove()"
+  />
+}
+
+@if (showRemoveTeacherPopup()) {
+  <app-delete-popup
+    [title]="'Remove Teacher'"
+    [message]="'Are you sure you want to remove this teacher from the stop?'"
+    (cancel)="showRemoveTeacherPopup.set(false)"
+    (removeConfirmed)="confirmTeacherRemove()"
+  />
+}
+
+@if (showRemoveStudentPopup()) {
+  <app-delete-popup
+    [title]="'Remove Student'"
+    [message]="'Are you sure you want to remove this student from the stop?'"
+    (cancel)="showRemoveStudentPopup.set(false)"
+    (removeConfirmed)="confirmStudentRemove()"
+  />
+}

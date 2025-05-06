@@ -1,5 +1,5 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
-import { Division, IsError } from '../types';
+import { Division } from '../types';
 import { inject } from '@angular/core';
 import { DivisionService } from '../division.service';
 
@@ -25,7 +25,7 @@ export const DivisionStore = signalStore(
     })();
 
     return {
-      async addDivision(division: Division, image: File | null): Promise<IsError> {
+      async addDivision(division: Division, image: File | null): Promise<void> {
         try {
           const createdDivision = await divisionService.addDivision(division);
           console.log('your id is: ' + createdDivision.id);
@@ -35,47 +35,42 @@ export const DivisionStore = signalStore(
           if (image) {
             await this.updateDivisionImg(createdDivision.id, image);
           }
-          return {isError: false};
         } catch (error) {
-          return {isError: true};
+          // Error is already handled by the service
         }
       },
-      async updateDivision(divisionToUpdate: Division): Promise<IsError> {
+      async updateDivision(divisionToUpdate: Division): Promise<void> {
         try {
           patchState(store, {
             divisions: store.divisions().map((division) => (division.id === divisionToUpdate.id ? divisionToUpdate : division)),
           });
           await divisionService.updateDivision(divisionToUpdate);
-          return {isError: false};
         } catch (error) {
-          return {isError: true};
+          // Error is already handled by the service
         }
       },
-      async updateDivisionImg(divisionId: number, image: File): Promise<IsError> {
+      async updateDivisionImg(divisionId: number, image: File): Promise<void> {
         try {
           await divisionService.updateDivisionImg(divisionId, image);
-          return {isError: false};
         } catch (error) {
-          return {isError: true};
+          // Error is already handled by the service
         }
       },
-      async deleteDivision(divisionIdToDel: number): Promise<IsError> {
+      async deleteDivision(divisionIdToDel: number): Promise<void> {
         patchState(store, {
           divisions: store.divisions().filter((division) => division.id !== divisionIdToDel),
         });
         try {
           await divisionService.deleteDivision(divisionIdToDel);
-          return {isError: false};
         } catch (error) {
-          return {isError: true};
+          // Error is already handled by the service
         }
       },
-      async deleteDivisionImg(divisionId: number): Promise<IsError> {
+      async deleteDivisionImg(divisionId: number): Promise<void> {
         try {
           await divisionService.deleteDivisionImg(divisionId);
-          return {isError: false};
         } catch (error) {
-          return {isError: true};
+          // Error is already handled by the service
         }
       },
       getDivisions() {

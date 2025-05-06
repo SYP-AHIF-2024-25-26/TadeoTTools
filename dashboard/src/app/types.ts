@@ -83,6 +83,3 @@ export type StopsShownInStopGroup = {
   isShown: boolean;
 };
 
-export type IsError = {
-  isError: boolean;
-}

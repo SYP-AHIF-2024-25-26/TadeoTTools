@@ -1,5 +1,5 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
-import { IsError, Stop, StopWithoutOrders } from '../types';
+import { Stop, StopWithoutOrders } from '../types';
 import { inject } from '@angular/core';
 import { StopService } from '../stop.service';
 
@@ -28,38 +28,35 @@ export const StopStore = signalStore(
     })();
 
     return {
-      async addStop(stopToAdd: Stop): Promise<IsError> {
+      async addStop(stopToAdd: Stop): Promise<void> {
         try {
           const stop = await stopService.addStop(stopToAdd);
           console.log(stop);
           patchState(store, {
             stops: [...store.stops(), stop],
           });
-          return {isError: false};
         } catch (error) {
-          return {isError: true};
+          // Error is already handled by the service
         }
       },
-      async updateStop(stopToUpdate: Stop): Promise<IsError> {
+      async updateStop(stopToUpdate: Stop): Promise<void> {
         try {
           patchState(store, {
             stops: store.stops().map((stop) => (stop.id === stopToUpdate.id ? stopToUpdate : stop)),
           });
           await stopService.updateStop(stopToUpdate as StopWithoutOrders);
-          return {isError: false};
         } catch (error) {
-          return {isError: true};
+          // Error is already handled by the service
         }
       },
-      async deleteStop(stopIdToDelete: number): Promise<IsError> {
+      async deleteStop(stopIdToDelete: number): Promise<void> {
         patchState(store, {
           stops: store.stops().filter((stop) => stop.id !== stopIdToDelete),
         });
         try {
           await stopService.deleteStop(stopIdToDelete);
-          return {isError: false};
         } catch (error) {
-          return {isError: true};
+          // Error is already handled by the service
         }
       },
       getStops() {
