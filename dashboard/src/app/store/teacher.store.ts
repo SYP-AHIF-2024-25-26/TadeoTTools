@@ -22,6 +22,7 @@ export const TeacherStore = signalStore(
     (async function fetchInitialTeachers() {
       if (initialState.teachers.length == 0) {
         const teachers = await teacherService.getTeachers();
+        console.log('teachers', teachers);
         patchState(store, { teachers, loaded: true });
       }
     })();
@@ -34,18 +35,18 @@ export const TeacherStore = signalStore(
         return store.teachers().find((teacher) => teacher.edufsUsername === id);
       },
       getTeachersByStopId(stopId: number): Teacher[] {
-        console.log(store.teachers().map((t) => t.edufsUsername));
         return store.teachers().filter((teacher) => {
-          if (teacher.stopAssignments) {
-            return teacher.stopAssignments.some((assignment) => assignment === stopId);
+          if (teacher.assignedStops) {
+            console.log(teacher.assignedStops.some((assignment) => assignment === stopId));
+            return teacher.assignedStops.some((assignment) => assignment === stopId);
           }
           return false;
         });
       },
       getTeachersNotInStop(stopId: number): Teacher[] {
         const wrongTeachers = store.teachers().filter((teacher) => {
-          if (teacher.stopAssignments) {
-            return teacher.stopAssignments.some((assignment) => assignment === stopId);
+          if (teacher.assignedStops) {
+            return teacher.assignedStops.some((assignment) => assignment === stopId);
           }
           return false;
         });
@@ -54,10 +55,10 @@ export const TeacherStore = signalStore(
       async addStopToTeacher(edufsUsername: string, stopId: number): Promise<Teacher[]> {
         const teacher = store.teachers().find((teacher) => teacher.edufsUsername === edufsUsername);
         if (teacher) {
-          if (teacher.stopAssignments === undefined) {
-            teacher.stopAssignments = [];
+          if (teacher.assignedStops === undefined) {
+            teacher.assignedStops = [];
           }
-          teacher.stopAssignments.push(stopId);
+          teacher.assignedStops.push(stopId);
           patchState(store, { teachers: [...store.teachers().filter((teacher) => teacher.edufsUsername !== edufsUsername), teacher] });
         }
         return store.teachers();
@@ -65,7 +66,7 @@ export const TeacherStore = signalStore(
       removeStopFromTeacher(edufsUsername: string, stopId: number): void {
         const teacher = store.teachers().find((teacher) => teacher.edufsUsername === edufsUsername);
         if (teacher) {
-          teacher.stopAssignments = teacher.stopAssignments.filter((assignment) => assignment !== stopId);
+          teacher.assignedStops = teacher.assignedStops.filter((assignment) => assignment !== stopId);
           patchState(store, { teachers: [...store.teachers().filter((teacher) => teacher.edufsUsername !== edufsUsername), teacher] });
         }
         console.log(store.teachers());
@@ -73,16 +74,14 @@ export const TeacherStore = signalStore(
       async setAssignments(edufsUsername: string) {
         const teacher = this.getTeacherById(edufsUsername);
         if (teacher) {
-          await teacherService.setAssignments(edufsUsername, teacher.stopAssignments);
+          await teacherService.setAssignments(edufsUsername, teacher.assignedStops);
         }
       },
       setStopIdForAssignmentsOnNewStop(stopId: number) {
         store.teachers().forEach((teacher) => {
-          teacher.stopAssignments.forEach((assignment) => {
-            if (assignment === -1) {
-              assignment = stopId;
-            }
-          });
+          if (teacher.assignedStops.includes(-1)) {
+            teacher.assignedStops = teacher.assignedStops.map((assignment) => (assignment === -1 ? stopId : assignment));
+          }
         });
         patchState(store, { teachers: [...store.teachers()] });
       },

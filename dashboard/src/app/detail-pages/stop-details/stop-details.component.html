@@ -1,4 +1,4 @@
-<div class="m-6 p-6 rounded-lg bg-background-100 shadow-lg">
+<div class="mt-10 mx-32 p-6 rounded-lg bg-background-100 shadow-lg">
   @if (stop().id == -1) {
     <h4 class="text-xl text-text-950">New Stop</h4>
   } @else {
@@ -6,7 +6,7 @@
   }
   <form (submit)="submitStopDetail()" class="mt-4">
     <div class="mb-4">
-      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 rounded-lg cursor-pointer" (click)="toggleSection('info')">
+      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('info')">
         <h1 class="text-lg font-medium text-text-950">Info</h1>
         <span class="text-text-900">{{ expandedSections()['info'] ? '▼' : '►' }}</span>
       </div>
@@ -60,7 +60,7 @@
       </div>
     </div>
     <div class="mb-4">
-      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 rounded-lg cursor-pointer" (click)="toggleSection('students')">
+      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('students')">
         <h1 class="text-lg font-medium text-text-950">Students</h1>
         <span class="text-text-900">{{ expandedSections()['students'] ? '▼' : '►' }}</span>
       </div>
@@ -148,7 +148,7 @@
     </div>
     @if (isAdmin()) {
       <div class="mb-4">
-        <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 rounded-lg cursor-pointer" (click)="toggleSection('teachers')">
+        <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('teachers')">
           <h1 class="text-lg font-medium text-text-950">Teachers</h1>
           <span class="text-text-900">{{ expandedSections()['teachers'] ? '▼' : '►' }}</span>
         </div>
@@ -221,7 +221,7 @@
     }
 
     <div class="mb-4">
-      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 rounded-lg cursor-pointer" (click)="toggleSection('stopGroups')">
+      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('stopGroups')">
         <h1 class="text-lg font-medium text-text-950">StopGroups</h1>
         <span class="text-text-900">{{ expandedSections()['stopGroups'] ? '▼' : '►' }}</span>
       </div>
@@ -236,7 +236,7 @@
     </div>
 
     <div class="mb-4">
-      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 rounded-lg cursor-pointer" (click)="toggleSection('divisions')">
+      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('divisions')">
         <h1 class="text-lg font-medium text-text-950">Divisions</h1>
         <span class="text-text-900">{{ expandedSections()['divisions'] ? '▼' : '►' }}</span>
       </div>

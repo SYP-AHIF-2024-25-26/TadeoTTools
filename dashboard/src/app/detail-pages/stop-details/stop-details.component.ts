@@ -69,7 +69,7 @@ export class StopDetailsComponent implements OnInit {
 
   teachersAssignedToStop = computed(() => {
     return this.teacherStore.teachers().filter((teacher) =>
-      teacher.stopAssignments.some((assignment) => assignment == this.stop().id)
+      teacher.assignedStops.some((assignment) => assignment == this.stop().id)
     );
   });
 
@@ -192,7 +192,10 @@ export class StopDetailsComponent implements OnInit {
         this.stop.set({ ...this.stop(), id: returnedStop.id });
 
         this.studentStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
+        console.log("teachers by stop -1");
+        console.log(this.teacherStore.getTeachersByStopId(-1));
         this.teacherStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
+        console.log("teachers by stop returned");
         console.log(this.teacherStore.getTeachersByStopId(returnedStop.id));
 
         this.infoStore.addInfo({ type: 'info', message: 'Stop added successfully' } as Info);
@@ -212,11 +215,11 @@ export class StopDetailsComponent implements OnInit {
 
     try {
       this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
-        console.log(student.firstName + ' ' + student.lastName);
         this.studentStore.setAssignments(student.edufsUsername);
       });
 
       this.teacherStore.getTeachersByStopId(this.stop().id).forEach((teacher) => {
+        console.log(teacher.firstName + ' ' + teacher.lastName);
         this.teacherStore.setAssignments(teacher.edufsUsername);
       });
       // Save teacher assignments to the backend

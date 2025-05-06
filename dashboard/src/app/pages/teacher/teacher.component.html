@@ -1,7 +1,7 @@
 <div class="text-text-950">
   @if (teacher()) {
     <h1 class="p-10 text-2xl font-semibold text-center">Your stops:</h1>
-    @for (stopId of teacher()?.stopAssignments; track $index) {
+    @for (stopId of teacher()?.assignedStops; track $index) {
       @if (stopStore.getStopById(stopId)) {
         <div class="m-2 rounded-lg bg-background-100 p-10 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 w-2/3 ml-auto mr-auto">
           <div class="flex justify-between">
@@ -17,5 +17,5 @@
         </div>
       }
     }
-  }  
+  }
 </div>

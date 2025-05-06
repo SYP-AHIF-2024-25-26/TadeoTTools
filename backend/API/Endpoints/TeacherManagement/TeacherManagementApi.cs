@@ -12,7 +12,7 @@ public static class TeacherManagementApi
             .WithDescription("Get all teachers")
             .Produces<List<TeacherFunctions.TeacherWithStopsDto>>();
 
-        group.MapPut("teachers/{id}/assignments", TeacherManagementEndpoints.SetTeacherAssignments)
+        group.MapPut("api/teachers/{id}/assignments", TeacherManagementEndpoints.SetTeacherAssignments)
             .WithName(nameof(TeacherManagementEndpoints.SetTeacherAssignments))
             .WithDescription("Set assignments for a teacher")
             .Produces(StatusCodes.Status400BadRequest)
