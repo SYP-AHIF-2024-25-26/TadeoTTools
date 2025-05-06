@@ -11,10 +11,13 @@ import { environment } from '../environments/environment';
 export const BASE_URL = new InjectionToken<string>('BaseUrl');
 
 import {
+  AutoRefreshTokenService,
   createInterceptorCondition,
   INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
   IncludeBearerTokenCondition, includeBearerTokenInterceptor,
-  provideKeycloak
+  provideKeycloak,
+  UserActivityService,
+  withAutoRefreshToken
 } from "keycloak-angular";
 
 const authTokenCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
@@ -37,12 +40,21 @@ const keycloakProvider = provideKeycloak({
     checkLoginIframe: true,
     checkLoginIframeInterval: 10
   },
+  
   providers: [
     {
       provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
       useValue: [authTokenCondition] // Specify conditions for adding the Bearer token
-    }
-  ]
+    },
+    AutoRefreshTokenService,
+    UserActivityService
+  ],
+  features: [
+    withAutoRefreshToken({
+      sessionTimeout: 300000, // 5 minutes
+      onInactivityTimeout: 'logout'
+    })
+  ],
 });
 
 export const appConfig: ApplicationConfig = {
