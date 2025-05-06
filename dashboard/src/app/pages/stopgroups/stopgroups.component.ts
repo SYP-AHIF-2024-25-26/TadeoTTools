@@ -31,7 +31,7 @@ export class StopGroupsComponent implements OnInit {
   showRemoveStopPopup = signal<boolean>(false);
   showRemoveGroupPopup = signal<boolean>(false);
   onlyPublicGroups = signal<boolean>(false);
-  
+
   showGroupDetailPopUp = signal<boolean>(false);
   groupIdDetail: number = -1;
 
@@ -41,7 +41,6 @@ export class StopGroupsComponent implements OnInit {
   filteredStops = computed(() => this.filterStopsByDivisionId(this.divisionFilter()));
 
   async ngOnInit() {
-    this.addInfo('info', 'Retrieving Data');
     await this.initialiseData();
   }
 

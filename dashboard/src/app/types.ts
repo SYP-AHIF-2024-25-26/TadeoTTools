@@ -28,8 +28,13 @@ export type Teacher = {
   edufsUsername: string;
   firstName: string;
   lastName: string;
-  stopAssignments: number[];
+  assignedStops: number[];
 };
+
+export type TeacherAssignment = {
+  teacherId: string;
+  stopId: number;
+}
 
 export type StopOfStudent = {
   name: string;
@@ -77,3 +82,4 @@ export type StopsShownInStopGroup = {
   stopGroupId: number;
   isShown: boolean;
 };
+

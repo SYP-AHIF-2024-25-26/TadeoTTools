@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using API.Endpoints.TeacherManagement;
 using API.Endpoints.AdminManagement;
+using API.Endpoints.FeedbackManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +64,7 @@ app.MapTeacherEndpoints();
 app.MapSettingsEndpoints();
 app.MapUserEndpoints();
 app.MapAdminEndpoints();
+app.MapFeedbackEndpoints();
 
 if (app.Environment.IsDevelopment())
 {

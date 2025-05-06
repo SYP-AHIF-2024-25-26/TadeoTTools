@@ -28,24 +28,36 @@ export const StopStore = signalStore(
     })();
 
     return {
-      async addStop(stopToAdd: Stop) {
-        const stop = await stopService.addStop(stopToAdd);
-        console.log(stop);
-        patchState(store, {
-          stops: [...store.stops(), stop],
-        });
+      async addStop(stopToAdd: Stop): Promise<void> {
+        try {
+          const stop = await stopService.addStop(stopToAdd);
+          console.log(stop);
+          patchState(store, {
+            stops: [...store.stops(), stop],
+          });
+        } catch (error) {
+          // Error is already handled by the service
+        }
       },
-      async updateStop(stopToUpdate: Stop) {
-        patchState(store, {
-          stops: store.stops().map((stop) => (stop.id === stopToUpdate.id ? stopToUpdate : stop)),
-        });
-        await stopService.updateStop(stopToUpdate as StopWithoutOrders);
+      async updateStop(stopToUpdate: Stop): Promise<void> {
+        try {
+          patchState(store, {
+            stops: store.stops().map((stop) => (stop.id === stopToUpdate.id ? stopToUpdate : stop)),
+          });
+          await stopService.updateStop(stopToUpdate as StopWithoutOrders);
+        } catch (error) {
+          // Error is already handled by the service
+        }
       },
-      async deleteStop(stopIdToDelete: number) {
+      async deleteStop(stopIdToDelete: number): Promise<void> {
         patchState(store, {
           stops: store.stops().filter((stop) => stop.id !== stopIdToDelete),
         });
-        await stopService.deleteStop(stopIdToDelete);
+        try {
+          await stopService.deleteStop(stopIdToDelete);
+        } catch (error) {
+          // Error is already handled by the service
+        }
       },
       getStops() {
         return store.stops();

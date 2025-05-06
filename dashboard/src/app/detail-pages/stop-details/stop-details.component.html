@@ -1,138 +1,279 @@
-<div class="m-6">
+<div class="mt-10 mx-32 p-6 rounded-lg bg-background-100 shadow-lg">
   @if (stop().id == -1) {
-    <h4 class="text-xl">New Stop</h4>
+    <h4 class="text-xl text-text-950">New Stop</h4>
   } @else {
-    <input
-      class="mb-4 resize-x rounded border px-4 py-2 text-xl text-gray-700"
-      type="text"
-      [value]="stop().name"
-      [(ngModel)]="stop().name"
-      name="name"
-      id="name"
-      [size]="stop().name.length || 1"
-    />
+    <h4 class="text-xl text-text-950">Edit Stop</h4>
   }
   <form (submit)="submitStopDetail()" class="mt-4">
     <div class="mb-4">
-      <label for="description" class="mb-2 block text-gray-700">Description</label>
-      <textarea
-        class="w-full rounded border px-4 py-2 text-gray-700"
-        [value]="stop().description"
-        [(ngModel)]="stop().description"
-        name="description"
-        id="description"
-        rows="4"
-      ></textarea>
-    </div>
-    <div>
-      <label for="roomNr" class="mr-4">Room Number</label>
-      <input
-        class="mb-4 rounded border px-4 py-2 text-gray-700"
-        type="text"
-        [value]="stop().roomNr"
-        [(ngModel)]="stop().roomNr"
-        name="roomNr"
-        id="roomNr"
-      />
-    </div>
-    <div class="w-1/2">
-      <div class="mb-6 mt-4 flex items-baseline">
-        <h1 class="my-2 text-lg font-medium">Students</h1>
+      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('info')">
+        <h1 class="text-lg font-medium text-text-950">Info</h1>
+        <span class="text-text-900">{{ expandedSections()['info'] ? '▼' : '►' }}</span>
+      </div>
+      <div [ngClass]="{'hidden': !expandedSections()['info']}">
+        <div class="mb-4 mt-2">
+          <label for="name" class="block text-sm font-medium text-text-950 mb-1">Name</label>
+          @if (stop().id == -1) {
+            <input
+              class="w-full rounded-lg border px-4 py-2 text-text-950 bg-background-50"
+              type="text"
+              [value]="stop().name"
+              [(ngModel)]="stop().name"
+              name="name-new"
+              id="name-new"
+            />
+          } @else {
+            <input
+              class="w-full rounded-lg border px-4 py-2 text-text-950 bg-background-50"
+              type="text"
+              [value]="stop().name"
+              [(ngModel)]="stop().name"
+              name="name"
+              id="name"
+            />
+          }
+        </div>
 
-        <form class="ml-10">
-          <label for="students" class="block text-sm font-medium text-gray-900"></label>
-          <select
-            id="students"
-            (change)="onStudentSelect($event)"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-          >
-            <option value="0" selected>Add Teacher</option>
-            @for (student of studentsNotInStop(); track student.edufsUsername) {
-              <option value="{{ student.edufsUsername }}">{{ student.lastName + ' ' + student.firstName }}</option>
-            }
-          </select>
-        </form>
+        <div class="mb-4">
+          <label for="description" class="block text-sm font-medium text-text-950 mb-1">Description</label>
+          <textarea
+            class="w-full rounded-lg border px-4 py-2 text-text-950 bg-background-50"
+            [value]="stop().description"
+            [(ngModel)]="stop().description"
+            name="description"
+            id="description"
+            rows="4"
+          ></textarea>
+        </div>
+
+        <div class="mb-2">
+          <label for="roomNr" class="block text-sm font-medium text-text-950 mb-1">Room Number</label>
+          <input
+            class="w-full rounded-lg border px-4 py-2 text-text-950 bg-background-50"
+            type="text"
+            [value]="stop().roomNr"
+            [(ngModel)]="stop().roomNr"
+            name="roomNr"
+            id="roomNr"
+          />
+        </div>
       </div>
     </div>
-    <div class="flex flex-row">
-      @for (student of studentStore.getStudentsByStopId(stop().id); track $index) {
-        <app-chip
-          class="mr-2 w-auto"
-          [id]="student.edufsUsername"
-          [value]="student.lastName + ' ' + student.firstName"
-          (remove)="onStudentRemove($event)"
-        >
-        </app-chip>
-      }
+    <div class="mb-4">
+      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('students')">
+        <h1 class="text-lg font-medium text-text-950">Students</h1>
+        <span class="text-text-900">{{ expandedSections()['students'] ? '▼' : '►' }}</span>
+      </div>
+      <div [ngClass]="{'hidden': !expandedSections()['students']}">
+        <div class="mr-20">
+          <div class="mb-6 mt-4">
+            <div class="ml-0 w-full">
+              <div class="flex items-center justify-between mb-2">
+                <div class="text-sm font-medium text-text-950">Available Students</div>
+                <div class="flex items-center">
+                  <label for="classFilter" class="mr-2 text-sm font-medium text-text-950">Filter by Class:</label>
+                  <select
+                    id="classFilter"
+                    (change)="onClassSelect($event)"
+                    class="rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
+                  >
+                    @for (className of availableClasses(); track className) {
+                      <option [value]="className" [selected]="selectedClass() === className">
+                        {{ className === 'all' ? 'All Classes' : className }}
+                      </option>
+                    }
+                  </select>
+                </div>
+                <div class="flex items-center ml-4">
+                  <label for="studentFilter" class="mr-2 text-sm font-medium text-text-950">Search:</label>
+                  <input
+                    id="studentFilter"
+                    type="text"
+                    [ngModel]="studentFilterText()"
+                    (ngModelChange)="studentFilterText.set($event)"
+                    placeholder="Name or username"
+                    class="rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
+                    name="studentFilter"
+                  />
+                </div>
+                <div class="ml-4">
+                  <button
+                    type="button"
+                    (click)="resetFilters()"
+                    class="rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 hover:bg-primary-100"
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              </div>
+              <div class="h-56 w-full overflow-y-auto border border-primary-200 rounded-lg bg-background-50">
+                <ul class="divide-y divide-primary-100">
+                  @for (student of studentsNotInStop(); track student.edufsUsername) {
+                    <li
+                      class="px-4 py-2 hover:bg-primary-100 cursor-pointer text-sm text-text-950"
+                      (click)="onStudentClick(student.edufsUsername)"
+                    >
+                      {{ student.lastName + ' ' + student.firstName }}
+                      <span class="text-xs text-text-900 ml-2">({{ student.studentClass }})</span>
+                    </li>
+                  }
+                  @if (studentsNotInStop().length === 0) {
+                    <li class="px-4 py-2 text-text-900 text-sm">No more students available</li>
+                  }
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 mb-6">
+          <div class="text-sm font-medium text-text-950 mb-2">Selected Students</div>
+          <div class="w-full overflow-y-auto border border-primary-200 rounded-lg bg-background-50">
+            <ul class="divide-y divide-primary-100">
+              @for (student of studentStore.getStudentsByStopId(stop().id); track student.edufsUsername) {
+                <li
+                  class="px-4 py-2 hover:bg-primary-100 cursor-pointer text-sm text-text-950"
+                  (click)="onStudentRemove(student.edufsUsername)"
+                >
+                  {{ student.lastName + ' ' + student.firstName }}
+                  <span class="text-xs text-text-900 ml-2">({{ student.studentClass }})</span>
+                </li>
+              }
+              @if (studentStore.getStudentsByStopId(stop().id).length === 0) {
+                <li class="px-4 py-2 text-text-900 text-sm">No students selected</li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
     @if (isAdmin()) {
-      <div class="w-1/2">
-        <div class="mb-6 mt-4 flex items-baseline">
-          <h1 class="my-2 text-lg font-medium">Teachers</h1>
+      <div class="mb-4">
+        <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('teachers')">
+          <h1 class="text-lg font-medium text-text-950">Teachers</h1>
+          <span class="text-text-900">{{ expandedSections()['teachers'] ? '▼' : '►' }}</span>
+        </div>
+        <div [ngClass]="{'hidden': !expandedSections()['teachers']}">
+          <div class="mr-20">
+            <div class="mb-6 mt-4">
+              <div class="ml-0 w-full">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="text-sm font-medium text-text-950">Available Teachers</div>
+                  <div class="flex items-center ml-4">
+                    <label for="teacherFilter" class="mr-2 text-sm font-medium text-text-950">Search:</label>
+                    <input
+                      id="teacherFilter"
+                      type="text"
+                      [ngModel]="teacherFilterText()"
+                      (ngModelChange)="teacherFilterText.set($event)"
+                      placeholder="Name or username"
+                      class="rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
+                      name="teacherFilter"
+                    />
+                  </div>
+                  <div class="ml-4">
+                    <button
+                      type="button"
+                      (click)="resetFilters()"
+                      class="rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 hover:bg-primary-100"
+                    >
+                      Reset Filters
+                    </button>
+                  </div>
+                </div>
+                <div class="h-56 w-full overflow-y-auto border border-primary-200 rounded-lg bg-background-50">
+                  <ul class="divide-y divide-primary-100">
+                    @for (teacher of teachersNotInStop(); track teacher.edufsUsername) {
+                      <li
+                        class="px-4 py-2 hover:bg-primary-100 cursor-pointer text-sm text-text-950"
+                        (click)="onTeacherClick(teacher.edufsUsername)"
+                      >
+                        {{ teacher.lastName + ' ' + teacher.firstName }}
+                      </li>
+                    }
+                    @if (teachersNotInStop().length === 0) {
+                      <li class="px-4 py-2 text-text-900 text-sm">No more teachers available</li>
+                    }
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 mb-6">
+            <div class="text-sm font-medium text-text-950 mb-2">Selected Teachers</div>
+            <div class="w-full overflow-y-auto border border-primary-200 rounded-lg bg-background-50">
+              <ul class="divide-y divide-primary-100">
+                @for (teacher of teachersAssignedToStop(); track teacher.edufsUsername) {
+                  <li
+                    class="px-4 py-2 hover:bg-primary-100 cursor-pointer text-sm text-text-950"
+                    (click)="onTeacherRemove(teacher.edufsUsername)"
+                  >
+                    {{ teacher.lastName + ' ' + teacher.firstName }}
+                  </li>
+                }
+                @if (teachersAssignedToStop().length === 0) {
+                  <li class="px-4 py-2 text-text-900 text-sm">No teachers selected</li>
+                }
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
 
-          <form class="ml-10">
-            <label for="teachers" class="block text-sm font-medium text-gray-900"></label>
+    <div class="mb-4">
+      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('stopGroups')">
+        <h1 class="text-lg font-medium text-text-950">StopGroups</h1>
+        <span class="text-text-900">{{ expandedSections()['stopGroups'] ? '▼' : '►' }}</span>
+      </div>
+      <div [ngClass]="{'hidden': !expandedSections()['stopGroups']}">
+        @for (stopGroupId of stop().stopGroupIds; track $index) {
+          <p class="ml-4 mb-2 text-text-950">{{ stopGroupStore.getStopGroupById(stopGroupId)!.name }}</p>
+        }
+        @if (stop().stopGroupIds.length === 0) {
+          <p class="ml-4 text-text-900 text-sm">No stop groups assigned</p>
+        }
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('divisions')">
+        <h1 class="text-lg font-medium text-text-950">Divisions</h1>
+        <span class="text-text-900">{{ expandedSections()['divisions'] ? '▼' : '►' }}</span>
+      </div>
+      <div [ngClass]="{'hidden': !expandedSections()['divisions']}">
+        <div class="mb-6 mt-4">
+          <form>
+            <label for="divisions" class="block text-sm font-medium text-text-950">Add Division</label>
             <select
-              id="teachers"
-              (change)="onTeacherSelect($event)"
-              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              id="divisions"
+              (change)="onDivisionSelect($event)"
+              class="block w-full rounded-lg border border-primary-200 bg-background-50 p-2.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
             >
-              <option value="0" selected>Add Teacher</option>
-              @for (teacher of teachersNotInStop(); track teacher.edufsUsername) {
-                <option value="{{ teacher.edufsUsername }}">{{ teacher.lastName + ' ' + teacher.firstName }}</option>
+              <option value="0" selected>Select Division</option>
+              @for (division of inactiveDivisions(); track division.id) {
+                <option value="{{ division.id }}">{{ division.name }}</option>
               }
             </select>
           </form>
         </div>
-      </div>
-      <div class="flex flex-row">
-        @for (teacher of teachersByStopId(); track $index) {
-          <app-chip
-            class="mr-2 w-auto"
-            [id]="teacher.edufsUsername"
-            [value]="teacher.lastName + ' ' + teacher.firstName"
-            (remove)="onTeacherRemove($event)"
-          >
-          </app-chip>
-        }
-      </div>
-    }
 
-    <h1 class="my-2 text-lg font-medium">StopGroups</h1>
-
-    @for (stopGroupId of stop().stopGroupIds; track $index) {
-      <p>{{ stopGroupStore.getStopGroupById(stopGroupId)!.name }}</p>
-    }
-
-    <div>
-      <div class="mb-6 mt-4 flex items-baseline">
-        <h1 class="my-2 text-lg font-medium">Divisions</h1>
-
-        <form class="ml-10">
-          <label for="divisions" class="block text-sm font-medium text-gray-900"></label>
-          <select
-            id="divisions"
-            (change)="onDivisionSelect($event)"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-          >
-            <option value="0" selected>Add Division</option>
-            @for (division of inactiveDivisions(); track division.id) {
-              <option value="{{ division.id }}">{{ division.name }}</option>
+        <div class="text-sm font-medium text-text-950 mb-2">Selected Divisions</div>
+        <div class="w-full overflow-y-auto border border-primary-200 rounded-lg bg-background-50">
+          <ul class="divide-y divide-primary-100">
+            @for (id of stop().divisionIds; track $index) {
+              <li
+                class="px-4 py-2 hover:bg-primary-100 cursor-pointer text-sm text-text-950"
+                (click)="onDivisionRemove(id.toString())"
+              >
+                {{ divisionStore.getDivisionById(id)!.name }}
+                <span class="inline-block w-4 h-4 ml-2 rounded-full" [style.background-color]="divisionStore.getDivisionById(id)!.color"></span>
+              </li>
             }
-          </select>
-        </form>
-      </div>
-
-      <div class="flex flex-wrap">
-        @for (id of stop().divisionIds; track $index) {
-          <app-chip
-            class="mr-2"
-            [id]="id.toString()"
-            [color]="divisionStore.getDivisionById(id)!.color"
-            [value]="divisionStore.getDivisionById(id)!.name"
-            (remove)="onDivisionRemove($event)"
-          ></app-chip>
-        }
+            @if (stop().divisionIds.length === 0) {
+              <li class="px-4 py-2 text-text-900 text-sm">No divisions assigned</li>
+            }
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -140,12 +281,39 @@
       <p class="text-red-700">{{ errorMessage() }}</p>
     }
     <div>
-      <button type="submit" class="mr-4 rounded bg-primary-200 p-2 text-white hover:bg-primary-300">Submit</button>
+      <button type="submit" class="mr-4 rounded-lg bg-primary-200 p-2 text-white hover:bg-primary-300">Submit</button>
 
-      <button (click)="goBack()" type="button" class="mr-4 mt-4 rounded bg-primary-200 p-2 text-white hover:bg-primary-300">Cancel</button>
+      <button (click)="goBack()" type="button" class="mr-4 mt-4 rounded-lg bg-primary-200 p-2 text-white hover:bg-primary-300">Cancel</button>
       @if (stop().id != -1) {
-        <button (click)="deleteAndGoBack()" type="button" class="mr-4 mt-4 rounded bg-primary-200 p-2 text-white hover:bg-primary-300">Delete</button>
+        <button (click)="deleteAndGoBack()" type="button" class="hover:bg-accent-300 mr-4 rounded bg-accent-200 p-2">Delete</button>
       }
     </div>
   </form>
 </div>
+
+@if (showRemoveDivisionPopup()) {
+  <app-delete-popup
+    [title]="'Remove Division'"
+    [message]="'Are you sure you want to remove this division from the stop?'"
+    (cancel)="showRemoveDivisionPopup.set(false)"
+    (removeConfirmed)="confirmDivisionRemove()"
+  />
+}
+
+@if (showRemoveTeacherPopup()) {
+  <app-delete-popup
+    [title]="'Remove Teacher'"
+    [message]="'Are you sure you want to remove this teacher from the stop?'"
+    (cancel)="showRemoveTeacherPopup.set(false)"
+    (removeConfirmed)="confirmTeacherRemove()"
+  />
+}
+
+@if (showRemoveStudentPopup()) {
+  <app-delete-popup
+    [title]="'Remove Student'"
+    [message]="'Are you sure you want to remove this student from the stop?'"
+    (cancel)="showRemoveStudentPopup.set(false)"
+    (removeConfirmed)="confirmStudentRemove()"
+  />
+}

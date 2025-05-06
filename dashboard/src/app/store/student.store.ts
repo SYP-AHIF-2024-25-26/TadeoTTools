@@ -66,7 +66,6 @@ export const StudentStore = signalStore(
       async setAssignments(edufsUsername: string) {
         const teacher = this.getTeacherByUsername(edufsUsername);
         if (teacher) {
-          console.log(teacher.firstName + ' ' + teacher.lastName + ' ' + teacher.edufsUsername);
           await studentService.setAssignments(edufsUsername, teacher.studentAssignments);
         }
       },

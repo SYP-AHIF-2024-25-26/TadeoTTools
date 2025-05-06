@@ -25,33 +25,53 @@ export const DivisionStore = signalStore(
     })();
 
     return {
-      async addDivision(division: Division, image: File | null) {
-        const createdDivision = await divisionService.addDivision(division);
-        console.log('your id is: ' + createdDivision.id);
-        patchState(store, {
-          divisions: [...store.divisions(), createdDivision],
-        });
-        if (image) {
-          await this.updateDivisionImg(createdDivision.id, image);
+      async addDivision(division: Division, image: File | null): Promise<void> {
+        try {
+          const createdDivision = await divisionService.addDivision(division);
+          console.log('your id is: ' + createdDivision.id);
+          patchState(store, {
+            divisions: [...store.divisions(), createdDivision],
+          });
+          if (image) {
+            await this.updateDivisionImg(createdDivision.id, image);
+          }
+        } catch (error) {
+          // Error is already handled by the service
         }
       },
-      async updateDivision(divisionToUpdate: Division) {
-        patchState(store, {
-          divisions: store.divisions().map((division) => (division.id === divisionToUpdate.id ? divisionToUpdate : division)),
-        });
-        await divisionService.updateDivision(divisionToUpdate);
+      async updateDivision(divisionToUpdate: Division): Promise<void> {
+        try {
+          patchState(store, {
+            divisions: store.divisions().map((division) => (division.id === divisionToUpdate.id ? divisionToUpdate : division)),
+          });
+          await divisionService.updateDivision(divisionToUpdate);
+        } catch (error) {
+          // Error is already handled by the service
+        }
       },
-      async updateDivisionImg(divisionId: number, image: File) {
-        await divisionService.updateDivisionImg(divisionId, image);
+      async updateDivisionImg(divisionId: number, image: File): Promise<void> {
+        try {
+          await divisionService.updateDivisionImg(divisionId, image);
+        } catch (error) {
+          // Error is already handled by the service
+        }
       },
-      async deleteDivision(divisionIdToDel: number) {
+      async deleteDivision(divisionIdToDel: number): Promise<void> {
         patchState(store, {
           divisions: store.divisions().filter((division) => division.id !== divisionIdToDel),
         });
-        await divisionService.deleteDivision(divisionIdToDel);
+        try {
+          await divisionService.deleteDivision(divisionIdToDel);
+        } catch (error) {
+          // Error is already handled by the service
+        }
       },
-      async deleteDivisionImg(divisionId: number) {
-        await divisionService.deleteDivisionImg(divisionId);
+      async deleteDivisionImg(divisionId: number): Promise<void> {
+        try {
+          await divisionService.deleteDivisionImg(divisionId);
+        } catch (error) {
+          // Error is already handled by the service
+        }
       },
       getDivisions() {
         return store.divisions();

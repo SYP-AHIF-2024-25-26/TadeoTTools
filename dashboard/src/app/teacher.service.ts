@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { Student, Teacher } from './types';
+import { Teacher, TeacherAssignment, Info } from './types';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from './app.config';
 import { HttpClient } from '@angular/common/http';
+import { InfoStore } from './store/info.store';
 
 @Injectable({
   providedIn: 'root',
@@ -10,23 +11,27 @@ import { HttpClient } from '@angular/common/http';
 export class TeacherService {
   baseUrl = inject(BASE_URL);
   httpClient = inject(HttpClient);
+  private readonly infoStore = inject(InfoStore);
 
   constructor() {}
 
   async getTeachers() {
-    return firstValueFrom(this.httpClient.get<Teacher[]>(this.baseUrl + '/api/teachers'));
+    try {
+      return await firstValueFrom(this.httpClient.get<Teacher[]>(this.baseUrl + '/api/teachers'));
+    } catch (error) {
+      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to get teachers' });
+      throw error;
+    }
   }
 
-  async assignStopToTeacher(edufsUsername: string, stopId: number) {
-    return firstValueFrom(
-      this.httpClient.put(this.baseUrl + '/teachers/assign', {
-        edufsUsername: edufsUsername,
-        stopId: stopId,
-      })
-    );
-  }
-
-  async unassignAllFromStop(stopId: number) {
-    return firstValueFrom(this.httpClient.put(this.baseUrl + '/teachers/unassign/' + stopId, {}));
+  async setAssignments(edufsUsername: string, assignments: number[]): Promise<void> {
+    try {
+      console.log(edufsUsername, assignments);
+      await firstValueFrom(this.httpClient.put<void>(this.baseUrl + '/api/teachers/' + edufsUsername + '/assignments', assignments.map(a => ({stopId: a, teacherId: edufsUsername} as TeacherAssignment))));
+      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully set teacher assignments' });
+    } catch (error) {
+      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to set teacher assignments' });
+      throw error;
+    }
   }
 }

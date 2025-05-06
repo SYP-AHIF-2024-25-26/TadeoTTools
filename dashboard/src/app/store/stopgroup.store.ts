@@ -25,26 +25,42 @@ export const StopGroupStore = signalStore(
       }
     })();
     return {
-      async addStopGroup(stopGroupToAdd: StopGroup) {
-        const stopGroup = await stopGroupService.addStopGroup(stopGroupToAdd);
-        patchState(store, {
-          stopGroups: [...store.stopGroups(), stopGroup],
-        });
+      async addStopGroup(stopGroupToAdd: StopGroup): Promise<void> {
+        try {
+          const stopGroup = await stopGroupService.addStopGroup(stopGroupToAdd);
+          patchState(store, {
+            stopGroups: [...store.stopGroups(), stopGroup],
+          });
+        } catch (error) {
+          // Error is already handled by the service
+        }
       },
-      async updateStopGroup(stopGroupToUpdate: StopGroup) {
-        await stopGroupService.updateStopGroup(stopGroupToUpdate);
-        patchState(store, {
-          stopGroups: store.stopGroups().map((stopGroup) => (stopGroup.id === stopGroupToUpdate.id ? stopGroupToUpdate : stopGroup)),
-        });
+      async updateStopGroup(stopGroupToUpdate: StopGroup): Promise<void> {
+        try {
+          await stopGroupService.updateStopGroup(stopGroupToUpdate);
+          patchState(store, {
+            stopGroups: store.stopGroups().map((stopGroup) => (stopGroup.id === stopGroupToUpdate.id ? stopGroupToUpdate : stopGroup)),
+          });
+        } catch (error) {
+          // Error is already handled by the service
+        }
       },
-      updateStopGroupOrder(order: number[]) {
-        stopGroupService.updateStopGroupOrder(order);
+      async updateStopGroupOrder(order: number[]): Promise<void> {
+        try {
+          await stopGroupService.updateStopGroupOrder(order);
+        } catch (error) {
+          // Error is already handled by the service
+        }
       },
-      async deleteStopGroup(stopGroupIdToDelete: number) {
+      async deleteStopGroup(stopGroupIdToDelete: number): Promise<void> {
         patchState(store, {
           stopGroups: store.stopGroups().filter((stopGroup) => stopGroup.id !== stopGroupIdToDelete),
         });
-        await stopGroupService.deleteStopGroup(stopGroupIdToDelete);
+        try {
+          await stopGroupService.deleteStopGroup(stopGroupIdToDelete);
+        } catch (error) {
+          // Error is already handled by the service
+        }
       },
       getStopGroups() {
         return store.stopGroups();

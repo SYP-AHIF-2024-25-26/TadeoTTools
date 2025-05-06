@@ -7,7 +7,7 @@ public class TeacherFunctions
 {
     public static async Task<List<TeacherWithStopsDto>> GetAllTeachersAsync(TadeoTDbContext context)
     {
-        return await context.Teachers.Select(t =>
+        return await context.Teachers.Include(t => t.AssignedStops).Select(t =>
             new TeacherWithStopsDto(
                 t.EdufsUsername,
                 t.FirstName,
@@ -25,5 +25,5 @@ public class TeacherFunctions
             .FirstOrDefaultAsync();
     }
 
-    public record TeacherWithStopsDto(string EdufsUsername, string FirstName, string LastName, int[] StopAssignments);
+    public record TeacherWithStopsDto(string EdufsUsername, string FirstName, string LastName, int[] AssignedStops);
 }
