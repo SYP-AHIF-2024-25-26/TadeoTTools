@@ -24,6 +24,6 @@ public static class TeacherManagementEndpoints
         teacher.AssignedStops.AddRange(assignments);
         await context.SaveChangesAsync();
 
-        return Results.Ok(teacher);
+        return Results.Ok();
     }
 }

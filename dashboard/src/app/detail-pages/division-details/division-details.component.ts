@@ -86,13 +86,17 @@ export class DivisionDetailsComponent implements OnInit {
       name: this.name(),
       color: this.color(),
     };
-    if (this.id === -1) {
-      await this.divisionStore.addDivision(division, this.selectedFile);
-    } else {
-      await this.divisionStore.updateDivision(division);
-    }
-    if (this.selectedFile) {
-      await this.divisionStore.updateDivisionImg(this.id, this.selectedFile);
+    try {
+      if (this.id === -1) {
+        await this.divisionStore.addDivision(division, this.selectedFile);
+      } else {
+        await this.divisionStore.updateDivision(division);
+      }
+      if (this.selectedFile) {
+        await this.divisionStore.updateDivisionImg(this.id, this.selectedFile);
+      }
+    } catch (error) {
+      // Error is already handled by the service
     }
     this.selectedFile = null;
     this.filePreview = null;
@@ -100,13 +104,21 @@ export class DivisionDetailsComponent implements OnInit {
   }
 
   async deleteAndGoBack() {
-    await this.divisionStore.deleteDivision(this.id);
+    try {
+      await this.divisionStore.deleteDivision(this.id);
+    } catch (error) {
+      // Error is already handled by the service
+    }
     this.cancel.emit();
   }
 
   async deleteImage() {
     this.selectedFile = null;
     this.filePreview = null;
-    await this.divisionStore.deleteDivisionImg(this.id);
+    try {
+      await this.divisionStore.deleteDivisionImg(this.id);
+    } catch (error) {
+      // Error is already handled by the service
+    }
   }
 }

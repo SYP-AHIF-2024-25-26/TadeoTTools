@@ -22,7 +22,7 @@ export class StopgroupDetailsComponent implements OnInit {
   cancelPopup() {
     this.cancel.emit();
   }
-  
+
   name = signal<string>('');
   description = signal<string>('');
   isPublic = signal<boolean>(false);
@@ -56,6 +56,10 @@ export class StopgroupDetailsComponent implements OnInit {
   }
 
   async submitStopGroupDetails() {
+    if (!this.isInputValid()) {
+      return;
+    }
+
     const stopGroup: StopGroup = {
       id: this.id,
       name: this.name(),
@@ -63,10 +67,15 @@ export class StopgroupDetailsComponent implements OnInit {
       isPublic: this.isPublic(),
       stopIds: this.stopIds(),
     };
-    if (this.id === -1) {
-      await this.stopGroupStore.addStopGroup(stopGroup);
-    } else {
-      await this.stopGroupStore.updateStopGroup(stopGroup);
+
+    try {
+      if (this.id === -1) {
+        await this.stopGroupStore.addStopGroup(stopGroup);
+      } else {
+        await this.stopGroupStore.updateStopGroup(stopGroup);
+      }
+    } catch (error) {
+      // Error is already handled by the service
     }
     this.cancel.emit();
   }
