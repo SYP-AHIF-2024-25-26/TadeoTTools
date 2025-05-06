@@ -31,6 +31,11 @@ export type Teacher = {
   stopAssignments: number[];
 };
 
+export type TeacherAssignment = {
+  teacherId: string;
+  id: number;
+}
+
 export type StopOfStudent = {
   name: string;
   status: Status;
@@ -77,3 +82,7 @@ export type StopsShownInStopGroup = {
   stopGroupId: number;
   isShown: boolean;
 };
+
+export type IsError = {
+  isError: boolean;
+}

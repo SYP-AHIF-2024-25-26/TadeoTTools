@@ -1,5 +1,5 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
-import { Division } from '../types';
+import { Division, IsError } from '../types';
 import { inject } from '@angular/core';
 import { DivisionService } from '../division.service';
 
@@ -25,33 +25,58 @@ export const DivisionStore = signalStore(
     })();
 
     return {
-      async addDivision(division: Division, image: File | null) {
-        const createdDivision = await divisionService.addDivision(division);
-        console.log('your id is: ' + createdDivision.id);
-        patchState(store, {
-          divisions: [...store.divisions(), createdDivision],
-        });
-        if (image) {
-          await this.updateDivisionImg(createdDivision.id, image);
+      async addDivision(division: Division, image: File | null): Promise<IsError> {
+        try {
+          const createdDivision = await divisionService.addDivision(division);
+          console.log('your id is: ' + createdDivision.id);
+          patchState(store, {
+            divisions: [...store.divisions(), createdDivision],
+          });
+          if (image) {
+            await this.updateDivisionImg(createdDivision.id, image);
+          }
+          return {isError: false};
+        } catch (error) {
+          return {isError: true};
         }
       },
-      async updateDivision(divisionToUpdate: Division) {
-        patchState(store, {
-          divisions: store.divisions().map((division) => (division.id === divisionToUpdate.id ? divisionToUpdate : division)),
-        });
-        await divisionService.updateDivision(divisionToUpdate);
+      async updateDivision(divisionToUpdate: Division): Promise<IsError> {
+        try {
+          patchState(store, {
+            divisions: store.divisions().map((division) => (division.id === divisionToUpdate.id ? divisionToUpdate : division)),
+          });
+          await divisionService.updateDivision(divisionToUpdate);
+          return {isError: false};
+        } catch (error) {
+          return {isError: true};
+        }
       },
-      async updateDivisionImg(divisionId: number, image: File) {
-        await divisionService.updateDivisionImg(divisionId, image);
+      async updateDivisionImg(divisionId: number, image: File): Promise<IsError> {
+        try {
+          await divisionService.updateDivisionImg(divisionId, image);
+          return {isError: false};
+        } catch (error) {
+          return {isError: true};
+        }
       },
-      async deleteDivision(divisionIdToDel: number) {
+      async deleteDivision(divisionIdToDel: number): Promise<IsError> {
         patchState(store, {
           divisions: store.divisions().filter((division) => division.id !== divisionIdToDel),
         });
-        await divisionService.deleteDivision(divisionIdToDel);
+        try {
+          await divisionService.deleteDivision(divisionIdToDel);
+          return {isError: false};
+        } catch (error) {
+          return {isError: true};
+        }
       },
-      async deleteDivisionImg(divisionId: number) {
-        await divisionService.deleteDivisionImg(divisionId);
+      async deleteDivisionImg(divisionId: number): Promise<IsError> {
+        try {
+          await divisionService.deleteDivisionImg(divisionId);
+          return {isError: false};
+        } catch (error) {
+          return {isError: true};
+        }
       },
       getDivisions() {
         return store.divisions();

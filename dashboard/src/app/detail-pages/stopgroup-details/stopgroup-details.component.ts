@@ -4,7 +4,8 @@ import { RouterModule } from '@angular/router';
 import { isValid } from '../../utilfunctions';
 import { Location } from '@angular/common';
 import { StopGroupStore } from '../../store/stopgroup.store';
-import { StopGroup } from '../../types';
+import { Info, StopGroup } from '../../types';
+import { InfoStore } from '../../store/info.store';
 
 @Component({
   selector: 'app-stopgroup-details',
@@ -15,6 +16,7 @@ import { StopGroup } from '../../types';
 export class StopgroupDetailsComponent implements OnInit {
   private stopGroupStore = inject(StopGroupStore);
   private location: Location = inject(Location);
+  private infoStore = inject(InfoStore);
 
   @Input() id: number = -1;
   @Output() cancel = new EventEmitter<void>();
@@ -22,7 +24,7 @@ export class StopgroupDetailsComponent implements OnInit {
   cancelPopup() {
     this.cancel.emit();
   }
-  
+
   name = signal<string>('');
   description = signal<string>('');
   isPublic = signal<boolean>(false);
@@ -56,6 +58,10 @@ export class StopgroupDetailsComponent implements OnInit {
   }
 
   async submitStopGroupDetails() {
+    if (!this.isInputValid()) {
+      return;
+    }
+
     const stopGroup: StopGroup = {
       id: this.id,
       name: this.name(),
@@ -63,16 +69,35 @@ export class StopgroupDetailsComponent implements OnInit {
       isPublic: this.isPublic(),
       stopIds: this.stopIds(),
     };
+
+    let isError;
     if (this.id === -1) {
-      await this.stopGroupStore.addStopGroup(stopGroup);
+      isError = await this.stopGroupStore.addStopGroup(stopGroup);
+      if (isError.isError) {
+        this.infoStore.addInfo({type: 'error', message: 'Error occurred while adding stop group'} as Info);
+        return;
+      } else {
+        this.infoStore.addInfo({type: 'info', message: 'Stop group added successfully'} as Info);
+      }
     } else {
-      await this.stopGroupStore.updateStopGroup(stopGroup);
+      isError = await this.stopGroupStore.updateStopGroup(stopGroup);
+      if (isError.isError) {
+        this.infoStore.addInfo({type: 'error', message: 'Error occurred while updating stop group'} as Info);
+        return;
+      } else {
+        this.infoStore.addInfo({type: 'info', message: 'Stop group updated successfully'} as Info);
+      }
     }
     this.cancel.emit();
   }
 
   async deleteAndGoBack() {
-    await this.stopGroupStore.deleteStopGroup(this.id);
+    const isError = await this.stopGroupStore.deleteStopGroup(this.id);
+    if (isError.isError) {
+      this.infoStore.addInfo({type: 'error', message: 'Error occurred while deleting stop group'} as Info);
+    } else {
+      this.infoStore.addInfo({type: 'info', message: 'Stop group deleted successfully'} as Info);
+    }
     this.cancel.emit();
   }
 

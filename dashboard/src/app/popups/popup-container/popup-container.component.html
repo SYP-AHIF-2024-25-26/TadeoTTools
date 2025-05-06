@@ -1,8 +1,0 @@
-<div class="fixed bottom-5 right-5 max-w-6xl max-h-96 overflow-y-auto z-50 bg-white shadow-lg p-4 rounded-lg">
-  @for (info of infos(); track info.id) {
-    <app-info-popup
-      [info]="info"
-      (deleted)="removeInfo($event)">
-    </app-info-popup>
-  }
-</div>

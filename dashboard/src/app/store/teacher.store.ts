@@ -70,11 +70,11 @@ export const TeacherStore = signalStore(
         }
         console.log(store.teachers());
       },
-      async setAssignments(stopId: number) {
-        await teacherService.unassignAllFromStop(stopId);
-        this.getTeachersByStopId(stopId).forEach((teacher) => {
-          teacherService.assignStopToTeacher(teacher.edufsUsername, stopId);
-        });
+      async setAssignments(edufsUsername: string) {
+        const teacher = this.getTeacherById(edufsUsername);
+        if (teacher) {
+          await teacherService.setAssignments(edufsUsername, teacher.stopAssignments);
+        }
       },
       setStopIdForAssignmentsOnNewStop(stopId: number) {
         store.teachers().forEach((teacher) => {

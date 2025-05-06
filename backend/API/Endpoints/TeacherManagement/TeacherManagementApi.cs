@@ -16,7 +16,7 @@ public static class TeacherManagementApi
             .WithName(nameof(TeacherManagementEndpoints.SetTeacherAssignments))
             .WithDescription("Set assignments for a teacher")
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status200OK);
-        //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
     }
 }

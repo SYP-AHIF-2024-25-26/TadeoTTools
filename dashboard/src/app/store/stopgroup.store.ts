@@ -1,4 +1,4 @@
-import { Stop, StopGroup } from '../types';
+import { IsError, Stop, StopGroup } from '../types';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { inject } from '@angular/core';
 import { StopGroupService } from '../stopgroup.service';
@@ -25,26 +25,46 @@ export const StopGroupStore = signalStore(
       }
     })();
     return {
-      async addStopGroup(stopGroupToAdd: StopGroup) {
-        const stopGroup = await stopGroupService.addStopGroup(stopGroupToAdd);
-        patchState(store, {
-          stopGroups: [...store.stopGroups(), stopGroup],
-        });
+      async addStopGroup(stopGroupToAdd: StopGroup): Promise<IsError> {
+        try {
+          const stopGroup = await stopGroupService.addStopGroup(stopGroupToAdd);
+          patchState(store, {
+            stopGroups: [...store.stopGroups(), stopGroup],
+          });
+          return {isError: false};
+        } catch (error) {
+          return {isError: true};
+        }
       },
-      async updateStopGroup(stopGroupToUpdate: StopGroup) {
-        await stopGroupService.updateStopGroup(stopGroupToUpdate);
-        patchState(store, {
-          stopGroups: store.stopGroups().map((stopGroup) => (stopGroup.id === stopGroupToUpdate.id ? stopGroupToUpdate : stopGroup)),
-        });
+      async updateStopGroup(stopGroupToUpdate: StopGroup): Promise<IsError> {
+        try {
+          await stopGroupService.updateStopGroup(stopGroupToUpdate);
+          patchState(store, {
+            stopGroups: store.stopGroups().map((stopGroup) => (stopGroup.id === stopGroupToUpdate.id ? stopGroupToUpdate : stopGroup)),
+          });
+          return {isError: false};
+        } catch (error) {
+          return {isError: true};
+        }
       },
-      updateStopGroupOrder(order: number[]) {
-        stopGroupService.updateStopGroupOrder(order);
+      async updateStopGroupOrder(order: number[]): Promise<IsError> {
+        try {
+          await stopGroupService.updateStopGroupOrder(order);
+          return {isError: false};
+        } catch (error) {
+          return {isError: true};
+        }
       },
-      async deleteStopGroup(stopGroupIdToDelete: number) {
+      async deleteStopGroup(stopGroupIdToDelete: number): Promise<IsError> {
         patchState(store, {
           stopGroups: store.stopGroups().filter((stopGroup) => stopGroup.id !== stopGroupIdToDelete),
         });
-        await stopGroupService.deleteStopGroup(stopGroupIdToDelete);
+        try {
+          await stopGroupService.deleteStopGroup(stopGroupIdToDelete);
+          return {isError: false};
+        } catch (error) {
+          return {isError: true};
+        }
       },
       getStopGroups() {
         return store.stopGroups();

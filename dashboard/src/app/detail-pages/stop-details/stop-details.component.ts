@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { StopService } from '../../stop.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Status, Stop, StudentAssignment } from '../../types';
+import { Info, Status, Stop, StudentAssignment } from '../../types';
 import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location, NgClass } from '@angular/common';
@@ -12,6 +12,7 @@ import { StopGroupStore } from '../../store/stopgroup.store';
 import { TeacherStore } from '../../store/teacher.store';
 import { LoginService } from '../../login.service';
 import { StudentStore } from '../../store/student.store';
+import { InfoStore } from '../../store/info.store';
 
 @Component({
   selector: 'app-stop-details',
@@ -25,6 +26,7 @@ export class StopDetailsComponent implements OnInit {
   protected stopGroupStore = inject(StopGroupStore);
   protected teacherStore = inject(TeacherStore);
   protected studentStore = inject(StudentStore);
+  private infoStore = inject(InfoStore);
   loginService = inject(LoginService);
   private service: StopService = inject(StopService);
   private route: ActivatedRoute = inject(ActivatedRoute);
@@ -178,36 +180,61 @@ export class StopDetailsComponent implements OnInit {
     if (!this.isInputValid()) {
       return;
     }
+
+    let isError;
+
     if (this.stop().id === -1) {
       // Store teachers assigned to the temporary stop
       const tempAssignedTeachers = this.teachersAssignedToStop();
 
-      const returnedStop = await this.service.addStop(this.stop());
-      this.stop.set({ ...this.stop(), id: returnedStop.id });
+      try {
+        const returnedStop = await this.service.addStop(this.stop());
+        this.stop.set({ ...this.stop(), id: returnedStop.id });
 
-      this.studentStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
-      console.log(this.teacherStore.getTeachersByStopId(returnedStop.id));
-      this.teacherStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
-      console.log(this.teacherStore.getTeachersByStopId(returnedStop.id));
+        this.studentStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
+        this.teacherStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
+        console.log(this.teacherStore.getTeachersByStopId(returnedStop.id));
 
+        this.infoStore.addInfo({ type: 'info', message: 'Stop added successfully' } as Info);
+      } catch (error) {
+        this.infoStore.addInfo({ type: 'error', message: 'Error occurred while adding stop' } as Info);
+        return;
+      }
     } else {
-      await this.stopStore.updateStop(this.stop());
+      isError = await this.stopStore.updateStop(this.stop());
+      if (isError.isError) {
+        this.infoStore.addInfo({ type: 'error', message: 'Error occurred while updating stop' } as Info);
+        return;
+      } else {
+        this.infoStore.addInfo({ type: 'info', message: 'Stop updated successfully' } as Info);
+      }
     }
 
-    this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
-      console.log(student.firstName + ' ' + student.lastName);
-      this.studentStore.setAssignments(student.edufsUsername);
-    });
+    try {
+      this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
+        console.log(student.firstName + ' ' + student.lastName);
+        this.studentStore.setAssignments(student.edufsUsername);
+      });
 
-    // Save teacher assignments to the backend
-    await this.teacherStore.setAssignments(this.stop().id);
+      this.teacherStore.getTeachersByStopId(this.stop().id).forEach((teacher) => {
+        this.teacherStore.setAssignments(teacher.edufsUsername);
+      });
+      // Save teacher assignments to the backend
+    } catch (error) {
+      this.infoStore.addInfo({ type: 'error', message: 'Error occurred while updating assignments' } as Info);
+    }
 
     this.stop.set(this.emptyStop);
     this.location.go('/stops');
   }
 
   async deleteAndGoBack() {
-    await this.stopStore.deleteStop(this.stop().id);
+    const isError = await this.stopStore.deleteStop(this.stop().id);
+    if (isError.isError) {
+      this.infoStore.addInfo({ type: 'error', message: 'Error occurred while deleting stop' } as Info);
+    } else {
+      this.infoStore.addInfo({ type: 'info', message: 'Stop deleted successfully' } as Info);
+    }
     this.stop.set(this.emptyStop);
     this.location.back();
   }
