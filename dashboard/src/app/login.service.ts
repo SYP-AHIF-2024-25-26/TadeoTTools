@@ -28,11 +28,6 @@ export class LoginService {
         }))
       );
 
-      // Only show success message if there was no error
-      if (!result.includes('Backend says no')) {
-        this.infoStore.addInfo({ id: 0, type: 'info', message: 'Login successful' });
-      }
-
       return result;
     } catch (error) {
       this.infoStore.addInfo({ id: 0, type: 'error', message: 'Login error' });

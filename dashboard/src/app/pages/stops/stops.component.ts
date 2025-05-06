@@ -55,4 +55,5 @@ export class StopsComponent {
     this.groupIdDetail = id;
     this.showGroupDetailPopUp.set(true);
   }
+
 }

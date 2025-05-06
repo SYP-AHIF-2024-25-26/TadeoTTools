@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { StopService } from '../../stop.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Status, Stop, StudentAssignment } from '../../types';
+import { Status, Stop, Student, StudentAssignment } from '../../types';
 import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location, NgClass } from '@angular/common';
@@ -62,6 +62,8 @@ export class StopDetailsComponent implements OnInit {
   teacherUsernameToRemove: string = '';
   studentUsernameToRemove: string = '';
 
+  // No longer tracking badge position
+
   // Section expansion states
   expandedSections = signal<{[key: string]: boolean}>({
     info: true,
@@ -88,8 +90,9 @@ export class StopDetailsComponent implements OnInit {
     return this.teacherStore.teachers().filter((teacher) => !assignedTeachers.includes(teacher));
   });
 
-  teachersNotInStop = computed(() => {
-    let filteredTeachers = this.teachersAvailableForAssignment();
+  // Filter function to apply common filtering logic for teachers
+  private applyTeacherFilters(teachers: any[]) {
+    let filteredTeachers = teachers;
 
     if (this.teacherFilterText().trim() !== '') {
       const searchText = this.teacherFilterText().toLowerCase().trim();
@@ -101,6 +104,15 @@ export class StopDetailsComponent implements OnInit {
     }
 
     return filteredTeachers;
+  }
+
+  // Filtered teachers assigned to the stop
+  filteredAssignedTeachers = computed(() => {
+    return this.applyTeacherFilters(this.teachersAssignedToStop());
+  });
+
+  teachersNotInStop = computed(() => {
+    return this.applyTeacherFilters(this.teachersAvailableForAssignment());
   });
 
   availableClasses = computed(() => {
@@ -108,9 +120,9 @@ export class StopDetailsComponent implements OnInit {
     return ['all', ...new Set(classes)].filter(Boolean);
   });
 
-  studentsNotInStop = computed(() => {
-    const wrongStudents = this.studentStore.getStudentsByStopId(this.stop().id);
-    let filteredStudents = this.studentStore.students().filter((student) => !wrongStudents.includes(student));
+  // Filter function to apply common filtering logic
+  private applyStudentFilters(students: any[]) {
+    let filteredStudents = students;
 
     if (this.selectedClass() !== 'all') {
       filteredStudents = filteredStudents.filter(student => student.studentClass === this.selectedClass());
@@ -126,6 +138,18 @@ export class StopDetailsComponent implements OnInit {
     }
 
     return filteredStudents;
+  }
+
+  // Filtered students assigned to the stop
+  filteredAssignedStudents = computed(() => {
+    const assignedStudents = this.studentStore.getStudentsByStopId(this.stop().id);
+    return this.applyStudentFilters(assignedStudents);
+  });
+
+  studentsNotInStop = computed(() => {
+    const wrongStudents = this.studentStore.getStudentsByStopId(this.stop().id);
+    let filteredStudents = this.studentStore.students().filter((student) => !wrongStudents.includes(student));
+    return this.applyStudentFilters(filteredStudents);
   });
 
   async ngOnInit() {
@@ -249,6 +273,7 @@ export class StopDetailsComponent implements OnInit {
   }
 
   async onStudentClick(edufsUsername: string) {
+    // Add the student to the stop
     const assignment = {
       studentId: edufsUsername,
       stopId: this.stop().id,
@@ -311,12 +336,16 @@ export class StopDetailsComponent implements OnInit {
   }
 
   onTeacherRemove(edufsUsername: string) {
-    this.selectTeacherToRemove(edufsUsername);
+    // Directly remove the teacher without showing the popup
+    this.teacherStore.removeStopFromTeacher(edufsUsername, this.stop().id);
   }
 
   onStudentRemove(edufsUsername: string) {
-    this.selectStudentToRemove(edufsUsername);
+    // Remove the student from the stop
+    this.studentStore.removeStopFromStudent(edufsUsername, this.stop().id);
   }
+
+  // No longer need to toggle badge position
 
   resetFilters() {
     this.selectedClass.set('all');
@@ -324,7 +353,32 @@ export class StopDetailsComponent implements OnInit {
     this.teacherFilterText.set('');
   }
 
+  getAssignmentStatus(student: Student): Status {
+    const assignment = student.studentAssignments.find(a => a.stopId === this.stop().id);
+    return assignment ? assignment.status : Status.Pending;
+  }
+
+  getStatusLabel(status: Status): string {
+    switch(status) {
+      case Status.Pending: return 'Pending';
+      case Status.Accepted: return 'Accepted';
+      case Status.Declined: return 'Declined';
+      default: return 'Unknown';
+    }
+  }
+
+  getStatusClass(status: Status): string {
+    switch(status) {
+      case Status.Pending: return 'bg-yellow-200 text-yellow-800';
+      case Status.Accepted: return 'bg-green-200 text-green-800';
+      case Status.Declined: return 'bg-red-200 text-red-800';
+      default: return '';
+    }
+  }
+
   async onTeacherClick(edufsUsername: string) {
     await this.teacherStore.addStopToTeacher(edufsUsername, this.stop().id);
   }
+
+  protected readonly Status = Status;
 }
