@@ -60,4 +60,20 @@ public class StudentManagementEndpoints
 
         return Results.Ok();
     }
+
+    public static async Task<IResult> DeleteStudentAssignment([FromRoute] string studentId, [FromRoute] int stopId, TadeoTDbContext context) 
+    {
+        var assignment = await context.StudentAssignments
+            .FirstOrDefaultAsync(sa => sa.StudentId == studentId && sa.StopId == stopId);
+
+        if (assignment == null)
+        {
+            return Results.NotFound($"No assignment found for StudentId '{studentId}' and StopId '{stopId}'.");
+        }
+
+        context.StudentAssignments.Remove(assignment);
+        await context.SaveChangesAsync();
+
+        return Results.Ok($"Assignment for StudentId '{studentId}' and StopId '{stopId}' has been deleted.");
+    }
 }

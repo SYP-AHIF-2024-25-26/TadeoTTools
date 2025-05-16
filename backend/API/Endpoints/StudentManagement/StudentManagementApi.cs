@@ -26,5 +26,12 @@ public static class StudentManagementApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+        
+        group.MapDelete("api/students/{studentId}/assignments/{stopId}", StudentManagementEndpoints.DeleteStudentAssignment)
+            .WithName(nameof(StudentManagementEndpoints.DeleteStudentAssignment))
+            .WithDescription("Delete a student assignment")
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
     }
 }
