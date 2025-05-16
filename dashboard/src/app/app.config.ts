@@ -21,7 +21,7 @@ import {
 } from "keycloak-angular";
 
 const authTokenCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
-  urlPattern: /^(http:\/\/localhost:5000)(\/.*)?$/i
+  urlPattern: environment.urlPattern
 });
 
 const keycloakProvider = provideKeycloak({
