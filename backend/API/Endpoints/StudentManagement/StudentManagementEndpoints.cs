@@ -39,7 +39,7 @@ public class StudentManagementEndpoints
 
         foreach (var studentId in duplicateStudents)
         {
-            var extraCount = rnd.Next(1, 3); // 1 oder 2 additional assignments
+            var extraCount = rnd.Next(1, 3); // 1 or 2 additional assignments
             for (var i = 0; i < extraCount; i++)
             {
                 duplicateAssignments.Add(new StudentAssignment
