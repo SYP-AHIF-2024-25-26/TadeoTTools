@@ -52,15 +52,12 @@ public static class FeedbackManagementEndpoints
     
     public static async Task<IResult> SaveFeedbackQuestions(UpsertFeedbackQuestionDto[] dtos, TadeoTDbContext context)
     {
-        // Get all IDs from the incoming DTOs
-        var incomingIds = dtos.Where(dto => dto.Id.HasValue).Select(dto => dto.Id.Value).ToList();
+        var incomingIds = dtos.Where(dto => dto.Id.HasValue).Select(dto => dto.Id!.Value).ToList();
 
-        // Find questions in the database that are not in the incoming IDs
         var questionsToDelete = await context.FeedbackQuestions
             .Where(q => !incomingIds.Contains(q.Id))
             .ToListAsync();
 
-        // Remove those questions
         context.FeedbackQuestions.RemoveRange(questionsToDelete);
 
         foreach (var dto in dtos)
@@ -85,8 +82,8 @@ public static class FeedbackManagementEndpoints
             .Include(f => f.FeedbackQuestion)
             .Select(f => new
             {
-                Question = f.FeedbackQuestion!.Question,
-                Answer = f.Answer
+                f.FeedbackQuestion!.Question,
+                f.Answer
             })
             .ToListAsync();
 
@@ -99,8 +96,8 @@ public static class FeedbackManagementEndpoints
         // Add data rows
         foreach (var item in feedbackAnswers)
         {
-            string escapedQuestion = EscapeCsvField(item.Question);
-            string escapedAnswer = EscapeCsvField(item.Answer);
+            var escapedQuestion = EscapeCsvField(item.Question);
+            var escapedAnswer = EscapeCsvField(item.Answer);
         
             csvBuilder.AppendLine($"{escapedQuestion};{escapedAnswer}");
         }
