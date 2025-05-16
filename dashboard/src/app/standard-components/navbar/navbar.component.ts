@@ -15,6 +15,7 @@ export class NavbarComponent {
   private readonly service = inject(LoginService);
   protected isAdmin = signal(false);
   isDarkMode = signal(false);
+  mobileMenuOpen = signal(false);
 
   async logout() {
     await this.keycloak.logout({ redirectUri: window.location.origin + '/login' });
