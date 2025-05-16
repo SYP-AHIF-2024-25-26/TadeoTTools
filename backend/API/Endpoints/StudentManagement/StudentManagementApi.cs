@@ -18,7 +18,14 @@ public static class StudentManagementApi
             .WithDescription("Update a student")
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
+
+        group.MapPost("api/students/assignments/generate", StudentManagementEndpoints.GenerateRandomAssignments)
+            .WithName(nameof(StudentManagementEndpoints.GenerateRandomAssignments))
+            .WithDescription("Generate random assignments for students")
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status200OK);
+            //.RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPut("api/students/{id}/assignments", StudentManagementEndpoints.SetStudentAssignments)
             .WithName(nameof(StudentManagementEndpoints.SetStudentAssignments))
