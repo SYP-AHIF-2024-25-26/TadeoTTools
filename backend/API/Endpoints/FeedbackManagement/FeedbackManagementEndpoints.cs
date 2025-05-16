@@ -1,3 +1,4 @@
+using System.Text;
 using Database.Entities;
 using Database.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -76,6 +77,55 @@ public static class FeedbackManagementEndpoints
 
         await context.SaveChangesAsync();
         return Results.Ok();
+    }
+
+    public static async Task<IResult> GetFeedbackAnswersCsv(TadeoTDbContext context)
+    {
+        var feedbackAnswers = await context.FeedbackQuestionAnswers
+            .Include(f => f.FeedbackQuestion)
+            .Select(f => new
+            {
+                Question = f.FeedbackQuestion!.Question,
+                Answer = f.Answer
+            })
+            .ToListAsync();
+
+        // Create CSV content
+        var csvBuilder = new StringBuilder();
+    
+        // Add headers
+        csvBuilder.AppendLine("Question;Answer");
+    
+        // Add data rows
+        foreach (var item in feedbackAnswers)
+        {
+            string escapedQuestion = EscapeCsvField(item.Question);
+            string escapedAnswer = EscapeCsvField(item.Answer);
+        
+            csvBuilder.AppendLine($"{escapedQuestion};{escapedAnswer}");
+        }
+    
+        byte[] csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+    
+        return Results.File(
+            fileContents: csvBytes,
+            contentType: "text/csv",
+            fileDownloadName: "feedback_answers.csv"
+        );
+    }
+
+    private static string EscapeCsvField(string field)
+    {
+        if (string.IsNullOrEmpty(field))
+            return "";
+    
+        // If the field contains commas, quotes, or newlines, wrap it in quotes and double any quotes
+        if (field.Contains(";") || field.Contains("\"") || field.Contains("\n"))
+        {
+            return $"\"{field.Replace("\"", "\"\"")}\"";
+        }
+    
+        return field;
     }
     
     private static async Task UpdateFeedbackQuestion(UpsertFeedbackQuestionDto dto, TadeoTDbContext context)

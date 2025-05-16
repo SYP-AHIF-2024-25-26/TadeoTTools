@@ -319,4 +319,30 @@ export class FeedbackConfiguratorComponent implements OnInit {
       }));
     });
   }
+
+  async downloadQuestionAnswers() {
+    try {
+      // Get the file blob from the service
+      const blob = await this.feedbackService.getFeedbackQuestionAnswersFile();
+
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary anchor element
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'feedback_answers.csv'; // Match the name from your backend
+
+      // Append to body, click, and clean up
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Failed to download file:', error);
+      alert('Failed to download feedback answers');
+    }
+  }
 }
