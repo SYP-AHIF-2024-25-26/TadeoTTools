@@ -7,6 +7,7 @@ import { BASE_URL } from '../app.config';
   imports: [],
   templateUrl: './description-container.component.html',
   styleUrl: './description-container.component.css',
+  standalone: true,
 })
 export class DescriptionContainerComponent {
   @Input({ required: true }) title!: string;

@@ -24,7 +24,7 @@ export class ApiFetchService {
   }
 
   public async getAllFeedbackQuestions(): Promise<FeedbackQuestion[]> {
-    return (await firstValueFrom(this.http.get<FeedbackQuestion[]>(this.baseURL + '/v1/feedback-questions')));
+    return firstValueFrom(this.http.get<FeedbackQuestion[]>(this.baseURL + '/v1/feedback-questions'));
   }
 
   public async submitFeedback(feedbackSubmissions: FeedbackSubmission[]) {

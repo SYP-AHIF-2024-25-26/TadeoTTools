@@ -15,6 +15,7 @@ import { CURRENT_STOP_GROUP_PREFIX, CURRENT_STOP_PREFIX, STOP_GROUP_PROGRESS_PRE
   imports: [HeaderComponent, NavbarComponent, BreadcrumbComponent, StopCardComponent, NgClass, DescriptionContainerComponent],
   templateUrl: './stop-page.component.html',
   styleUrl: './stop-page.component.css',
+  standalone: true,
 })
 export class StopPageComponent {
   protected apiFetchService = inject(ApiFetchService);

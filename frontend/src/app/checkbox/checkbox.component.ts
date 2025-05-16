@@ -8,6 +8,7 @@ import { GUIDE_CARD_PREFIX, MANUAL_CHECK_PREFIX } from '../constants';
   imports: [FormsModule, NgClass, NgIf],
   templateUrl: './checkbox.component.html',
   styleUrl: './checkbox.component.css',
+  standalone: true,
 })
 export class CheckboxComponent {
   @Input() id!: string;
