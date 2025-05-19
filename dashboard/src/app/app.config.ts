@@ -20,8 +20,10 @@ import {
   withAutoRefreshToken
 } from "keycloak-angular";
 
+const escapedBaseUrl = environment.apiBaseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special characters
+const urlPattern = new RegExp(`^(${escapedBaseUrl})(\\/.*)?$`, 'i');
 const authTokenCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
-  urlPattern: environment.urlPattern
+  urlPattern: urlPattern
 });
 
 const keycloakProvider = provideKeycloak({
