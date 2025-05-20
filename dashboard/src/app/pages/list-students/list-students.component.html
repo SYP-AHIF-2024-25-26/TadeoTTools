@@ -25,7 +25,7 @@
     <div
       class="collapse-title bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
     >
-      <h3 class="mb-2 text-lg font-semibold">Conflicts (Multiple Pending Assignments)</h3>
+      <h3 class="mb-2 text-lg font-semibold">Conflicts (Multiple Pending Requests)</h3>
     </div>
     <div
       class="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
@@ -65,7 +65,7 @@
         </div>
       </div>
 
-      <div class="overflow-x-auto w-auto mx-20 table-zebra table-lg rounded-box border border-base-content/5 bg-base-100 block max-h-[100] overflow-y-scroll">
+      <div class="mx-20 w-auto overflow-x-auto table-zebra rounded-box border border-base-content/5 bg-base-100 max-h-[400px] overflow-y-scroll">
         <table class="table">
           <!-- head -->
           <thead>
@@ -93,7 +93,7 @@
                 <td>{{ student.department }}</td>
                 <td>
                   <button class="btn btn-sm btn-primary" (click)="showConflictDetails(student)">
-                    View Assignments
+                    View Requests
                   </button>
                 </td>
               </tr>
@@ -110,7 +110,7 @@
     <div
       class="collapse-title bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
     >
-      <h3 class="text-lg font-semibold">Single Assignments</h3>
+      <h3 class="text-lg font-semibold">Single Requests</h3>
     </div>
     <div
       class="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
@@ -153,7 +153,7 @@
 
       </div>
 
-      <div class="overflow-x-auto w-auto mx-20 table-zebra table-lg rounded-box border border-base-content/5 bg-base-100 block max-h-[100] overflow-y-scroll">
+      <div class="overflow-x-auto w-auto mx-20 table-zebra table-lg rounded-box border border-base-content/5 bg-base-100 block max-h-[400px] overflow-y-scroll">
         <table class="table">
           <!-- head -->
           <thead>
@@ -165,6 +165,7 @@
             <th>Department</th>
             <th>Assignment</th>
             <th>Action</th>
+            <th>Delete</th>
           </tr>
           </thead>
           <tbody>
@@ -195,6 +196,11 @@
                       </button>
                     }
                   </td>
+                  <td>
+                    <button class="btn btn-sm btn-error" (click)="deleteAssignment(student, 0)">
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               }
             }
@@ -209,7 +215,7 @@
       <div
         class="collapse-title bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
       >
-        <h3 class="text-lg font-semibold">No Assignments</h3>
+        <h3 class="text-lg font-semibold">No Requests</h3>
       </div>
       <div
         class="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
@@ -237,7 +243,7 @@
           </div>
         </div>
 
-        <div class="overflow-x-auto w-auto mx-20 table-zebra table-lg rounded-box border border-base-content/5 bg-base-100 block max-h-[100] overflow-y-scroll">
+        <div class="overflow-x-auto w-auto mx-20 table-zebra table-lg rounded-box border border-base-content/5 bg-base-100 block max-h-[400px] overflow-y-scroll">
           <table class="table">
             <!-- head -->
             <thead>
@@ -252,7 +258,7 @@
             <tbody>
               @if(noAssignments().length === 0) {
                 <tr>
-                  <td colspan="5" class="text-center">No students without assignments found</td>
+                  <td colspan="5" class="text-center">No students without requests found</td>
                 </tr>
               } @else {
                 @for (student of noAssignments(); track $index) {
@@ -276,7 +282,7 @@
       <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[80vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-xl font-bold">
-            Assignment Details for {{ selectedStudent()!.firstName }} {{ selectedStudent()!.lastName }}
+            Request Details for {{ selectedStudent()!.firstName }} {{ selectedStudent()!.lastName }}
           </h3>
           <button class="btn btn-sm btn-circle" (click)="closeConflictDetails()">✕</button>
         </div>
@@ -287,7 +293,8 @@
               <tr>
                 <th>Stop Name</th>
                 <th>Status</th>
-                <th>Actions</th>
+                <th>Action</th>
+                <th>Delete</th>
               </tr>
             </thead>
             <tbody>
@@ -310,6 +317,11 @@
                         Undo
                       </button>
                     }
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-error" (click)="deleteAssignment(selectedStudent()!, $index)">
+                      Delete
+                    </button>
                   </td>
                 </tr>
               }
