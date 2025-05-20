@@ -29,7 +29,7 @@ public static class TeacherManagementEndpoints
         return Results.Ok();
     }
     
-    public static async Task<IResult> UploadCsvFile([FromForm] UploadCsvFileDto file, TadeoTDbContext context)
+    public static async Task<IResult> UploadCsvFile([FromForm] UploadTeacherCsvFileDto file, TadeoTDbContext context)
     {
         if (file.File.Length <= 0) return Results.BadRequest("File upload failed");
         try
@@ -47,5 +47,5 @@ public static class TeacherManagementEndpoints
         }
     }
     
-    public record UploadCsvFileDto(IFormFile File);
+    public record UploadTeacherCsvFileDto(IFormFile File);
 }

@@ -105,7 +105,7 @@ public class StudentManagementEndpoints
         return Results.Ok();
     }
 
-    public static async Task<IResult> UploadCsvFile([FromForm] UploadCsvFileDto file, TadeoTDbContext context)
+    public static async Task<IResult> UploadCsvFile([FromForm] UploadStudentCsvFileDto file, TadeoTDbContext context)
     {
         if (file.File.Length <= 0) return Results.BadRequest("File upload failed");
         try
@@ -124,7 +124,7 @@ public class StudentManagementEndpoints
         
     }
     
-    public record UploadCsvFileDto(IFormFile File);
+    public record UploadStudentCsvFileDto(IFormFile File);
     public static async Task<IResult> DeleteStudentAssignment([FromRoute] string studentId, [FromRoute] int stopId, TadeoTDbContext context) 
     {
         var assignment = await context.StudentAssignments
