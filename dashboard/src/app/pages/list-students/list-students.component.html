@@ -1,5 +1,24 @@
 <div class="m-4 flex flex-col items-center text-text-950">
-  <h2 class="my-6 text-2xl font-bold">Student Conflict Manager</h2>
+  <h2 class="my-6 text-2xl font-bold self-center">Student Conflict Manager</h2>
+
+  <div class="flex gap-x-4 mb-4 self-start">
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend text-lg font-bold">Import Student Csv</legend>
+      <input
+        type="file"
+        class="file-input file-input-primary file-input-sm"
+        accept=".csv"
+        (change)="onFileSelected($event)"
+      />
+    </fieldset>
+    <button
+      class="btn btn-primary btn-sm self-end px-4"
+      (click)="submitStudentsCsv()"
+      [disabled]="!selectedFile"
+    >
+      Import
+    </button>
+  </div>
 
   <div class="bg-base-100 border-base-300 collapse collapse-arrow border mt-8">
     <input type="checkbox" class="peer" />

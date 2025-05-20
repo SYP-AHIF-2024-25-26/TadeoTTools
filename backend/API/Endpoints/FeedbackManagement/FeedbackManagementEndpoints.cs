@@ -102,7 +102,7 @@ public static class FeedbackManagementEndpoints
             csvBuilder.AppendLine($"{escapedQuestion};{escapedAnswer}");
         }
     
-        byte[] csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
     
         return Results.File(
             fileContents: csvBytes,

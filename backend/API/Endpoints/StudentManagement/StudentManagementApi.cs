@@ -26,5 +26,8 @@ public static class StudentManagementApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+
+        group.MapPost("api/students/upload", StudentManagementEndpoints.UploadCsvFile)
+            .DisableAntiforgery();
     }
 }
