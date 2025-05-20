@@ -13,8 +13,6 @@ declare global {
   }
 }
 
-console.log("backendURL: " + window.__env?.backendURL);
-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideExperimentalZonelessChangeDetection(),

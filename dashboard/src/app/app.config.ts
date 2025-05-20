@@ -32,9 +32,11 @@ declare global {
     __env: any;
   }
 }
-
-const escapedBaseUrl = environment.apiBaseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special characters
+const baseUrl = environment.production && window.__env?.backendURL ? window.__env.backendURL : environment.apiBaseUrl;
+const escapedBaseUrl = baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special characters
 const urlPattern = new RegExp(`^(${escapedBaseUrl})(\\/.*)?$`, 'i');
+console.log("urlPattern: " + urlPattern);
+
 const authTokenCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
   urlPattern: urlPattern,
 });
@@ -79,7 +81,7 @@ export const appConfig: ApplicationConfig = {
     { 
       provide: BASE_URL, 
       useFactory: () => {
-        return environment.production && window.__env?.backendURL ? window.__env.backendURL : environment.apiBaseUrl;
+        return baseUrl;
       }
     },
     provideRouter(routes),

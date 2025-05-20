@@ -1,8 +1,6 @@
 services:
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: haasluca/tadeot-frontend:latest
     container_name: tadeot-frontend
     ports:
       - "4300:80"
@@ -14,9 +12,7 @@ services:
       - backend
 
   dashboard:
-    build:
-      context: ./dashboard
-      dockerfile: Dockerfile
+    image: haasluca/tadeot-dashboard:latest
     container_name: tadeot-dashboard
     ports:
       - "4200:80"
@@ -28,9 +24,7 @@ services:
       - backend
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: haasluca/tadeot-backend:latest
     container_name: tadeot-backend
     ports:
       - "5001:5000"
