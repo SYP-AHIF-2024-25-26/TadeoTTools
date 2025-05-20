@@ -82,4 +82,3 @@ export type StopsShownInStopGroup = {
   stopGroupId: number;
   isShown: boolean;
 };
-

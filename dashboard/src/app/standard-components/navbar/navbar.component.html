@@ -1,27 +1,69 @@
-<div class="sticky">
-  <nav class="flex items-center space-x-10 bg-background-200 p-2 text-text-900">
-    <div class="flex w-full justify-start space-x-10">
-      <div class="text-lg">Admin Dashboard</div>
+<div class="sticky top-0 z-50 bg-background-200 shadow">
+  <nav class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-text-900">
+    
+    <div class="text-lg font-semibold">Admin Dashboard</div>
+
+    <!-- Hamburger (mobile only) -->
+    <button
+      class="md:hidden inline-flex items-center justify-center rounded p-2 text-text-900 hover:bg-background-300 focus:outline-none"
+      (click)="mobileMenuOpen.set(!mobileMenuOpen())"
+    >
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          [attr.d]="mobileMenuOpen() ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        />
+      </svg>
+    </button>
+
+    <!-- Nav Links (desktop) -->
+    <div class="hidden md:flex md:items-center md:justify-start space-x-4">
       @if (isAdmin()) {
-        <button class="justify-start" [routerLink]="['/overview']">Overview</button>
-        <button [routerLink]="['/students']">Students</button>
-        <button [routerLink]="['/stopgroups']">StopGroups</button>
-        <button [routerLink]="['/stops']">Stops</button>
-        <button [routerLink]="['/divisions']">Divisions</button>
-        <button [routerLink]="['/feedback']">Feedback</button>
+        <button class="px-3 py-2" [routerLink]="['/overview']">Overview</button>
+        <button class="px-3 py-2" [routerLink]="['/students']">Students</button>
+        <button class="px-3 py-2" [routerLink]="['/stopgroups']">StopGroups</button>
+        <button class="px-3 py-2" [routerLink]="['/stops']">Stops</button>
+        <button class="px-3 py-2" [routerLink]="['/divisions']">Divisions</button>
+        <button class="px-3 py-2" [routerLink]="['/feedback']">Feedback</button>
       }
     </div>
-    <label class="inline-flex cursor-pointer items-center">
-      <input type="checkbox" value="" class="peer sr-only" (click)="changeDarkMode()" />
-      <div
-        class="peer relative h-6 w-11 rounded-full bg-background-300 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-background-50 after:transition-all after:content-[''] peer-checked:bg-background-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-background-300 rtl:peer-checked:after:-translate-x-full"
-      ></div>
-      <span class="ms-3">Dark</span>
-    </label>
-    @if (!isAdmin()) {
-      <button (click)="logout()" class="justify-start">Logout</button>
-    } @else {
-      <app-admin-dropdown />
-    }
+
+    <div class="flex items-center space-x-4">
+      <label class="inline-flex cursor-pointer items-center">
+        <input
+          type="checkbox"
+          class="peer sr-only"
+          (click)="changeDarkMode()"
+        />
+        <div
+          class="peer relative h-6 w-11 rounded-full bg-background-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-background-50 after:transition-all after:content-[''] peer-checked:bg-background-600 peer-checked:after:translate-x-full peer-checked:after:border-white"
+        ></div>
+        <span class="ms-2">Dark</span>
+      </label>
+
+      <!-- Admin/User Logic -->
+      @if (!isAdmin()) {
+        <button (click)="logout()">Logout</button>
+      } @else {
+        <app-admin-dropdown></app-admin-dropdown>
+      }
+    </div>
+
+    <!-- Mobile Menu -->
+     @if(mobileMenuOpen()) {
+      <div class="mt-4 flex w-full flex-col space-y-2 md:hidden">
+        @if (isAdmin()) {
+          <button class="px-3 py-2 text-left" [routerLink]="['/overview']">Overview</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/students']">Students</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/stopgroups']">StopGroups</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/stops']">Stops</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/divisions']">Divisions</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/feedback']">Feedback</button>
+        }
+      </div>
+     }
+
   </nav>
 </div>
