@@ -15,7 +15,10 @@ export class LoginService {
   response = signal<string | null>(null);
   showResponse = computed(() => this.response() !== null);
 
-  constructor() {}
+  constructor() {
+    console.log("everyone-allowed");
+    this.performCall('everyone-allowed');
+  }
 
   public async performCall(action: string): Promise<string> {
     try {
@@ -29,13 +32,15 @@ export class LoginService {
       );
 
       // Only show success message if there was no error
-      if (!result.includes('Backend says no')) {
+      if (!result.includes('Backend says no') && action === 'at-least-student') {
         this.infoStore.addInfo({ id: 0, type: 'info', message: 'Login successful' });
       }
 
       return result;
     } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Login error' });
+      if (action === 'at-least-student') {
+        this.infoStore.addInfo({ id: 0, type: 'error', message: 'Login error' });
+      }
       throw error;
     }
   }

@@ -47,7 +47,9 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/assets",
+              "src/assets/env.js"
             ],
             "styles": ["src/styles.css"],
             "scripts": []
