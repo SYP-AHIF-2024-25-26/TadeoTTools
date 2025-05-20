@@ -1,0 +1,56 @@
+<h1 class="font-bold text-3xl mt-8 text-center">Data Importing and Exporting</h1>
+<div class="flex justify-evenly">
+  <div class="flex flex-col gap-x-4 mb-4 mt-4">
+    <h1 class="font-bold text-3xl mb-4">Imports</h1>
+    <div class="flex gap-x-4 mb-4 self-start">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend text-lg font-bold">Import Student Csv</legend>
+        <input
+          type="file"
+          class="file-input file-input-primary file-input-sm"
+          accept=".csv"
+          (change)="onStudentFileSelected($event)"
+        />
+      </fieldset>
+      <button
+        class="btn btn-primary btn-sm self-end px-4"
+        (click)="submitStudentsCsv()"
+        [disabled]="!selectedStudentFile"
+      >
+        Import
+      </button>
+    </div>
+    <div class="flex gap-x-4 mb-4 self-start">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend text-lg font-bold">Import Teacher Csv</legend>
+        <input
+          type="file"
+          class="file-input file-input-primary file-input-sm"
+          accept=".csv"
+          (change)="onTeacherFileSelected($event)"
+        />
+      </fieldset>
+      <button
+        class="btn btn-primary btn-sm self-end px-4"
+        (click)="submitTeachersCsv()"
+        [disabled]="!selectedTeacherFile"
+      >
+        Import
+      </button>
+    </div>
+  </div>
+  <div class="flex flex-col gap-x-4 mb-4 mt-4">
+    <h1 class="font-bold text-3xl mb-4">Exports</h1>
+    <button
+      (click)="downloadQuestionAnswers()"
+      class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-md text-gray-700 flex items-center w-fit"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+      </svg>
+      Download Feedback Answers
+    </button>
+  </div>
+</div>
+
+

@@ -55,7 +55,7 @@ public class StudentFunctions
         if (lines.Length > 0)
         {
             var header = lines[0].Split(';');
-            if (header.Length != 5 || header[0] != "EdufsUsername" || header[1] != "FirstName" || header[2] != "LastName" || header[3] != "StudentClass" || header[4] != "Department")
+            if (header is not ["EdufsUsername", "FirstName", "LastName", "StudentClass", "Department"])
             {
                 throw new ArgumentException("Invalid CSV format" +
                                             "Valid format: EdufsUsername;FirstName;LastName;StudentClass;Department");

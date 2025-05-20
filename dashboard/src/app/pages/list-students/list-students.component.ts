@@ -13,10 +13,6 @@ import { StudentService } from '../../student.service';
 })
 export class ListStudentsComponent {
   private studentStore = inject(StudentStore);
-  private studentService = inject(StudentService);
-
-  // Property to store the selected CSV file
-  selectedFile: WritableSignal<File | null> = signal(null);
 
   // Filter and search state
   conflictsClassFilter = signal<string>('');
@@ -207,29 +203,5 @@ export class ListStudentsComponent {
 
   async undoSingleAssignment(student: Student) {
     await this.changeAssignmentStatus(student, 0, Status.Pending);
-  }
-
-  // Handle file selection
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedFile.set(input.files[0]);
-    }
-  }
-
-  // Submit the CSV file to the backend
-  async submitStudentsCsv(): Promise<void> {
-    if (!this.selectedFile) {
-      alert('Please select a CSV file first');
-      return;
-    }
-
-    try {
-      await this.studentService.uploadStudentsCsv(this.selectedFile() as File);
-      // Refresh the student list after successful upload
-      location.reload();
-    } catch (error) {
-      console.error('Error uploading CSV:', error);
-    }
   }
 }
