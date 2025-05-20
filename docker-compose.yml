@@ -1,0 +1,73 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tadeot-frontend
+    ports:
+      - "4300:80"
+    environment:
+      - BACKEND_URL=http://localhost:5001/v1
+    networks:
+      - tadeotnet
+    depends_on:
+      - backend
+
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: tadeot-dashboard
+    ports:
+      - "4200:80"
+    environment:
+      - BACKEND_URL=http://localhost:5001/v1
+    networks:
+      - tadeotnet
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tadeot-backend
+    ports:
+      - "5001:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=mysql;Database=tadeot;User=user;Password=test;
+      - ASPNETCORE_URLS=http://+:5000
+    networks:
+      - tadeotnet
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:latest
+    container_name: tadeot-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_DATABASE=tadeot
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=test
+    volumes:
+      - tadeot-data:/var/lib/mysql
+    networks:
+      - tadeotnet
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  tadeot-data:
+
+networks:
+  tadeotnet:
+    name: tadeotnet
