@@ -11,7 +11,8 @@ import { HeaderComponent } from '../header/header.component';
     HeaderComponent,
   ],
   templateUrl: './feedback.component.html',
-  styleUrl: './feedback.component.css'
+  standalone: true,
+  styleUrl: './feedback.component.css',
 })
 export class FeedbackComponent implements OnInit{
   feedbackForm!: FormGroup

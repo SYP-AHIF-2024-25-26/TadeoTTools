@@ -132,6 +132,11 @@ export class ListStudentsComponent {
     return filtered;
   });
 
+  async deleteAssignment(student: Student, index: number) {
+    student.studentAssignments.splice(index, 1);
+    return this.studentStore.updateStudent(student);
+  }
+
   async changeAssignmentStatus(student: Student, index: number, status: Status) {
     student.studentAssignments[index].status = status;
     await this.studentStore.updateStudent(student);

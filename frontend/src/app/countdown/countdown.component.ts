@@ -14,6 +14,7 @@ type TimeLeft = {
   imports: [CountdownUnitComponent],
   templateUrl: './countdown.component.html',
   styleUrl: './countdown.component.css',
+  standalone: true,
 })
 export class CountdownComponent implements OnInit, OnDestroy {
   @Input() targetDate!: Date;
