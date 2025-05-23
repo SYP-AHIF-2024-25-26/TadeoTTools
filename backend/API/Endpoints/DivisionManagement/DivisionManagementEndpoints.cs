@@ -1,7 +1,9 @@
+using System.Text;
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints.DivisionManagement;
 
@@ -74,6 +76,37 @@ public static class DivisionManagementEndpoints
         await context.SaveChangesAsync();
         return Results.Ok();
     }
+    
+    
+    public static async Task<IResult> GetDivisionsCsv(TadeoTDbContext context)
+    {
+        var divisions = await context.Divisions.Include(d => d.Stops).ToListAsync();
+        
+        // Create CSV content
+        var csvBuilder = new StringBuilder();
+    
+        // Add headers
+        csvBuilder.AppendLine("Id;Name;Color;Stops;Image");
+        
+        // Add data rows
+        foreach (var item in divisions)
+        {
+            var escapedId = Utils.EscapeCsvField(item.Id.ToString()); // for assignments in stop export
+            var escapedName = Utils.EscapeCsvField(item.Name);
+            var escapedColor = Utils.EscapeCsvField(item.Color);
+            var escapedStops = Utils.EscapeCsvField(string.Join(",", item.Stops.Select(s => s.Id)));
+            var escapedImage = Utils.EscapeCsvField(item.Image?.ToString() ?? string.Empty);
+            csvBuilder.AppendLine($"{escapedId};{escapedName};{escapedColor};{escapedStops};{escapedImage}");
+        }
+    
+        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+    
+        return Results.File(
+            fileContents: csvBytes,
+            contentType: "text/csv",
+            fileDownloadName: "stops-export.csv"
+        );
+    }    
     
     public record AddDivisionDto(string Name, string Color);
     public record UpdateDivisionDto(int Id, string Name, string Color);

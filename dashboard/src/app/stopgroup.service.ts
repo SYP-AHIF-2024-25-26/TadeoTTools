@@ -64,4 +64,10 @@ export class StopGroupService {
       throw error;
     }
   }
+
+  async getStopGroupDataFile(): Promise<Blob> {
+    return firstValueFrom(this.httpClient.get(this.baseUrl + '/api/groups/csv', {
+      responseType: 'blob'
+    }));
+  }
 }
