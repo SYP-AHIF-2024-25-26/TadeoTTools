@@ -72,4 +72,10 @@ export class StopService {
       throw error;
     }
   }
+
+  async getStopDataFile(): Promise<Blob> {
+    return firstValueFrom(this.httpClient.get(this.baseUrl + '/api/stops/csv', {
+      responseType: 'blob'
+    }));
+  }
 }
