@@ -96,8 +96,8 @@ public static class FeedbackManagementEndpoints
         // Add data rows
         foreach (var item in feedbackAnswers)
         {
-            var escapedQuestion = EscapeCsvField(item.Question);
-            var escapedAnswer = EscapeCsvField(item.Answer);
+            var escapedQuestion = Utils.EscapeCsvField(item.Question);
+            var escapedAnswer = Utils.EscapeCsvField(item.Answer);
         
             csvBuilder.AppendLine($"{escapedQuestion};{escapedAnswer}");
         }
@@ -109,20 +109,6 @@ public static class FeedbackManagementEndpoints
             contentType: "text/csv",
             fileDownloadName: "feedback_answers.csv"
         );
-    }
-
-    private static string EscapeCsvField(string field)
-    {
-        if (string.IsNullOrEmpty(field))
-            return "";
-    
-        // If the field contains commas, quotes, or newlines, wrap it in quotes and double any quotes
-        if (field.Contains(";") || field.Contains("\"") || field.Contains("\n"))
-        {
-            return $"\"{field.Replace("\"", "\"\"")}\"";
-        }
-    
-        return field;
     }
     
     private static async Task UpdateFeedbackQuestion(UpsertFeedbackQuestionDto dto, TadeoTDbContext context)

@@ -1,3 +1,4 @@
+using System.Text;
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
@@ -150,6 +151,40 @@ public static class StopManagementEndpoints
         context.Stops.Remove(stop!);
         await context.SaveChangesAsync();
         return Results.Ok();
+    }
+
+    public static async Task<IResult> GetStopsCsv(TadeoTDbContext context)
+    {
+        var stops = await context.Stops
+            .Include(stop => stop.Divisions)
+            .Include(stop => stop.StopGroupAssignments)
+            .ToListAsync();
+        
+        // Create CSV content
+        var csvBuilder = new StringBuilder();
+    
+        // Add headers
+        csvBuilder.AppendLine("Id;Name;Description;RoomNr;StopGroups;Divisions");
+    
+        // Add data rows
+        foreach (var item in stops)
+        {
+            var escapedId = Utils.EscapeCsvField(item.Id.ToString()); // for assignments in stopgroup export
+            var escapedName = Utils.EscapeCsvField(item.Name);
+            var escapedDescription = Utils.EscapeCsvField(item.Description);
+            var escapedRoomNr = Utils.EscapeCsvField(item.RoomNr);
+            var escapedDivisions = Utils.EscapeCsvField(string.Join(",", item.Divisions.Select(d => d.Id)));;
+            var escapedStopGroupIds = Utils.EscapeCsvField(string.Join(",", item.StopGroupAssignments.Select(a => a.StopGroupId)));
+            csvBuilder.AppendLine($"{escapedId};{escapedName};{escapedDescription};{escapedRoomNr};{escapedStopGroupIds};{escapedDivisions}");
+        }
+    
+        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+    
+        return Results.File(
+            fileContents: csvBytes,
+            contentType: "text/csv",
+            fileDownloadName: "stops-export.csv"
+        );
     }
 
     public record UpdateStopRequestDto(

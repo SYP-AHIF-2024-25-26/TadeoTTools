@@ -52,5 +52,12 @@ public static class StopManagementApi
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
+
+        group.MapGet("api/stops/csv", StopManagementEndpoints.GetStopsCsv)
+            .WithName(nameof(StopManagementEndpoints.GetStopsCsv))
+            .WithDescription("Get all stops in a csv file")
+            .Produces(StatusCodes.Status206PartialContent)
+            .Produces(StatusCodes.Status416RangeNotSatisfiable)
+            .RequireAuthorization(Setup.AdminPolicyName);
     }
 }
