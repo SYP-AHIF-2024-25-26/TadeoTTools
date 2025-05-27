@@ -1,3 +1,4 @@
+using System.Text;
 using Database.Entities;
 using Database.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -51,15 +52,12 @@ public static class FeedbackManagementEndpoints
     
     public static async Task<IResult> SaveFeedbackQuestions(UpsertFeedbackQuestionDto[] dtos, TadeoTDbContext context)
     {
-        // Get all IDs from the incoming DTOs
-        var incomingIds = dtos.Where(dto => dto.Id.HasValue).Select(dto => dto.Id.Value).ToList();
+        var incomingIds = dtos.Where(dto => dto.Id.HasValue).Select(dto => dto.Id!.Value).ToList();
 
-        // Find questions in the database that are not in the incoming IDs
         var questionsToDelete = await context.FeedbackQuestions
             .Where(q => !incomingIds.Contains(q.Id))
             .ToListAsync();
 
-        // Remove those questions
         context.FeedbackQuestions.RemoveRange(questionsToDelete);
 
         foreach (var dto in dtos)
@@ -76,6 +74,41 @@ public static class FeedbackManagementEndpoints
 
         await context.SaveChangesAsync();
         return Results.Ok();
+    }
+
+    public static async Task<IResult> GetFeedbackAnswersCsv(TadeoTDbContext context)
+    {
+        var feedbackAnswers = await context.FeedbackQuestionAnswers
+            .Include(f => f.FeedbackQuestion)
+            .Select(f => new
+            {
+                f.FeedbackQuestion!.Question,
+                f.Answer
+            })
+            .ToListAsync();
+
+        // Create CSV content
+        var csvBuilder = new StringBuilder();
+    
+        // Add headers
+        csvBuilder.AppendLine("Question;Answer");
+    
+        // Add data rows
+        foreach (var item in feedbackAnswers)
+        {
+            var escapedQuestion = Utils.EscapeCsvField(item.Question);
+            var escapedAnswer = Utils.EscapeCsvField(item.Answer);
+        
+            csvBuilder.AppendLine($"{escapedQuestion};{escapedAnswer}");
+        }
+    
+        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+    
+        return Results.File(
+            fileContents: csvBytes,
+            contentType: "text/csv",
+            fileDownloadName: "feedback_answers.csv"
+        );
     }
     
     private static async Task UpdateFeedbackQuestion(UpsertFeedbackQuestionDto dto, TadeoTDbContext context)

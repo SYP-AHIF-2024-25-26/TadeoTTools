@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
   imports: [CommonModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
+  standalone: true,
 })
 export class NavbarComponent {
   protected router = inject(Router);

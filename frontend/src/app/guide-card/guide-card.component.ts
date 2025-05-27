@@ -10,6 +10,7 @@ import { GUIDE_CARD_PREFIX, MANUAL_CHECK_PREFIX, STOP_GROUP_PROGRESS_PREFIX, STO
   imports: [CheckboxComponent, CommonModule],
   templateUrl: './guide-card.component.html',
   styleUrl: './guide-card.component.css',
+  standalone: true,
 })
 export class GuideCardComponent {
   @Input() stopGroup!: StopGroup;

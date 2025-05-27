@@ -12,6 +12,7 @@ import { CURRENT_STOP_GROUP_PREFIX } from '../constants';
   imports: [NavbarComponent, HeaderComponent, GuideCardComponent],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.css',
+  standalone: true,
 })
 export class MainPageComponent {
   private apiFetchService = inject(ApiFetchService);

@@ -4,12 +4,12 @@
     <header class="mb-8">
       <div class="flex items-center justify-between">
         <div class="flex items-center">
-          <h1 class="text-2xl font-bold text-text-950">Feedback Configurator</h1>
+          <h1 class="text-2xl font-bold text-text-950">Feedback</h1>
         </div>
         <div class="flex flex-row space-x-4">
           <button
             (click)="togglePreview()"
-            class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-md text-gray-700 mr-2 flex items-center"
+            class="px-4 py-2 bg-secondary-200 hover:bg-secondary-300 rounded-md text-text-950 mr-2 flex items-center"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -28,26 +28,26 @@
           </button>
         </div>
       </div>
-      <div class="mt-6 bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Feedback Form Configuration</h2>
-        <div class="flex items-center space-x-4">
+      <div class="mt-6 bg-background-100 text-text-950 rounded-lg p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400">
+        <h2 class="text-xl font-semibold mb-4">Feedback Form Configuration</h2>
+        <div class="flex items-center space-x-4 text-text-900">
           <div class="flex-1">
-            <label for="formTitle" class="block text-sm font-medium text-gray-700 mb-1">Form Title</label>
+            <label for="formTitle" class="block text-sm font-medium mb-1">Form Title</label>
             <input
               type="text"
               id="formTitle"
               [ngModel]="formTitle()" (ngModelChange)="formTitle.set($event)"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
+              class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
               placeholder="Enter form title"
             >
           </div>
           <div class="flex-1">
-            <label for="formSubtitle" class="block text-sm font-medium text-gray-700 mb-1">Form Subtitle</label>
+            <label for="formSubtitle" class="block text-sm font-medium text-text-900 mb-1">Form Subtitle</label>
             <input
               type="text"
               id="formSubtitle"
               [ngModel]="formSubtitle()" (ngModelChange)="formSubtitle.set($event)"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
+              class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
               placeholder="Enter form subtitle"
             >
           </div>
@@ -58,10 +58,10 @@
     <!-- Preview Mode -->
     @if (isPreviewMode()) {
       <div class="mb-8">
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-background-100 rounded-lg p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400">
           <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-800">Form Preview</h2>
-            <span class="text-sm text-gray-500">This is how users will see your form</span>
+            <h2 class="text-lg font-semibold text-text-950">Form Preview</h2>
+            <span class="text-sm text-text-950">This is how users will see your form</span>
           </div>
 
           <!-- Embedded Form Preview -->
@@ -90,7 +90,7 @@
 
               <!-- Question Content -->
               <div class="p-4 pt-2 bg-white">
-                <h3 class="text-xl font-bold mb-4 text-gray-800">
+                <h3 class="text-xl font-bold mb-4 text-gray-500">
                   {{ questions().length > 0 ? questions()[previewQuestionIndex()].question : 'No questions added yet' }}
                 </h3>
 
@@ -215,9 +215,9 @@
 
     <!-- Questions Management -->
     @if (!isPreviewMode()) {
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div class="bg-background-100 text-text-950 rounded-lg p-6 mb-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-semibold text-gray-800">Questions</h2>
+          <h2 class="text-lg font-semibold">Questions</h2>
           <button
             (click)="addNewQuestion()"
             class="px-3 py-2 bg-primary-300 hover:bg-primary-400 rounded-md text-text-950 text-sm flex items-center"
@@ -229,7 +229,7 @@
           </button>
         </div>
 
-        <div class="text-sm text-gray-500 mb-4">
+        <div class="text-sm text-text-900 mb-4">
           Drag and drop to reorder questions. Click on a question to edit it.
         </div>
 
@@ -289,11 +289,11 @@
 
           <!-- Empty State -->
           @if (questions().length === 0) {
-            <div class="border border-dashed border-gray-300 rounded-lg p-8 text-center">
+            <div class="border border-dashed border-background-300 rounded-lg p-8 text-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p class="text-gray-500 mb-4">No questions added yet</p>
+              <p class="text-text-950 mb-4">No questions added yet</p>
               <button
                 (click)="addNewQuestion()"
                 class="btn btn-primary"
@@ -311,13 +311,13 @@
 
     <!-- Question Editor Modal -->
     @if (showQuestionEditor()) {
-      <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6 mx-4">
+      <div class="fixed inset-0 bg-black bg-opacity-50 text-text-950 flex items-center justify-center z-50">
+        <div class="bg-background-100 rounded-lg shadow-xl w-full max-w-2xl p-6 mx-4">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-semibold text-gray-800">
+            <h3 class="text-xl font-semibold text-text-950">
               {{ editingIndex() === -1 ? 'Add New Question' : 'Edit Question' }}
             </h3>
-            <button (click)="closeQuestionEditor()" class="text-gray-400 hover:text-gray-600">
+            <button (click)="closeQuestionEditor()" class="text-text-900 hover:text-text-950">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -326,12 +326,12 @@
 
           <form [formGroup]="questionForm" (ngSubmit)="saveQuestion()">
             <div class="mb-4">
-              <label for="question" class="block text-sm font-medium text-gray-700 mb-1">Question Text</label>
+              <label for="question" class="block text-sm font-medium text-text-950 mb-1">Question Text</label>
               <input
                 type="text"
                 id="question"
                 formControlName="question"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
+                class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
                 placeholder="Enter your question"
               >
               @if (questionForm.get('question')?.invalid && questionForm.get('question')?.touched) {
@@ -342,11 +342,11 @@
             </div>
 
             <div class="mb-4">
-              <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Question Type</label>
+              <label for="type" class="block text-sm font-medium text-text-950 bg-background-100 mb-1">Question Type</label>
               <select
                 id="type"
                 formControlName="type"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
+                class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
               >
                 <option value="text">Text Input</option>
                 <option value="choice">Multiple Choice</option>
@@ -357,14 +357,14 @@
             <!-- Options for Multiple Choice -->
             @if (questionForm.get('type')?.value === 'choice') {
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Answer Options</label>
+                <label class="block text-sm font-medium text-text-900 mb-1">Answer Options</label>
                 <div formArrayName="options" class="space-y-2">
                   @for (option of optionsArray.controls; track $index; let i = $index) {
                     <div class="flex items-center">
                       <input
                         [formControlName]="i"
                         type="text"
-                        class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
+                        class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
                         placeholder="Option {{ i + 1 }}"
                       >
                       @if (optionsArray.controls.length > 1) {
@@ -384,7 +384,7 @@
                 <button
                   type="button"
                   (click)="addOption()"
-                  class="mt-2 px-3 py-1 bg-slate-200 hover:bg-slate-300 rounded-md text-gray-700 text-sm flex items-center"
+                  class="mt-2 px-3 py-1 bg-background-300 hover:bg-background-400 rounded-md text-text-900 text-sm flex items-center"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -397,38 +397,38 @@
             <!-- Settings for Rating -->
             @if (questionForm.get('type')?.value === 'rating') {
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Rating Scale</label>
+                <label class="block text-sm font-medium text-text-950 mb-1">Rating Scale</label>
                 <div class="flex items-center space-x-4">
                   <div class="flex-1">
-                    <label for="minRating" class="block text-xs text-gray-500 mb-1">Minimum</label>
+                    <label for="minRating" class="block text-xs text-text-900 mb-1">Minimum</label>
                     <input
                       type="number"
                       id="minRating"
                       formControlName="minRating"
                       min="0"
                       max="10"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
+                      class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
                     >
                   </div>
                   <div class="flex-1">
-                    <label for="maxRating" class="block text-xs text-gray-500 mb-1">Maximum</label>
+                    <label for="maxRating" class="block text-xs text-text-900 mb-1">Maximum</label>
                     <input
                       type="number"
                       id="maxRating"
                       formControlName="maxRating"
                       min="1"
                       max="10"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
+                      class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
                     >
                   </div>
                 </div>
                 <div class="mt-2">
-                  <label for="ratingLabels" class="block text-xs text-gray-500 mb-1">Labels (comma separated, e.g. "Poor, Average, Excellent")</label>
+                  <label for="ratingLabels" class="block text-xs text-text-900 mb-1">Labels (comma separated, e.g. "Poor, Average, Excellent")</label>
                   <input
                     type="text"
                     id="ratingLabels"
                     formControlName="ratingLabels"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
+                    class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
                     placeholder="Poor, Average, Excellent"
                   >
                 </div>
@@ -436,20 +436,20 @@
             }
 
             <div class="mb-4">
-              <label for="placeholder" class="block text-sm font-medium text-gray-700 mb-1">Answer Placeholder</label>
+              <label for="placeholder" class="block text-sm font-medium mb-1">Answer Placeholder</label>
               <input
                 type="text"
                 id="placeholder"
                 formControlName="placeholder"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-400"
+                class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
                 placeholder="e.g., Enter your answer"
               >
             </div>
 
             <div class="mb-4">
               <label class="flex items-center">
-                <input type="checkbox" formControlName="required" class="h-4 w-4 text-orange-500 focus:ring-primary-400 border-gray-300 rounded">
-                <span class="ml-2 text-sm text-gray-700">Required question</span>
+                <input type="checkbox" formControlName="required" class="h-4 w-4 border-gray-300 rounded">
+                <span class="ml-2 text-sm text-text-950">Required question</span>
               </label>
             </div>
 
@@ -457,14 +457,14 @@
               <button
                 type="button"
                 (click)="closeQuestionEditor()"
-                class="px-4 py-2 border bg-slate-200 rounded-md text-gray-700 hover:bg-slate-300"
+                class="rounded-lg px-4 py-2 text-white bg-gray-400 hover:bg-gray-500"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 [disabled]="questionForm.invalid"
-                class="px-4 py-2 bg-primary-300 hover:bg-primary-400 rounded-md text-white disabled:opacity-50"
+                class="btn btn-primary"
               >
                 Save Question
               </button>

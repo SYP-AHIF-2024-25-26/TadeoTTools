@@ -7,6 +7,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
   templateUrl: './map.component.html',
   styleUrl: './map.component.css',
   imports: [HeaderComponent, NavbarComponent],
+  standalone: true,
 })
 export class MapComponent {
   @Input() roomNr: string | undefined;

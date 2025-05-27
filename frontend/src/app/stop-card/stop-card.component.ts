@@ -8,6 +8,7 @@ import { Stop } from '../types';
   imports: [CheckboxComponent, NgClass, NgStyle],
   templateUrl: './stop-card.component.html',
   styleUrl: './stop-card.component.css',
+  standalone: true,
 })
 export class StopCardComponent {
   @Input() stop!: Stop;

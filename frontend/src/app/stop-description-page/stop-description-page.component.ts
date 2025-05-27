@@ -12,6 +12,7 @@ import { CURRENT_STOP_GROUP_PREFIX, CURRENT_STOP_PREFIX } from '../constants';
   imports: [DescriptionContainerComponent, HeaderComponent, BreadcrumbComponent, NavbarComponent],
   templateUrl: './stop-description-page.component.html',
   styleUrl: './stop-description-page.component.css',
+  standalone: true,
 })
 export class StopDescriptionPageComponent {
   private router = inject(Router);

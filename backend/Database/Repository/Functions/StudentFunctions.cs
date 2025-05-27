@@ -46,4 +46,39 @@ public class StudentFunctions
             .Include(s => s.StudentAssignments)
             .FirstOrDefaultAsync(s => s.EdufsUsername == edufsUsername);
     }
+
+
+    public static async Task ParseStudentsCsv(string csvData, TadeoTDbContext context)
+    {
+        var lines = csvData.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+        
+        if (lines.Length > 0)
+        {
+            var header = lines[0].Split(';');
+            if (header is not ["EdufsUsername", "FirstName", "LastName", "StudentClass", "Department"])
+            {
+                throw new ArgumentException("Invalid CSV format" +
+                                            "Valid format: EdufsUsername;FirstName;LastName;StudentClass;Department");
+            }
+
+            var students = lines
+                .Skip(1)
+                .Select(line => line.Split(';'))
+                .Select(cols => new Student
+                {
+                    EdufsUsername = cols[0],
+                    FirstName = cols[1],
+                    LastName = cols[2],
+                    StudentClass = cols[3],
+                    Department = cols[4],
+                })
+                .Where(s => !context.Students.Any(st => st.EdufsUsername.Equals(s.EdufsUsername)));
+            
+            await context.Students.AddRangeAsync(students);
+            await context.SaveChangesAsync();
+        } else 
+        {
+            throw new ArgumentException("Empty CSV file");
+        }
+    }
 }

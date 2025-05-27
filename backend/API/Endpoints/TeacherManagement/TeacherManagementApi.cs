@@ -18,5 +18,8 @@ public static class TeacherManagementApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+
+        group.MapPost("api/teachers/upload", TeacherManagementEndpoints.UploadCsvFile)
+            .DisableAntiforgery();
     }
 }

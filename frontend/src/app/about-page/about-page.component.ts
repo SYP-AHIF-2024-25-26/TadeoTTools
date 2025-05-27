@@ -8,5 +8,6 @@ import { NgOptimizedImage } from '@angular/common';
   imports: [NavbarComponent, HeaderComponent],
   templateUrl: './about-page.component.html',
   styleUrl: './about-page.component.css',
+  standalone: true,
 })
 export class AboutPageComponent {}

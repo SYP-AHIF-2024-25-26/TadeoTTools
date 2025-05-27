@@ -10,11 +10,11 @@ import { FeedbackComponent } from './feedback/feedback.component';
 export const routes: Routes = [
   { path: '', component: NextYearPageComponent },
   { path: 'feedback', component: FeedbackComponent},
-  /*{ path: 'main', component: MainPageComponent },
+  { path: 'main', component: MainPageComponent },
   { path: 'tour/:stopGroupId', component: StopPageComponent },
   { path: 'tour/:stopGroupId/stop/:stopId', component: StopDescriptionPageComponent },
   { path: 'map', component: MapComponent },
   { path: 'map/:roomNr', component: MapComponent },
-  { path: 'about', component: AboutPageComponent },*/
+  { path: 'about', component: AboutPageComponent },
   { path: '', redirectTo: '', pathMatch: 'full' },
 ];

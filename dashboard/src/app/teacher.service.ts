@@ -33,4 +33,17 @@ export class TeacherService {
       throw error;
     }
   }
+
+  async uploadTeachersCsv(file: File) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      await firstValueFrom(this.httpClient.post<void>(this.baseUrl + '/api/teachers/upload', formData));
+      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully uploaded students CSV' });
+    } catch (error) {
+      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to upload students CSV' });
+      throw error;
+    }
+  }
 }

@@ -63,5 +63,12 @@ public static class DivisionManagementApi
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
+        
+        group.MapGet("api/divisions/csv", DivisionManagementEndpoints.GetDivisionsCsv)
+            .WithName(nameof(DivisionManagementEndpoints.GetDivisionsCsv))
+            .WithDescription("Get all divisions in a csv file")
+            .Produces(StatusCodes.Status206PartialContent)
+            .Produces(StatusCodes.Status416RangeNotSatisfiable)
+            .RequireAuthorization(Setup.AdminPolicyName);
     }
 }

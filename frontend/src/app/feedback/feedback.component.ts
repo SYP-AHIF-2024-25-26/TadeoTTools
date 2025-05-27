@@ -3,15 +3,18 @@ import { FormBuilder, type FormGroup, ReactiveFormsModule, Validators } from '@a
 import { FeedbackQuestion, FeedbackSubmission } from '../types';
 import { ApiFetchService } from '../api-fetch.service';
 import { HeaderComponent } from '../header/header.component';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-feedback',
   imports: [
     ReactiveFormsModule,
     HeaderComponent,
+    NavbarComponent,
   ],
   templateUrl: './feedback.component.html',
-  styleUrl: './feedback.component.css'
+  standalone: true,
+  styleUrl: './feedback.component.css',
 })
 export class FeedbackComponent implements OnInit{
   feedbackForm!: FormGroup
