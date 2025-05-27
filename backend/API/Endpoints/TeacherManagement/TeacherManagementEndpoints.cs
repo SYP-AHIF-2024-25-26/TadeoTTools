@@ -1,3 +1,5 @@
+using System.Text;
+using API.Endpoints.StudentManagement;
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
@@ -26,4 +28,24 @@ public static class TeacherManagementEndpoints
 
         return Results.Ok();
     }
+    
+    public static async Task<IResult> UploadCsvFile([FromForm] UploadTeacherCsvFileDto file, TadeoTDbContext context)
+    {
+        if (file.File.Length <= 0) return Results.BadRequest("File upload failed");
+        try
+        {
+            using (var stream = new MemoryStream())
+            {
+                await file.File.CopyToAsync(stream);
+                var csvData = Encoding.UTF8.GetString(stream.ToArray()); 
+                await TeacherFunctions.ParseTeacherCsv(csvData, context);
+            }
+            return Results.Ok("File uploaded successfully");
+        } catch (Exception e)
+        {
+            return Results.BadRequest($"File upload failed: {e.Message}");
+        }
+    }
+    
+    public record UploadTeacherCsvFileDto(IFormFile File);
 }

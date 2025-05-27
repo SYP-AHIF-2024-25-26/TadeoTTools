@@ -24,8 +24,8 @@ public static class StudentManagementApi
             .WithName(nameof(StudentManagementEndpoints.GenerateRandomAssignments))
             .WithDescription("Generate random assignments for students")
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(Setup.AdminPolicyName);
+            .Produces(StatusCodes.Status200OK);
+            //.RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPut("api/students/{id}/assignments", StudentManagementEndpoints.SetStudentAssignments)
             .WithName(nameof(StudentManagementEndpoints.SetStudentAssignments))
@@ -33,6 +33,9 @@ public static class StudentManagementApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+
+        group.MapPost("api/students/upload", StudentManagementEndpoints.UploadCsvFile)
+            .DisableAntiforgery();
         
         group.MapDelete("api/students/{studentId}/assignments/{stopId}", StudentManagementEndpoints.DeleteStudentAssignment)
             .WithName(nameof(StudentManagementEndpoints.DeleteStudentAssignment))

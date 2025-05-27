@@ -73,6 +73,7 @@ export class DivisionService {
       throw error;
     }
   }
+  
   async deleteDivisionImg(divisionId: number): Promise<void> {
     try {
       await firstValueFrom(this.httpClient.delete(`${this.baseUrl}/api/divisions/${divisionId}/image`));
@@ -81,5 +82,11 @@ export class DivisionService {
       this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to delete division image' });
       throw error;
     }
+  }
+
+  async getDivisionDataFile(): Promise<Blob> {
+    return firstValueFrom(this.httpClient.get(this.baseUrl + '/api/divisions/csv', {
+      responseType: 'blob'
+    }));
   }
 }

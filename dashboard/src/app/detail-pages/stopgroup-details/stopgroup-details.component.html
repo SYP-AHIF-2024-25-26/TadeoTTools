@@ -1,13 +1,13 @@
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
   <div
-    class="m-6 inline-flex flex-col items-center rounded-lg bg-background-100 p-4 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+    class="m-6 inline-flex w-[600px] flex-col items-center rounded-lg bg-background-100 p-8 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
   >
     @if (id == -1) {
-      <h4 class="text-2xl">New StopGroup</h4>
+      <h4 class="mb-6 text-2xl">New StopGroup</h4>
     }
-    <label for="name" class="mb-2 block">Name</label>
+    <label for="name" class="mb-3 block">Name</label>
     <input
-        class="text-text-950 mb-4 resize-x rounded border bg-primary-200 px-4 py-2 text-xl"
+        class="text-text-950 mb-6 w-full resize-x rounded border bg-primary-200 px-4 py-2 text-xl"
         type="text"
         [value]="name()"
         [(ngModel)]="name"
@@ -16,9 +16,9 @@
         [size]="name().length || 1"
       />
 
-    <form (submit)="submitStopGroupDetails()" class="mt-4">
-      <div class="mb-4">
-        <label for="description" class="mb-2 block">Description</label>
+    <form (submit)="submitStopGroupDetails()" class="mt-6 w-full">
+      <div class="mb-6">
+        <label for="description" class="mb-3 block">Description</label>
         <textarea
           class="text-text-95 w-full rounded border bg-primary-200 px-4 py-2"
           [value]="description()"
@@ -28,21 +28,21 @@
           rows="4"
         ></textarea>
       </div>
-      <div>
+      <div class="mb-6">
         <label for="isPublic" class="mr-4">Is public?</label>
-        <input class="mb-4 rounded border px-4 py-2" type="checkbox" id="isPublic" [(ngModel)]="isPublic" name="isPublic" />
+        <input class="rounded border px-4 py-2" type="checkbox" id="isPublic" [(ngModel)]="isPublic" name="isPublic" />
       </div>
 
       @if (errorMessage() != null) {
-        <p class="text-red-700">{{ errorMessage() }}</p>
+        <p class="mb-6 text-red-700">{{ errorMessage() }}</p>
       }
-      <div>
+      <div class="flex justify-end space-x-4">
         <button type="submit" class="rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
 
-        <button (click)="goBack()" type="button" class="ml-4 rounded bg-gray-400 p-2 hover:bg-gray-500">Cancel</button>
+        <button (click)="goBack()" type="button" class="rounded bg-gray-400 p-2 hover:bg-gray-500">Cancel</button>
 
         @if (id != -1) {
-          <button (click)="deleteAndGoBack()" type="button" class="hover:bg-accent-300 ml-4 rounded bg-accent-200 p-2">Delete</button>
+          <button (click)="deleteAndGoBack()" type="button" class="rounded bg-accent-200 p-2 hover:bg-accent-300">Delete</button>
         }
       </div>
     </form>

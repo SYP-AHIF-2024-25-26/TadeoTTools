@@ -1,8 +1,9 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import {Component, computed, inject, signal, WritableSignal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Status, Student } from '../../types';
 import { StudentStore } from '../../store/student.store';
 import { CommonModule } from '@angular/common';
+import { StudentService } from '../../student.service';
 
 @Component({
   selector: 'app-list-students',

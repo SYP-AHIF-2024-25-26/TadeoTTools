@@ -30,5 +30,10 @@ public static class FeedbackManagementApi
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
 
+        group.MapGet("get-answers-csv", FeedbackManagementEndpoints.GetFeedbackAnswersCsv)
+            .WithName(nameof(FeedbackManagementEndpoints.GetFeedbackAnswersCsv))
+            .WithDescription("Get all answers in a csv file")
+            .Produces(StatusCodes.Status206PartialContent)
+            .Produces(StatusCodes.Status416RangeNotSatisfiable);
     }
 }

@@ -1,48 +1,50 @@
 <div class="m-4 flex justify-between px-10 pt-2">
-  <div>
+  <div class="flex items-center space-x-4">
     <button
       (click)="saveChanges()"
       [disabled]="!hasChanged()"
-      class="my-2 mr-2 btn btn-primary !text-text-900 disabled:btn-disabled"
+      class="btn btn-primary !text-text-900 disabled:btn-disabled"
     >
       Save Changes
     </button>
     <button
       (click)="initialiseData()"
       [disabled]="!hasChanged()"
-      class="m-2 btn btn-primary !text-text-950 disabled:btn-disabled"
+      class="btn btn-primary !text-text-950 disabled:btn-disabled"
     >
       Cancel
     </button>
 
     <button
       (click)="toggleShowStops()"
-      class="m-2 btn btn-primary disabled:btn-disabled"
+      class="btn btn-primary disabled:btn-disabled"
     >
       Collapse All
     </button>
 
-    <input
-      (click)="onlyPublicGroups.set(!onlyPublicGroups())"
-      class="p-2 m-2"
-      type="checkbox"
-      value="Show Private Groups"
-      id="only-public-groups"
-    />
-    <label for="only-public-groups" class="text-text-950">Show Private Groups</label>
+    <div class="flex items-center">
+      <input
+        (click)="onlyPublicGroups.set(!onlyPublicGroups())"
+        class="checkbox mr-2 h-4 w-4"
+        type="checkbox"
+        value="Show Private Groups"
+        id="only-public-groups"
+      />
+      <label for="only-public-groups" class="text-text-950">Show Private Groups</label>
+    </div>
   </div>
 
-  <div>
+  <div class="flex items-center space-x-4">
     <button
       (click)="showGroupPopUp(-1)"
-      class="m-2 btn btn-primary"
+      class="btn btn-primary"
     >
       Add StopGroup
     </button>
 
     <button
       [routerLink]="['/stop']"
-      class="my-2 ml-2 btn btn-primary"
+      class="btn btn-primary"
     >
       Add Stop
     </button>

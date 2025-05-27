@@ -1,12 +1,12 @@
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
   <div
-    class="m-6 p-8 inline-flex flex-col items-center rounded-lg bg-background-100 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+    class="m-6 p-8 inline-flex w-[600px] flex-col items-center rounded-lg bg-background-100 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
   >
     @if(id == -1) {
-      <h4 class="text-2xl mb-3">New Division</h4>
+      <h4 class="text-2xl mb-6">New Division</h4>
     }
     <input
-      class="mb-4 rounded bg-primary-200 px-4 py-2 text-text-950 input"
+      class="mb-6 w-full rounded bg-primary-200 px-4 py-2 text-text-950 input"
       type="text"
       [value]="name()"
       [(ngModel)]="name"
@@ -14,37 +14,42 @@
       id="name"
     />
     @if (filePreview != null) {
-      <div class="mt-4">
-        <p>File Preview</p>
+      <div class="mt-6 mb-6">
+        <p class="mb-3">File Preview</p>
         <img class="h-32 w-32 object-cover" [src]="filePreview" alt="File preview" />
       </div>
     } @else {
-      <img
-        class="h-32 w-32 object-cover"
-        [src]="baseUrl + '/divisions/' + id + '/image?timestamp=1234567890'"
-        alt="Division Picture will load here"
-      />
+      <div class="mt-6 mb-6">
+        <img
+          class="h-32 w-32 object-cover"
+          [src]="baseUrl + '/divisions/' + id + '/image?timestamp=1234567890'"
+          alt="Division Picture will load here"
+        />
+      </div>
     }
-    <form (submit)="submitDivisionDetail()" class="flex flex-col items-center">
-      <div>
-        <label for="color" class="mr-4">Color</label>
-        <input class="mb-4" type="color" [value]="color()" [(ngModel)]="color" name="color" id="color" />
-        <div class="w-100 h-100" [style.backgroundColor]="color()"></div>
+    <form (submit)="submitDivisionDetail()" class="flex w-full flex-col items-center">
+      <div class="mb-6 w-full">
+        <label for="color" class="mb-3 block">Color</label>
+        <div class="flex items-center space-x-4">
+          <input class="h-10 w-20" type="color" [value]="color()" [(ngModel)]="color" name="color" id="color" />
+          <div class="h-10 w-20 rounded" [style.backgroundColor]="color()"></div>
+        </div>
       </div>
 
-      <div>
-        <input class="rounded py-2" type="file" id="file" accept=".jpg, .jpeg, .png, .svg" (change)="onFileChange($event)" />
+      <div class="mb-6 w-full">
+        <label for="file" class="mb-3 block">Upload Image</label>
+        <input class="w-full rounded py-2" type="file" id="file" accept=".jpg, .jpeg, .png, .svg" (change)="onFileChange($event)" />
 
         @if (errorMessage() != null) {
-          <p class="text-red-700">{{ errorMessage() }}</p>
+          <p class="mt-4 text-red-700">{{ errorMessage() }}</p>
         }
       </div>
-      <div>
-        <button type="submit" class="mr-4 rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
-        <button (click)="cancelPopup()" class="mr-4 mt-4 rounded bg-gray-400 hover:bg-gray-500 p-2">Cancel</button>
+      <div class="flex w-full justify-end space-x-4">
+        <button type="submit" class="rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
+        <button (click)="cancelPopup()" class="rounded bg-gray-400 p-2 hover:bg-gray-500">Cancel</button>
         @if (id != -1) {
-          <button (click)="deleteAndGoBack()" class="hover:bg-accent-300 mr-4 rounded bg-accent-200 p-2">Delete</button>
-          <button (click)="deleteImage()" class="bg-accent-200 mt-4 rounded p-2 text-text-950 hover:bg-accent-300">Delete Image</button>
+          <button (click)="deleteAndGoBack()" class="rounded bg-accent-200 p-2 hover:bg-accent-300">Delete</button>
+          <button (click)="deleteImage()" class="rounded bg-accent-200 p-2 text-text-950 hover:bg-accent-300">Delete Image</button>
         }
       </div>
     </form>

@@ -1,3 +1,4 @@
+using System.Text;
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
@@ -89,6 +90,39 @@ public static class StopGroupManagementEndpoints
         return Results.Ok();
     }
 
+    public static async Task<IResult> GetGroupsCsv(TadeoTDbContext context)
+    {
+        var groups = await context.StopGroups
+            .Include(s => s.StopAssignments)   
+            .OrderBy(g => g.Rank)
+            .ToListAsync();
+        
+        // Create CSV content
+        var csvBuilder = new StringBuilder();
+    
+        // Add headers
+        csvBuilder.AppendLine("Id;Name;Description;IsPublic;Rank;Stops");
+        
+        // Add data rows
+        foreach (var item in groups)
+        {
+            var escapedId = Utils.EscapeCsvField(item.Id.ToString()); // for assignments in stop export
+            var escapedName = Utils.EscapeCsvField(item.Name);
+            var escapedDescription = Utils.EscapeCsvField(item.Description);
+            var escapedIsPublic = Utils.EscapeCsvField(item.IsPublic.ToString());
+            var escapedRank = Utils.EscapeCsvField(item.Rank.ToString());
+            var escapedStopAssignments = Utils.EscapeCsvField(string.Join(",", item.StopAssignments.Select(a => a.StopId)));
+            csvBuilder.AppendLine($"{escapedId};{escapedName};{escapedDescription};{escapedIsPublic};{escapedRank};{escapedStopAssignments}");
+        }
+    
+        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+    
+        return Results.File(
+            fileContents: csvBytes,
+            contentType: "text/csv",
+            fileDownloadName: "stops-export.csv"
+        );
+    }    
     public record CreateGroupRequestDto(string Name, string Description, bool IsPublic);
     public record UpdateGroupRequestDto(int Id, string Name, string Description, bool IsPublic, int[] StopIds);
 }

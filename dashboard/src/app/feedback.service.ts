@@ -17,7 +17,7 @@ export class FeedbackService {
 
   async getAllFeedbackQuestions(): Promise<FeedbackQuestion[]> {
     try {
-      return await firstValueFrom(this.httpClient.get<FeedbackQuestion[]>('http://localhost:5000/v1/feedback-questions'));
+      return await firstValueFrom(this.httpClient.get<FeedbackQuestion[]>(this.baseUrl + '/feedback-questions'));
     } catch (error) {
       this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to get feedback questions' });
       throw error;
@@ -26,11 +26,17 @@ export class FeedbackService {
 
   async saveFeedbackQuestions(questions: FeedbackQuestion[]) {
     try {
-      await firstValueFrom(this.httpClient.post<FeedbackQuestion[]>('http://localhost:5000/v1/save-questions', questions));
+      await firstValueFrom(this.httpClient.post<FeedbackQuestion[]>(this.baseUrl + '/save-questions', questions));
       this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully saved feedback questions' });
     } catch (error) {
       this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to save feedback questions' });
       throw error;
     }
+  }
+
+  getFeedbackQuestionAnswersFile(): Promise<Blob> {
+    return firstValueFrom(this.httpClient.get(this.baseUrl + '/get-answers-csv', {
+      responseType: 'blob'
+    }));
   }
 }
