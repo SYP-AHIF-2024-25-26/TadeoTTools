@@ -12,7 +12,6 @@ public class Stop
     public required string Description { get; set; }
     public required string RoomNr { get; set; }
 
-    public List<StopStatistic> Statistics { get; set; } = [];
     public List<Division> Divisions { get; set; } = [];
     public List<StopGroupAssignment> StopGroupAssignments { get; set; } = [];
     public List<StudentAssignment> StudentAssignments { get; set; } = [];
