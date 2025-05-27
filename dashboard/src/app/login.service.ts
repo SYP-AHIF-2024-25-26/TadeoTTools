@@ -32,15 +32,13 @@ export class LoginService {
       );
 
       // Only show success message if there was no error
-      if (!result.includes('Backend says no') && action === 'at-least-student') {
+      if (!result.includes('Backend says no')) {
         this.infoStore.addInfo({ id: 0, type: 'info', message: 'Login successful' });
       }
 
       return result;
     } catch (error) {
-      if (action === 'at-least-student') {
-        this.infoStore.addInfo({ id: 0, type: 'error', message: 'Login error' });
-      }
+      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Login error' });
       throw error;
     }
   }

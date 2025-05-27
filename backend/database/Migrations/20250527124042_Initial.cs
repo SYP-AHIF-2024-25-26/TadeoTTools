@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
@@ -223,28 +222,6 @@ namespace Database.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "StopStatistics",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Time = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    IsDone = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    StopId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StopStatistics", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_StopStatistics_Stops_StopId",
-                        column: x => x.StopId,
-                        principalTable: "Stops",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "StudentAssignments",
                 columns: table => new
                 {
@@ -349,11 +326,6 @@ namespace Database.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_StopStatistics_StopId",
-                table: "StopStatistics",
-                column: "StopId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_StudentAssignments_StopId",
                 table: "StudentAssignments",
                 column: "StopId");
@@ -391,9 +363,6 @@ namespace Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "StopGroupAssignments");
-
-            migrationBuilder.DropTable(
-                name: "StopStatistics");
 
             migrationBuilder.DropTable(
                 name: "StudentAssignments");

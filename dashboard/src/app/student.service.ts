@@ -35,7 +35,6 @@ export class StudentService {
   async setAssignments(edufsUsername: string, assignments: StudentAssignment[]): Promise<void> {
     try {
       await firstValueFrom(this.httpClient.put<void>(this.baseUrl + '/api/students/' + edufsUsername + '/assignments', assignments));
-      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully set student assignments' });
     } catch (error) {
       this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to set student assignments' });
       throw error;
