@@ -253,6 +253,9 @@ export class StopDetailsComponent implements OnInit {
 
   goBack() {
     this.stop.set(this.emptyStop);
+    this.studentStore.getStudentsByStopId(-1).forEach((student) => {
+      this.studentStore.removeStopFromStudent(student.edufsUsername, -1);
+    });
     this.location.back();
   }
 
