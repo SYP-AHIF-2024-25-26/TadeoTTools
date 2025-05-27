@@ -1,0 +1,16 @@
+services:
+  frontend:
+    build: 
+      context: .
+      args:
+        - BACKEND_URL=http://localhost:5001/v1
+        - BASE_HREF=/app
+    container_name: tadeot-guide
+    ports:
+      - "4300:80"
+    networks:
+      - tadeotnet
+
+networks:
+  tadeotnet:
+    driver: bridge

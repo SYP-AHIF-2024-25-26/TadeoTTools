@@ -43,7 +43,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(Setup.CorsPolicyName,
         policyBuilder =>
         {
-            policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:4300", "http://localhost:51566", "http://localhost:5005");
+            policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:4300", "http://localhost:51566", "https://vm45.htl-leonding.ac.at");
             policyBuilder.AllowAnyHeader();
             policyBuilder.AllowAnyMethod();
             policyBuilder.AllowCredentials();
@@ -74,12 +74,13 @@ if (app.Environment.IsDevelopment())
 
 app.Map("ping", () => Results.Ok("pong"));
 
-var basePath = "";
+
+/*var basePath = "";
 if (app.Environment.IsProduction())
 {
-    basePath = "/tadeot-tools-backend";
+    basePath = "/tadeot-backend-2511";
     app.UsePathBase(basePath + "/");
-}
+}*/
 
 app.UseCors(Setup.CorsPolicyName);
 

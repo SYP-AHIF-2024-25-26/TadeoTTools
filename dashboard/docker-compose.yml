@@ -1,0 +1,13 @@
+services:
+  frontend:
+    build: 
+      context: .
+    container_name: tadeot-dashboard
+    ports:
+      - "4300:80"
+    networks:
+      - tadeotnet
+
+networks:
+  tadeotnet:
+    driver: bridge
