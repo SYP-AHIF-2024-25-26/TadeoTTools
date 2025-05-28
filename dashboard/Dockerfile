@@ -7,5 +7,11 @@ RUN npm run build
 
 FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
-COPY --from=build /app/dist/dashboard/browser /usr/share/nginx/html/dash
+COPY --from=build /app/dist/dashboard/browser /usr/share/nginx/html/admin
+COPY src/env.js /usr/share/nginx/html/admin/env.js
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
