@@ -28,7 +28,6 @@ export const DivisionStore = signalStore(
       async addDivision(division: Division, image: File | null): Promise<void> {
         try {
           const createdDivision = await divisionService.addDivision(division);
-          console.log('your id is: ' + createdDivision.id);
           patchState(store, {
             divisions: [...store.divisions(), createdDivision],
           });

@@ -31,7 +31,6 @@ export class AdminService {
 
   async deleteAdmin(name: string) {
     try {
-      console.log(name);
       await firstValueFrom(this.httpClient.delete(this.baseUrl + `/api/admins/${name}`));
       this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully deleted admin' });
     } catch (error) {

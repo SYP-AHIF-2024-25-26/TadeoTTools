@@ -22,7 +22,6 @@ export const TeacherStore = signalStore(
     (async function fetchInitialTeachers() {
       if (initialState.teachers.length == 0) {
         const teachers = await teacherService.getTeachers();
-        console.log('teachers', teachers);
         patchState(store, { teachers, loaded: true });
       }
     })();
@@ -37,7 +36,6 @@ export const TeacherStore = signalStore(
       getTeachersByStopId(stopId: number): Teacher[] {
         return store.teachers().filter((teacher) => {
           if (teacher.assignedStops) {
-            console.log(teacher.assignedStops.some((assignment) => assignment === stopId));
             return teacher.assignedStops.some((assignment) => assignment === stopId);
           }
           return false;
@@ -69,7 +67,6 @@ export const TeacherStore = signalStore(
           teacher.assignedStops = teacher.assignedStops.filter((assignment) => assignment !== stopId);
           patchState(store, { teachers: [...store.teachers().filter((teacher) => teacher.edufsUsername !== edufsUsername), teacher] });
         }
-        console.log(store.teachers());
       },
       async setAssignments(edufsUsername: string) {
         const teacher = this.getTeacherById(edufsUsername);

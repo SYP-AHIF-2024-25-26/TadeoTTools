@@ -22,7 +22,6 @@ export const StopStore = signalStore(
     (async function fetchInitialStops() {
       if (initialState.stops.length == 0) {
         const stops = await stopService.getStops();
-        console.log('Fetched stops: ', stops);
         patchState(store, { stops: stops, loaded: true });
       }
     })();
@@ -31,7 +30,6 @@ export const StopStore = signalStore(
       async addStop(stopToAdd: Stop): Promise<void> {
         try {
           const stop = await stopService.addStop(stopToAdd);
-          console.log(stop);
           patchState(store, {
             stops: [...store.stops(), stop],
           });

@@ -35,7 +35,6 @@ declare global {
 const baseUrl = environment.production && window.__env?.backendURL ? window.__env.backendURL : environment.apiBaseUrl;
 const escapedBaseUrl = baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special characters
 const urlPattern = new RegExp(`^(${escapedBaseUrl})(\\/.*)?$`, 'i');
-console.log("urlPattern: " + urlPattern);
 
 const authTokenCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
   urlPattern: urlPattern,
@@ -78,8 +77,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     keycloakProvider,
     provideExperimentalZonelessChangeDetection(),
-    { 
-      provide: BASE_URL, 
+    {
+      provide: BASE_URL,
       useFactory: () => {
         return baseUrl;
       }

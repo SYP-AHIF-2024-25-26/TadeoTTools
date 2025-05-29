@@ -26,7 +26,6 @@ export class TeacherService {
 
   async setAssignments(edufsUsername: string, assignments: number[]): Promise<void> {
     try {
-      console.log(edufsUsername, assignments);
       await firstValueFrom(this.httpClient.put<void>(this.baseUrl + '/api/teachers/' + edufsUsername + '/assignments', assignments.map(a => ({stopId: a, teacherId: edufsUsername} as TeacherAssignment))));
     } catch (error) {
       this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to set teacher assignments' });

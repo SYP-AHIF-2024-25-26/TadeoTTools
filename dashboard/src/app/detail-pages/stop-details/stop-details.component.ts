@@ -223,11 +223,7 @@ export class StopDetailsComponent implements OnInit {
         this.stop.set({ ...this.stop(), id: returnedStop.id });
 
         this.studentStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
-        console.log("teachers by stop -1");
-        console.log(this.teacherStore.getTeachersByStopId(-1));
         this.teacherStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
-        console.log("teachers by stop returned");
-        console.log(this.teacherStore.getTeachersByStopId(returnedStop.id));
     } else {
       await this.stopStore.updateStop(this.stop());
     }
@@ -237,7 +233,6 @@ export class StopDetailsComponent implements OnInit {
       });
 
       this.teacherStore.getTeachersByStopId(this.stop().id).forEach((teacher) => {
-        console.log(teacher.firstName + ' ' + teacher.lastName);
         this.teacherStore.setAssignments(teacher.edufsUsername);
       });
 
@@ -283,7 +278,6 @@ export class StopDetailsComponent implements OnInit {
       status: Status.Pending,
     } as StudentAssignment;
     await this.studentStore.addStopToStudent(assignment);
-    console.log(this.studentStore.getStudentsByStopId(this.stop().id));
   }
 
   // Keep for backward compatibility
@@ -329,7 +323,6 @@ export class StopDetailsComponent implements OnInit {
 
   confirmStudentRemove() {
     this.studentStore.removeStopFromStudent(this.studentUsernameToRemove, this.stop().id);
-    console.log(this.studentStore.getStudentsByStopId(this.stop().id));
     this.showRemoveStudentPopup.set(false);
   }
 

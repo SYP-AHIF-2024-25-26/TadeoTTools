@@ -164,18 +164,21 @@
                   <td>{{ student.department }}</td>
                   <td>{{ student.studentAssignments[0].stopName }}</td>
                   <td>
-                    @if (student.studentAssignments[0].status === Status.Pending) {
-                      <button class="btn btn-sm btn-success mr-4" (click)="approveSingleAssignment(student)">
-                        Approve
-                      </button>
-                      <button class="btn btn-sm btn-error" (click)="rejectSingleAssignment(student)">
-                        Reject
-                      </button>
-                    } @else {
-                      <button class="btn btn-sm btn-primary" (click)="undoSingleAssignment(student)">
-                        Undo {{student.studentAssignments[0].status === Status.Accepted ? 'Approve' : 'Reject'}}
-                      </button>
-                    }
+
+                      @if (student.studentAssignments[0].status === Status.Pending) {
+                        <div class="flex gap-x-1">
+                          <button class="btn btn-sm btn-success mr-4" (click)="approveSingleAssignment(student)">
+                            Approve
+                          </button>
+                          <button class="btn btn-sm btn-error" (click)="rejectSingleAssignment(student)">
+                            Reject
+                          </button>
+                        </div>
+                      } @else {
+                        <button class="btn btn-sm btn-primary" (click)="undoSingleAssignment(student)">
+                          Undo {{student.studentAssignments[0].status === Status.Accepted ? 'Approve' : 'Reject'}}
+                        </button>
+                      }
                   </td>
                   <td>
                     <button class="btn btn-sm btn-error" (click)="deleteAssignment(student, 0)">

@@ -47,7 +47,6 @@ export class DataPageComponent {
 
   onTeacherFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    console.log(input.files);
     if (input.files && input.files.length > 0) {
       this.selectedTeacherFile.set(input.files[0]);
     }
@@ -107,7 +106,7 @@ export class DataPageComponent {
     }
   }
 
-  private downloadFile(blob: Blob, filename: string) { 
+  private downloadFile(blob: Blob, filename: string) {
     const url = window.URL.createObjectURL(blob);
 
     const a = document.createElement('a');

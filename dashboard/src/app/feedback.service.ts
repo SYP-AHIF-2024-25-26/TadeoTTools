@@ -3,8 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {FeedbackQuestion} from "./pages/feedback-configurator/feedback-configurator.component";
 import {firstValueFrom} from "rxjs";
 import {BASE_URL} from "./app.config";
-import { Info } from './types';
-import { InfoStore } from './store/info.store';
+import {InfoStore} from './store/info.store';
 
 @Injectable({
   providedIn: 'root'

@@ -103,8 +103,6 @@ export class StopGroupsComponent implements OnInit {
       const stopId = this.stopStore.stops()[event.previousIndex].id;
       if (!event.container.data.includes(stopId)) {
         event.container.data.splice(event.currentIndex, 0, stopId);
-      } else {
-        console.log('already exists in this stopGroup');
       }
     } else if (event.container === event.previousContainer) {
       moveItemInArray(event.previousContainer.data, event.previousIndex, event.currentIndex);
@@ -123,7 +121,6 @@ export class StopGroupsComponent implements OnInit {
     if (divisionId === 0) {
       return this.stopStore.stops();
     }
-    this.stopStore.stops().forEach((stop) => console.log(stop));
     return this.stopStore.stops().filter((stop) => Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId));
   }
 
