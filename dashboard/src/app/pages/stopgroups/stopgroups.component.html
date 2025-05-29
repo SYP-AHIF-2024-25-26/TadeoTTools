@@ -56,59 +56,61 @@
     @for (group of stopGroupStore.getStopGroups(); track group) {
       @if (!onlyPublicGroups() || group.isPublic) {
         <div class="dark:border-accent-400 m-10 rounded-xl bg-background-100 p-5 shadow-lg shadow-secondary-200 dark:border" cdkDrag>
-          <div class="flex justify-between">
-            <div>
-              <button (click)="toggleShowStop(group.id)">
-                @if (shouldStopsBeShown(group.id)) {
-                  -
-                } @else {
-                  >
-                }
-              </button>
-              <p class="font-bold">{{ group.name }}</p>
-              <p>{{ group.description }}</p>
-            </div>
-            <button
-              class="my-1 h-10 btn btn-primary"
-              (click)="showGroupPopUp(group.id)"
-            >
-              Details
-            </button>
-          </div>
-          @if (shouldStopsBeShown(group.id)) {
+          <div class="bg-base-400 collapse collapse-arrow">
+            <input type="checkbox" class="peer" />
             <div
-              class="m-5 flex flex-col rounded-xl p-4 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
-              cdkDropList
-              [cdkDropListConnectedTo]="getDropGroups()"
-              [cdkDropListData]="group.stopIds"
-              (cdkDropListDropped)="dropStop($event)"
-              id="{{ 'group-' + group.id }}"
+              class="collapse-title bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
             >
-              <p>Stops</p>
-              @for (stopId of group.stopIds; track stopId) {
-                <div class="mb-1 flex cursor-grab items-center justify-between rounded-l p-3" cdkDrag>
-                  <p class="ml-5">{{ stopStore.getStopById(stopId)?.name }}</p>
-                  <div>
-                    <button
-                      class="m-5 my-1 btn btn-error btn-outline"
-                      (click)="selectStopToRemove(stopId, group)"
-                    >
-                      Remove
-                    </button>
-                    <button
-                      class="my-1 btn btn-secondary"
-                      [routerLink]="['/stop']"
-                      [queryParams]="{
-                        id: stopId,
-                      }"
-                    >
-                      Details
-                    </button>
-                  </div>
+              <div class="flex justify-between">
+                <div>
+                  <p class="font-bold">{{ group.name }}</p>
+                  <p>{{ group.description }}</p>
                 </div>
-              }
+                <button
+                  class="my-1 h-10 btn btn-primary"
+                  (click)="showGroupPopUp(group.id)"
+                >
+                  Details
+                </button>
+              </div>
             </div>
-          }
+            <div
+              class="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
+            >
+              <div
+                class="m-5 flex flex-col rounded-xl p-4 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+                cdkDropList
+                [cdkDropListConnectedTo]="getDropGroups()"
+                [cdkDropListData]="group.stopIds"
+                (cdkDropListDropped)="dropStop($event)"
+                id="{{ 'group-' + group.id }}"
+              >
+                <p>Stops</p>
+                @for (stopId of group.stopIds; track stopId) {
+                  <div class="mb-1 flex cursor-grab items-center justify-between rounded-l p-3" cdkDrag>
+                    <p class="ml-5">{{ stopStore.getStopById(stopId)?.name }}</p>
+                    <div>
+                      <button
+                        class="m-5 my-1 btn btn-error btn-outline"
+                        (click)="selectStopToRemove(stopId, group)"
+                      >
+                        Remove
+                      </button>
+                      <button
+                        class="my-1 btn btn-secondary"
+                        [routerLink]="['/stop']"
+                        [queryParams]="{
+                      id: stopId,
+                    }"
+                      >
+                        Details
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
         </div>
       }
     }
@@ -124,7 +126,7 @@
     <div class="flex justify-between items-center">
       <p class="mb-3 font-semibold">Unassigned Stops</p>
       <app-filter (filter)="divisionFilter.set($event)" [elements]="divisionStore.getDivisions()"></app-filter>
-    </div>    
+    </div>
       @for (stop of filteredStops(); track stop.id) {
         <div class="mb-1 flex cursor-grab items-start gap-2 rounded-l py-3" cdkDrag>
           <p class="flex-1 break-words text-left">{{ stop.name }}</p>
