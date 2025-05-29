@@ -1,14 +1,14 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { RouterLink } from '@angular/router';
-import { Info, Stop, StopGroup, StopsShownInStopGroup } from '../../types';
-import { InfoPopupComponent } from '../../popups/info-popup/info-popup.component';
-import { FilterComponent } from '../../standard-components/filter/filter.component';
-import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
-import { StopStore } from '../../store/stop.store';
-import { DivisionStore } from '../../store/division.store';
-import { StopGroupStore } from '../../store/stopgroup.store';
-import { StopgroupDetailsComponent } from '../../detail-pages/stopgroup-details/stopgroup-details.component';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {RouterLink} from '@angular/router';
+import {Info, Stop, StopGroup, StopsShownInStopGroup} from '../../types';
+import {InfoPopupComponent} from '../../popups/info-popup/info-popup.component';
+import {FilterComponent} from '../../standard-components/filter/filter.component';
+import {DeletePopupComponent} from '../../popups/delete-popup/delete-popup.component';
+import {StopStore} from '../../store/stop.store';
+import {DivisionStore} from '../../store/division.store';
+import {StopGroupStore} from '../../store/stopgroup.store';
+import {StopgroupDetailsComponent} from '../../detail-pages/stopgroup-details/stopgroup-details.component';
 
 @Component({
   selector: 'app-stopgroups',
@@ -59,25 +59,13 @@ export class StopGroupsComponent implements OnInit {
     this.hasChanged.set(false);
   }
 
-  shouldStopsBeShown(stopGroupId: number): boolean {
-    let showStops = this.showStopsForStopGroup().find((s) => s.stopGroupId === stopGroupId);
-    return showStops !== undefined && showStops.isShown;
-  }
-
   toggleShowStops() {
-    this.showStopsForStopGroup.update((show) =>
-      show.map(
-        (sg): StopsShownInStopGroup => ({
-          stopGroupId: sg.stopGroupId,
-          isShown: false,
-        })
-      )
-    );
-  }
-
-  toggleShowStop(stopGroupId: number) {
-    let showStops = this.showStopsForStopGroup().find((s) => s.stopGroupId === stopGroupId);
-    showStops!.isShown = !showStops?.isShown;
+    setTimeout(() => {
+      const checkboxes = document.querySelectorAll('.collapse-checkbox') as NodeListOf<HTMLInputElement>;
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+    });
   }
 
   addInfo(type: string, message: string): void {
