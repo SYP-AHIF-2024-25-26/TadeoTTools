@@ -133,15 +133,6 @@
                 <!-- Rating Question -->
                 @if (currentPreviewQuestion()?.type === 'rating') {
                   <div class="mb-4">
-                    <div class="flex justify-between mb-2">
-                      <span class="text-sm text-gray-500">
-                        {{ getPreviewRatingLabel(currentPreviewQuestion()?.minRating || 1) }}
-                      </span>
-                      <span class="text-sm text-gray-500">
-                        {{ getPreviewRatingLabel(currentPreviewQuestion()?.maxRating || 5) }}
-                      </span>
-                    </div>
-
                     <div class="flex justify-between items-center">
                       @for (rating of getPreviewRatingRange(); track rating; let i = $index) {
                         <div

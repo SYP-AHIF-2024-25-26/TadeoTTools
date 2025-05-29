@@ -1,12 +1,12 @@
 <!-- Header -->
-<div class="flex flex-col h-screen">
-  <app-header [showWelcomeText]="true"/>
-
+<div class="flex flex-col h-screen overflow-y-scroll">
+  <app-header [showWelcomeText]="false"/>
+  <!-- Main Content -->
   <div class="flex-1 bg-gray-50 overflow-auto flex flex-col items-center  p-4">
 
     @if (!feedbackAlreadySubmitted() && !isSubmitted()) {
       <!-- Feedback Form -->
-      <div class="w-full mt-4 max-w-md shadow-lg border-0 bg-white rounded-lg overflow-hidden">
+      <div class="w-full mt-6 max-w-md shadow-lg border-0 bg-white rounded-lg overflow-hidden">
         <!-- Progress Header -->
         <div class="p-6 pb-2">
           <div class="flex justify-between items-center mb-2">
@@ -70,15 +70,6 @@
             <!-- Rating Question -->
             @if (currentQuestion().type === 'rating') {
               <div class="mb-4">
-                <div class="flex justify-between mb-2">
-              <span class="text-sm text-gray-500">
-                {{ getRatingLabel(currentQuestion().minRating || 1) }}
-              </span>
-                  <span class="text-sm text-gray-500">
-                {{ getRatingLabel(currentQuestion().maxRating || 5) }}
-              </span>
-                </div>
-
                 <div class="flex justify-between items-center">
                   @for (rating of getRatingRange(); track rating; let i = $index) {
                     <div
