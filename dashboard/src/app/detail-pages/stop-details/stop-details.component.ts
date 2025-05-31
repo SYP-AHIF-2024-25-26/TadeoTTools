@@ -50,6 +50,14 @@ export class StopDetailsComponent implements OnInit {
   studentFilterText = signal<string>('');
   teacherFilterText = signal<string>('');
 
+  // Separate filter signals for each list
+  assignedStudentFilterText = signal<string>('');
+  availableStudentFilterText = signal<string>('');
+  assignedTeacherFilterText = signal<string>('');
+  availableTeacherFilterText = signal<string>('');
+  selectedAssignedClass = signal<string>('all');
+  selectedAvailableClass = signal<string>('all');
+
   inactiveDivisions = computed(() => this.divisionStore.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id)));
 
   errorMessage = signal<string | null>(null);
@@ -91,11 +99,11 @@ export class StopDetailsComponent implements OnInit {
   });
 
   // Filter function to apply common filtering logic for teachers
-  private applyTeacherFilters(teachers: any[]) {
+  private applyTeacherFilters(teachers: any[], filterText: string) {
     let filteredTeachers = teachers;
 
-    if (this.teacherFilterText().trim() !== '') {
-      const searchText = this.teacherFilterText().toLowerCase().trim();
+    if (filterText.trim() !== '') {
+      const searchText = filterText.toLowerCase().trim();
       filteredTeachers = filteredTeachers.filter(teacher =>
         teacher.firstName.toLowerCase().includes(searchText) ||
         teacher.lastName.toLowerCase().includes(searchText) ||
@@ -108,11 +116,11 @@ export class StopDetailsComponent implements OnInit {
 
   // Filtered teachers assigned to the stop
   filteredAssignedTeachers = computed(() => {
-    return this.applyTeacherFilters(this.teachersAssignedToStop());
+    return this.applyTeacherFilters(this.teachersAssignedToStop(), this.assignedTeacherFilterText());
   });
 
   teachersNotInStop = computed(() => {
-    return this.applyTeacherFilters(this.teachersAvailableForAssignment());
+    return this.applyTeacherFilters(this.teachersAvailableForAssignment(), this.availableTeacherFilterText());
   });
 
   availableClasses = computed(() => {
@@ -120,16 +128,16 @@ export class StopDetailsComponent implements OnInit {
     return ['all', ...new Set(classes)].filter(Boolean);
   });
 
-  // Filter function to apply common filtering logic
-  private applyStudentFilters(students: any[]) {
+  // Filter function to apply common filtering logic for students
+  private applyStudentFilters(students: any[], filterText: string, selectedClass: string) {
     let filteredStudents = students;
 
-    if (this.selectedClass() !== 'all') {
-      filteredStudents = filteredStudents.filter(student => student.studentClass === this.selectedClass());
+    if (selectedClass !== 'all') {
+      filteredStudents = filteredStudents.filter(student => student.studentClass === selectedClass);
     }
 
-    if (this.studentFilterText().trim() !== '') {
-      const searchText = this.studentFilterText().toLowerCase().trim();
+    if (filterText.trim() !== '') {
+      const searchText = filterText.toLowerCase().trim();
       filteredStudents = filteredStudents.filter(student =>
         student.firstName.toLowerCase().includes(searchText) ||
         student.lastName.toLowerCase().includes(searchText) ||
@@ -143,13 +151,13 @@ export class StopDetailsComponent implements OnInit {
   // Filtered students assigned to the stop
   filteredAssignedStudents = computed(() => {
     const assignedStudents = this.studentStore.getStudentsByStopId(this.stop().id);
-    return this.applyStudentFilters(assignedStudents);
+    return this.applyStudentFilters(assignedStudents, this.assignedStudentFilterText(), this.selectedAssignedClass());
   });
 
   studentsNotInStop = computed(() => {
     const wrongStudents = this.studentStore.getStudentsByStopId(this.stop().id);
     let filteredStudents = this.studentStore.students().filter((student) => !wrongStudents.includes(student));
-    return this.applyStudentFilters(filteredStudents);
+    return this.applyStudentFilters(filteredStudents, this.availableStudentFilterText(), this.selectedAvailableClass());
   });
 
   async ngOnInit() {
@@ -344,9 +352,12 @@ export class StopDetailsComponent implements OnInit {
   // No longer need to toggle badge position
 
   resetFilters() {
-    this.selectedClass.set('all');
-    this.studentFilterText.set('');
-    this.teacherFilterText.set('');
+    this.assignedStudentFilterText.set('');
+    this.availableStudentFilterText.set('');
+    this.assignedTeacherFilterText.set('');
+    this.availableTeacherFilterText.set('');
+    this.selectedAssignedClass.set('all');
+    this.selectedAvailableClass.set('all');
   }
 
   getAssignmentStatus(student: Student): Status {
@@ -374,6 +385,14 @@ export class StopDetailsComponent implements OnInit {
 
   async onTeacherClick(edufsUsername: string) {
     await this.teacherStore.addStopToTeacher(edufsUsername, this.stop().id);
+  }
+
+  onAssignedClassSelect($event: Event) {
+    this.selectedAssignedClass.set(($event.target as HTMLSelectElement).value);
+  }
+
+  onAvailableClassSelect($event: Event) {
+    this.selectedAvailableClass.set(($event.target as HTMLSelectElement).value);
   }
 
   protected readonly Status = Status;
