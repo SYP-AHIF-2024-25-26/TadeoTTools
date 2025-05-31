@@ -49,7 +49,7 @@ public static class TeacherManagementEndpoints
 
     public static async Task<IResult> AddTeacher(TadeoTDbContext context, AddTeacherDto teacherToAdd) 
     {
-        var teacher = await context.Teachers.FindAsync(teacherToAdd.Username);
+        var teacher = await context.Teachers.FindAsync(teacherToAdd.EdufsUsername);
         
         if (teacher != null)
         {
@@ -58,12 +58,13 @@ public static class TeacherManagementEndpoints
 
         var teacherEntity = new Teacher
         {
-            EdufsUsername = teacherToAdd.Username,
+            EdufsUsername = teacherToAdd.EdufsUsername,
             FirstName = teacherToAdd.FirstName,
             LastName = teacherToAdd.LastName
         };
         
-        await context.Teachers.AddAsync(teacherEntity);
+        context.Teachers.Add(teacherEntity);
+        await context.SaveChangesAsync();
         
         return Results.Created();
     } 
@@ -82,7 +83,7 @@ public static class TeacherManagementEndpoints
 
     public static async Task<IResult> UpdateTeacher(TadeoTDbContext context, AddTeacherDto teacherToUpdate)
     {
-        var teacher = await context.Teachers.FindAsync(teacherToUpdate.Username);
+        var teacher = await context.Teachers.FindAsync(teacherToUpdate.EdufsUsername);
         if (teacher == null)
         {
             return Results.NotFound("Teacher not found");
@@ -95,5 +96,5 @@ public static class TeacherManagementEndpoints
     
     public record UploadTeacherCsvFileDto(IFormFile File);
     
-    public record AddTeacherDto(string Username, string FirstName, string LastName);
+    public record AddTeacherDto(string EdufsUsername, string FirstName, string LastName);
 }

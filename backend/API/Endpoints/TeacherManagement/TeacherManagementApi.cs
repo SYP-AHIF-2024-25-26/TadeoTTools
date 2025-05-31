@@ -33,7 +33,7 @@ public static class TeacherManagementApi
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
         
-        app.MapPut("api/teachers", TeacherManagementEndpoints.UpdateTeacher)
+        group.MapPut("api/teachers", TeacherManagementEndpoints.UpdateTeacher)
             .WithName(nameof(TeacherManagementEndpoints.UpdateTeacher))
             .WithDescription("Update a teacher")
             .Produces(StatusCodes.Status400BadRequest)
