@@ -68,9 +68,9 @@ public static class TeacherManagementEndpoints
         return Results.Created();
     } 
     
-    public static async Task<IResult> DeleteTeacher(TadeoTDbContext context, [FromRoute] string username)
+    public static async Task<IResult> DeleteTeacher(TadeoTDbContext context, [FromRoute] string id)
     {
-        var teacher = await context.Teachers.FindAsync(username);
+        var teacher = await context.Teachers.FindAsync(id);
         if (teacher == null)
         {
             return Results.NotFound("Teacher not found");

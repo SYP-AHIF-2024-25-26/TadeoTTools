@@ -26,7 +26,7 @@ public static class TeacherManagementApi
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
         
-        group.MapDelete("api/teachers", TeacherManagementEndpoints.DeleteTeacher)
+        group.MapDelete("api/teachers/{id}", TeacherManagementEndpoints.DeleteTeacher)
             .WithName(nameof(TeacherManagementEndpoints.DeleteTeacher))
             .WithDescription("Delete a teacher")
             .Produces(StatusCodes.Status400BadRequest)
