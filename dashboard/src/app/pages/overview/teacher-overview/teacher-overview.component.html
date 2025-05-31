@@ -1,0 +1,139 @@
+<div class="m-4 flex flex-col items-center text-text-950">
+  <div class="my-3 text-2xl text-text-950">Teacher Overview</div>
+
+  <!-- Add new teacher form -->
+  <div class="w-full max-w-4xl">
+    <div class="my-4 flex flex-wrap gap-4">
+      <input 
+        class="input flex-1 min-w-[200px] rounded px-4 py-2 bg-background-100 dark:border dark:border-accent-400" 
+        type="text" 
+        [(ngModel)]="newTeacher().edufsUsername" 
+        placeholder="EduFS Username"
+      />
+      <input 
+        class="input flex-1 min-w-[200px] rounded px-4 py-2 bg-background-100 dark:border dark:border-accent-400" 
+        type="text" 
+        [(ngModel)]="newTeacher().firstName" 
+        placeholder="First Name"
+      />
+      <input 
+        class="input flex-1 min-w-[200px] rounded px-4 py-2 bg-background-100 dark:border dark:border-accent-400" 
+        type="text" 
+        [(ngModel)]="newTeacher().lastName" 
+        placeholder="Last Name"
+      />
+      <button 
+        (click)="addTeacher()" 
+        class="btn btn-primary px-4 py-2 shadow"
+      >
+        Add Teacher
+      </button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="w-full max-w-4xl">
+    <div class="relative">
+      <input 
+        type="text" 
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)"
+        placeholder="Search teachers..." 
+        class="input w-full rounded-lg px-4 py-2 pl-10 bg-background-100 dark:border dark:border-accent-400"
+      />
+      <svg 
+        class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-text-500" 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke="currentColor"
+      >
+        <path 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          stroke-width="2" 
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        />
+      </svg>
+    </div>
+  </div>
+
+  <!-- Teachers table -->
+  <div class="mt-4 w-full max-w-4xl">
+    <div class="max-h-[60vh] overflow-y-auto rounded-lg border border-background-200 dark:border-background-700">
+      <table class="w-full border-collapse">
+        <thead class="sticky top-0 z-10 bg-background-200">
+          <tr>
+            <th class="px-4 py-2 text-left">EduFS Username</th>
+            <th class="px-4 py-2 text-left">First Name</th>
+            <th class="px-4 py-2 text-left">Last Name</th>
+            <th class="px-4 py-2 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (teacher of filteredTeachers(); track teacher.edufsUsername) {
+            <tr class="border-b border-background-200 dark:border-background-700 hover:bg-background-100">
+              @if (editingTeacher()?.edufsUsername === teacher.edufsUsername) {
+                <td class="px-4 py-2">
+                  <input 
+                    class="input w-full rounded px-2 py-1 bg-background-100 dark:border dark:border-accent-400" 
+                    [(ngModel)]="editingTeacher()!.edufsUsername"
+                    readonly
+                  />
+                </td>
+                <td class="px-4 py-2">
+                  <input 
+                    class="input w-full rounded px-2 py-1 bg-background-100 dark:border dark:border-accent-400" 
+                    [(ngModel)]="editingTeacher()!.firstName"
+                  />
+                </td>
+                <td class="px-4 py-2">
+                  <input 
+                    class="input w-full rounded px-2 py-1 bg-background-100 dark:border dark:border-accent-400" 
+                    [(ngModel)]="editingTeacher()!.lastName"
+                  />
+                </td>
+                <td class="px-4 py-2">
+                  <div class="flex gap-2">
+                    <button 
+                      (click)="saveEdit()" 
+                      class="btn btn-success btn-sm px-3 py-1"
+                    >
+                      Save
+                    </button>
+                    <button 
+                      (click)="cancelEdit()" 
+                      class="btn btn-outline btn-sm px-3 py-1"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </td>
+              } @else {
+                <td class="px-4 py-2">{{ teacher.edufsUsername }}</td>
+                <td class="px-4 py-2">{{ teacher.firstName }}</td>
+                <td class="px-4 py-2">{{ teacher.lastName }}</td>
+                <td class="px-4 py-2">
+                  <div class="flex gap-2">
+                    <button 
+                      (click)="startEdit(teacher)" 
+                      class="btn btn-outline btn-sm px-3 py-1"
+                    >
+                      Edit
+                    </button>
+                    <button 
+                      (click)="deleteTeacher(teacher.edufsUsername)" 
+                      class="btn btn-outline btn-error btn-sm px-3 py-1"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

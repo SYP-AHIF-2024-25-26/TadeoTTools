@@ -46,6 +46,55 @@ public static class TeacherManagementEndpoints
             return Results.BadRequest($"File upload failed: {e.Message}");
         }
     }
+
+    public static async Task<IResult> AddTeacher(TadeoTDbContext context, AddTeacherDto teacherToAdd) 
+    {
+        var teacher = await context.Teachers.FindAsync(teacherToAdd.EdufsUsername);
+        
+        if (teacher != null)
+        {
+            return Results.BadRequest("Username already exists");
+        }
+
+        var teacherEntity = new Teacher
+        {
+            EdufsUsername = teacherToAdd.EdufsUsername,
+            FirstName = teacherToAdd.FirstName,
+            LastName = teacherToAdd.LastName
+        };
+        
+        context.Teachers.Add(teacherEntity);
+        await context.SaveChangesAsync();
+        
+        return Results.Created();
+    } 
+    
+    public static async Task<IResult> DeleteTeacher(TadeoTDbContext context, [FromRoute] string id)
+    {
+        var teacher = await context.Teachers.FindAsync(id);
+        if (teacher == null)
+        {
+            return Results.NotFound("Teacher not found");
+        }
+        context.Teachers.Remove(teacher!);
+        await context.SaveChangesAsync();
+        return Results.Ok();
+    }
+
+    public static async Task<IResult> UpdateTeacher(TadeoTDbContext context, AddTeacherDto teacherToUpdate)
+    {
+        var teacher = await context.Teachers.FindAsync(teacherToUpdate.EdufsUsername);
+        if (teacher == null)
+        {
+            return Results.NotFound("Teacher not found");
+        }
+        teacher.FirstName = teacherToUpdate.FirstName;
+        teacher.LastName = teacherToUpdate.LastName;
+        await context.SaveChangesAsync();
+        return Results.Ok();
+    }
     
     public record UploadTeacherCsvFileDto(IFormFile File);
+    
+    public record AddTeacherDto(string EdufsUsername, string FirstName, string LastName);
 }
