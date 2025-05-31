@@ -10,8 +10,7 @@ import { DivisionService } from '../../division.service';
   selector: 'app-data-page',
   imports: [],
   templateUrl: './data-page.component.html',
-  styleUrl: './data-page.component.css',
-  standalone: true,
+  standalone: true
 })
 export class DataPageComponent {
 
