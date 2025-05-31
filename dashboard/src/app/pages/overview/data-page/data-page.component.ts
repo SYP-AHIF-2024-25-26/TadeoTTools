@@ -1,10 +1,10 @@
 import {Component, inject, signal, WritableSignal} from '@angular/core';
-import {StudentService} from "../../student.service";
-import {TeacherService} from "../../teacher.service";
-import {FeedbackService} from "../../feedback.service";
-import { StopGroupService } from '../../stopgroup.service';
-import { StopService } from '../../stop.service';
-import { DivisionService } from '../../division.service';
+import {StudentService} from "../../../student.service";
+import {TeacherService} from "../../../teacher.service";
+import {FeedbackService} from "../../../feedback.service";
+import { StopGroupService } from '../../../stopgroup.service';
+import { StopService } from '../../../stop.service';
+import { DivisionService } from '../../../division.service';
 
 @Component({
   selector: 'app-data-page',
