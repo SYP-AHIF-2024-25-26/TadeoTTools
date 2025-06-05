@@ -75,12 +75,12 @@ if (app.Environment.IsDevelopment())
 app.Map("ping", () => Results.Ok("pong"));
 
 
-/*var basePath = "";
+var basePath = "";
 if (app.Environment.IsProduction())
 {
     basePath = "/tadeot-backend-2511";
     app.UsePathBase(basePath + "/");
-}*/
+}
 
 app.UseCors(Setup.CorsPolicyName);
 
