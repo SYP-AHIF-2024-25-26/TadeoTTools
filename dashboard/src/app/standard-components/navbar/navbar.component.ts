@@ -36,13 +36,13 @@ export class NavbarComponent {
       } else {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('color-theme', 'light');
-        html.removeAttribute('data-theme'); 
+        html.removeAttribute('data-theme');
       }
     } else {
       if (document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('color-theme', 'light');
-        html.removeAttribute('data-theme'); 
+        html.removeAttribute('data-theme');
       } else {
         document.documentElement.classList.add('dark');
         localStorage.setItem('color-theme', 'dark');
