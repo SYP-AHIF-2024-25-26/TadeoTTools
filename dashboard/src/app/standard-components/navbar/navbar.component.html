@@ -21,12 +21,12 @@
     <!-- Nav Links (desktop) -->
     <div class="hidden md:flex md:items-center md:justify-start space-x-4">
       @if (isAdmin()) {
-        <button class="px-3 py-2" [routerLink]="['/overview']">Overview</button>
-        <button class="px-3 py-2" [routerLink]="['/students']">Students</button>
-        <button class="px-3 py-2" [routerLink]="['/stopgroups']">StopGroups</button>
-        <button class="px-3 py-2" [routerLink]="['/stops']">Stops</button>
-        <button class="px-3 py-2" [routerLink]="['/divisions']">Divisions</button>
-        <button class="px-3 py-2" [routerLink]="['/feedback']">Feedback</button>
+        <button class="px-3 py-2" [routerLink]="['/students']" routerLinkActive="bg-primary underline font-medium rounded">Students</button>
+        <button class="px-3 py-2" [routerLink]="['/stopgroups']" routerLinkActive="bg-primary underline font-medium rounded">StopGroups</button>
+        <button class="px-3 py-2" [routerLink]="['/stops']" routerLinkActive="bg-primary underline font-medium rounded">Stops</button>
+        <button class="px-3 py-2" [routerLink]="['/divisions']" routerLinkActive="bg-primary underline font-medium rounded">Divisions</button>
+        <button class="px-3 py-2" [routerLink]="['/feedback']" routerLinkActive="bg-primary underline font-medium rounded">Feedback</button>
+        <button class="px-3 py-2" [routerLink]="['/admin']" routerLinkActive="bg-primary underline font-medium rounded">Admin</button>
       }
     </div>
 
@@ -55,12 +55,13 @@
      @if(mobileMenuOpen()) {
       <div class="mt-4 flex w-full flex-col space-y-2 md:hidden">
         @if (isAdmin()) {
-          <button class="px-3 py-2 text-left" [routerLink]="['/overview']">Overview</button>
-          <button class="px-3 py-2 text-left" [routerLink]="['/students']">Students</button>
-          <button class="px-3 py-2 text-left" [routerLink]="['/stopgroups']">StopGroups</button>
-          <button class="px-3 py-2 text-left" [routerLink]="['/stops']">Stops</button>
-          <button class="px-3 py-2 text-left" [routerLink]="['/divisions']">Divisions</button>
-          <button class="px-3 py-2 text-left" [routerLink]="['/feedback']">Feedback</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/overview']" routerLinkActive="bg-primary underline font-medium rounded">Overview</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/students']" routerLinkActive="bg-primary underline font-medium rounded">Students</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/stopgroups']" routerLinkActive="bg-primary underline font-medium rounded">StopGroups</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/stops']" routerLinkActive="bg-primary underline font-medium rounded">Stops</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/divisions']" routerLinkActive="bg-primary underline font-medium rounded">Divisions</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/feedback']" routerLinkActive="bg-primary underline font-medium rounded">Feedback</button>
+          <button class="px-3 py-2 text-left" [routerLink]="['/data']" routerLinkActive="bg-primary underline font-medium rounded">Data</button>
         }
       </div>
      }

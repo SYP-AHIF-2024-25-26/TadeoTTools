@@ -59,16 +59,21 @@
           <div class="bg-base-400 collapse collapse-arrow">
             <input type="checkbox" class="peer collapse-checkbox" />
             <div
-              class="collapse-title bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
+              class="collapse-title
+             bg-primary text-primary-content
+             peer-checked:bg-secondary peer-checked:text-secondary-content
+             z-10 pointer-events-none"
             >
-              <div class="flex justify-between">
+              <div class="flex justify-between items-center w-full">
                 <div>
                   <p class="font-bold">{{ group.name }}</p>
                   <p>{{ group.description }}</p>
                 </div>
+
                 <button
-                  class="my-1 h-10 btn btn-primary"
-                  (click)="showGroupPopUp(group.id)"
+                  type="button"
+                  class="my-1 h-10 btn btn-primary pointer-events-auto"
+                  (click)="$event.stopPropagation(); showGroupPopUp(group.id)"
                 >
                   Details
                 </button>

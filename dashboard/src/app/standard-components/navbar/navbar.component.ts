@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, RouterLinkActive } from '@angular/router';
 import Keycloak from 'keycloak-js';
 import { AdminDropdownComponent } from '../admin-dropdown/admin-dropdown.component';
 import { LoginService } from '../../login.service';
@@ -7,7 +7,7 @@ import { LoginService } from '../../login.service';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterModule, AdminDropdownComponent],
+  imports: [RouterModule, RouterLinkActive, AdminDropdownComponent],
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent {
@@ -36,13 +36,13 @@ export class NavbarComponent {
       } else {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('color-theme', 'light');
-        html.removeAttribute('data-theme'); 
+        html.removeAttribute('data-theme');
       }
     } else {
       if (document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('color-theme', 'light');
-        html.removeAttribute('data-theme'); 
+        html.removeAttribute('data-theme');
       } else {
         document.documentElement.classList.add('dark');
         localStorage.setItem('color-theme', 'dark');

@@ -7,8 +7,8 @@ import { TeacherOverviewComponent } from './teacher-overview/teacher-overview.co
 @Component({
   selector: 'app-overview',
   imports: [AdminOverviewComponent, DataPageComponent, TeacherOverviewComponent],
-  templateUrl: './overview.component.html',
+  templateUrl: './admin.component.html',
 })
-export class OverviewComponent {
+export class AdminComponent {
 
 }
