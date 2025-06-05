@@ -67,7 +67,7 @@ const keycloakProvider = provideKeycloak({
   ],
   features: [
     withAutoRefreshToken({
-      sessionTimeout: 300000, // 5 minutes
+      sessionTimeout: 1800000, // 30 minutes
       onInactivityTimeout: 'logout',
     }),
   ],
