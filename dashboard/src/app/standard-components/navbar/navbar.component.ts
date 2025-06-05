@@ -3,11 +3,12 @@ import { RouterModule, RouterLinkActive } from '@angular/router';
 import Keycloak from 'keycloak-js';
 import { AdminDropdownComponent } from '../admin-dropdown/admin-dropdown.component';
 import { LoginService } from '../../login.service';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterModule, RouterLinkActive, AdminDropdownComponent],
+  imports: [RouterModule, RouterLinkActive, AdminDropdownComponent, NgOptimizedImage],
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent {
