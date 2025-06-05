@@ -1,7 +1,9 @@
 <div class="sticky top-0 z-50 bg-background-200 shadow">
   <nav class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-text-900">
-
-    <div class="text-lg font-semibold">Admin Dashboard</div>
+    <!-- Logo -->
+    <a [routerLink]="['/']" class="flex items-center">
+      <img ngSrc="assets/Leonding_Logo.svg" alt="Leonding Logo" class="h-8" height="29" width="128">
+    </a>
 
     <!-- Hamburger (mobile only) -->
     <button
