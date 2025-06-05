@@ -19,6 +19,27 @@ public static class TeacherManagementApi
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
+        group.MapPost("api/teachers", TeacherManagementEndpoints.AddTeacher)
+            .WithName(nameof(TeacherManagementEndpoints.AddTeacher))
+            .WithDescription("Add a teacher")
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.AdminPolicyName);
+        
+        group.MapDelete("api/teachers/{id}", TeacherManagementEndpoints.DeleteTeacher)
+            .WithName(nameof(TeacherManagementEndpoints.DeleteTeacher))
+            .WithDescription("Delete a teacher")
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.AdminPolicyName);
+        
+        group.MapPut("api/teachers", TeacherManagementEndpoints.UpdateTeacher)
+            .WithName(nameof(TeacherManagementEndpoints.UpdateTeacher))
+            .WithDescription("Update a teacher")
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.AdminPolicyName);
+
         group.MapPost("api/teachers/upload", TeacherManagementEndpoints.UploadCsvFile)
             .DisableAntiforgery();
     }

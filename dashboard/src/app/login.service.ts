@@ -16,7 +16,6 @@ export class LoginService {
   showResponse = computed(() => this.response() !== null);
 
   constructor() {
-    console.log("everyone-allowed");
     this.performCall('everyone-allowed');
   }
 

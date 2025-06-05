@@ -8,10 +8,9 @@ import { StopDetailsComponent } from './detail-pages/stop-details/stop-details.c
 import { StopsComponent } from './pages/stops/stops.component';
 import { StudentComponent } from './pages/student/student.component';
 import { TeacherComponent } from './pages/teacher/teacher.component';
-import { AdminOverviewComponent } from './pages/admin-overview/admin-overview.component';
 import { ListStudentsComponent } from './pages/list-students/list-students.component';
 import {FeedbackConfiguratorComponent} from "./pages/feedback-configurator/feedback-configurator.component";
-import {DataPageComponent} from "./pages/data-page/data-page.component";
+import { OverviewComponent } from './pages/overview/overview.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -23,9 +22,8 @@ export const routes: Routes = [
   { path: 'stop', component: StopDetailsComponent },
   { path: 'student', component: StudentComponent },
   { path: 'teacher', component: TeacherComponent },
-  { path: 'overview', component: AdminOverviewComponent },
+  { path: 'overview', component: OverviewComponent },
   { path: 'students', component: ListStudentsComponent },
   { path: 'feedback', component: FeedbackConfiguratorComponent },
-  { path: 'data', component: DataPageComponent},
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

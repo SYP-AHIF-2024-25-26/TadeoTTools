@@ -1,10 +1,10 @@
-<h1 class="font-bold text-3xl mt-8 text-center text-text-950">Data Importing and Exporting</h1>
-<div class="flex justify-evenly text-text-950">
-  <div class="flex flex-col gap-x-4 mb-4 mt-4">
-    <h1 class="font-bold text-3xl mb-4">Imports</h1>
-    <div class="flex gap-x-4 mb-4 self-start">
+<div class="my-6 text-2xl text-center text-text-950">Data Importing and Exporting</div>
+<div class="flex items-start justify-center gap-x-16 text-text-950">
+  <div class="flex flex-col my-4">
+    <h1 class="text-3xl mb-4 text-center">Imports</h1>
+    <div class="flex gap-x-4 mb-4">
       <fieldset class="fieldset">
-        <legend class="fieldset-legend text-lg font-bold">Import Student Csv</legend>
+        <legend class="fieldset-legend text-lg">Import Student Csv</legend>
         <input type="file" class="file-input file-input-primary file-input-sm" accept=".csv"
           (change)="onStudentFileSelected($event)" />
       </fieldset>
@@ -13,9 +13,12 @@
         Import
       </button>
     </div>
+    <div class="rounded-lg bg-background-100 p-2 my-2 dark:border dark:border-accent-400">
+      <p class="font-mono text-sm text-text-600">EdufsUsername;FirstName;LastName;StudentClass;Department</p>
+    </div>
     <div class="flex gap-x-4 mb-4 self-start">
       <fieldset class="fieldset">
-        <legend class="fieldset-legend text-lg font-bold">Import Teacher Csv</legend>
+        <legend class="fieldset-legend text-lg">Import Teacher Csv</legend>
         <input type="file" class="file-input file-input-primary file-input-sm" accept=".csv"
           (change)="onTeacherFileSelected($event)" />
       </fieldset>
@@ -23,10 +26,14 @@
         [disabled]="!selectedTeacherFile">
         Import
       </button>
+
+    </div>
+    <div class="rounded-lg bg-background-100 p-2 my-2 dark:border dark:border-accent-400">
+      <p class="font-mono text-sm text-text-600">EdufsUsername;FirstName;LastName</p>
     </div>
   </div>
   <div class="flex flex-col gap-y-4 my-4">
-    <h1 class="font-bold text-3xl mb-4">Exports</h1>
+    <h1 class="text-3xl mb-4 text-center">Exports</h1>
     <button (click)="downloadQuestionAnswers()" class="btn btn-primary btn-sm self-start">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
         stroke="currentColor">

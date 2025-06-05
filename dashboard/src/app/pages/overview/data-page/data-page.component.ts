@@ -1,17 +1,16 @@
 import {Component, inject, signal, WritableSignal} from '@angular/core';
-import {StudentService} from "../../student.service";
-import {TeacherService} from "../../teacher.service";
-import {FeedbackService} from "../../feedback.service";
-import { StopGroupService } from '../../stopgroup.service';
-import { StopService } from '../../stop.service';
-import { DivisionService } from '../../division.service';
+import {StudentService} from "../../../student.service";
+import {TeacherService} from "../../../teacher.service";
+import {FeedbackService} from "../../../feedback.service";
+import { StopGroupService } from '../../../stopgroup.service';
+import { StopService } from '../../../stop.service';
+import { DivisionService } from '../../../division.service';
 
 @Component({
   selector: 'app-data-page',
   imports: [],
   templateUrl: './data-page.component.html',
-  styleUrl: './data-page.component.css',
-  standalone: true,
+  standalone: true
 })
 export class DataPageComponent {
 
@@ -47,7 +46,6 @@ export class DataPageComponent {
 
   onTeacherFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    console.log(input.files);
     if (input.files && input.files.length > 0) {
       this.selectedTeacherFile.set(input.files[0]);
     }
@@ -107,7 +105,7 @@ export class DataPageComponent {
     }
   }
 
-  private downloadFile(blob: Blob, filename: string) { 
+  private downloadFile(blob: Blob, filename: string) {
     const url = window.URL.createObjectURL(blob);
 
     const a = document.createElement('a');

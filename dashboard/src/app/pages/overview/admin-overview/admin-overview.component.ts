@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AdminService } from '../../admin.service';
+import { AdminService } from '../../../admin.service';
 
 @Component({
   selector: 'app-admin-overview',
