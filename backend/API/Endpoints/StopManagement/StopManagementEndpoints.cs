@@ -147,8 +147,12 @@ public static class StopManagementEndpoints
     public static async Task<IResult> DeleteStop(TadeoTDbContext context, [FromRoute] int stopId)
     {
         var stop = await context.Stops.FindAsync(stopId);
+        if (stop is null)
+        {
+            return Results.NotFound($"Stop with ID {stopId} not found");
+        }
 
-        context.Stops.Remove(stop!);
+        context.Stops.Remove(stop);
         await context.SaveChangesAsync();
         return Results.Ok();
     }
@@ -173,7 +177,7 @@ public static class StopManagementEndpoints
             var escapedName = Utils.EscapeCsvField(item.Name);
             var escapedDescription = Utils.EscapeCsvField(item.Description);
             var escapedRoomNr = Utils.EscapeCsvField(item.RoomNr);
-            var escapedDivisions = Utils.EscapeCsvField(string.Join(",", item.Divisions.Select(d => d.Id)));;
+            var escapedDivisions = Utils.EscapeCsvField(string.Join(",", item.Divisions.Select(d => d.Id)));
             var escapedStopGroupIds = Utils.EscapeCsvField(string.Join(",", item.StopGroupAssignments.Select(a => a.StopGroupId)));
             csvBuilder.AppendLine($"{escapedId};{escapedName};{escapedDescription};{escapedRoomNr};{escapedStopGroupIds};{escapedDivisions}");
         }
