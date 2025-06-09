@@ -37,12 +37,12 @@
         <p class="mb-6 text-red-700">{{ errorMessage() }}</p>
       }
       <div class="flex justify-end space-x-4">
-        <button type="submit" class="rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
+        <button type="submit" class="rounded bg-primary-200 p-2 hover:bg-primary-300 text-black">Submit</button>
 
-        <button (click)="goBack()" type="button" class="rounded bg-gray-400 p-2 hover:bg-gray-500">Cancel</button>
+        <button (click)="goBack()" type="button" class="rounded bg-gray-400 p-2 hover:bg-gray-500 text-black">Cancel</button>
 
         @if (id != -1) {
-          <button (click)="deleteAndGoBack()" type="button" class="rounded bg-accent-200 p-2 hover:bg-accent-300">Delete</button>
+          <button (click)="deleteAndGoBack()" type="button" class="rounded bg-accent-200 p-2 hover:bg-accent-300 text-black">Delete</button>
         }
       </div>
     </form>

@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { NgClass } from '@angular/common';
-import { Router } from '@angular/router';
+import {Component, ElementRef, HostListener, inject, signal, ViewChild} from '@angular/core';
+import {NgClass} from '@angular/common';
+import {Router} from '@angular/router';
 import Keycloak from 'keycloak-js';
 
 @Component({
@@ -8,14 +8,16 @@ import Keycloak from 'keycloak-js';
   imports: [NgClass],
   templateUrl: './admin-dropdown.component.html',
 })
-export class AdminDropdownComponent {
-  isOpen = false;
+export class AdminDropdownComponent{
+  isOpen = signal(false);
   private readonly router = inject(Router);
   private readonly keycloak = inject(Keycloak);
   items = ['Student View', 'Teacher View', 'Logout'];
 
+  @ViewChild('dropdown', { static: false }) dropdownRef!: ElementRef;
+
   toggleDropdown(): void {
-    this.isOpen = !this.isOpen;
+    this.isOpen.set(!this.isOpen());
   }
 
   async selectItem(item: string): Promise<void> {
@@ -30,6 +32,14 @@ export class AdminDropdownComponent {
       await this.router.navigate(['login']);
       await this.keycloak.logout();
     }
-    this.isOpen = false;
+    this.isOpen.set(false);
+  }
+
+  @HostListener('document:mousedown', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    if (!this.isOpen()) return;
+    if (this.dropdownRef && !this.dropdownRef.nativeElement.contains(event.target)) {
+      this.isOpen.set(false);
+    }
   }
 }

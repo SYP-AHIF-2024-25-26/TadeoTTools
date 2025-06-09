@@ -13,23 +13,6 @@
     >
       Add Stop
     </button>
-  </div>
-
-  <div class="flex items-center space-x-4">
-    <button
-      (click)="saveChanges()"
-      [disabled]="!hasChanged()"
-      class="btn btn-primary !text-text-900 disabled:btn-disabled"
-    >
-      Save Changes
-    </button>
-    <button
-      (click)="initialiseData()"
-      [disabled]="!hasChanged()"
-      class="btn btn-primary !text-text-950 disabled:btn-disabled"
-    >
-      Cancel
-    </button>
 
     <button
       (click)="toggleShowStops()"
@@ -48,6 +31,23 @@
       />
       <label for="only-public-groups" class="text-text-950">Show Private Groups</label>
     </div>
+  </div>
+
+  <div class="flex items-center space-x-4">
+    <button
+      (click)="saveChanges()"
+      [disabled]="!hasChanged()"
+      class="btn btn-primary !text-text-900 disabled:btn-disabled cursor-pointer"
+    >
+      Save Changes
+    </button>
+    <button
+      (click)="initialiseData()"
+      [disabled]="!hasChanged()"
+      class="btn btn-primary !text-text-950 disabled:btn-disabled cursor-pointer"
+    >
+      Cancel
+    </button>
   </div>
 </div>
 

@@ -1,10 +1,9 @@
-import {Component, computed, inject, signal, WritableSignal} from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Status, Student } from '../../types';
-import { StudentStore } from '../../store/student.store';
-import { CommonModule } from '@angular/common';
-import { StudentService } from '../../student.service';
-import { ChipComponent } from '../../standard-components/chip/chip.component';
+import {Component, computed, inject, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {Status, Student} from '../../types';
+import {StudentStore} from '../../store/student.store';
+import {CommonModule} from '@angular/common';
+import {ChipComponent} from '../../standard-components/chip/chip.component';
 
 @Component({
   selector: 'app-list-students',
@@ -119,7 +118,7 @@ export class ListStudentsComponent {
 
     if (this.singleAssignmentsStatusFilter() === 'approved') {
       filtered = filtered.filter(s => s.studentAssignments[0].status === Status.Accepted);
-    } else if (this.singleAssignmentsStatusFilter() === 'unapproved') {
+    } else if (this.singleAssignmentsStatusFilter() === 'rejected') {
       filtered = filtered.filter(s => s.studentAssignments[0].status !== Status.Accepted);
     }
 

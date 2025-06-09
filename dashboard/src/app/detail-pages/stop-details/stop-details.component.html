@@ -337,9 +337,9 @@
       <p class="text-red-700">{{ errorMessage() }}</p>
     }
     <div>
-      <button type="submit" class="mr-4 rounded-lg bg-primary-200 p-2 text-white hover:bg-primary-300">Submit</button>
+      <button type="submit" class="mr-4 rounded-lg bg-primary-200 p-2 text-black hover:bg-primary-300">Submit</button>
 
-      <button (click)="goBack()" type="button" class="mr-4 mt-4 rounded-lg bg-primary-200 p-2 text-white hover:bg-primary-300">Cancel</button>
+      <button (click)="goBack()" type="button" class="mr-4 mt-4 rounded-lg bg-primary-200 p-2 text-black hover:bg-primary-300">Cancel</button>
       @if (stop().id != -1) {
         <button (click)="deleteAndGoBack()" type="button" class="hover:bg-accent-300 mr-4 rounded bg-accent-200 p-2">Delete</button>
       }
