@@ -30,6 +30,7 @@ export class StopDetailsComponent implements OnInit {
   private service: StopService = inject(StopService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
+  private originalAssignments = new Map<string, StudentAssignment[]>();
 
   constructor(private router: Router) {
   }
@@ -187,6 +188,13 @@ export class StopDetailsComponent implements OnInit {
         foundStop = this.stopStore.getStopById(Number(id));
         if (foundStop) {
           this.stop.set(foundStop);
+          const students = this.studentStore.getStudentsByStopId(foundStop.id);
+          students.forEach(s => {
+            const assignments = s.studentAssignments
+              .filter(a => a.stopId === foundStop!.id)
+              .map(a => ({ ...a }));
+            this.originalAssignments.set(s.edufsUsername, assignments);
+          });
           break;
         }
 
@@ -255,10 +263,20 @@ export class StopDetailsComponent implements OnInit {
   }
 
   goBack() {
+    if (this.stop().id !== -1) {
+      const currentStudents = this.studentStore.getStudentsByStopId(this.stop().id);
+      currentStudents.forEach(student => {
+        this.studentStore.removeStopFromStudent(student.edufsUsername, this.stop().id);
+      });
+      this.originalAssignments.forEach((assignments, username) => {
+        assignments.forEach(a => this.studentStore.addStopToStudent({ ...a }));
+      });
+    } else {
+      this.studentStore.getStudentsByStopId(-1).forEach((student) => {
+        this.studentStore.removeStopFromStudent(student.edufsUsername, -1);
+      });
+    }
     this.stop.set(this.emptyStop);
-    this.studentStore.getStudentsByStopId(-1).forEach((student) => {
-      this.studentStore.removeStopFromStudent(student.edufsUsername, -1);
-    });
     this.location.back();
   }
 

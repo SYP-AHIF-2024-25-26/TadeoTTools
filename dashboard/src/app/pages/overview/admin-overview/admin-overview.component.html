@@ -3,7 +3,7 @@
   <div class="w-full max-w-xl">
     <div class="my-4 flex gap-5">
       <input class="input flex-1 rounded px-4 py-2 bg-background-100 dark:border dark:border-accent-400" type="text" [value]="addname()" [(ngModel)]="addname" name="addname" id="addname" />
-      <button (click)="addAdmin()" class="btn btn-primary px-4 py-2 shadow">Add Admin</button>
+      <button (click)="addAdmin()" class="btn btn-primary px-4 py-2 shadow text-black">Add Admin</button>
     </div>
   </div>
 
@@ -13,7 +13,7 @@
         class="mb-4 flex items-center justify-between rounded-lg bg-background-100 p-4 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
       >
         <div class="text-lg font-semibolds">{{ admin }}</div>
-        <button (click)="deleteAdmin(admin)" class="btn btn-outline btn-error rounded px-4 py-2">Delete</button>
+        <button (click)="deleteAdmin(admin)" class="btn btn-outline btn-error rounded px-4 py-2 text-black">Delete</button>
       </div>
     }
   </div>

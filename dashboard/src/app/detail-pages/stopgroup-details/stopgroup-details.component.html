@@ -7,7 +7,7 @@
     }
     <label for="name" class="mb-3 block">Name</label>
     <input
-        class="text-text-950 mb-6 w-full resize-x rounded border bg-primary-200 px-4 py-2 text-xl"
+        class="text-text-950 mb-6 w-full resize-x rounded border bg-background-50 px-4 py-2 text-xl"
         type="text"
         [value]="name()"
         [(ngModel)]="name"
@@ -20,7 +20,7 @@
       <div class="mb-6">
         <label for="description" class="mb-3 block">Description</label>
         <textarea
-          class="text-text-95 w-full rounded border bg-primary-200 px-4 py-2"
+          class="text-text-95 w-full rounded border bg-background-50 px-4 py-2"
           [value]="description()"
           [(ngModel)]="description"
           name="description"
@@ -37,12 +37,12 @@
         <p class="mb-6 text-red-700">{{ errorMessage() }}</p>
       }
       <div class="flex justify-end space-x-4">
-        <button type="submit" class="rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
+        <button type="submit" class="rounded bg-primary-200 p-2 hover:bg-primary-300 text-black">Submit</button>
 
-        <button (click)="goBack()" type="button" class="rounded bg-gray-400 p-2 hover:bg-gray-500">Cancel</button>
+        <button (click)="goBack()" type="button" class="rounded bg-gray-400 p-2 hover:bg-gray-500 text-black">Cancel</button>
 
         @if (id != -1) {
-          <button (click)="deleteAndGoBack()" type="button" class="rounded bg-accent-200 p-2 hover:bg-accent-300">Delete</button>
+          <button (click)="deleteAndGoBack()" type="button" class="rounded bg-accent-200 p-2 hover:bg-accent-300 text-black">Delete</button>
         }
       </div>
     </form>

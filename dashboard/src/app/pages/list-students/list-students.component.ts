@@ -1,13 +1,13 @@
-import {Component, computed, inject, signal, WritableSignal} from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Status, Student } from '../../types';
-import { StudentStore } from '../../store/student.store';
-import { CommonModule } from '@angular/common';
-import { StudentService } from '../../student.service';
+import {Component, computed, inject, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {Status, Student} from '../../types';
+import {StudentStore} from '../../store/student.store';
+import {CommonModule} from '@angular/common';
+import {ChipComponent} from '../../standard-components/chip/chip.component';
 
 @Component({
   selector: 'app-list-students',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, ChipComponent],
   templateUrl: './list-students.component.html',
   standalone: true,
 })
@@ -22,9 +22,11 @@ export class ListStudentsComponent {
   singleAssignmentsClassFilter = signal<string>('');
   singleAssignmentsStopFilter = signal<string>('');
   singleAssignmentsSearchTerm = signal<string>('');
+  singleAssignmentsStatusFilter = signal<string>('all');
 
   noAssignmentsClassFilter = signal<string>('');
   noAssignmentsSearchTerm = signal<string>('');
+  noAssignmentsDepartmentFilter = signal<string[]>([]);
 
   // Selected student for conflict details
   selectedStudent = signal<Student | null>(null);
@@ -47,6 +49,12 @@ export class ListStudentsComponent {
       });
     });
     return Array.from(stops).sort();
+  });
+
+  uniqueDepartments = computed(() => {
+    const deps = new Set<string>();
+    this.studentStore.students().forEach(s => deps.add(s.department));
+    return Array.from(deps).sort();
   });
 
   // all where there is more than one assignment and at least one is pending
@@ -108,6 +116,12 @@ export class ListStudentsComponent {
       );
     }
 
+    if (this.singleAssignmentsStatusFilter() === 'approved') {
+      filtered = filtered.filter(s => s.studentAssignments[0].status === Status.Accepted);
+    } else if (this.singleAssignmentsStatusFilter() === 'rejected') {
+      filtered = filtered.filter(s => s.studentAssignments[0].status !== Status.Accepted);
+    }
+
     return filtered;
   });
 
@@ -128,6 +142,10 @@ export class ListStudentsComponent {
         s.lastName.toLowerCase().includes(term) ||
         s.edufsUsername.toLowerCase().includes(term)
       );
+    }
+
+    if (this.noAssignmentsDepartmentFilter().length > 0) {
+      filtered = filtered.filter(s => this.noAssignmentsDepartmentFilter().includes(s.department));
     }
 
     return filtered;
@@ -203,5 +221,19 @@ export class ListStudentsComponent {
 
   async undoSingleAssignment(student: Student) {
     await this.changeAssignmentStatus(student, 0, Status.Pending);
+  }
+
+  onNoAssignmentsDepartmentSelect(event: Event) {
+    const val = (event.target as HTMLSelectElement).value;
+    if (val && !this.noAssignmentsDepartmentFilter().includes(val)) {
+      this.noAssignmentsDepartmentFilter.set([...this.noAssignmentsDepartmentFilter(), val]);
+    }
+    (event.target as HTMLSelectElement).value = '';
+  }
+
+  removeNoAssignmentsDepartment(value: string) {
+    this.noAssignmentsDepartmentFilter.set(
+      this.noAssignmentsDepartmentFilter().filter(v => v !== value)
+    );
   }
 }

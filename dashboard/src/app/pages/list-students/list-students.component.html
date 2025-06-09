@@ -130,6 +130,17 @@
                  [(ngModel)]="singleAssignmentsSearchTerm" />
         </div>
 
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Status Filter</span>
+          </label>
+          <select class="select select-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400" [(ngModel)]="singleAssignmentsStatusFilter">
+            <option value="all">All</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+
         <button (click)="autoApproveAll()" class="self-end h-12 rounded bg-primary-200 px-4 py-2 text-text-950 hover:bg-primary-300">Auto Approve All</button>
 
       </div>
@@ -224,6 +235,24 @@
             </label>
             <input type="text" placeholder="Search by (user)name" class="input input-bordered w-full max-w-xs"
                    [(ngModel)]="noAssignmentsSearchTerm" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Department</span>
+            </label>
+            <select class="select select-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400" (change)="onNoAssignmentsDepartmentSelect($event)">
+              <option value="">Select Department</option>
+              @for (dep of uniqueDepartments(); track dep) {
+                <option [value]="dep">{{ dep }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="flex items-end gap-2">
+            @for (dep of noAssignmentsDepartmentFilter(); track dep) {
+              <app-chip [id]="dep" [value]="dep" (remove)="removeNoAssignmentsDepartment($event)"></app-chip>
+            }
           </div>
         </div>
 
