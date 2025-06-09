@@ -1,18 +1,17 @@
 <div class="m-4 flex justify-between px-10 pt-2">
   <div class="flex items-center space-x-4">
     <button
-      (click)="saveChanges()"
-      [disabled]="!hasChanged()"
-      class="btn btn-primary !text-text-900 disabled:btn-disabled"
+      (click)="showGroupPopUp(-1)"
+      class="btn btn-primary"
     >
-      Save Changes
+      Add StopGroup
     </button>
+
     <button
-      (click)="initialiseData()"
-      [disabled]="!hasChanged()"
-      class="btn btn-primary !text-text-950 disabled:btn-disabled"
+      [routerLink]="['/stop']"
+      class="btn btn-primary"
     >
-      Cancel
+      Add Stop
     </button>
 
     <button
@@ -36,17 +35,18 @@
 
   <div class="flex items-center space-x-4">
     <button
-      (click)="showGroupPopUp(-1)"
-      class="btn btn-primary"
+      (click)="saveChanges()"
+      [disabled]="!hasChanged()"
+      class="btn btn-primary !text-text-900 disabled:btn-disabled"
     >
-      Add StopGroup
+      Save Changes
     </button>
-
     <button
-      [routerLink]="['/stop']"
-      class="btn btn-primary"
+      (click)="initialiseData()"
+      [disabled]="!hasChanged()"
+      class="btn btn-primary !text-text-950 disabled:btn-disabled"
     >
-      Add Stop
+      Cancel
     </button>
   </div>
 </div>
