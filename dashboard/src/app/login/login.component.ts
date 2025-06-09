@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
 
     await this.getRole('is-admin');
     if (this.response() && this.response()!.includes('admin')) {
-      this.router.navigate(['/stopgroups']);
+      this.router.navigate(['/students']);
     } else {
       await this.getRole('is-teacher');
       if (this.response() && this.response()!.includes('teacher')) {

@@ -1,6 +1,22 @@
 <div class="m-4 flex justify-between px-10 pt-2">
   <div class="flex items-center space-x-4">
     <button
+      (click)="showGroupPopUp(-1)"
+      class="btn btn-primary"
+    >
+      Add StopGroup
+    </button>
+
+    <button
+      [routerLink]="['/stop']"
+      class="btn btn-primary"
+    >
+      Add Stop
+    </button>
+  </div>
+
+  <div class="flex items-center space-x-4">
+    <button
       (click)="saveChanges()"
       [disabled]="!hasChanged()"
       class="btn btn-primary !text-text-900 disabled:btn-disabled"
@@ -32,22 +48,6 @@
       />
       <label for="only-public-groups" class="text-text-950">Show Private Groups</label>
     </div>
-  </div>
-
-  <div class="flex items-center space-x-4">
-    <button
-      (click)="showGroupPopUp(-1)"
-      class="btn btn-primary"
-    >
-      Add StopGroup
-    </button>
-
-    <button
-      [routerLink]="['/stop']"
-      class="btn btn-primary"
-    >
-      Add Stop
-    </button>
   </div>
 </div>
 
