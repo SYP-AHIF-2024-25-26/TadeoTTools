@@ -12,6 +12,7 @@ export type Student = {
   studentClass: string;
   department: string;
   studentAssignments: StudentAssignment[];
+  showStops?: boolean;
 };
 
 export type Stop = {

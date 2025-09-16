@@ -1,9 +1,15 @@
-import {Component, computed, inject, signal} from '@angular/core';
+import {Component, computed, inject, signal, HostListener} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {Status, Student} from '../../types';
+import {Status, Student, Stop, StudentAssignment} from '../../types';
 import {StudentStore} from '../../store/student.store';
 import {CommonModule} from '@angular/common';
 import {ChipComponent} from '../../standard-components/chip/chip.component';
+import { StopStore } from '../../store/stop.store';
+
+interface StudentWithUI extends Student {
+  showStops?: boolean;
+  selectedStops?: Set<number>;
+}
 
 @Component({
   selector: 'app-list-students',
@@ -13,6 +19,7 @@ import {ChipComponent} from '../../standard-components/chip/chip.component';
 })
 export class ListStudentsComponent {
   private studentStore = inject(StudentStore);
+  private stopStore = inject(StopStore);
 
   // Filter and search state
   conflictsClassFilter = signal<string>('');
@@ -30,6 +37,8 @@ export class ListStudentsComponent {
 
   // Selected student for conflict details
   selectedStudent = signal<Student | null>(null);
+
+  allStops = computed(() => this.stopStore.getStops());
 
   // Get unique class names for filter dropdowns
   uniqueClasses = computed(() => {
@@ -127,7 +136,13 @@ export class ListStudentsComponent {
 
   // all where there is no assignment
   noAssignments = computed(() => {
-    let filtered = this.studentStore.students().filter((s) => s.studentAssignments.length === 0);
+    let filtered = this.studentStore.students()
+      .filter((s) => s.studentAssignments.length === 0)
+      .map(student => ({
+        ...student, 
+        showStops: false,
+        selectedStops: new Set<number>()
+      } as StudentWithUI));
 
     // Apply class filter
     if (this.noAssignmentsClassFilter()) {
@@ -235,5 +250,67 @@ export class ListStudentsComponent {
     this.noAssignmentsDepartmentFilter.set(
       this.noAssignmentsDepartmentFilter().filter(v => v !== value)
     );
+  }
+
+  onStopSelect(student: StudentWithUI, stop: Stop, event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    
+    if (isChecked) {
+      student.selectedStops?.add(stop.id);
+    } else {
+      student.selectedStops?.delete(stop.id);
+    }
+  }
+
+  async applyStopSelections(student: StudentWithUI): Promise<void> {
+    if (!student.selectedStops?.size) {
+      return;
+    }
+
+    // Initialize assignments array if needed
+    if (!student.studentAssignments) {
+      student.studentAssignments = [];
+    }
+
+    // Get all selected stops
+    const selectedStops = this.allStops().filter(stop => student.selectedStops?.has(stop.id));
+
+    // Create assignments for all selected stops
+    for (const stop of selectedStops) {
+      const newAssignment: StudentAssignment = {
+        studentId: student.edufsUsername,
+        stopId: stop.id,
+        stopName: stop.name,
+        status: Status.Pending
+      };
+      student.studentAssignments.push(newAssignment);
+    }
+
+    // Update the student and close the popup
+    await this.studentStore.updateStudent(student);
+    student.showStops = false;
+    student.selectedStops?.clear();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const noAssignmentsStudents = this.noAssignments();
+    for (const student of noAssignmentsStudents) {
+      if (student.showStops) {
+        // Check if click is outside the popup and the toggle button
+        const popup = document.querySelector(`[data-student-id="${student.edufsUsername}"] .stops-popup`);
+        const button = document.querySelector(`[data-student-id="${student.edufsUsername}"] .toggle-stops-btn`);
+        
+        if (popup && button && 
+            !popup.contains(event.target as Node) && 
+            !button.contains(event.target as Node)) {
+          student.showStops = false;
+        }
+      }
+    }
+  }
+
+  isStopSelected(student: StudentWithUI, stopId: number): boolean {
+    return student.selectedStops?.has(stopId) || false;
   }
 }
