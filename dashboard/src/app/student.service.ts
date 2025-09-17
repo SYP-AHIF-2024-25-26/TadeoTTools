@@ -53,4 +53,14 @@ export class StudentService {
       throw error;
     }
   }
+
+  async deleteAllStudents(): Promise<void> {
+    try {
+      await firstValueFrom(this.httpClient.delete<void>(this.baseUrl + '/api/students'));
+      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully deleted students' });
+    } catch (error) {
+      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to delete students' });
+      throw error;
+    }
+  }
 }

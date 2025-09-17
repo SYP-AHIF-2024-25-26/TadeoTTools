@@ -236,4 +236,8 @@ export class ListStudentsComponent {
       this.noAssignmentsDepartmentFilter().filter(v => v !== value)
     );
   }
+
+  async deleteAllStudents() {
+    await this.studentStore.deleteAllStudents();
+  }
 }
