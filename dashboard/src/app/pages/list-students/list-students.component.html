@@ -1,6 +1,6 @@
 <div class="m-4 flex flex-col items-center text-text-950">
   <h2 class="my-6 text-2xl font-bold self-center">Student Conflict Manager</h2>
-  <button class="btn btn-sm p-4 shadow min-h-fit text-center align-middle btn-primary self-end" (click)="deleteAllStudents()">
+  <button class="btn p-4 min-h-fit text-center btn-primary self-end" (click)="deleteAllStudents()">
     Delete all Students
   </button>
   <div class="bg-base-100 border-base-300 collapse collapse-arrow border mt-8">
@@ -286,7 +286,7 @@
                     <td>{{ student.department }}</td>
                     <td>
                       <div class="relative" [attr.data-student-id]="student.edufsUsername">
-                        <button class="btn btn-primary btn-sm toggle-stops-btn" 
+                        <button class="btn btn-primary btn-sm toggle-stops-btn"
                                 (click)="$event.stopPropagation(); student.showStops = !student.showStops">
                           Select Stops
                         </button>
@@ -298,7 +298,7 @@
                                   <div class="form-control">
                                     <label class="label cursor-pointer hover:bg-base-200 rounded-lg px-2">
                                       <span class="label-text mr-2">{{ stop.name }}</span>
-                                      <input type="checkbox" class="checkbox" 
+                                      <input type="checkbox" class="checkbox"
                                              [checked]="isStopSelected(student, stop.id)"
                                              (change)="onStopSelect(student, stop, $event)" />
                                     </label>
@@ -306,11 +306,11 @@
                                 }
                               </div>
                               <div class="flex justify-end gap-2 pt-2 border-t border-base-300">
-                                <button class="btn btn-sm btn-ghost" 
+                                <button class="btn btn-sm btn-ghost"
                                         (click)="student.showStops = false; student.selectedStops?.clear()">
                                   Cancel
                                 </button>
-                                <button class="btn btn-sm btn-primary" 
+                                <button class="btn btn-sm btn-primary"
                                         (click)="applyStopSelections(student)"
                                         [disabled]="!student.selectedStops?.size">
                                   Apply
