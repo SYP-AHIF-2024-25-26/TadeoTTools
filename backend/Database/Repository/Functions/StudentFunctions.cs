@@ -55,14 +55,12 @@ public class StudentFunctions
         if (lines.Length > 0)
         {
             var header = lines[0].Split(';');
-            if (header is not ["EdufsUsername", "FirstName", "LastName", "StudentClass", "Department"])
+            if (header is ["EdufsUsername", "FirstName", "LastName", "StudentClass", "Department"])
             {
-                throw new ArgumentException("Invalid CSV format" +
-                                            "Valid format: EdufsUsername;FirstName;LastName;StudentClass;Department");
+                lines = lines.Skip(1).ToArray(); // Skip header line
             }
-
+            
             var students = lines
-                .Skip(1)
                 .Select(line => line.Split(';'))
                 .Select(cols => new Student
                 {

@@ -313,4 +313,8 @@ export class ListStudentsComponent {
   isStopSelected(student: StudentWithUI, stopId: number): boolean {
     return student.selectedStops?.has(stopId) || false;
   }
+
+  async deleteAllStudents() {
+    await this.studentStore.deleteAllStudents();
+  }
 }

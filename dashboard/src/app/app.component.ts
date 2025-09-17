@@ -3,7 +3,6 @@ import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './standard-components/navbar/navbar.component';
 import { InfoStore } from './store/info.store';
 import { BASE_URL } from './app.config';
-import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',

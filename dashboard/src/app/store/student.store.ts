@@ -69,6 +69,10 @@ export const StudentStore = signalStore(
           await studentService.setAssignments(edufsUsername, teacher.studentAssignments);
         }
       },
+      async deleteAllStudents() {
+        patchState(store, { students: [] });
+        await studentService.deleteAllStudents();
+      }
     };
   })
 );

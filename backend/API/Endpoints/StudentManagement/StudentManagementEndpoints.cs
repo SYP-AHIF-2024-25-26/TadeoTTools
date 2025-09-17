@@ -140,4 +140,11 @@ public class StudentManagementEndpoints
 
         return Results.Ok($"Assignment for StudentId '{studentId}' and StopId '{stopId}' has been deleted.");
     }
+
+    public static async Task DeleteAllStudents(TadeoTDbContext context)
+    {
+        context.StudentAssignments.RemoveRange(context.StudentAssignments);
+        context.Students.RemoveRange(context.Students);
+        await context.SaveChangesAsync();
+    }
 }
