@@ -15,10 +15,6 @@ export class LoginService {
   response = signal<string | null>(null);
   showResponse = computed(() => this.response() !== null);
 
-  constructor() {
-    this.performCall('everyone-allowed');
-  }
-
   public async performCall(action: string): Promise<string> {
     try {
       const route = this.baseUrl + `/users/${action}`;

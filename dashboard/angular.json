@@ -92,6 +92,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "servePath": "/admin/"
+          },
           "configurations": {
             "production": {
               "buildTarget": "dashboard:build:production"

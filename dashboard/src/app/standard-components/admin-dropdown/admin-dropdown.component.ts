@@ -29,8 +29,7 @@ export class AdminDropdownComponent{
       if (!this.keycloak.authenticated) {
         return;
       }
-      await this.router.navigate(['login']);
-      await this.keycloak.logout();
+      await this.keycloak.logout({ redirectUri: window.location.origin + '/admin/' });
     }
     this.isOpen.set(false);
   }

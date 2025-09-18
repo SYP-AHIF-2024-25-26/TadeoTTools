@@ -19,7 +19,8 @@ export class NavbarComponent {
   mobileMenuOpen = signal(false);
 
   async logout() {
-    await this.keycloak.logout({ redirectUri: window.location.origin + '/login' });
+    // Redirect back to the dashboard base path after logout to stay under /admin/
+    await this.keycloak.logout({ redirectUri: window.location.origin + '/admin/' });
   }
 
   async ngOnInit() {
