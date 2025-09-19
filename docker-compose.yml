@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: haasluca/tadeot-frontend:latest
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/tadeot-frontend:latest
     container_name: tadeot-frontend
     ports:
       - "4300:80"
@@ -12,7 +12,7 @@ services:
       - backend
 
   dashboard:
-    image: haasluca/tadeot-dashboard:latest
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/tadeot-dashboard:latest
     container_name: tadeot-dashboard
     ports:
       - "4200:80"
@@ -24,7 +24,7 @@ services:
       - backend
 
   backend:
-    image: haasluca/tadeot-backend:latest
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/tadeot-backend:latest
     container_name: tadeot-backend
     ports:
       - "5001:5000"

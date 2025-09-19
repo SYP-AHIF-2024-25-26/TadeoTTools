@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy csproj and restore as distinct layers
-COPY ./Database/Database.csproj ./database/
+COPY ./Database/Database.csproj ./Database/
 COPY ./API/API.csproj ./API/
 RUN dotnet restore ./API/API.csproj
 
@@ -13,7 +13,7 @@ RUN dotnet publish ./API/API.csproj -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 ENV ASPNETCORE_ENVIRONMENT=Development
-ENV ASPNETCORE_URLS=http://+:5005
-EXPOSE 5005
+ENV ASPNETCORE_URLS=http://+:5000
+EXPOSE 5000
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "API.dll"]
