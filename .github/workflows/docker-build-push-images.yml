@@ -28,15 +28,12 @@ jobs:
           - service: frontend
             context: ./frontend
             dockerfile: ./frontend/Dockerfile
-            platforms: linux/amd64,linux/arm64
           - service: backend
             context: ./backend
             dockerfile: ./backend/Dockerfile
-            platforms: linux/amd64,linux/arm64
           - service: dashboard
             context: ./dashboard
             dockerfile: ./dashboard/Dockerfile
-            platforms: linux/amd64,linux/arm64
 
     steps:
       - name: Checkout repository
@@ -61,20 +58,23 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=sha,prefix={{branch}}-
+            type=sha,prefix=main-,enable={{is_default_branch}}
             type=raw,value=latest,enable={{is_default_branch}}
+          flavor: |
+            latest=auto
 
       - name: Build and push Docker image
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: ${{ matrix.platforms }}
 
       - name: Generate artifact attestation
         if: github.event_name != 'pull_request'
