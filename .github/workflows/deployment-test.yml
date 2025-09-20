@@ -1,0 +1,92 @@
+name: Deployment Test
+
+on:
+  push:
+    paths:
+      - 'docker-compose.yml'
+      - 'deployment/**'
+      - '.github/workflows/deployment-test.yml'
+  pull_request:
+    paths:
+      - 'docker-compose.yml'
+      - 'deployment/**'
+      - '.github/workflows/deployment-test.yml'
+  workflow_run:
+    workflows: ["Backend CI", "Dashboard CI", "Frontend CI"]
+    types:
+      - completed
+
+jobs:
+  test-deployment:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name != 'workflow_run' }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Create .env file for testing
+      run: |
+        cat << EOF > .env
+        BACKEND_URL=http://localhost:5001/v1
+        MYSQL_ROOT_PASSWORD=test
+        MYSQL_DATABASE=tadeot
+        MYSQL_USER=user
+        MYSQL_PASSWORD=test
+        EOF
+
+    - name: Build and start services
+      run: |
+        docker-compose build
+        docker-compose up -d
+
+    - name: Wait for services to be ready
+      run: |
+        echo "Waiting for services to start..."
+        sleep 30
+        
+        # Check if services are running
+        docker-compose ps
+        
+        # Check backend health (wait up to 60 seconds)
+        for i in {1..12}; do
+          if curl -f http://localhost:5001/health 2>/dev/null; then
+            echo "Backend is healthy"
+            break
+          fi
+          if [ $i -eq 12 ]; then
+            echo "Backend health check failed"
+            docker-compose logs backend
+            exit 1
+          fi
+          echo "Waiting for backend... ($i/12)"
+          sleep 5
+        done
+
+    - name: Run deployment tests
+      run: |
+        # Test dashboard (port 4200)
+        if curl -f http://localhost:4200 2>/dev/null; then
+          echo "Dashboard is accessible"
+        else
+          echo "Dashboard is not accessible"
+          docker-compose logs dashboard
+          exit 1
+        fi
+        
+        # Test frontend (port 4300)
+        if curl -f http://localhost:4300 2>/dev/null; then
+          echo "Frontend is accessible"
+        else
+          echo "Frontend is not accessible"
+          docker-compose logs frontend
+          exit 1
+        fi
+
+    - name: Cleanup
+      if: always()
+      run: |
+        docker-compose down -v
+        docker system prune -f

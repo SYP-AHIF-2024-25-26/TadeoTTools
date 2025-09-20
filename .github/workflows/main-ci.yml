@@ -1,0 +1,78 @@
+name: Main CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.changes.outputs.backend }}
+      dashboard: ${{ steps.changes.outputs.dashboard }}
+      frontend: ${{ steps.changes.outputs.frontend }}
+      deployment: ${{ steps.changes.outputs.deployment }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          backend:
+            - 'backend/**'
+          dashboard:
+            - 'dashboard/**'
+          frontend:
+            - 'frontend/**'
+          deployment:
+            - 'docker-compose.yml'
+            - 'deployment/**'
+
+  backend:
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Trigger Backend CI
+      run: echo "Backend changes detected - individual backend-ci.yml workflow will run"
+
+  dashboard:
+    needs: changes
+    if: ${{ needs.changes.outputs.dashboard == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Trigger Dashboard CI
+      run: echo "Dashboard changes detected - individual dashboard-ci.yml workflow will run"
+
+  frontend:
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Trigger Frontend CI
+      run: echo "Frontend changes detected - individual frontend-ci.yml workflow will run"
+
+  deployment:
+    needs: changes
+    if: ${{ needs.changes.outputs.deployment == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Trigger Deployment Test
+      run: echo "Deployment changes detected - individual deployment-test.yml workflow will run"
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: [changes, backend, dashboard, frontend, deployment]
+    if: always()
+    steps:
+    - name: Summary
+      run: |
+        echo "## CI Summary" >> $GITHUB_STEP_SUMMARY
+        echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Backend | ${{ needs.backend.result || 'skipped' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Dashboard | ${{ needs.dashboard.result || 'skipped' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Frontend | ${{ needs.frontend.result || 'skipped' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Deployment | ${{ needs.deployment.result || 'skipped' }} |" >> $GITHUB_STEP_SUMMARY

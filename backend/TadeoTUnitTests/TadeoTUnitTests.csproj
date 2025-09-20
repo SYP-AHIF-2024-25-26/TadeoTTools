@@ -21,4 +21,9 @@
     <Using Include="NUnit.Framework" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Database\Database.csproj" />
+    <ProjectReference Include="..\API\API.csproj" />
+  </ItemGroup>
+
 </Project>
