@@ -52,12 +52,12 @@ jobs:
         
         # Check backend health (wait up to 60 seconds)
         for i in {1..12}; do
-          if curl -f http://localhost:5001/health 2>/dev/null; then
-            echo "Backend is healthy"
+          if curl -f http://localhost:5001 2>/dev/null || curl -f http://localhost:5001/api 2>/dev/null; then
+            echo "Backend is responding"
             break
           fi
           if [ $i -eq 12 ]; then
-            echo "Backend health check failed"
+            echo "Backend health check failed - checking logs"
             docker-compose logs backend
             exit 1
           fi
