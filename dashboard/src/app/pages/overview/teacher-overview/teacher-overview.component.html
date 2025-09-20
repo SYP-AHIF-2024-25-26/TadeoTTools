@@ -67,6 +67,7 @@
             <th class="px-4 py-2 text-left">EduFS Username</th>
             <th class="px-4 py-2 text-left">First Name</th>
             <th class="px-4 py-2 text-left">Last Name</th>
+            <th class="px-4 py-2 text-left">Assigned Stops</th>
             <th class="px-4 py-2 text-left">Actions</th>
           </tr>
         </thead>
@@ -94,6 +95,9 @@
                   />
                 </td>
                 <td class="px-4 py-2">
+                  {{editingTeacher()!.assignedStops.length}}
+                </td>
+                <td class="px-4 py-2">
                   <div class="flex gap-2">
                     <button 
                       (click)="saveEdit()" 
@@ -113,6 +117,7 @@
                 <td class="px-4 py-2">{{ teacher.edufsUsername }}</td>
                 <td class="px-4 py-2">{{ teacher.firstName }}</td>
                 <td class="px-4 py-2">{{ teacher.lastName }}</td>
+                <td class="px-4 py-2">{{ teacher.assignedStops.length }}</td>
                 <td class="px-4 py-2">
                   <div class="flex gap-2">
                     <button 

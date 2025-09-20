@@ -12,7 +12,7 @@ import { Teacher } from '../../../types';
 })
 export class TeacherOverviewComponent {
   private teacherService = inject(TeacherService);
-  
+
   teachers = signal<Teacher[]>([]);
   editingTeacher = signal<Teacher | null>(null);
   newTeacher = signal<Partial<Teacher>>({});
@@ -21,8 +21,8 @@ export class TeacherOverviewComponent {
   filteredTeachers = computed(() => {
     const query = this.searchQuery().toLowerCase();
     if (!query) return this.teachers();
-    
-    return this.teachers().filter(teacher => 
+
+    return this.teachers().filter(teacher =>
       teacher.edufsUsername.toLowerCase().includes(query) ||
       teacher.firstName.toLowerCase().includes(query) ||
       teacher.lastName.toLowerCase().includes(query)
@@ -36,7 +36,7 @@ export class TeacherOverviewComponent {
   async loadTeachers() {
     try {
       const teachers = await this.teacherService.getTeachers();
-      this.teachers.set(teachers);
+      this.teachers.set(teachers.sort((a, b) => a.lastName.localeCompare(b.lastName)));
     } catch (error) {
       console.error('Failed to load teachers:', error);
     }
