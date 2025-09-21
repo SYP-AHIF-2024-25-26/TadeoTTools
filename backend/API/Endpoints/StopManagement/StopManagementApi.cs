@@ -12,7 +12,7 @@ public static class StopManagementApi
             .WithName(nameof(StopManagementEndpoints.GetAllStops))
             .WithDescription("Get all Stops")
             .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
-            .RequireAuthorization(Setup.AdminPolicyName);
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
         group.MapGet("stops", StopManagementEndpoints.GetPublicStops)
             .WithName(nameof(StopManagementEndpoints.GetPublicStops))
