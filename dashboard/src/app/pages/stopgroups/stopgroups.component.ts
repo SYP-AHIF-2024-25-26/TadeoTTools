@@ -30,7 +30,7 @@ export class StopGroupsComponent implements OnInit {
   showStopsForStopGroup = signal<StopsShownInStopGroup[]>([]);
   showRemoveStopPopup = signal<boolean>(false);
   showRemoveGroupPopup = signal<boolean>(false);
-  onlyPublicGroups = signal<boolean>(false);
+  onlyPublicGroups = signal<boolean>(true);
 
   showGroupDetailPopUp = signal<boolean>(false);
   groupIdDetail: number = -1;
