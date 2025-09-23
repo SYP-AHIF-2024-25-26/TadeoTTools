@@ -1,75 +1,108 @@
-<div class="top-10 flex justify-center px-10 pt-2 mt-5">
-  <button
-    (click)="showGroupPopUp(-1)"
-    class="mr-5 btn btn-primary"
-  >
-    Add StopGroup
-  </button>
-  <button [routerLink]="['/stop']" class="mr-5 btn btn-primary">
-    Add Stop
-  </button>
-  <app-filter [elements]="divisionStore.getDivisions()" (filter)="divisionFilter.set($event)"></app-filter>
-</div>
-<div>
-  <div class="m-5 p-5">
-    @for (stop of filteredStops(); track $index) {
-      <div
-        class="w-100 border-transparents m-2 mx-32 mb-10 justify-between rounded-lg dark:border dark:border-accent-400 bg-background-100 p-6 text-text-950 shadow-lg shadow-secondary-200"
-      >
-        <div class="flex flex-nowrap justify-between">
-          <p class="font-bold">{{ stop.name }}</p>
-          <button
-            class="mr-5 btn btn-primary"
-            [routerLink]="['/stop']"
-            [queryParams]="{ id: stop.id }"
-          >
-            Details
-          </button>
-        </div>
+<div class="m-4 flex flex-col items-center text-text-950">
+  <h2 class="my-6 text-2xl font-bold self-center">Stops Overview</h2>
 
-        @if (stop.stopGroupIds.length > 0) {
-          <div class="mt-5 rounded-xl p-5 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400">
-            <p class="text-xl">Stopgroups</p>
-            @for (sgId of stop.stopGroupIds; track $index) {
-              @if (getGroupById(sgId)) {
-                <div class="flex flex-nowrap justify-between pl-5 pt-5">
-                  <p>{{ getGroupById(sgId)?.name }}</p>
-                  <div>
-                    <button
-                      class="mr-5 btn btn-outline btn-error shadow-lg"
-                      (click)="selectStopgroupToRemove(stop.id, sgId)"
-                    >
-                      Remove
-                    </button>
-                    <button
-                      class="my-1 btn btn-primary"
-                      (click)="showGroupPopUp(sgId)"
-                    >
-                      Details
-                    </button>
-                  </div>
-                </div>
-              }
-            }
-          </div>
+  <!-- Action Buttons -->
+  <div class="flex justify-center gap-4 mb-6">
+    <button [routerLink]="['/stop']" class="btn btn-primary">
+      Add Stop
+    </button>
+    <button (click)="clearFilters()" class="btn btn-outline hover:btn-primary">
+      Clear Filters
+    </button>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="flex flex-wrap gap-4 mb-4 mx-4">
+    <!-- Stop Name Search -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Stop Name Filter</span>
+      </label>
+      <input type="text" placeholder="Search stop names..."
+             class="input placeholder-black input-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400"
+             [(ngModel)]="stopNameSearchTerm"/>
+    </div>
+
+    <!-- Stop Group Filter -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Stop Group Filter</span>
+      </label>
+      <select class="select select-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400"
+              [(ngModel)]="stopGroupFilter">
+        <option value="">All Stop Groups</option>
+        @for (groupName of uniqueStopGroups(); track groupName) {
+          <option [value]="groupName">{{ groupName }}</option>
         }
-      </div>
-    }
+      </select>
+    </div>
+
+    <!-- Teacher Search -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Responsible Teachers Filter</span>
+      </label>
+      <input type="text" placeholder="Search teachers..."
+             class="input placeholder-black input-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400"
+             [(ngModel)]="teacherSearchTerm"/>
+    </div>
+
+    <!-- Division Filter (existing functionality) -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Department Filter</span>
+      </label>
+      <app-filter [elements]="divisionStore.getDivisions()" (filter)="divisionFilter.set($event)"></app-filter>
+    </div>
+  </div>
+
+  <!-- Stops Table -->
+  <div
+    class="overflow-x-auto w-full max-w-6xl mt-6 table-zebra table-lg rounded-box border border-base-content/5 bg-base-100 max-h-[600px] overflow-y-scroll">
+    <table class="table table-xs">
+      <thead>
+      <tr>
+        <th>Stop Name</th>
+        <th>Stop Group</th>
+        <th>Room</th>
+        <th>Responsible Teachers</th>
+        <th>Department</th>
+        <th>Students (Requested/Assigned)</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+        @if (filteredStops().length === 0) {
+          <tr>
+            <td colspan="7" class="text-center">No stops found</td>
+          </tr>
+        } @else {
+          @for (stop of filteredStops(); track stop.id) {
+            <tr>
+              <td class="font-semibold">{{ stop.name }}</td>
+              <td>{{ getStopGroupNames(stop.stopGroupIds) }}</td>
+              <td>{{ stop.roomNr || 'No room assigned' }}</td>
+              <td>{{ getTeacherNames(stop.id) }}</td>
+              <td>{{ getDivisionNames(stop.divisionIds) }}</td>
+              <td>{{ getStudentCount(stop.id) }}</td>
+              <td>
+                <button
+                  class="btn btn-sm btn-info"
+                  [routerLink]="['/stop']"
+                  [queryParams]="{ id: stop.id }"
+                >
+                  Details
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Summary Information -->
+  <div class="mt-4 text-sm text-gray-600">
+    Showing {{ filteredStops().length }} of {{ stopStore.stops().length }} stops
   </div>
 </div>
-
-@if (showRemoveStopgroupPopup()) {
-  <app-delete-popup
-    [title]="'Remove Stopgroup'"
-    [message]="'Are you sure you want to remove this stop from the stop group?'"
-    (cancel)="showRemoveStopgroupPopup.set(false)"
-    (removeConfirmed)="removeStopgroup()"
-  />
-}
-
-@if (showGroupDetailPopUp()) {
-  <app-stopgroup-details
-    [id]="groupIdDetail"
-    (cancel)="showGroupDetailPopUp.set(false)"
-  />
-}
