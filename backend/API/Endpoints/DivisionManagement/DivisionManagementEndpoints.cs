@@ -86,7 +86,7 @@ public static class DivisionManagementEndpoints
         var csvBuilder = new StringBuilder();
     
         // Add headers
-        csvBuilder.AppendLine("Name;Color;Stops;Image");
+        csvBuilder.AppendLine("Name;Color;Stops");
         
         // Add data rows
         foreach (var item in divisions)
@@ -94,8 +94,7 @@ public static class DivisionManagementEndpoints
             var escapedName = Utils.EscapeCsvField(item.Name);
             var escapedColor = Utils.EscapeCsvField(item.Color);
             var escapedStops = Utils.EscapeCsvField(string.Join(",", item.Stops.Select(s => s.Name)));
-            var escapedImage = Utils.EscapeCsvField(item.Image?.ToString() ?? string.Empty);
-            csvBuilder.AppendLine($"{escapedName};{escapedColor};{escapedStops};{escapedImage}");
+            csvBuilder.AppendLine($"{escapedName};{escapedColor};{escapedStops}");
         }
     
         var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());

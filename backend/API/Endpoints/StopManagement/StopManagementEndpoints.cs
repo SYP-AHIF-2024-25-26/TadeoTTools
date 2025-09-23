@@ -185,13 +185,17 @@ public static class StopManagementEndpoints
         var stops = await context.Stops
             .Include(stop => stop.Divisions)
             .Include(stop => stop.StopGroupAssignments)
+            .ThenInclude(stopGroupAssignment => stopGroupAssignment.StopGroup)
+            .Include(stop => stop.TeacherAssignments)
+            .ThenInclude(teacherAssignment => teacherAssignment.Teacher)
+            .Include(stop => stop.StudentAssignments)
             .ToListAsync();
         
         // Create CSV content
         var csvBuilder = new StringBuilder();
     
         // Add headers
-        csvBuilder.AppendLine("Name;Description;RoomNr;StopGroups;Divisions");
+        csvBuilder.AppendLine("Name;Description;RoomNr;Teacher;StudentsRequested;StudentsAssigned;StopGroups;Divisions");
     
         // Add data rows
         foreach (var item in stops)
@@ -199,9 +203,12 @@ public static class StopManagementEndpoints
             var escapedName = Utils.EscapeCsvField(item.Name);
             var escapedDescription = Utils.EscapeCsvField(item.Description);
             var escapedRoomNr = Utils.EscapeCsvField(item.RoomNr);
+            var escapedTeacher = Utils.EscapeCsvField(string.Join(",", item.TeacherAssignments.Select(t => t.Teacher?.FirstName + " " + t.Teacher?.LastName)));
+            var escapedStudentsRequested = Utils.EscapeCsvField(item.StudentAssignments.Count(sa => sa.Status == Status.PENDING).ToString());
+            var escapedStudentsAssigned = Utils.EscapeCsvField(item.StudentAssignments.Count(sa => sa.Status == Status.ACCEPTED).ToString());
             var escapedDivisions = Utils.EscapeCsvField(string.Join(",", item.Divisions.Select(d => d.Name)));
             var escapedStopGroupNames = Utils.EscapeCsvField(string.Join(",", item.StopGroupAssignments.Select(a => a.StopGroup?.Name)));
-            csvBuilder.AppendLine($"{escapedName};{escapedDescription};{escapedRoomNr};{escapedStopGroupNames};{escapedDivisions}");
+            csvBuilder.AppendLine($"{escapedName};{escapedDescription};{escapedRoomNr};{escapedTeacher};{escapedStudentsRequested};{escapedStudentsAssigned};{escapedStopGroupNames};{escapedDivisions}");
         }
     
         var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
