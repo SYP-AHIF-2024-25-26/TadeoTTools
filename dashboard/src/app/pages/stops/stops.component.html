@@ -19,7 +19,7 @@
         <span class="label-text">Stop Name Filter</span>
       </label>
       <input type="text" placeholder="Search stop names..."
-             class="input placeholder-black input-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400"
+             class="input input-bordered placeholder-black dark:placeholder-white w-full max-w-xs bg-primary-300 hover:bg-primary-400"
              [(ngModel)]="stopNameSearchTerm"/>
     </div>
 
@@ -43,7 +43,7 @@
         <span class="label-text">Responsible Teachers Filter</span>
       </label>
       <input type="text" placeholder="Search teachers..."
-             class="input placeholder-black input-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400"
+             class="input placeholder-black dark:placeholder-white input-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400"
              [(ngModel)]="teacherSearchTerm"/>
     </div>
 
@@ -57,48 +57,65 @@
   </div>
 
   <!-- Stops Table -->
-  <div
-    class="overflow-x-auto w-full max-w-6xl mt-6 table-zebra table-lg rounded-box border border-base-content/5 bg-base-100 max-h-[600px] overflow-y-scroll">
-    <table class="table table-xs">
-      <thead>
-      <tr>
-        <th>Stop Name</th>
-        <th>Stop Group</th>
-        <th>Room</th>
-        <th>Responsible Teachers</th>
-        <th>Department</th>
-        <th>Students (Requested/Assigned)</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-        @if (filteredStops().length === 0) {
-          <tr>
-            <td colspan="7" class="text-center">No stops found</td>
-          </tr>
-        } @else {
-          @for (stop of filteredStops(); track stop.id) {
+  <div class="mt-6 w-full max-w-6xl">
+    <div class="overflow-x-auto rounded-lg border border-background-200 dark:border-background-700">
+      <div class="max-h-[60vh] overflow-y-auto">
+        <table class="w-full border-collapse">
+          <thead class="sticky top-0 z-10 bg-background-100 dark:bg-background-900 border-b border-background-200 dark:border-background-700">
             <tr>
-              <td class="font-semibold">{{ stop.name }}</td>
-              <td>{{ getStopGroupNames(stop.stopGroupIds) }}</td>
-              <td>{{ stop.roomNr || 'No room assigned' }}</td>
-              <td>{{ getTeacherNames(stop.id) }}</td>
-              <td>{{ getDivisionNames(stop.divisionIds) }}</td>
-              <td>{{ getStudentCount(stop.id) }}</td>
-              <td>
-                <button
-                  class="btn btn-sm btn-info"
-                  [routerLink]="['/stop']"
-                  [queryParams]="{ id: stop.id }"
-                >
-                  Details
-                </button>
-              </td>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400">Stop Name</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400">Stop Groups</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400">Room</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400">Responsible Teachers</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400">Department</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400">Students (Requested/Assigned)</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400 w-24">Actions</th>
             </tr>
-          }
-        }
-      </tbody>
-    </table>
+          </thead>
+          <tbody>
+            @for (stop of filteredStops(); track stop.id) {
+              <tr class="border-b border-background-200 dark:border-background-700 bg-white dark:bg-background-800 hover:bg-background-50 dark:hover:bg-background-700 transition-colors">
+                <td class="px-4 py-3 font-medium text-text-900 dark:text-text-100">{{ stop.name }}</td>
+                <td class="px-4 py-3">{{ getStopGroupNames(stop.stopGroupIds) }}</td>
+                <td class="px-4 py-3">{{ stop.roomNr || 'No room assigned' }}</td>
+                <td class="px-4 py-3 truncate max-w-[240px]" title="{{ getTeacherNames(stop.id) }}">{{ getTeacherNames(stop.id) }}</td>
+                <td class="px-4 py-3 truncate max-w-[200px]" title="{{ getDivisionNames(stop.divisionIds) }}">{{ getDivisionNames(stop.divisionIds) }}</td>
+                <td class="px-4 py-3">
+                  <span class="text-xs px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">{{ getStudentCount(stop.id) }}</span>
+                </td>
+                <td class="px-4 py-2">
+                  <div class="flex items-center gap-1">
+                    <button
+                      class="btn btn-ghost btn-xs"
+                      [routerLink]="['/stop']"
+                      [queryParams]="{ id: stop.id }"
+                      title="Details"
+                    >
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (filteredStops().length === 0) {
+              <tr>
+                <td colspan="7" class="px-4 py-10 text-center text-sm text-text-500">
+                  <div class="flex flex-col items-center gap-2">
+                    <svg class="w-8 h-8 text-text-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    No stops found
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <!-- Summary Information -->

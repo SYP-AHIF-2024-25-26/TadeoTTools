@@ -1,4 +1,4 @@
-import {Component, computed, inject, signal, HostListener} from '@angular/core';
+import {Component, computed, inject, signal, HostListener, ViewChild, TemplateRef, ViewContainerRef} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {Status, Student, Stop, StudentAssignment} from '../../types';
 import {StudentStore} from '../../store/student.store';
@@ -6,6 +6,8 @@ import {CommonModule} from '@angular/common';
 import {ChipComponent} from '../../standard-components/chip/chip.component';
 import { StopStore } from '../../store/stop.store';
 import { sortStudents } from '../../utilfunctions';
+import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
 
 export interface StudentWithUI extends Student {
   showStops?: boolean;
@@ -312,5 +314,48 @@ export class ListStudentsComponent {
 
   isStopSelected(student: StudentWithUI, stopId: number): boolean {
     return student.selectedStops?.has(stopId) || false;
+  }
+
+  @ViewChild('stopsPopup') stopsPopupTemplate!: TemplateRef<any>;
+  private overlayRef: OverlayRef | null = null;
+  popupStudent: StudentWithUI | null = null;
+  private popupAnchor: HTMLElement | null = null;
+
+  constructor(
+    private overlay: Overlay,
+    private viewContainerRef: ViewContainerRef,
+    private positionBuilder: OverlayPositionBuilder
+  ) {}
+
+  openStopsPopup(student: StudentWithUI, anchor: HTMLElement) {
+    this.closeStopsPopup();
+    this.popupStudent = student;
+    this.popupAnchor = anchor;
+    const positionStrategy = this.positionBuilder
+      .flexibleConnectedTo(anchor)
+      .withPositions([
+        { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+        { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }
+      ]);
+    this.overlayRef = this.overlay.create({
+      positionStrategy,
+      hasBackdrop: true,
+      backdropClass: 'cdk-overlay-transparent-backdrop',
+      scrollStrategy: this.overlay.scrollStrategies.reposition()
+    });
+    this.overlayRef.backdropClick().subscribe(() => this.closeStopsPopup());
+    this.overlayRef.keydownEvents().subscribe(event => {
+      if (event.key === 'Escape') this.closeStopsPopup();
+    });
+    this.overlayRef.attach(new TemplatePortal(this.stopsPopupTemplate, this.viewContainerRef));
+  }
+
+  closeStopsPopup() {
+    if (this.overlayRef) {
+      this.overlayRef.dispose();
+      this.overlayRef = null;
+    }
+    this.popupStudent = null;
+    this.popupAnchor = null;
   }
 }

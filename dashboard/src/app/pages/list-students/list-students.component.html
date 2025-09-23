@@ -8,7 +8,7 @@
       <h3 class="mb-2 text-lg font-semibold">Conflicts (Multiple Pending Requests)</h3>
     </div>
     <div
-      class="collapse-content text-primary-content peer-checked:bg-white peer-checked:text-secondary-content"
+      class="collapse-content text-primary-content peer-checked:bg-white peer-checked:dark:bg-background-800 peer-checked:text-secondary-content"
     >
       <!-- Filter and search controls -->
       <div class="flex flex-wrap gap-4 mb-4 mx-20">
@@ -88,12 +88,12 @@
   <div class="collapse collapse-arrow bg-background-100 text-text-950 rounded-lg shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 mt-8">
     <input type="checkbox" class="peer" />
     <div
-      class="collapse-title bg-white text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
+      class="collapse-title bg-white dark:bg-background-800 text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
     >
       <h3 class="text-lg font-semibold">Single Requests</h3>
     </div>
     <div
-      class="collapse-content bg-white text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
+      class="collapse-content bg-white dark:bg-background-800 text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
     >
       <!-- Filter and search controls -->
       <div class="flex flex-wrap gap-4 mb-4 mx-20">
@@ -207,12 +207,12 @@
     <div class="collapse collapse-arrow bg-background-100 text-text-950 rounded-lg shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 mt-8">
       <input type="checkbox" class="peer" />
       <div
-        class="collapse-title bg-white text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
+        class="collapse-title bg-white dark:bg-background-800 text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
       >
         <h3 class="text-lg font-semibold">No Requests</h3>
       </div>
       <div
-        class="collapse-content bg-white text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
+        class="collapse-content bg-white dark:bg-background-800 text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content"
       >
         <!-- Filter and search controls -->
         <div class="flex flex-wrap gap-4 mb-4 mx-20">
@@ -260,7 +260,6 @@
             <!-- head -->
             <thead>
             <tr>
-              <th></th>
               <th>Username</th>
               <th>Name</th>
               <th>Class</th>
@@ -276,7 +275,6 @@
               } @else {
                 @for (student of noAssignments(); track $index) {
                   <tr>
-                    <th>{{ $index + 1 }}</th>
                     <td>{{ student.edufsUsername }}</td>
                     <td>{{ student.firstName }} {{ student.lastName }}</td>
                     <td>{{ student.studentClass }}</td>
@@ -284,38 +282,10 @@
                     <td>
                       <div class="relative" [attr.data-student-id]="student.edufsUsername">
                         <button class="btn btn-primary btn-sm toggle-stops-btn"
-                                (click)="$event.stopPropagation(); student.showStops = !student.showStops">
+                                #stopsBtn
+                                (click)="$event.stopPropagation(); openStopsPopup(student, stopsBtn)">
                           Select Stops
                         </button>
-                        @if(student.showStops) {
-                          <div class="absolute z-50 mt-2 bg-base-100 border border-base-300 rounded-lg shadow-xl max-h-[300px] overflow-y-auto w-64 stops-popup">
-                            <div class="p-4">
-                              <div class="max-h-[200px] overflow-y-auto mb-4">
-                                @for(stop of allStops(); track stop.id) {
-                                  <div class="form-control">
-                                    <label class="label cursor-pointer hover:bg-base-200 rounded-lg px-2">
-                                      <span class="label-text mr-2">{{ stop.name }}</span>
-                                      <input type="checkbox" class="checkbox"
-                                             [checked]="isStopSelected(student, stop.id)"
-                                             (change)="onStopSelect(student, stop, $event)" />
-                                    </label>
-                                  </div>
-                                }
-                              </div>
-                              <div class="flex justify-end gap-2 pt-2 border-t border-base-300">
-                                <button class="btn btn-sm btn-ghost"
-                                        (click)="student.showStops = false; student.selectedStops?.clear()">
-                                  Cancel
-                                </button>
-                                <button class="btn btn-sm btn-primary"
-                                        (click)="applyStopSelections(student)"
-                                        [disabled]="!student.selectedStops?.size">
-                                  Apply
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        }
                       </div>
                     </td>
                   </tr>
@@ -385,4 +355,34 @@
       </div>
     </div>
   }
+
+  <ng-template #stopsPopup>
+    <div class="z-[9999] mt-2 bg-base-100 border border-base-300 rounded-lg shadow-xl max-h-[300px] overflow-y-auto w-64 stops-popup">
+      <div class="p-4">
+        <div class="max-h-[200px] overflow-y-auto mb-4">
+          @for(stop of allStops(); track stop.id) {
+            <div class="form-control">
+              <label class="label cursor-pointer hover:bg-base-200 rounded-lg px-2">
+                <span class="label-text mr-2">{{ stop.name }}</span>
+                <input type="checkbox" class="checkbox"
+                       [checked]="isStopSelected(popupStudent!, stop.id)"
+                       (change)="onStopSelect(popupStudent!, stop, $event)" />
+              </label>
+            </div>
+          }
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t border-base-300">
+          <button class="btn btn-sm btn-ghost"
+                  (click)="closeStopsPopup(); popupStudent?.selectedStops?.clear()">
+            Cancel
+          </button>
+          <button class="btn btn-sm btn-primary"
+                  (click)="applyStopSelections(popupStudent!)"
+                  [disabled]="!popupStudent?.selectedStops?.size">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
 </div>
