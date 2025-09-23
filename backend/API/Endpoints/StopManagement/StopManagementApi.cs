@@ -11,8 +11,8 @@ public static class StopManagementApi
         group.MapGet("api/stops", StopManagementEndpoints.GetAllStops)
             .WithName(nameof(StopManagementEndpoints.GetAllStops))
             .WithDescription("Get all Stops")
-            .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
-            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+            .Produces<List<StopWithAssignmentsAndDivisionsDto>>();
+            //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
         group.MapGet("stops", StopManagementEndpoints.GetPublicStops)
             .WithName(nameof(StopManagementEndpoints.GetPublicStops))
