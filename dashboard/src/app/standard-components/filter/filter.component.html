@@ -2,12 +2,12 @@
   <select
     id="divisions"
     (change)="onFilterChange($event)"
-    class="rounded-lg bg-primary-300 p-2.5 text-sm text-text-950 hover:bg-primary-400"
+    class="btn btn-sm gap-2 btn-primary"
   >
     <option value="0" selected>Filter by Division</option>
 
     @for (element of elements; track element.id) {
-      <option class="text-text-700 hover:bg-background-50" value="{{ element.id }}">{{ element.name }}</option>
+      <option value="{{ element.id }}">{{ element.name }}</option>
     }
   </select>
 </form>

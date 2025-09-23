@@ -16,7 +16,9 @@ public static class StopGroupManagementEndpoints
 
     public static async Task<IResult> GetGroupsApi(TadeoTDbContext context)
     {
-        return Results.Ok(await StopGroupFunctions.GetAllStopGroupsAsync(context));
+        var stopgroups = (await StopGroupFunctions.GetAllStopGroupsAsync(context)).ToList();
+        stopgroups.Sort((a, b) => a.Rank.CompareTo(b.Rank));
+        return Results.Ok(stopgroups);
     }
 
     public static async Task<IResult> CreateGroup(TadeoTDbContext context, CreateGroupRequestDto dto)

@@ -30,7 +30,7 @@ export class StopGroupsComponent implements OnInit {
   showStopsForStopGroup = signal<StopsShownInStopGroup[]>([]);
   showRemoveStopPopup = signal<boolean>(false);
   showRemoveGroupPopup = signal<boolean>(false);
-  onlyPublicGroups = signal<boolean>(false);
+  onlyPublicGroups = signal<boolean>(true);
 
   showGroupDetailPopUp = signal<boolean>(false);
   groupIdDetail: number = -1;
@@ -102,6 +102,7 @@ export class StopGroupsComponent implements OnInit {
 
   dropGroup(event: CdkDragDrop<any, any>) {
     moveItemInArray(this.stopGroupStore.stopGroups(), event.previousIndex, event.currentIndex);
+    console.log(this.stopGroupStore.stopGroups());
     this.hasChanged.set(true);
   }
 
