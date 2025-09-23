@@ -36,6 +36,29 @@ public static class StopManagementEndpoints
             _ => Task.FromResult(Results.BadRequest("User information not found"))
         );
     }
+    
+    public static async Task<IResult> GetStopsForTeacher(TadeoTDbContext context, [FromRoute] string teacherId)
+    {
+        var stops = await context.Stops
+            .Include(stop => stop.Divisions)
+            .Include(stop => stop.StopGroupAssignments)
+            .Where(stop => stop.TeacherAssignments.Any(t => t.TeacherId == teacherId))
+            .ToListAsync();
+
+        return Results.Ok(stops.Select(stop => new StopOfTeacher(
+            stop.Id,
+            stop.Name,
+            stop.RoomNr,
+            stop.Description
+        )).ToList());
+    }
+    
+    public record StopOfTeacher(
+        int Id,
+        string Name,
+        string Description,
+        string RoomNr
+    );
 
     public static async Task<IResult> GetPublicStops(TadeoTDbContext context)
     {

@@ -11,8 +11,7 @@ internal static class Setup
     public const string CorsPolicyName = "AllowOrigins";
     public const string AdminPolicyName = "IsAdmin";
     public const string TeacherOrAdminPolicyName = "IsTeacherOrAdmin";
-
-
+    
     public static void AddLeoAuthentication(this IServiceCollection services)
     {
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

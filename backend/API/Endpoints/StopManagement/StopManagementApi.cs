@@ -11,9 +11,15 @@ public static class StopManagementApi
         group.MapGet("api/stops", StopManagementEndpoints.GetAllStops)
             .WithName(nameof(StopManagementEndpoints.GetAllStops))
             .WithDescription("Get all Stops")
-            .Produces<List<StopWithAssignmentsAndDivisionsDto>>();
-            //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+            .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName); // fix later to admin only
 
+        group.MapGet("api/stops/teacher/{teacherId}", StopManagementEndpoints.GetStopsForTeacher) // use this endpoint later!
+            .WithName(nameof(StopManagementEndpoints.GetStopsForTeacher))
+            .WithDescription("Get all stops assigned to a specific teacher")
+            .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+            
         group.MapGet("stops", StopManagementEndpoints.GetPublicStops)
             .WithName(nameof(StopManagementEndpoints.GetPublicStops))
             .WithDescription("Get all stops that are publically available to see")
