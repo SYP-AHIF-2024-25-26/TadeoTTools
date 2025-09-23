@@ -45,12 +45,5 @@ public static class StopGroupManagementApi
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
-        
-        group.MapGet("api/groups/csv", StopGroupManagementEndpoints.GetGroupsCsv)
-            .WithName(nameof(StopGroupManagementEndpoints.GetGroupsCsv))
-            .WithDescription("Get all stop groups in a csv file")
-            .Produces(StatusCodes.Status206PartialContent)
-            .Produces(StatusCodes.Status416RangeNotSatisfiable)
-            .RequireAuthorization(Setup.AdminPolicyName);
     }
 }

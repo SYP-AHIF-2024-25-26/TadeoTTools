@@ -85,16 +85,6 @@ export class DataPageComponent {
     }
   }
 
-  async downloadStopGroupData() {
-    try {
-      const blob = await this.stopGroupService.getStopGroupDataFile();
-      this.downloadFile(blob, 'stop_group_data.csv');
-    } catch (error) {
-      console.error('Failed to download file:', error);
-      alert('Failed to download stop group data');
-    }
-  }
-
   async downloadDivisionData() {
     try {
       const blob = await this.divisionService.getDivisionDataFile();
