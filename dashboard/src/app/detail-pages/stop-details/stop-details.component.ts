@@ -14,7 +14,6 @@ import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.com
 import { sortStudents } from '../../utilfunctions';
 import { DivisionService } from '../../division.service';
 import { StopGroupService } from '../../stopgroup.service';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-stop-details',
@@ -180,7 +179,7 @@ export class StopDetailsComponent implements OnInit {
 
       // Fetch bonus data
       this.divisions.set(await this.divisionService.getDivisions());
-
+      this.stopGroups.set(await this.stopGroupService.getStopGroups());
 
       // Try to find the stop with a timeout to prevent infinite waiting
       const maxWaitTimeMs = 5000; // 5 seconds timeout
