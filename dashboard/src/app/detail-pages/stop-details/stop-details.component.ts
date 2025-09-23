@@ -78,11 +78,9 @@ export class StopDetailsComponent implements OnInit {
 
   // Section expansion states
   expandedSections = signal<{[key: string]: boolean}>({
-    info: true,
-    students: false,
-    teachers: false,
-    stopGroups: false,
-    divisions: false
+    students: true,
+    teachers: true,
+    divisions: true
   });
 
   toggleSection(section: string) {

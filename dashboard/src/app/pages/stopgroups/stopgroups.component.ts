@@ -1,14 +1,14 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {RouterLink} from '@angular/router';
-import {Division, Info, Stop, StopGroup, StopsShownInStopGroup} from '../../types';
+import {Info, Stop, StopGroup, StopsShownInStopGroup} from '../../types';
 import {InfoPopupComponent} from '../../popups/info-popup/info-popup.component';
 import {FilterComponent} from '../../standard-components/filter/filter.component';
 import {DeletePopupComponent} from '../../popups/delete-popup/delete-popup.component';
 import {StopStore} from '../../store/stop.store';
+import {DivisionStore} from '../../store/division.store';
+import {StopGroupStore} from '../../store/stopgroup.store';
 import {StopgroupDetailsComponent} from '../../detail-pages/stopgroup-details/stopgroup-details.component';
-import { DivisionService } from '../../division.service';
-import { StopGroupService } from '../../stopgroup.service';
 
 @Component({
   selector: 'app-stopgroups',
@@ -17,14 +17,9 @@ import { StopGroupService } from '../../stopgroup.service';
   templateUrl: './stopgroups.component.html',
 })
 export class StopGroupsComponent implements OnInit {
-  private divisionService = inject(DivisionService);
-  private stopGroupService = inject(StopGroupService);
-
-  divisions = signal<Division[]>([]);
-  stopGroups = signal<StopGroup[]>([]);
-
-
   stopStore = inject(StopStore);
+  stopGroupStore = inject(StopGroupStore);
+  divisionStore = inject(DivisionStore);
   hasChanged = signal<boolean>(false);
 
   infos = signal<Info[]>([]);
@@ -35,7 +30,7 @@ export class StopGroupsComponent implements OnInit {
   showStopsForStopGroup = signal<StopsShownInStopGroup[]>([]);
   showRemoveStopPopup = signal<boolean>(false);
   showRemoveGroupPopup = signal<boolean>(false);
-  onlyPublicGroups = signal<boolean>(false);
+  onlyPublicGroups = signal<boolean>(true);
 
   showGroupDetailPopUp = signal<boolean>(false);
   groupIdDetail: number = -1;
@@ -50,11 +45,11 @@ export class StopGroupsComponent implements OnInit {
   }
 
   async initialiseData() {
-    this.divisions.set(await this.divisionService.getDivisions());
-    this.stopGroups.set(await this.stopGroupService.getStopGroups());
-
+    while (!this.stopGroupStore.initialised()) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
     this.showStopsForStopGroup.set(
-      this.stopGroups().map(
+      this.stopGroupStore.stopGroups().map(
         (sg): StopsShownInStopGroup => ({
           stopGroupId: sg.id,
           isShown: false,
@@ -88,7 +83,7 @@ export class StopGroupsComponent implements OnInit {
   }
 
   getDropGroups(): string[] {
-    return this.stopGroups().map((group) => 'group-' + group.id);
+    return this.stopGroupStore.stopGroups().map((group) => 'group-' + group.id);
   }
 
   dropStop(event: CdkDragDrop<any, any>) {
@@ -106,7 +101,8 @@ export class StopGroupsComponent implements OnInit {
   }
 
   dropGroup(event: CdkDragDrop<any, any>) {
-    moveItemInArray(this.stopGroups(), event.previousIndex, event.currentIndex);
+    moveItemInArray(this.stopGroupStore.stopGroups(), event.previousIndex, event.currentIndex);
+    console.log(this.stopGroupStore.stopGroups());
     this.hasChanged.set(true);
   }
 
@@ -118,9 +114,9 @@ export class StopGroupsComponent implements OnInit {
   }
 
   saveChanges() {
-    this.stopGroupService.updateStopGroupOrder(this.stopGroups().map((group) => group.id));
-    this.stopGroups().forEach(async (group) => {
-      await this.stopGroupService.updateStopGroup(group);
+    this.stopGroupStore.updateStopGroupOrder(this.stopGroupStore.stopGroups().map((group) => group.id));
+    this.stopGroupStore.stopGroups().forEach(async (group) => {
+      await this.stopGroupStore.updateStopGroup(group);
     });
     this.hasChanged.set(false);
   }

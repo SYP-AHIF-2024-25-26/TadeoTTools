@@ -6,11 +6,6 @@
   }
   <form (submit)="submitStopDetail()" class="mt-4">
     <div class="mb-4">
-      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('info')">
-        <h1 class="text-lg font-medium text-text-950">Info</h1>
-        <span class="text-text-900">{{ expandedSections()['info'] ? '▼' : '►' }}</span>
-      </div>
-      <div [ngClass]="{'hidden': !expandedSections()['info']}">
         <div class="mb-4 mt-2">
           <label for="name" class="block text-sm font-medium text-text-950 mb-1">Name</label>
           @if (stop().id == -1) {
@@ -58,7 +53,20 @@
           />
         </div>
       </div>
-    </div>
+      <label for="stop-groups" class="block text-sm font-medium text-text-950 mb-1">Stop Groups</label>
+      <div class="mb-10" id="stop-groups">
+        @if (stop().stopGroupIds.length > 0) {
+          <div class="ml-1 flex flex-wrap gap-2">
+            @for (stopGroupId of stop().stopGroupIds; track $index) {
+              <span class="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-800 shadow-sm">
+                {{ stopGroupStore.getStopGroupById(stopGroupId)!.name }}
+              </span>
+            }
+          </div>
+        } @else {
+          <p class="ml-4 text-text-900 text-sm">No stop groups assigned</p>
+        }
+      </div>
     <div class="mb-4">
       <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('students')">
         <h1 class="text-lg font-medium text-text-950">Students</h1>
@@ -276,22 +284,6 @@
         </div>
       </div>
     }
-
-    <div class="mb-4">
-      <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('stopGroups')">
-        <h1 class="text-lg font-medium text-text-950">StopGroups</h1>
-        <span class="text-text-900">{{ expandedSections()['stopGroups'] ? '▼' : '►' }}</span>
-      </div>
-      <div [ngClass]="{'hidden': !expandedSections()['stopGroups']}">
-        @for (stopGroupId of stop().stopGroupIds; track $index) {
-          <p class="ml-4 mb-2 text-text-950">{{ (getStopGroupById(stopGroupId) | async)?.name }}</p>
-        }
-        @if (stop().stopGroupIds.length === 0) {
-          <p class="ml-4 text-text-900 text-sm">No stop groups assigned</p>
-        }
-      </div>
-    </div>
-
     <div class="mb-4">
       <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('divisions')">
         <h1 class="text-lg font-medium text-text-950">Divisions</h1>
@@ -321,8 +313,8 @@
                 class="px-4 py-2 hover:bg-primary-100 cursor-pointer text-sm text-text-950"
                 (click)="onDivisionRemove(id.toString())"
               >
-                {{ getDivisionById(id)!.name }}
-                <span class="inline-block w-4 h-4 ml-2 rounded-full" [style.background-color]="getDivisionById(id)!.color"></span>
+                {{ divisionStore.getDivisionById(id)!.name }}
+                <span class="inline-block w-4 h-4 ml-2 rounded-full" [style.background-color]="divisionStore.getDivisionById(id)!.color"></span>
               </li>
             }
             @if (stop().divisionIds.length === 0) {
@@ -337,11 +329,11 @@
       <p class="text-red-700">{{ errorMessage() }}</p>
     }
     <div>
-      <button type="submit" class="mr-4 rounded-lg bg-primary-200 p-2 text-black hover:bg-primary-300">Submit</button>
+      <button type="submit" class="btn btn-primary btn-sm gap-2 mr-4">Submit</button>
 
-      <button (click)="goBack()" type="button" class="mr-4 mt-4 rounded-lg bg-primary-200 p-2 text-black hover:bg-primary-300">Cancel</button>
+      <button (click)="goBack()" type="button" class="mr-4 mt-4 rounded-lg btn btn-sm bg-primary-200 p-2 text-black hover:bg-primary-300">Cancel</button>
       @if (stop().id != -1) {
-        <button (click)="deleteAndGoBack()" type="button" class="hover:bg-accent-300 mr-4 rounded bg-accent-200 p-2">Delete</button>
+        <button (click)="deleteAndGoBack()" type="button" class="hover:bg-accent-300 mr-4 btn btn-sm gap-2 bg-red-600 p-2">Delete</button>
       }
     </div>
   </form>
