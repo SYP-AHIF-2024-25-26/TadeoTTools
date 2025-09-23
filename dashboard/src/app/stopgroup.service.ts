@@ -24,6 +24,15 @@ export class StopGroupService {
     }
   }
 
+  async getStopGroupById(id: number): Promise<StopGroup | undefined> {
+    try {
+      return await firstValueFrom(this.httpClient.get<StopGroup>(this.baseUrl + `/api/groups/${id}`));
+    } catch (error) {
+      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to get stop group by ID: ' + (error instanceof Error ? error.message : String(error)) });
+      throw error;
+    }
+  }
+
   async updateStopGroupOrder(stopGroups: number[]) {
     try {
       await firstValueFrom(this.httpClient.put(this.baseUrl + `/api/groups/order`, stopGroups));

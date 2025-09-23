@@ -3,11 +3,11 @@ import {Division, Status, StopGroup} from '../../types';
 import {RouterModule} from '@angular/router';
 import {FilterComponent} from '../../standard-components/filter/filter.component';
 import {StopStore} from '../../store/stop.store';
-import {StopGroupStore} from '../../store/stopgroup.store';
 import {TeacherStore} from '../../store/teacher.store';
 import {StudentStore} from '../../store/student.store';
 import {FormsModule} from '@angular/forms';
 import { DivisionService } from '../../division.service';
+import { StopGroupService } from '../../stopgroup.service';
 
 @Component({
   selector: 'app-stops',
@@ -17,11 +17,11 @@ import { DivisionService } from '../../division.service';
 })
 export class StopsComponent {
   protected stopStore = inject(StopStore);
-  private stopGroupStore = inject(StopGroupStore);
   private teacherStore = inject(TeacherStore);
   private studentStore = inject(StudentStore);
 
   private divisionService = inject(DivisionService);
+  private stopGroupService = inject(StopGroupService);
 
   divisionFilter = signal<number>(0);
   stopNameSearchTerm = signal<string>('');
@@ -29,15 +29,17 @@ export class StopsComponent {
   teacherSearchTerm = signal<string>('');
 
   divisions = signal<Division[]>([]);
+  stopGroups = signal<StopGroup[]>([]);
   
   async ngOnInit() {
     this.divisions.set(await this.divisionService.getDivisions());
+    this.stopGroups.set(await this.stopGroupService.getStopGroups());
   }
 
 
   // Computed properties for filters and data
   uniqueStopGroups = computed(() => {
-    const stopGroups = this.stopGroupStore.stopGroups();
+    const stopGroups = this.stopGroups();
     return [...new Set(stopGroups.map(sg => sg.name))].sort();
   });
 
@@ -53,7 +55,7 @@ export class StopsComponent {
     // Filter by stop group
     const stopGroupName = this.stopGroupFilter();
     if (stopGroupName) {
-      const stopGroup = this.stopGroupStore.stopGroups().find(sg => sg.name === stopGroupName);
+      const stopGroup = this.stopGroups().find(sg => sg.name === stopGroupName);
       if (stopGroup) {
         stops = stops.filter(stop => stop.stopGroupIds.includes(stopGroup.id));
       }
@@ -76,7 +78,7 @@ export class StopsComponent {
   });
 
   getGroupById(sgId: number): StopGroup | null {
-    return this.stopGroupStore.stopGroups().find((sg) => sg.id === sgId) || null;
+    return this.stopGroups().find((sg) => sg.id === sgId) || null;
   }
 
   getStopGroupNames(stopGroupIds: number[]): string {

@@ -7,25 +7,27 @@ import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location, NgClass } from '@angular/common';
 import { StopStore } from '../../store/stop.store';
-import { StopGroupStore } from '../../store/stopgroup.store';
 import { TeacherStore } from '../../store/teacher.store';
 import { LoginService } from '../../login.service';
 import { StudentStore } from '../../store/student.store';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
 import { sortStudents } from '../../utilfunctions';
 import { DivisionService } from '../../division.service';
+import { StopGroupService } from '../../stopgroup.service';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-stop-details',
   standalone: true,
-  imports: [FormsModule, RouterModule, NgClass, DeletePopupComponent],
+  imports: [FormsModule, RouterModule, NgClass, DeletePopupComponent, AsyncPipe],
   templateUrl: './stop-details.component.html',
 })
 export class StopDetailsComponent implements OnInit {
   private divisionService = inject(DivisionService);
+  private stopGroupService = inject(StopGroupService);
+
   divisions = signal<Division[]>([]);
   private stopStore = inject(StopStore);
-  protected stopGroupStore = inject(StopGroupStore);
   protected teacherStore = inject(TeacherStore);
   protected studentStore = inject(StudentStore);
   loginService = inject(LoginService);
@@ -34,8 +36,7 @@ export class StopDetailsComponent implements OnInit {
   private location: Location = inject(Location);
   private originalAssignments = new Map<string, StudentAssignment[]>();
 
-  constructor(private router: Router) {
-  }
+  router = inject(Router);
 
   emptyStop = {
     id: -1,
@@ -421,5 +422,9 @@ export class StopDetailsComponent implements OnInit {
 
   getDivisionById(id: number): Division | undefined {
     return this.divisions().find(d => d.id === id);
+  }
+
+  async getStopGroupById(id: number) {
+    return await this.stopGroupService.getStopGroupById(id);
   }
 }

@@ -17,6 +17,13 @@ public static class StopGroupManagementApi
             .WithDescription("Get all stop groups")
             .Produces<List<StopGroup>>()
             .RequireAuthorization(Setup.AdminPolicyName);
+        
+        group.MapGet("api/groups/{groupId:int}", StopGroupManagementEndpoints.GetGroupById)
+            .WithName(nameof(StopGroupManagementEndpoints.GetGroupById))
+            .WithDescription("Get a stop group by its id")
+            .Produces<StopGroup>()
+            .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPost("api/groups", StopGroupManagementEndpoints.CreateGroup)
             .WithName(nameof(StopGroupManagementEndpoints.CreateGroup))
@@ -31,7 +38,7 @@ public static class StopGroupManagementApi
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
 
-        group.MapDelete("api/groups/{groupId}", StopGroupManagementEndpoints.DeleteGroup)
+        group.MapDelete("api/groups/{groupId:int}", StopGroupManagementEndpoints.DeleteGroup)
             .AddEndpointFilter(StopGroupManagementValidations.DeleteGroupValidationAsync)
             .WithName(nameof(StopGroupManagementEndpoints.DeleteGroup))
             .WithDescription("Delete a stop group by its id")
