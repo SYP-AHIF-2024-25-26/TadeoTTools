@@ -191,18 +191,17 @@ public static class StopManagementEndpoints
         var csvBuilder = new StringBuilder();
     
         // Add headers
-        csvBuilder.AppendLine("Id;Name;Description;RoomNr;StopGroups;Divisions");
+        csvBuilder.AppendLine("Name;Description;RoomNr;StopGroups;Divisions");
     
         // Add data rows
         foreach (var item in stops)
         {
-            var escapedId = Utils.EscapeCsvField(item.Id.ToString()); // for assignments in stopgroup export
             var escapedName = Utils.EscapeCsvField(item.Name);
             var escapedDescription = Utils.EscapeCsvField(item.Description);
             var escapedRoomNr = Utils.EscapeCsvField(item.RoomNr);
-            var escapedDivisions = Utils.EscapeCsvField(string.Join(",", item.Divisions.Select(d => d.Id)));
-            var escapedStopGroupIds = Utils.EscapeCsvField(string.Join(",", item.StopGroupAssignments.Select(a => a.StopGroupId)));
-            csvBuilder.AppendLine($"{escapedId};{escapedName};{escapedDescription};{escapedRoomNr};{escapedStopGroupIds};{escapedDivisions}");
+            var escapedDivisions = Utils.EscapeCsvField(string.Join(",", item.Divisions.Select(d => d.Name)));
+            var escapedStopGroupNames = Utils.EscapeCsvField(string.Join(",", item.StopGroupAssignments.Select(a => a.StopGroup?.Name)));
+            csvBuilder.AppendLine($"{escapedName};{escapedDescription};{escapedRoomNr};{escapedStopGroupNames};{escapedDivisions}");
         }
     
         var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
