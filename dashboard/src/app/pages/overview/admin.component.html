@@ -1,4 +1,11 @@
 <h1 class="text-3xl mt-8 text-center text-text-950">Overview</h1>
+
+<div class="flex justify-center mt-4">
+  <button class="btn p-4 min-h-fit text-center btn-primary" (click)="showDeleteStudentsPopup.set(true)">
+      Delete all Students
+  </button>
+</div>
+
 <app-teacher-overview></app-teacher-overview>
 <app-admin-overview></app-admin-overview>
 <app-data-page></app-data-page>
@@ -11,7 +18,3 @@
     (removeConfirmed)="deleteAllStudents()"
   />
 }
-
-<button class="btn p-4 min-h-fit text-center btn-primary self-end" (click)="showDeleteStudentsPopup.set(true)">
-    Delete all Students
-</button>
