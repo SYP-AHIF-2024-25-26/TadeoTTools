@@ -45,9 +45,9 @@ jobs:
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
             # Pull latest images
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest  
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/dashboard:latest
+            docker pull ${{ env.REGISTRY }}/${{ toLower(env.IMAGE_NAME) }}/frontend:latest
+            docker pull ${{ env.REGISTRY }}/${{ toLower(env.IMAGE_NAME) }}/backend:latest  
+            docker pull ${{ env.REGISTRY }}/${{ toLower(env.IMAGE_NAME) }}/dashboard:latest
             
             # Stop and remove existing containers
             docker compose down
