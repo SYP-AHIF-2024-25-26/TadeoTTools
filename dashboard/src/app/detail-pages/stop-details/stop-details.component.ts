@@ -13,6 +13,7 @@ import { TeacherStore } from '../../store/teacher.store';
 import { LoginService } from '../../login.service';
 import { StudentStore } from '../../store/student.store';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
+import { sortStudents } from '../../utilfunctions';
 
 @Component({
   selector: 'app-stop-details',
@@ -146,19 +147,19 @@ export class StopDetailsComponent implements OnInit {
       );
     }
 
-    return filteredStudents;
+    return sortStudents(filteredStudents);
   }
 
   // Filtered students assigned to the stop
   filteredAssignedStudents = computed(() => {
     const assignedStudents = this.studentStore.getStudentsByStopId(this.stop().id);
-    return this.applyStudentFilters(assignedStudents, this.assignedStudentFilterText(), this.selectedAssignedClass());
+    return sortStudents(this.applyStudentFilters(assignedStudents, this.assignedStudentFilterText(), this.selectedAssignedClass()));
   });
 
   studentsNotInStop = computed(() => {
     const wrongStudents = this.studentStore.getStudentsByStopId(this.stop().id);
     let filteredStudents = this.studentStore.students().filter((student) => !wrongStudents.includes(student));
-    return this.applyStudentFilters(filteredStudents, this.availableStudentFilterText(), this.selectedAvailableClass());
+    return sortStudents(this.applyStudentFilters(filteredStudents, this.availableStudentFilterText(), this.selectedAvailableClass()));
   });
 
   async ngOnInit() {
@@ -358,12 +359,10 @@ export class StopDetailsComponent implements OnInit {
   }
 
   onTeacherRemove(edufsUsername: string) {
-    // Directly remove the teacher without showing the popup
     this.teacherStore.removeStopFromTeacher(edufsUsername, this.stop().id);
   }
 
   onStudentRemove(edufsUsername: string) {
-    // Remove the student from the stop
     this.studentStore.removeStopFromStudent(edufsUsername, this.stop().id);
   }
 
