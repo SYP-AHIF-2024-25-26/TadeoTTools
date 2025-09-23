@@ -5,6 +5,7 @@ import {StudentStore} from '../../store/student.store';
 import {CommonModule} from '@angular/common';
 import {ChipComponent} from '../../standard-components/chip/chip.component';
 import { StopStore } from '../../store/stop.store';
+import { sortStudents } from '../../utilfunctions';
 
 interface StudentWithUI extends Student {
   showStops?: boolean;
@@ -94,7 +95,7 @@ export class ListStudentsComponent {
       );
     }
 
-    return filtered;
+    return sortStudents(filtered);
   });
 
   // all where there is only one assignment and that one is pending
@@ -131,7 +132,7 @@ export class ListStudentsComponent {
       filtered = filtered.filter(s => s.studentAssignments[0].status !== Status.Accepted);
     }
 
-    return filtered;
+    return sortStudents(filtered);
   });
 
   // all where there is no assignment
@@ -163,7 +164,7 @@ export class ListStudentsComponent {
       filtered = filtered.filter(s => this.noAssignmentsDepartmentFilter().includes(s.department));
     }
 
-    return filtered;
+    return sortStudents(filtered);
   });
 
   async deleteAssignment(student: Student, index: number) {
