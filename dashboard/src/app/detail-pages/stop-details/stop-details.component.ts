@@ -254,7 +254,7 @@ export class StopDetailsComponent implements OnInit {
       });
 
     this.stop.set(this.emptyStop);
-    await this.router.navigate(['/stops']);
+    this.location.back();
   }
 
   async deleteAndGoBack() {

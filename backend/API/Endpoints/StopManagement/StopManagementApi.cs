@@ -22,7 +22,7 @@ public static class StopManagementApi
             
         group.MapGet("stops", StopManagementEndpoints.GetPublicStops)
             .WithName(nameof(StopManagementEndpoints.GetPublicStops))
-            .WithDescription("Get all stops that are publically available to see")
+            .WithDescription("Get all stops that are publicly available to see")
             .Produces<List<StopWithAssignmentsAndDivisionsDto>>();
 
         group.MapGet("stops/correlating", StopManagementEndpoints.GetCorrelatingStops)
@@ -48,7 +48,6 @@ public static class StopManagementApi
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
-
 
         group.MapDelete("api/stops/{stopId}", StopManagementEndpoints.DeleteStop)
             .AddEndpointFilter(StopManagementValidations.DeleteStopValidationAsync)
