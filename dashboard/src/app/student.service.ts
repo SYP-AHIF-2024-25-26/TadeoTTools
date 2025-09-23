@@ -63,4 +63,9 @@ export class StudentService {
       throw error;
     }
   }
+  async getStudentsDataFile(): Promise<Blob> {
+    return firstValueFrom(this.httpClient.get(this.baseUrl + '/api/students/csv', {
+      responseType: 'blob'
+    }));
+  }
 }

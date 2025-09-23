@@ -48,5 +48,12 @@ public static class StudentManagementApi
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+        
+        group.MapGet("api/students/csv", StudentManagementEndpoints.GetStudentsCsv)
+            .WithName(nameof(StudentManagementEndpoints.GetStudentsCsv))
+            .WithDescription("Get all students in a csv file")
+            .Produces(StatusCodes.Status206PartialContent)
+            .Produces(StatusCodes.Status416RangeNotSatisfiable)
+            .RequireAuthorization(Setup.AdminPolicyName);
     }
 }

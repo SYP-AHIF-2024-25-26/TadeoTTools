@@ -147,4 +147,39 @@ public class StudentManagementEndpoints
         context.Students.RemoveRange(context.Students);
         await context.SaveChangesAsync();
     }
+    
+    public static async Task<IResult> GetStudentsCsv(TadeoTDbContext context)
+    {
+        var divisions = await context.Students
+            .Include(s => s.StudentAssignments)
+            .ThenInclude(studentAssignment => studentAssignment.Stop)
+            .ToListAsync();
+        
+        var csvBuilder = new StringBuilder();
+    
+        // Add headers
+        csvBuilder.AppendLine("Vorname;Nachname;EdufsUsername;Klasse;Abteilung;Stop(s)");
+        
+        // Add data rows
+        foreach (var item in divisions)
+        {
+            var escapedFirstName = Utils.EscapeCsvField(item.FirstName);
+            var escapedLastName = Utils.EscapeCsvField(item.LastName);
+            var escapedEdufsUsername = Utils.EscapeCsvField(item.EdufsUsername);
+            var escapedClass = Utils.EscapeCsvField(item.StudentClass);
+            var escapedDepartment = Utils.EscapeCsvField(item.Department);
+            var escapedAssignments =
+                Utils.EscapeCsvField(string.Join(",",
+                    item.StudentAssignments.Select(a => $"{a.Stop.Name}:{a.Status}")));
+            csvBuilder.AppendLine($"{escapedFirstName};{escapedLastName};{escapedEdufsUsername};{escapedClass};{escapedDepartment};{escapedAssignments}");
+        }
+    
+        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+    
+        return Results.File(
+            fileContents: csvBytes,
+            contentType: "text/csv",
+            fileDownloadName: "students-export.csv"
+        );
+    }    
 }

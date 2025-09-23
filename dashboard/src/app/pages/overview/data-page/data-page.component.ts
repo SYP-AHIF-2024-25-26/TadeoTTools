@@ -75,6 +75,16 @@ export class DataPageComponent {
     }
   }
 
+  async downloadStudentsData() {
+    try {
+      const blob = await this.studentService.getStudentsDataFile();
+      this.downloadFile(blob, 'students_data.csv');
+    } catch (error) {
+      console.error('Failed to download file:', error);
+      alert('Failed to download students data');
+    }
+  }
+
   async downloadStopData() {
     try {
       const blob = await this.stopService.getStopDataFile();
@@ -84,6 +94,8 @@ export class DataPageComponent {
       alert('Failed to download stop data');
     }
   }
+
+
 
   async downloadDivisionData() {
     try {
