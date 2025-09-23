@@ -7,7 +7,7 @@ import {ChipComponent} from '../../standard-components/chip/chip.component';
 import { StopStore } from '../../store/stop.store';
 import { sortStudents } from '../../utilfunctions';
 
-interface StudentWithUI extends Student {
+export interface StudentWithUI extends Student {
   showStops?: boolean;
   selectedStops?: Set<number>;
 }
@@ -95,7 +95,7 @@ export class ListStudentsComponent {
       );
     }
 
-    return sortStudents(filtered);
+    return sortStudents(filtered) as Student[];
   });
 
   // all where there is only one assignment and that one is pending
@@ -132,7 +132,7 @@ export class ListStudentsComponent {
       filtered = filtered.filter(s => s.studentAssignments[0].status !== Status.Accepted);
     }
 
-    return sortStudents(filtered);
+    return sortStudents(filtered) as Student[];
   });
 
   // all where there is no assignment
@@ -140,7 +140,7 @@ export class ListStudentsComponent {
     let filtered = this.studentStore.students()
       .filter((s) => s.studentAssignments.length === 0)
       .map(student => ({
-        ...student, 
+        ...student,
         showStops: false,
         selectedStops: new Set<number>()
       } as StudentWithUI));
@@ -164,7 +164,7 @@ export class ListStudentsComponent {
       filtered = filtered.filter(s => this.noAssignmentsDepartmentFilter().includes(s.department));
     }
 
-    return sortStudents(filtered);
+    return sortStudents(filtered) as StudentWithUI[];
   });
 
   async deleteAssignment(student: Student, index: number) {
@@ -255,7 +255,7 @@ export class ListStudentsComponent {
 
   onStopSelect(student: StudentWithUI, stop: Stop, event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
-    
+
     if (isChecked) {
       student.selectedStops?.add(stop.id);
     } else {
@@ -301,9 +301,9 @@ export class ListStudentsComponent {
         // Check if click is outside the popup and the toggle button
         const popup = document.querySelector(`[data-student-id="${student.edufsUsername}"] .stops-popup`);
         const button = document.querySelector(`[data-student-id="${student.edufsUsername}"] .toggle-stops-btn`);
-        
-        if (popup && button && 
-            !popup.contains(event.target as Node) && 
+
+        if (popup && button &&
+            !popup.contains(event.target as Node) &&
             !button.contains(event.target as Node)) {
           student.showStops = false;
         }
