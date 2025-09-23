@@ -26,30 +26,24 @@ export class NavbarComponent {
   async ngOnInit() {
     const response = await this.service.performCall('is-admin');
     this.isAdmin.set(response.includes('admin'));
+    const colorTheme = localStorage.getItem('color-theme');
+    if (colorTheme === 'dark') {
+      this.isWhiteMode.set(false);
+      document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'darkCustom');
+    }
   }
 
   changeDarkMode() {
-    const html = document.documentElement;
-    if (localStorage.getItem('color-theme')) {
-      if (localStorage.getItem('color-theme') === 'light') {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('color-theme', 'dark');
-        html.setAttribute('data-theme', 'darkCustom');
-      } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('color-theme', 'light');
-        html.removeAttribute('data-theme');
-      }
+    this.isWhiteMode.set(!this.isWhiteMode());
+    if (this.isWhiteMode()) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('color-theme', 'light');
+      document.documentElement.removeAttribute('data-theme');
     } else {
-      if (document.documentElement.classList.contains('dark')) {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('color-theme', 'light');
-        html.removeAttribute('data-theme');
-      } else {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('color-theme', 'dark');
-        html.setAttribute('data-theme', 'darkCustom');
-      }
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('color-theme', 'dark');
+      document.documentElement.setAttribute('data-theme', 'darkCustom');
     }
   }
 }
