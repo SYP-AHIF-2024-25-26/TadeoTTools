@@ -15,7 +15,7 @@ export class NavbarComponent {
   private readonly keycloak = inject(Keycloak);
   private readonly service = inject(LoginService);
   protected isAdmin = signal(false);
-  isDarkMode = signal(false);
+  isWhiteMode = signal(true);
   mobileMenuOpen = signal(false);
 
   async logout() {

@@ -102,6 +102,7 @@ export class StopGroupsComponent implements OnInit {
 
   dropGroup(event: CdkDragDrop<any, any>) {
     moveItemInArray(this.stopGroupStore.stopGroups(), event.previousIndex, event.currentIndex);
+    console.log(this.stopGroupStore.stopGroups());
     this.hasChanged.set(true);
   }
 
