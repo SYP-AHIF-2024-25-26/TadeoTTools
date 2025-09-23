@@ -12,10 +12,16 @@ public class TeacherOrAdminHandler(TadeoTDbContext dbContext) : AuthorizationHan
         TeacherOrAdminRequirement requirement)
     {
         var user = context.User;
-        if (user.IsInRole(nameof(LeoUserRole.Teacher)))
+
+        var info = user.GetLeoUserInformation().Value;
+        if (info is LeoUser leoUser)
         {
-            context.Succeed(requirement);
-            return;
+            var role = leoUser.Role;
+            if (role >= LeoUserRole.Teacher)
+            {
+                context.Succeed(requirement);
+                return;
+            }
         }
         var userId = user.FindFirst("preferred_username")?.Value;
         if (userId != null)
