@@ -2,3 +2,16 @@
 <app-teacher-overview></app-teacher-overview>
 <app-admin-overview></app-admin-overview>
 <app-data-page></app-data-page>
+
+@if (showDeleteStudentsPopup()) {
+  <app-delete-popup
+    [title]="'Delete Students'"
+    [message]="'Are you sure you want to delete all students?'"
+    (cancel)="showDeleteStudentsPopup.set(false)"
+    (removeConfirmed)="deleteAllStudents()"
+  />
+}
+
+<button class="btn p-4 min-h-fit text-center btn-primary self-end" (click)="showDeleteStudentsPopup.set(true)">
+    Delete all Students
+</button>

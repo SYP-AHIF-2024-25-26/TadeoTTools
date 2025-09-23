@@ -36,7 +36,6 @@ export class ListStudentsComponent {
   noAssignmentsSearchTerm = signal<string>('');
   noAssignmentsDepartmentFilter = signal<string[]>([]);
 
-  // Selected student for conflict details
   selectedStudent = signal<Student | null>(null);
 
   allStops = computed(() => this.stopStore.getStops());
@@ -313,9 +312,5 @@ export class ListStudentsComponent {
 
   isStopSelected(student: StudentWithUI, stopId: number): boolean {
     return student.selectedStops?.has(stopId) || false;
-  }
-
-  async deleteAllStudents() {
-    await this.studentStore.deleteAllStudents();
   }
 }
