@@ -59,7 +59,7 @@
           <div class="ml-1 flex flex-wrap gap-2">
             @for (stopGroupId of stop().stopGroupIds; track $index) {
               <span class="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-800 shadow-sm">
-                {{ stopGroupStore.getStopGroupById(stopGroupId)!.name }}
+                {{ getStopGroupById(stopGroupId)!.name }}
               </span>
             }
           </div>
@@ -313,8 +313,8 @@
                 class="px-4 py-2 hover:bg-primary-100 cursor-pointer text-sm text-text-950"
                 (click)="onDivisionRemove(id.toString())"
               >
-                {{ divisionStore.getDivisionById(id)!.name }}
-                <span class="inline-block w-4 h-4 ml-2 rounded-full" [style.background-color]="divisionStore.getDivisionById(id)!.color"></span>
+                {{ getDivisionById(id)!.name }}
+                <span class="inline-block w-4 h-4 ml-2 rounded-full" [style.background-color]="getDivisionById(id)!.color"></span>
               </li>
             }
             @if (stop().divisionIds.length === 0) {

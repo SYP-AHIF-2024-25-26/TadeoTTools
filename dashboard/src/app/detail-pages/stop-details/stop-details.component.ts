@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { StopService } from '../../stop.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Division, Status, Stop, Student, StudentAssignment } from '../../types';
+import { Division, Status, Stop, StopGroup, Student, StudentAssignment } from '../../types';
 import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location, NgClass } from '@angular/common';
@@ -19,7 +19,7 @@ import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'app-stop-details',
   standalone: true,
-  imports: [FormsModule, RouterModule, NgClass, DeletePopupComponent, AsyncPipe],
+  imports: [FormsModule, RouterModule, NgClass, DeletePopupComponent],
   templateUrl: './stop-details.component.html',
 })
 export class StopDetailsComponent implements OnInit {
@@ -27,6 +27,7 @@ export class StopDetailsComponent implements OnInit {
   private stopGroupService = inject(StopGroupService);
 
   divisions = signal<Division[]>([]);
+  stopGroups = signal<StopGroup[]>([]);
   private stopStore = inject(StopStore);
   protected teacherStore = inject(TeacherStore);
   protected studentStore = inject(StudentStore);
@@ -422,7 +423,7 @@ export class StopDetailsComponent implements OnInit {
     return this.divisions().find(d => d.id === id);
   }
 
-  async getStopGroupById(id: number) {
-    return await this.stopGroupService.getStopGroupById(id);
+  getStopGroupById(id: number) {
+    return this.stopGroups().find(sg => sg.id === id);
   }
 }

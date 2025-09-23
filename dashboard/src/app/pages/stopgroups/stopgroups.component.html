@@ -76,7 +76,7 @@
     <!-- Stop Groups Column -->
     <div class="flex-1 max-w-4xl">
       <div (cdkDropListDropped)="dropGroup($event)" cdkDropList class="space-y-4">
-        @for (group of stopGroupStore.getStopGroups(); track group) {
+        @for (group of stopGroups(); track group) {
           @if (!onlyPublicGroups() || group.isPublic) {
             <div
               class="collapse collapse-arrow bg-background-100 text-text-950 rounded-lg overflow-hidden shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
@@ -199,7 +199,7 @@
               <h3 class="font-semibold text-text-900 dark:text-text-100">Unassigned Stops</h3>
               <app-filter
                 (filter)="divisionFilter.set($event)"
-                [elements]="divisionStore.getDivisions()"
+                [elements]="divisions()"
                 class="text-xs"
               ></app-filter>
             </div>
