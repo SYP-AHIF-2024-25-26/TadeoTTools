@@ -130,7 +130,7 @@
     >
     <div class="flex justify-between items-center">
       <p class="mb-3 font-semibold">Unassigned Stops</p>
-      <app-filter (filter)="divisionFilter.set($event)" [elements]="divisionStore.getDivisions()"></app-filter>
+      <app-filter (filter)="divisionFilter.set($event)" [elements]="divisions()"></app-filter>
     </div>
       @for (stop of filteredStops(); track stop.id) {
         <div class="mb-1 flex cursor-grab items-start gap-2 rounded-l py-3" cdkDrag>

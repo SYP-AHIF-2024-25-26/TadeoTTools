@@ -2,18 +2,18 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { StopService } from '../../stop.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Status, Stop, Student, StudentAssignment } from '../../types';
+import { Division, Status, Stop, Student, StudentAssignment } from '../../types';
 import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location, NgClass } from '@angular/common';
 import { StopStore } from '../../store/stop.store';
-import { DivisionStore } from '../../store/division.store';
 import { StopGroupStore } from '../../store/stopgroup.store';
 import { TeacherStore } from '../../store/teacher.store';
 import { LoginService } from '../../login.service';
 import { StudentStore } from '../../store/student.store';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
 import { sortStudents } from '../../utilfunctions';
+import { DivisionService } from '../../division.service';
 
 @Component({
   selector: 'app-stop-details',
@@ -22,8 +22,9 @@ import { sortStudents } from '../../utilfunctions';
   templateUrl: './stop-details.component.html',
 })
 export class StopDetailsComponent implements OnInit {
+  private divisionService = inject(DivisionService);
+  divisions = signal<Division[]>([]);
   private stopStore = inject(StopStore);
-  protected divisionStore = inject(DivisionStore);
   protected stopGroupStore = inject(StopGroupStore);
   protected teacherStore = inject(TeacherStore);
   protected studentStore = inject(StudentStore);
@@ -60,7 +61,7 @@ export class StopDetailsComponent implements OnInit {
   selectedAssignedClass = signal<string>('all');
   selectedAvailableClass = signal<string>('all');
 
-  inactiveDivisions = computed(() => this.divisionStore.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id)));
+  inactiveDivisions = computed(() => this.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id)));
 
   errorMessage = signal<string | null>(null);
 
@@ -177,6 +178,10 @@ export class StopDetailsComponent implements OnInit {
         return;
       }
 
+      // Fetch bonus data
+      this.divisions.set(await this.divisionService.getDivisions());
+
+
       // Try to find the stop with a timeout to prevent infinite waiting
       const maxWaitTimeMs = 5000; // 5 seconds timeout
       const pollIntervalMs = 100;
@@ -284,7 +289,7 @@ export class StopDetailsComponent implements OnInit {
   async onDivisionSelect($event: Event) {
     const target = $event.target as HTMLSelectElement;
     const divisionId = parseInt(target.value);
-    if (!this.stop().divisionIds.includes(divisionId) && this.divisionStore.divisions().find((d) => d.id === divisionId)) {
+    if (!this.stop().divisionIds.includes(divisionId) && this.divisions().find((d) => d.id === divisionId)) {
       this.stop.update((stop) => {
         stop.divisionIds = [divisionId, ...stop.divisionIds];
         return stop;
@@ -413,4 +418,8 @@ export class StopDetailsComponent implements OnInit {
   }
 
   protected readonly Status = Status;
+
+  getDivisionById(id: number): Division | undefined {
+    return this.divisions().find(d => d.id === id);
+  }
 }

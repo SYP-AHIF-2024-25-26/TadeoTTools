@@ -52,7 +52,7 @@
       <label class="label">
         <span class="label-text">Department Filter</span>
       </label>
-      <app-filter [elements]="divisionStore.getDivisions()" (filter)="divisionFilter.set($event)"></app-filter>
+      <app-filter [elements]="divisions()" (filter)="divisionFilter.set($event)"></app-filter>
     </div>
   </div>
 

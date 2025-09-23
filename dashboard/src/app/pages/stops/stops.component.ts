@@ -1,13 +1,13 @@
 import {Component, computed, inject, signal} from '@angular/core';
-import {Status, StopGroup} from '../../types';
+import {Division, Status, StopGroup} from '../../types';
 import {RouterModule} from '@angular/router';
 import {FilterComponent} from '../../standard-components/filter/filter.component';
 import {StopStore} from '../../store/stop.store';
 import {StopGroupStore} from '../../store/stopgroup.store';
-import {DivisionStore} from '../../store/division.store';
 import {TeacherStore} from '../../store/teacher.store';
 import {StudentStore} from '../../store/student.store';
 import {FormsModule} from '@angular/forms';
+import { DivisionService } from '../../division.service';
 
 @Component({
   selector: 'app-stops',
@@ -20,13 +20,19 @@ export class StopsComponent {
   private stopGroupStore = inject(StopGroupStore);
   private teacherStore = inject(TeacherStore);
   private studentStore = inject(StudentStore);
-  protected divisionStore = inject(DivisionStore);
 
-  // Filter signals
+  private divisionService = inject(DivisionService);
+
   divisionFilter = signal<number>(0);
   stopNameSearchTerm = signal<string>('');
   stopGroupFilter = signal<string>('');
   teacherSearchTerm = signal<string>('');
+
+  divisions = signal<Division[]>([]);
+  
+  async ngOnInit() {
+    this.divisions.set(await this.divisionService.getDivisions());
+  }
 
 
   // Computed properties for filters and data
@@ -103,9 +109,8 @@ export class StopsComponent {
   }
 
   getDivisionNames(divisionIds: number[]): string {
-    const divisions = this.divisionStore.getDivisions();
     const names = divisionIds
-      .map(id => divisions.find(d => d.id === id)?.name)
+      .map(id => this.divisions().find(d => d.id === id)?.name)
       .filter(name => name)
       .join(', ');
     return names || 'No departments';
