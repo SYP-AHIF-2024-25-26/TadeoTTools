@@ -2,6 +2,7 @@
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -150,18 +151,20 @@ public class StudentManagementEndpoints
     
     public static async Task<IResult> GetStudentsCsv(TadeoTDbContext context)
     {
-        var divisions = await context.Students
+        var students = await context.Students
             .Include(s => s.StudentAssignments)
             .ThenInclude(studentAssignment => studentAssignment.Stop)
+            .OrderBy(s => s.StudentClass)
+            .ThenBy(s => s.LastName)
             .ToListAsync();
         
         var csvBuilder = new StringBuilder();
     
         // Add headers
-        csvBuilder.AppendLine("Vorname;Nachname;EdufsUsername;Klasse;Abteilung;Stop(s)");
+        csvBuilder.AppendLine("Vorname;Nachname;EdufsUsername;Klasse;Abteilung;Stop(s);Status");
         
         // Add data rows
-        foreach (var item in divisions)
+        foreach (var item in students)
         {
             var escapedFirstName = Utils.EscapeCsvField(item.FirstName);
             var escapedLastName = Utils.EscapeCsvField(item.LastName);
@@ -169,9 +172,15 @@ public class StudentManagementEndpoints
             var escapedClass = Utils.EscapeCsvField(item.StudentClass);
             var escapedDepartment = Utils.EscapeCsvField(item.Department);
             var escapedAssignments =
-                Utils.EscapeCsvField(string.Join(",",
-                    item.StudentAssignments.Select(a => $"{a.Stop.Name}:{a.Status}")));
-            csvBuilder.AppendLine($"{escapedFirstName};{escapedLastName};{escapedEdufsUsername};{escapedClass};{escapedDepartment};{escapedAssignments}");
+                Utils.EscapeCsvField(string.Join(",", item.StudentAssignments.Select(s => s.Stop.Name)));
+            var status = item.StudentAssignments.Count switch
+            {
+                0 => "",
+                > 1 => "CONFLICT",
+                _ => item.StudentAssignments[0].Status.ToString()
+            };
+            var escapedStatus = Utils.EscapeCsvField(status);
+            csvBuilder.AppendLine($"{escapedFirstName};{escapedLastName};{escapedEdufsUsername};{escapedClass};{escapedDepartment};{escapedAssignments};{escapedStatus}");
         }
     
         var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());

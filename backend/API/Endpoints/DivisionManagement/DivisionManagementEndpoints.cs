@@ -80,7 +80,10 @@ public static class DivisionManagementEndpoints
     
     public static async Task<IResult> GetDivisionsCsv(TadeoTDbContext context)
     {
-        var divisions = await context.Divisions.Include(d => d.Stops).ToListAsync();
+        var divisions = await context.Divisions
+            .Include(d => d.Stops)
+            .OrderBy(d => d.Name)
+            .ToListAsync();
         
         // Create CSV content
         var csvBuilder = new StringBuilder();
