@@ -360,7 +360,7 @@
     <div class="z-[9999] mt-2 bg-base-100 border border-base-300 rounded-lg shadow-xl max-h-[300px] overflow-y-auto w-64 stops-popup">
       <div class="p-4">
         <div class="max-h-[200px] overflow-y-auto mb-4">
-          @for(stop of allStops(); track stop.id) {
+          @for(stop of stops(); track stop.id) {
             <div class="form-control">
               <label class="label cursor-pointer hover:bg-base-200 rounded-lg px-2">
                 <span class="label-text mr-2">{{ stop.name }}</span>

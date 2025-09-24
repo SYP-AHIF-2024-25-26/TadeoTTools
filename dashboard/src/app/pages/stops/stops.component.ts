@@ -1,13 +1,13 @@
 import {Component, computed, inject, signal} from '@angular/core';
-import {Division, Status, StopGroup} from '../../types';
+import {Division, Status, Stop, StopGroup} from '../../types';
 import {RouterModule} from '@angular/router';
 import {FilterComponent} from '../../standard-components/filter/filter.component';
-import {StopStore} from '../../store/stop.store';
 import {TeacherStore} from '../../store/teacher.store';
 import {StudentStore} from '../../store/student.store';
 import {FormsModule} from '@angular/forms';
 import { DivisionService } from '../../division.service';
 import { StopGroupService } from '../../stopgroup.service';
+import { StopService } from '../../stop.service';
 
 @Component({
   selector: 'app-stops',
@@ -16,12 +16,12 @@ import { StopGroupService } from '../../stopgroup.service';
   templateUrl: './stops.component.html',
 })
 export class StopsComponent {
-  protected stopStore = inject(StopStore);
   private teacherStore = inject(TeacherStore);
   private studentStore = inject(StudentStore);
 
   private divisionService = inject(DivisionService);
   private stopGroupService = inject(StopGroupService);
+  private stopService = inject(StopService);
 
   divisionFilter = signal<number>(0);
   stopNameSearchTerm = signal<string>('');
@@ -30,10 +30,12 @@ export class StopsComponent {
 
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
+  stops = signal<Stop[]>([]);
   
   async ngOnInit() {
     this.divisions.set(await this.divisionService.getDivisions());
     this.stopGroups.set(await this.stopGroupService.getStopGroups());
+    this.stops.set(await this.stopService.getStops());
   }
 
 
@@ -44,8 +46,12 @@ export class StopsComponent {
   });
 
   filteredStops = computed(() => {
-    let stops = this.stopStore.filterStopsByDivisionId(this.divisionFilter());
-
+    // Filter by division
+    const divisionId = this.divisionFilter();
+    let stops = divisionId
+      ? this.stops().filter(stop => stop.divisionIds.includes(divisionId))
+      : this.stops();
+      
     // Filter by stop name
     const nameSearch = this.stopNameSearchTerm().toLowerCase();
     if (nameSearch) {

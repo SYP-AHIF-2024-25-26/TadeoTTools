@@ -6,7 +6,6 @@ import { Division, Status, Stop, StopGroup, Student, StudentAssignment } from '.
 import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location, NgClass } from '@angular/common';
-import { StopStore } from '../../store/stop.store';
 import { TeacherStore } from '../../store/teacher.store';
 import { LoginService } from '../../login.service';
 import { StudentStore } from '../../store/student.store';
@@ -24,13 +23,13 @@ import { StopGroupService } from '../../stopgroup.service';
 export class StopDetailsComponent implements OnInit {
   private divisionService = inject(DivisionService);
   private stopGroupService = inject(StopGroupService);
+  private stopService = inject(StopService);
+  private loginService = inject(LoginService);
 
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
-  private stopStore = inject(StopStore);
   protected teacherStore = inject(TeacherStore);
   protected studentStore = inject(StudentStore);
-  loginService = inject(LoginService);
   private service: StopService = inject(StopService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
@@ -177,38 +176,23 @@ export class StopDetailsComponent implements OnInit {
         return;
       }
 
-      // Fetch bonus data
       this.divisions.set(await this.divisionService.getDivisions());
       this.stopGroups.set(await this.stopGroupService.getStopGroups());
 
-      // Try to find the stop with a timeout to prevent infinite waiting
-      const maxWaitTimeMs = 5000; // 5 seconds timeout
-      const pollIntervalMs = 100;
-      const maxAttempts = maxWaitTimeMs / pollIntervalMs;
-
-      let attempts = 0;
       let foundStop: Stop | undefined;
 
-      while (attempts < maxAttempts) {
-        foundStop = this.stopStore.getStopById(Number(id));
-        if (foundStop) {
-          this.stop.set(foundStop);
-          const students = this.studentStore.getStudentsByStopId(foundStop.id);
-          students.forEach(s => {
-            const assignments = s.studentAssignments
-              .filter(a => a.stopId === foundStop!.id)
-              .map(a => ({ ...a }));
-            this.originalAssignments.set(s.edufsUsername, assignments);
-          });
-          break;
-        }
-
-        await new Promise(resolve => setTimeout(resolve, pollIntervalMs));
-        attempts++;
-      }
-
-      if (!foundStop) {
-        this.errorMessage.set(`Could not find stop with ID ${id} after ${maxWaitTimeMs/1000} seconds`);
+      foundStop = await this.stopService.getStopById(Number(id));
+      if (foundStop === undefined) {
+        this.errorMessage.set(`Could not find stop with ID ${id}`);
+      } else {
+        this.stop.set({ ...foundStop });
+        const students = this.studentStore.getStudentsByStopId(foundStop.id);
+        students.forEach(s => {
+          const assignments = s.studentAssignments
+            .filter(a => a.stopId === foundStop!.id)
+            .map(a => ({ ...a }));
+          this.originalAssignments.set(s.edufsUsername, assignments);
+        });
       }
     } catch (error) {
       this.errorMessage.set(`Error initializing component: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -246,7 +230,7 @@ export class StopDetailsComponent implements OnInit {
         this.studentStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
         this.teacherStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
     } else {
-      await this.stopStore.updateStop(this.stop());
+      await this.stopService.updateStop(this.stop());
     }
 
       this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
@@ -262,7 +246,7 @@ export class StopDetailsComponent implements OnInit {
   }
 
   async deleteAndGoBack() {
-    await this.stopStore.deleteStop(this.stop().id);
+    await this.stopService.deleteStop(this.stop().id);
     this.stop.set(this.emptyStop);
     this.location.back();
   }

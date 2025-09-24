@@ -14,6 +14,31 @@ public static class StopManagementEndpoints
     {
         return Results.Ok(await StopFunctions.GetAllStopsAsync(context));
     }
+    
+    public static async Task<IResult> GetStopById(TadeoTDbContext context, [FromRoute] int stopId)
+    {
+        var stop = await context.Stops
+            .Include(s => s.Divisions)
+            .Include(s => s.StopGroupAssignments)
+            .ThenInclude(sg => sg.StopGroup)
+            .FirstOrDefaultAsync(s => s.Id == stopId);
+        if (stop == null)
+        {
+            return Results.NotFound($"Stop with ID {stopId} not found");
+        }
+
+        var result = new StopWithAssignmentsAndDivisionsDto(
+            stop.Id,
+            stop.Name,
+            stop.RoomNr,
+            stop.Description,
+            stop.Divisions.Select(d => d.Id).ToArray(),
+            stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
+            stop.StopGroupAssignments.Select(a => a.Order).ToArray()
+        );
+
+        return Results.Ok(result);
+    }
 
     public static async Task<IResult> GetCorrelatingStops(TadeoTDbContext context, HttpContext httpContext)
     {
@@ -35,6 +60,22 @@ public static class StopManagementEndpoints
             },
             _ => Task.FromResult(Results.BadRequest("User information not found"))
         );
+    }
+    
+    public static async Task<IResult> GetStopsByDivisionId(TadeoTDbContext context, int divisionId)
+    {
+        var stops = await context.Stops
+            .Where(s => s.Divisions.Any(d => d.Id == divisionId))
+            .Select(s => new StopResponseDto(
+                s.Id,
+                s.Name,
+                s.Description,
+                s.RoomNr,
+                s.Divisions.Select(d => d.Id).ToArray(),
+                s.StopGroupAssignments.Select(a => a.StopGroupId).ToArray()
+            ))
+            .ToListAsync();
+        return stops.Count == 0 ? Results.NotFound($"No stops found for division ID {divisionId}") : Results.Ok(stops);
     }
     
     public static async Task<IResult> GetStopsForTeacher(TadeoTDbContext context, [FromRoute] string teacherId)

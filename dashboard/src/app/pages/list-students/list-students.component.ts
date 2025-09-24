@@ -4,10 +4,10 @@ import {Status, Student, Stop, StudentAssignment} from '../../types';
 import {StudentStore} from '../../store/student.store';
 import {CommonModule} from '@angular/common';
 import {ChipComponent} from '../../standard-components/chip/chip.component';
-import { StopStore } from '../../store/stop.store';
 import { sortStudents } from '../../utilfunctions';
 import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
+import { StopService } from '../../stop.service';
 
 export interface StudentWithUI extends Student {
   showStops?: boolean;
@@ -22,7 +22,7 @@ export interface StudentWithUI extends Student {
 })
 export class ListStudentsComponent {
   private studentStore = inject(StudentStore);
-  private stopStore = inject(StopStore);
+  private stopService = inject(StopService);
 
   // Filter and search state
   conflictsClassFilter = signal<string>('');
@@ -39,8 +39,7 @@ export class ListStudentsComponent {
   noAssignmentsDepartmentFilter = signal<string[]>([]);
 
   selectedStudent = signal<Student | null>(null);
-
-  allStops = computed(() => this.stopStore.getStops());
+  stops = signal<Stop[]>([]);
 
   // Get unique class names for filter dropdowns
   uniqueClasses = computed(() => {
@@ -50,6 +49,10 @@ export class ListStudentsComponent {
     });
     return Array.from(classes).sort();
   });
+
+  async ngOnInit() {
+    this.stops.set(await this.stopService.getStops());
+  }
 
   // Get unique stop names for filter dropdowns
   uniqueStops = computed(() => {
@@ -275,7 +278,7 @@ export class ListStudentsComponent {
     }
 
     // Get all selected stops
-    const selectedStops = this.allStops().filter(stop => student.selectedStops?.has(stop.id));
+    const selectedStops = this.stops().filter(stop => student.selectedStops?.has(stop.id));
 
     // Create assignments for all selected stops
     for (const stop of selectedStops) {

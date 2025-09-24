@@ -23,6 +23,12 @@ export class StopService {
     );
   }
 
+  getStopsOfTeacher(teacherId: string): Promise<Stop[]> {
+    return firstValueFrom(
+      this.httpClient.get<Stop[]>(`${this.baseUrl}/api/stops/teacher/${teacherId}`)
+    );
+  }
+
   addStop(stop: Stop): Promise<Stop> {
     return firstValueFrom(
       this.httpClient.post<Stop>(`${this.baseUrl}/api/stops`, stop)
@@ -52,6 +58,21 @@ export class StopService {
       this.httpClient.get(`${this.baseUrl}/api/stops/csv`, {
         responseType: 'blob'
       })
+    );
+  }
+
+  getStopById(id: number): Promise<Stop | undefined> {
+    return firstValueFrom(
+      this.httpClient.get<Stop>(`${this.baseUrl}/api/stops/${id}`)
+    );
+  }
+
+  filterStopsByDivisionId(divisionId: number): Promise<Stop[]> {
+    if (divisionId === 0) {
+      return this.getStops();
+    }
+    return firstValueFrom(
+      this.httpClient.get<Stop[]>(`${this.baseUrl}/api/stops?divisionId=${divisionId}`)
     );
   }
 }

@@ -49,7 +49,7 @@ public static class StopManagementApi
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
-        group.MapDelete("api/stops/{stopId}", StopManagementEndpoints.DeleteStop)
+        group.MapDelete("api/stops/{stopId:int}", StopManagementEndpoints.DeleteStop)
             .AddEndpointFilter(StopManagementValidations.DeleteStopValidationAsync)
             .WithName(nameof(StopManagementEndpoints.DeleteStop))
             .WithDescription("Delete a stop by its id")
@@ -63,5 +63,19 @@ public static class StopManagementApi
             .Produces(StatusCodes.Status206PartialContent)
             .Produces(StatusCodes.Status416RangeNotSatisfiable)
             .RequireAuthorization(Setup.AdminPolicyName);
+        
+        group.MapGet("api/stops/{stopId:int}", StopManagementEndpoints.GetStopById)
+            .WithName(nameof(StopManagementEndpoints.GetStopById))
+            .WithDescription("Get a stop by its id")
+            .Produces<StopWithAssignmentsAndDivisionsDto>()
+            .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName); // fix later to admin only
+        
+        //this.httpClient.get<Stop[]>(`${this.baseUrl}/api/stops?divisionId=${divisionId}`)
+        group.MapGet("api/stops/by-division", StopManagementEndpoints.GetStopsByDivisionId)
+            .WithName(nameof(StopManagementEndpoints.GetStopsByDivisionId))
+            .WithDescription("Get all stops filtered by divisionId query parameter")
+            .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
     }
 }

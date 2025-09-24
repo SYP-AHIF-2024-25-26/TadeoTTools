@@ -5,10 +5,10 @@ import {Division, Info, Stop, StopGroup, StopsShownInStopGroup} from '../../type
 import {InfoPopupComponent} from '../../popups/info-popup/info-popup.component';
 import {FilterComponent} from '../../standard-components/filter/filter.component';
 import {DeletePopupComponent} from '../../popups/delete-popup/delete-popup.component';
-import {StopStore} from '../../store/stop.store';
 import {StopgroupDetailsComponent} from '../../detail-pages/stopgroup-details/stopgroup-details.component';
 import { StopGroupService } from '../../stopgroup.service';
 import { DivisionService } from '../../division.service';
+import { StopService } from '../../stop.service';
 
 @Component({
   selector: 'app-stopgroups',
@@ -19,13 +19,13 @@ import { DivisionService } from '../../division.service';
 export class StopGroupsComponent implements OnInit {
   private stopGroupService = inject(StopGroupService);
   private divisionService = inject(DivisionService);
+  private stopService = inject(StopService);
 
-  stopStore = inject(StopStore);
   hasChanged = signal<boolean>(false);
-
   infos = signal<Info[]>([]);
   stopGroups = signal<StopGroup[]>([]);
   divisions = signal<Division[]>([]);
+  stops = signal<Stop[]>([]);
 
   stopIdToRemove: number = -1;
   stopGroupToRemoveFrom: StopGroup | undefined = undefined;
@@ -50,6 +50,7 @@ export class StopGroupsComponent implements OnInit {
   async initialiseData() {
     this.stopGroups.set(await this.stopGroupService.getStopGroups());
     this.divisions.set(await this.divisionService.getDivisions());
+    this.stops.set(await this.stopService.getStops());
 
     this.showStopsForStopGroup.set(
       this.stopGroups().map(
@@ -89,9 +90,13 @@ export class StopGroupsComponent implements OnInit {
     return this.stopGroups().map((group) => 'group-' + group.id);
   }
 
+  getStopName(stopId: number): string {
+    return this.stops().filter((stop) => stop.id === stopId)[0]?.name || '';
+  }
+
   dropStop(event: CdkDragDrop<any, any>) {
     if (event.previousContainer.id === 'all-stops') {
-      const stopId = this.stopStore.stops()[event.previousIndex].id;
+      const stopId = this.stops()[event.previousIndex].id;
       if (!event.container.data.includes(stopId)) {
         event.container.data.splice(event.currentIndex, 0, stopId);
       }
@@ -110,9 +115,9 @@ export class StopGroupsComponent implements OnInit {
 
   filterStopsByDivisionId(divisionId: number): Stop[] {
     if (divisionId === 0) {
-      return this.stopStore.stops();
+      return this.stops();
     }
-    return this.stopStore.stops().filter((stop) => Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId));
+    return this.stops().filter((stop) => Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId));
   }
 
   saveChanges() {
