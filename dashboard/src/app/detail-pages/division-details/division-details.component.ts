@@ -24,7 +24,6 @@ export class DivisionDetailsComponent implements OnInit {
   }
 
   baseUrl = inject(BASE_URL);
-
   name = signal<string>('');
   color = signal<string>('');
 

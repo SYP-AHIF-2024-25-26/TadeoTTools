@@ -74,7 +74,6 @@ export class TeacherOverviewComponent {
   async addTeacher() {
     if (this.newTeacher()?.edufsUsername && this.newTeacher()?.firstName && this.newTeacher()?.lastName) {
       try {
-        console.log(this.newTeacher());
         await this.teacherService.postTeacher(this.newTeacher() as Teacher);
         await this.loadTeachers();
         this.newTeacher.set({});

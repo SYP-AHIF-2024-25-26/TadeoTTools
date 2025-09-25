@@ -66,7 +66,6 @@ export class TeacherService {
       stopId,
       teacherId: edufsUsername
     }));
-    console.log(JSON.stringify(teacherAssignments));
 
     return firstValueFrom(
       this.httpClient.put<void>(
