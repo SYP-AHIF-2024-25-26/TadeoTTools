@@ -1,27 +1,28 @@
 import {Component, computed, inject, signal} from '@angular/core';
-import {Division, Status, Stop, StopGroup} from '../../types';
+import {Division, Status, Stop, StopGroup, Teacher} from '../../types';
 import {RouterModule} from '@angular/router';
 import {FilterComponent} from '../../standard-components/filter/filter.component';
-import {TeacherStore} from '../../store/teacher.store';
 import {StudentStore} from '../../store/student.store';
 import {FormsModule} from '@angular/forms';
 import { DivisionService } from '../../division.service';
 import { StopGroupService } from '../../stopgroup.service';
 import { StopService } from '../../stop.service';
+import { TeacherService } from '../../teacher.service';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-stops',
   standalone: true,
-  imports: [RouterModule, FilterComponent, FormsModule],
+  imports: [RouterModule, FilterComponent, FormsModule, AsyncPipe],
   templateUrl: './stops.component.html',
 })
 export class StopsComponent {
-  private teacherStore = inject(TeacherStore);
   private studentStore = inject(StudentStore);
 
   private divisionService = inject(DivisionService);
   private stopGroupService = inject(StopGroupService);
   private stopService = inject(StopService);
+  private teacherService = inject(TeacherService);
 
   divisionFilter = signal<number>(0);
   stopNameSearchTerm = signal<string>('');
@@ -31,11 +32,13 @@ export class StopsComponent {
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
   stops = signal<Stop[]>([]);
+  teachers = signal<Teacher[]>([]);
   
   async ngOnInit() {
     this.divisions.set(await this.divisionService.getDivisions());
     this.stopGroups.set(await this.stopGroupService.getStopGroups());
     this.stops.set(await this.stopService.getStops());
+    this.teachers.set(await this.teacherService.getTeachers());
   }
 
 
@@ -70,8 +73,8 @@ export class StopsComponent {
     // Filter by teacher
     const teacherSearch = this.teacherSearchTerm().toLowerCase();
     if (teacherSearch) {
-      stops = stops.filter(stop => {
-        const teachers = this.getTeachersByStopId(stop.id);
+      stops = stops.filter(async stop => {
+        const teachers = await this.teacherService.getTeachersOfStop(stop.id);
         return teachers.some(teacher =>
           teacher.firstName.toLowerCase().includes(teacherSearch) ||
           teacher.lastName.toLowerCase().includes(teacherSearch) ||
@@ -95,17 +98,17 @@ export class StopsComponent {
     return names || 'No groups assigned';
   }
 
-  getTeachersByStopId(stopId: number) {
-    return this.teacherStore.getTeachersByStopId(stopId);
+  async getTeachersByStopId(stopId: number) {
+    return await this.teacherService.getTeachersOfStop(stopId);
   }
 
-  getTeacherNames(stopId: number): string {
-    const teachers = this.getTeachersByStopId(stopId);
+  async getTeacherNames(stopId: number): Promise<string> {
+    const teachers = await this.getTeachersByStopId(stopId);
     if (teachers.length === 0) return 'No teachers assigned';
     return teachers.map(t => `${t.firstName} ${t.lastName}`).join(', ');
   }
 
-  getStudentCount(stopId: number): string {
+  async getStudentCount(stopId: number): Promise<string> {
     const students = this.studentStore.getStudentsByStopId(stopId);
     const requested = students.filter(s =>
       s.studentAssignments.some(a => a.stopId === stopId && a.status === Status.Pending)

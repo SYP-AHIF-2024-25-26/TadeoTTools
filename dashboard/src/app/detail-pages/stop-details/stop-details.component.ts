@@ -2,17 +2,17 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { StopService } from '../../stop.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Division, Status, Stop, StopGroup, Student, StudentAssignment } from '../../types';
+import { Division, Status, Stop, StopGroup, Student, StudentAssignment, Teacher } from '../../types';
 import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location, NgClass } from '@angular/common';
-import { TeacherStore } from '../../store/teacher.store';
 import { LoginService } from '../../login.service';
 import { StudentStore } from '../../store/student.store';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
 import { sortStudents } from '../../utilfunctions';
 import { DivisionService } from '../../division.service';
 import { StopGroupService } from '../../stopgroup.service';
+import { TeacherService } from '../../teacher.service';
 
 @Component({
   selector: 'app-stop-details',
@@ -25,10 +25,12 @@ export class StopDetailsComponent implements OnInit {
   private stopGroupService = inject(StopGroupService);
   private stopService = inject(StopService);
   private loginService = inject(LoginService);
+  private teacherService = inject(TeacherService);
 
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
-  protected teacherStore = inject(TeacherStore);
+  teachers = signal<Teacher[]>([]);
+
   protected studentStore = inject(StudentStore);
   private service: StopService = inject(StopService);
   private route: ActivatedRoute = inject(ActivatedRoute);
@@ -67,11 +69,7 @@ export class StopDetailsComponent implements OnInit {
 
   // Popup signals and properties
   showRemoveDivisionPopup = signal<boolean>(false);
-  showRemoveTeacherPopup = signal<boolean>(false);
-  showRemoveStudentPopup = signal<boolean>(false);
   divisionIdToRemove: string = '';
-  teacherUsernameToRemove: string = '';
-  studentUsernameToRemove: string = '';
 
   // No longer tracking badge position
 
@@ -89,14 +87,14 @@ export class StopDetailsComponent implements OnInit {
   }
 
   teachersAssignedToStop = computed(() => {
-    return this.teacherStore.teachers().filter((teacher) =>
+    return this.teachers().filter((teacher) =>
       teacher.assignedStops.some((assignment) => assignment == this.stop().id)
     );
   });
 
   teachersAvailableForAssignment = computed(() => {
     const assignedTeachers = this.teachersAssignedToStop();
-    return this.teacherStore.teachers().filter((teacher) => !assignedTeachers.includes(teacher));
+    return this.teachers().filter((teacher) => !assignedTeachers.includes(teacher));
   });
 
   // Filter function to apply common filtering logic for teachers
@@ -176,6 +174,7 @@ export class StopDetailsComponent implements OnInit {
         return;
       }
 
+      this.teachers.set(await this.teacherService.getTeachers());
       this.divisions.set(await this.divisionService.getDivisions());
       this.stopGroups.set(await this.stopGroupService.getStopGroups());
 
@@ -228,17 +227,16 @@ export class StopDetailsComponent implements OnInit {
         this.stop.set({ ...this.stop(), id: returnedStop.id });
 
         this.studentStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
-        this.teacherStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
+        this.teacherService.setStopIdForAssignmentsOnNewStop(returnedStop.id);
     } else {
       await this.stopService.updateStop(this.stop());
     }
-
       this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
         this.studentStore.setAssignments(student.edufsUsername);
       });
 
-      this.teacherStore.getTeachersByStopId(this.stop().id).forEach((teacher) => {
-        this.teacherStore.setAssignments(teacher.edufsUsername);
+      (await this.teacherService.getTeachersOfStop(this.stop().id)).forEach((teacher) => {
+        this.teacherService.setAssignments(teacher.edufsUsername, teacher.assignedStops);
       });
 
     this.stop.set(this.emptyStop);
@@ -305,7 +303,7 @@ export class StopDetailsComponent implements OnInit {
   async onTeacherSelect($event: Event) {
     const target = $event.target as HTMLSelectElement;
     const edufsUsername = target.value;
-    await this.teacherStore.addStopToTeacher(edufsUsername, this.stop().id);
+    await this.teacherService.addStopToTeacher(edufsUsername, this.stop().id);
   }
 
   selectDivisionToRemove(divisionId: string) {
@@ -321,33 +319,23 @@ export class StopDetailsComponent implements OnInit {
     this.showRemoveDivisionPopup.set(false);
   }
 
-  selectTeacherToRemove(edufsUsername: string) {
-    this.teacherUsernameToRemove = edufsUsername;
-    this.showRemoveTeacherPopup.set(true);
-  }
-
-  confirmTeacherRemove() {
-    this.teacherStore.removeStopFromTeacher(this.teacherUsernameToRemove, this.stop().id);
-    this.showRemoveTeacherPopup.set(false);
+  removeTeacher(edufsUsername: string) {
+    this.teachers.update(teachers => {
+      const teacher = teachers.find(t => t.edufsUsername === edufsUsername);
+      if (teacher) {
+        teacher.assignedStops = teacher.assignedStops.filter(stopId => stopId !== this.stop().id);
+      }
+      return [...teachers];
+    });
   }
 
   selectStudentToRemove(edufsUsername: string) {
-    this.studentUsernameToRemove = edufsUsername;
-    this.showRemoveStudentPopup.set(true);
-  }
-
-  confirmStudentRemove() {
-    this.studentStore.removeStopFromStudent(this.studentUsernameToRemove, this.stop().id);
-    this.showRemoveStudentPopup.set(false);
+    this.studentStore.removeStopFromStudent(edufsUsername, this.stop().id);
   }
 
   // Keep for backward compatibility
   onDivisionRemove(divisionId: string) {
     this.selectDivisionToRemove(divisionId);
-  }
-
-  onTeacherRemove(edufsUsername: string) {
-    this.teacherStore.removeStopFromTeacher(edufsUsername, this.stop().id);
   }
 
   onStudentRemove(edufsUsername: string) {
@@ -388,8 +376,14 @@ export class StopDetailsComponent implements OnInit {
     }
   }
 
-  async onTeacherClick(edufsUsername: string) {
-    await this.teacherStore.addStopToTeacher(edufsUsername, this.stop().id);
+  addTeacher(edufsUsername: string) {
+    this.teachers.update(teachers => {
+      const teacher = teachers.find(t => t.edufsUsername === edufsUsername);
+      if (teacher && !teacher.assignedStops.includes(this.stop().id)) {
+        teacher.assignedStops.push(this.stop().id);
+      }
+      return [...teachers];
+    });
   }
 
   onAssignedClassSelect($event: Event) {

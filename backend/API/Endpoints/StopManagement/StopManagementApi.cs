@@ -12,7 +12,7 @@ public static class StopManagementApi
             .WithName(nameof(StopManagementEndpoints.GetAllStops))
             .WithDescription("Get all Stops")
             .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
-            .RequireAuthorization(Setup.TeacherOrAdminPolicyName); // fix later to admin only
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapGet("api/stops/teacher/{teacherId}", StopManagementEndpoints.GetStopsForTeacher) // use this endpoint later!
             .WithName(nameof(StopManagementEndpoints.GetStopsForTeacher))
@@ -71,7 +71,6 @@ public static class StopManagementApi
             .Produces(StatusCodes.Status404NotFound)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName); // fix later to admin only
         
-        //this.httpClient.get<Stop[]>(`${this.baseUrl}/api/stops?divisionId=${divisionId}`)
         group.MapGet("api/stops/by-division", StopManagementEndpoints.GetStopsByDivisionId)
             .WithName(nameof(StopManagementEndpoints.GetStopsByDivisionId))
             .WithDescription("Get all stops filtered by divisionId query parameter")

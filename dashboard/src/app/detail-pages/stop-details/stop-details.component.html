@@ -229,7 +229,7 @@
                         {{ teacher.lastName + ' ' + teacher.firstName }}
                       </div>
                       <div class="flex items-center">
-                        <span class="text-accent-600 font-bold text-lg cursor-pointer" (click)="onTeacherRemove(teacher.edufsUsername)">−</span>
+                        <span class="text-accent-600 font-bold text-lg cursor-pointer" (click)="removeTeacher(teacher.edufsUsername)">−</span>
                       </div>
                     </li>
                   }
@@ -270,7 +270,7 @@
                         {{ teacher.lastName + ' ' + teacher.firstName }}
                       </div>
                       <div class="flex items-center">
-                        <span class="text-primary-600 font-bold text-lg cursor-pointer" (click)="onTeacherClick(teacher.edufsUsername)">+</span>
+                        <span class="text-primary-600 font-bold text-lg cursor-pointer" (click)="addTeacher(teacher.edufsUsername)">+</span>
                       </div>
                     </li>
                   }
@@ -345,15 +345,5 @@
     [message]="'Are you sure you want to remove this division from the stop?'"
     (cancel)="showRemoveDivisionPopup.set(false)"
     (removeConfirmed)="confirmDivisionRemove()"
-  />
-}
-
-
-@if (showRemoveStudentPopup()) {
-  <app-delete-popup
-    [title]="'Remove Student'"
-    [message]="'Are you sure you want to remove this student from the stop?'"
-    (cancel)="showRemoveStudentPopup.set(false)"
-    (removeConfirmed)="confirmStudentRemove()"
   />
 }

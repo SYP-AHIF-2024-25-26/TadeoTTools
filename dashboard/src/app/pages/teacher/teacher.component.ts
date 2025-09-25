@@ -1,10 +1,10 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { TeacherStore } from '../../store/teacher.store';
 import Keycloak from 'keycloak-js';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { StopService } from '../../stop.service';
 import { Stop } from '../../types';
+import { TeacherService } from '../../teacher.service';
 
 @Component({
   selector: 'app-teacher',
@@ -13,13 +13,13 @@ import { Stop } from '../../types';
 })
 export class TeacherComponent implements OnInit {
   private stopService = inject(StopService);
+  private teacherService = inject(TeacherService);
   stops = signal<Stop[]>([]);
   keycloak = inject(Keycloak);
 
-  protected teacherStore = inject(TeacherStore);
   username = signal<string>('');
   teacher = computed(() => {
-    return this.teacherStore.getTeacherById(this.username());
+    return this.teacherService.getTeacherById(this.username());
   });
 
   async ngOnInit() {
