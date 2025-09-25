@@ -147,4 +147,10 @@ export class StopGroupsComponent implements OnInit {
   }
 
   deleteGroup() {}
+
+  async handleGroupPopupClose(): Promise<void> {
+    this.showGroupDetailPopUp.set(false);
+    this.stopGroups.set(await this.stopGroupService.getStopGroups());
+  }
+
 }

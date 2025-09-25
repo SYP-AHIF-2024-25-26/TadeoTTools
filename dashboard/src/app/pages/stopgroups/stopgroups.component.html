@@ -281,6 +281,6 @@
 @if (showGroupDetailPopUp()) {
   <app-stopgroup-details
     [id]="groupIdDetail"
-    (cancel)="showGroupDetailPopUp.set(false)"
+    (cancel)="handleGroupPopupClose()"
   />
 }
