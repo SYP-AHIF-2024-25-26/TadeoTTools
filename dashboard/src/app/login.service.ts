@@ -16,11 +16,7 @@ export class LoginService {
     const route = `${this.baseUrl}/users/${action}`;
     
     return firstValueFrom(
-      this.httpClient.get(route, { responseType: 'text' }).pipe(
-        catchError((err: HttpErrorResponse) => 
-          of(`Backend says no: ${err.status}`)
-        )
-      )
+      this.httpClient.get(route, { responseType: 'text' })
     );
   }
 }
