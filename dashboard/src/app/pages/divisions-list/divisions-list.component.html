@@ -45,6 +45,7 @@
 @if (showDivisionDetailPopUp()) {
   <app-division-details
     [id]="divisionIdDetail"
-    (cancel)="showDivisionDetailPopUp.set(false)"
+    (cancel)="handleDivisionPopupClose()"
+    (close)="handleDivisionPopupClose()"
   />
 }

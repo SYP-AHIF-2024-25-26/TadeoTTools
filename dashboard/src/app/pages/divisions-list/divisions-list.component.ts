@@ -40,6 +40,11 @@ export class DivisionsListComponent {
     this.showDivisionDetailPopUp.set(true);
   }
 
+  async handleDivisionPopupClose(): Promise<void> {
+    this.showDivisionDetailPopUp.set(false);
+    this.divisions.set(await this.divisionService.getDivisions());
+  }
+
   hideImage(event: Event): void {
     const imgElement = event.target as HTMLImageElement;
     imgElement.style.display = 'none';
