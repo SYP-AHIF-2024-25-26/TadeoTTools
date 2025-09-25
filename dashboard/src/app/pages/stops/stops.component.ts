@@ -34,9 +34,9 @@ export class StopsComponent {
   students = signal<Student[]>([]);
   
   async ngOnInit() {
-    this.divisions.set(await this.divisionService.getDivisions());
-    this.stopGroups.set(await this.stopGroupService.getStopGroups());
     this.stops.set(await this.stopService.getStops());
+    this.stopGroups.set(await this.stopGroupService.getStopGroups());
+    this.divisions.set(await this.divisionService.getDivisions());
     this.teachers.set(await this.teacherService.getTeachers());
     this.students.set(await this.studentService.getStudents());
   }
