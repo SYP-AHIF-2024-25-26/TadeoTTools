@@ -1,9 +1,10 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { TeacherStore } from '../../store/teacher.store';
 import Keycloak from 'keycloak-js';
-import { StopStore } from '../../store/stop.store';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { StopService } from '../../stop.service';
+import { Stop } from '../../types';
+import { TeacherService } from '../../teacher.service';
 
 @Component({
   selector: 'app-teacher',
@@ -11,16 +12,19 @@ import { RouterLink } from '@angular/router';
   templateUrl: './teacher.component.html',
 })
 export class TeacherComponent implements OnInit {
+  private stopService = inject(StopService);
+  private teacherService = inject(TeacherService);
+  stops = signal<Stop[]>([]);
   keycloak = inject(Keycloak);
-  protected teacherStore = inject(TeacherStore);
-  protected stopStore = inject(StopStore);
+
   username = signal<string>('');
   teacher = computed(() => {
-    return this.teacherStore.getTeacherById(this.username());
+    return this.teacherService.getTeacherById(this.username());
   });
 
   async ngOnInit() {
     const userProfile = await this.keycloak.loadUserProfile();
     this.username.set(userProfile.username || '');
+    this.stops.set(await this.stopService.getStopsOfTeacher(this.username()));
   }
 }

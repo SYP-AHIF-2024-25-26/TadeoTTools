@@ -11,6 +11,13 @@ public static class TeacherManagementApi
             .WithName(nameof(TeacherManagementEndpoints.GetAllTeachers))
             .WithDescription("Get all teachers")
             .Produces<List<TeacherFunctions.TeacherWithStopsDto>>();
+        
+        group.MapGet("api/teachers/{id}", TeacherManagementEndpoints.GetTeacherById)
+            .WithName(nameof(TeacherManagementEndpoints.GetTeacherById))
+            .WithDescription("Get a teacher by id")
+            .Produces<TeacherFunctions.TeacherWithStopsDto>()
+            .Produces(StatusCodes.Status400BadRequest)
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
         group.MapPut("api/teachers/{id}/assignments", TeacherManagementEndpoints.SetTeacherAssignments)
             .WithName(nameof(TeacherManagementEndpoints.SetTeacherAssignments))
@@ -18,6 +25,7 @@ public static class TeacherManagementApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+        
 
         group.MapPost("api/teachers", TeacherManagementEndpoints.AddTeacher)
             .WithName(nameof(TeacherManagementEndpoints.AddTeacher))

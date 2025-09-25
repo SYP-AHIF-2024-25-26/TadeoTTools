@@ -59,7 +59,7 @@
           <div class="ml-1 flex flex-wrap gap-2">
             @for (stopGroupId of stop().stopGroupIds; track $index) {
               <span class="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-800 shadow-sm">
-                {{ stopGroupStore.getStopGroupById(stopGroupId)!.name }}
+                {{ getStopGroupById(stopGroupId)!.name }}
               </span>
             }
           </div>
@@ -122,7 +122,7 @@
                       <span class="px-2 py-0.5 rounded-full text-xs font-medium mr-2" [ngClass]="getStatusClass(getAssignmentStatus(student))">
                         {{ getStatusLabel(getAssignmentStatus(student)) }}
                       </span>
-                      <span class="text-accent-600 font-bold text-lg cursor-pointer" (click)="onStudentRemove(student.edufsUsername)">−</span>
+                      <span class="text-accent-600 font-bold text-lg cursor-pointer" (click)="removeStudent(student.edufsUsername)">−</span>
                     </div>
                   </li>
                 }
@@ -229,7 +229,7 @@
                         {{ teacher.lastName + ' ' + teacher.firstName }}
                       </div>
                       <div class="flex items-center">
-                        <span class="text-accent-600 font-bold text-lg cursor-pointer" (click)="onTeacherRemove(teacher.edufsUsername)">−</span>
+                        <span class="text-accent-600 font-bold text-lg cursor-pointer" (click)="removeTeacher(teacher.edufsUsername)">−</span>
                       </div>
                     </li>
                   }
@@ -270,7 +270,7 @@
                         {{ teacher.lastName + ' ' + teacher.firstName }}
                       </div>
                       <div class="flex items-center">
-                        <span class="text-primary-600 font-bold text-lg cursor-pointer" (click)="onTeacherClick(teacher.edufsUsername)">+</span>
+                        <span class="text-primary-600 font-bold text-lg cursor-pointer" (click)="addTeacher(teacher.edufsUsername)">+</span>
                       </div>
                     </li>
                   }
@@ -313,8 +313,8 @@
                 class="px-4 py-2 hover:bg-primary-100 cursor-pointer text-sm text-text-950"
                 (click)="onDivisionRemove(id.toString())"
               >
-                {{ divisionStore.getDivisionById(id)!.name }}
-                <span class="inline-block w-4 h-4 ml-2 rounded-full" [style.background-color]="divisionStore.getDivisionById(id)!.color"></span>
+                {{ getDivisionById(id)!.name }}
+                <span class="inline-block w-4 h-4 ml-2 rounded-full" [style.background-color]="getDivisionById(id)!.color"></span>
               </li>
             }
             @if (stop().divisionIds.length === 0) {
@@ -345,15 +345,5 @@
     [message]="'Are you sure you want to remove this division from the stop?'"
     (cancel)="showRemoveDivisionPopup.set(false)"
     (removeConfirmed)="confirmDivisionRemove()"
-  />
-}
-
-
-@if (showRemoveStudentPopup()) {
-  <app-delete-popup
-    [title]="'Remove Student'"
-    [message]="'Are you sure you want to remove this student from the stop?'"
-    (cancel)="showRemoveStudentPopup.set(false)"
-    (removeConfirmed)="confirmStudentRemove()"
   />
 }

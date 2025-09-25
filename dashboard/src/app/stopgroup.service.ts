@@ -1,67 +1,51 @@
 import { inject, Injectable } from '@angular/core';
-import { StopGroup, Info } from './types';
+import { StopGroup } from './types';
 import { StopService } from './stop.service';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom, map } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from './app.config';
-import { InfoStore } from './store/info.store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StopGroupService {
-  stopService = inject(StopService);
-  httpClient = inject(HttpClient);
-  baseUrl = inject(BASE_URL);
-  private readonly infoStore = inject(InfoStore);
+  private stopService = inject(StopService);
+  private httpClient = inject(HttpClient);
+  private baseUrl = inject(BASE_URL);
 
-  async getStopGroups(): Promise<StopGroup[]> {
-    try {
-      return await firstValueFrom(this.httpClient.get<StopGroup[]>(this.baseUrl + '/api/groups'));
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to get stop groups: ' + (error instanceof Error ? error.message : String(error)) });
-      throw error;
-    }
+  getStopGroups(): Promise<StopGroup[]> {
+    return firstValueFrom(
+      this.httpClient.get<StopGroup[]>(`${this.baseUrl}/api/groups`)
+    );
   }
 
-  async updateStopGroupOrder(stopGroups: number[]) {
-    try {
-      await firstValueFrom(this.httpClient.put(this.baseUrl + `/api/groups/order`, stopGroups));
-      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully updated stop group order' });
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to update stop group order: ' + (error instanceof Error ? error.message : String(error)) });
-      throw error;
-    }
+  getStopGroupById(id: number): Promise<StopGroup | undefined> {
+    return firstValueFrom(
+      this.httpClient.get<StopGroup>(`${this.baseUrl}/api/groups/${id}`)
+    );
   }
 
-  async addStopGroup(stopGroup: StopGroup) {
-    try {
-      const result = await firstValueFrom(this.httpClient.post<StopGroup>(this.baseUrl + '/api/groups', stopGroup));
-      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully added stop group' });
-      return result;
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to add stop group: ' + (error instanceof Error ? error.message : String(error)) });
-      throw error;
-    }
+  updateStopGroupOrder(stopGroups: number[]): Promise<void> {
+    return firstValueFrom(
+      this.httpClient.put<void>(`${this.baseUrl}/api/groups/order`, stopGroups)
+    );
   }
 
-  async updateStopGroup(stopGroup: StopGroup) {
-    try {
-      await firstValueFrom(this.httpClient.put(this.baseUrl + `/api/groups`, stopGroup));
-      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully updated stop group' });
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to update stop group: ' + (error instanceof Error ? error.message : String(error)) });
-      throw error;
-    }
+  addStopGroup(stopGroup: StopGroup): Promise<StopGroup> {
+    return firstValueFrom(
+      this.httpClient.post<StopGroup>(`${this.baseUrl}/api/groups`, stopGroup)
+    );
   }
 
-  async deleteStopGroup(stopGroupID: number) {
-    try {
-      await firstValueFrom(this.httpClient.delete(this.baseUrl + `/api/groups/${stopGroupID}`));
-      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully deleted stop group' });
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to delete stop group: ' + (error instanceof Error ? error.message : String(error)) });
-      throw error;
-    }
+  updateStopGroup(stopGroup: StopGroup): Promise<void> {
+    return firstValueFrom(
+      this.httpClient.put<void>(`${this.baseUrl}/api/groups`, stopGroup)
+    );
+  }
+
+  deleteStopGroup(stopGroupID: number): Promise<void> {
+    return firstValueFrom(
+      this.httpClient.delete<void>(`${this.baseUrl}/api/groups/${stopGroupID}`)
+    );
   }
 }

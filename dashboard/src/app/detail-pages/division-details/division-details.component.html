@@ -46,10 +46,10 @@
       </div>
       <div class="flex w-full justify-end space-x-4">
         <button type="submit" class="rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
-        <button (click)="cancelPopup()" class="rounded bg-gray-400 p-2 hover:bg-gray-500">Cancel</button>
+        <button (click)="cancelPopup()" type="button" class="rounded bg-gray-400 p-2 hover:bg-gray-500">Cancel</button>
         @if (id != -1) {
-          <button (click)="deleteAndGoBack()" class="rounded bg-accent-200 p-2 hover:bg-accent-300">Delete</button>
-          <button (click)="deleteImage()" class="rounded bg-accent-200 p-2 text-text-950 hover:bg-accent-300">Delete Image</button>
+          <button (click)="deleteAndGoBack()" type="button" class="rounded bg-accent-200 p-2 hover:bg-accent-300">Delete</button>
+          <button (click)="deleteImage()" type="button" class="rounded bg-accent-200 p-2 text-text-950 hover:bg-accent-300">Delete Image</button>
         }
       </div>
     </form>

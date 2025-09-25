@@ -1,13 +1,21 @@
-import {Component, computed, inject, signal, HostListener, ViewChild, TemplateRef, ViewContainerRef} from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  ViewContainerRef
+} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {Status, Student, Stop, StudentAssignment} from '../../types';
-import {StudentStore} from '../../store/student.store';
+import {Status, Stop, Student, StudentAssignment} from '../../types';
 import {CommonModule} from '@angular/common';
 import {ChipComponent} from '../../standard-components/chip/chip.component';
-import { StopStore } from '../../store/stop.store';
 import { sortStudents } from '../../utilfunctions';
-import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
+import { StopService } from '../../stop.service';
+import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
+import {ComponentPortal} from '@angular/cdk/portal';
+import {StopsPopupComponent} from "../../popups/stops-popup/stops-popup.component";
+import { StudentService } from '../../student.service';
 
 export interface StudentWithUI extends Student {
   showStops?: boolean;
@@ -16,45 +24,49 @@ export interface StudentWithUI extends Student {
 
 @Component({
   selector: 'app-list-students',
-  imports: [FormsModule, CommonModule, ChipComponent],
+  imports: [FormsModule, CommonModule],
   templateUrl: './list-students.component.html',
   standalone: true,
 })
 export class ListStudentsComponent {
-  private studentStore = inject(StudentStore);
-  private stopStore = inject(StopStore);
+  private stopService = inject(StopService);
+  private studentService = inject(StudentService);
 
   // Filter and search state
   conflictsClassFilter = signal<string>('');
   conflictsStopFilter = signal<string>('');
   conflictsSearchTerm = signal<string>('');
 
-  singleAssignmentsClassFilter = signal<string>('');
-  singleAssignmentsStopFilter = signal<string>('');
-  singleAssignmentsSearchTerm = signal<string>('');
-  singleAssignmentsStatusFilter = signal<string>('all');
 
-  noAssignmentsClassFilter = signal<string>('');
-  noAssignmentsSearchTerm = signal<string>('');
-  noAssignmentsDepartmentFilter = signal<string[]>([]);
+  // Fused (Single + No Requests)
+  fusedClassFilter = signal<string>('');
+  fusedDepartmentFilter = signal<string>('');
+  fusedStopFilter = signal<string>('');
+  fusedSearchTerm = signal<string>('');
+  fusedStatusFilter = signal<string>('all');
 
   selectedStudent = signal<Student | null>(null);
-
-  allStops = computed(() => this.stopStore.getStops());
+  stops = signal<Stop[]>([]);
+  students = signal<Student[]>([]);
 
   // Get unique class names for filter dropdowns
   uniqueClasses = computed(() => {
     const classes = new Set<string>();
-    this.studentStore.students().forEach(student => {
+    this.students().forEach(student => {
       classes.add(student.studentClass);
     });
     return Array.from(classes).sort();
   });
 
+  async ngOnInit() {
+    this.stops.set(await this.stopService.getStops());
+    this.students.set(await this.studentService.getStudents());
+  }
+
   // Get unique stop names for filter dropdowns
   uniqueStops = computed(() => {
     const stops = new Set<string>();
-    this.studentStore.students().forEach(student => {
+    this.students().forEach(student => {
       student.studentAssignments.forEach(assignment => {
         stops.add(assignment.stopName);
       });
@@ -64,13 +76,41 @@ export class ListStudentsComponent {
 
   uniqueDepartments = computed(() => {
     const deps = new Set<string>();
-    this.studentStore.students().forEach(s => deps.add(s.department));
+    this.students().forEach(s => deps.add(s.department));
     return Array.from(deps).sort();
+  });
+
+  // Unique classes for fused section; if department is 'inf', only show HIF classes
+  fusedUniqueClasses = computed(() => {
+    const classes = new Set<string>();
+    this.students().forEach(student => {
+      classes.add(student.studentClass);
+    });
+    let arr = Array.from(classes).sort();
+    const dep = this.fusedDepartmentFilter()?.toLowerCase();
+    switch (dep) {
+      case 'informatik':
+        arr = arr.filter(c => c?.toLowerCase().includes('hif'));
+        break;
+      case 'medizintechnik':
+        arr = arr.filter(c => c?.toLowerCase().includes('hbg'));
+        break;
+      case 'medientechnik':
+        arr = arr.filter(c => c?.toLowerCase().includes('hitm'));
+        break;
+      case 'elektrotechnik':
+        arr = arr.filter(c => c?.toLowerCase().includes('hel'));
+        break;
+      default:
+        break;
+    }
+
+    return arr;
   });
 
   // all where there is more than one assignment and at least one is pending
   conflicts = computed(() => {
-    let filtered = this.studentStore.students().filter(
+    let filtered = this.students().filter(
       (s) => s.studentAssignments.length > 1
     );
 
@@ -99,61 +139,52 @@ export class ListStudentsComponent {
     return sortStudents(filtered) as Student[];
   });
 
-  // all where there is only one assignment and that one is pending
-  singleAssignments = computed(() => {
-    let filtered = this.studentStore.students().filter(
-      (s) => s.studentAssignments.length === 1
-    );
 
-    // Apply class filter
-    if (this.singleAssignmentsClassFilter()) {
-      filtered = filtered.filter(s => s.studentClass === this.singleAssignmentsClassFilter());
-    }
-
-    // Apply stop filter
-    if (this.singleAssignmentsStopFilter()) {
-      filtered = filtered.filter(s =>
-        s.studentAssignments.some(a => a.stopName === this.singleAssignmentsStopFilter())
-      );
-    }
-
-    // Apply search
-    if (this.singleAssignmentsSearchTerm()) {
-      const term = this.singleAssignmentsSearchTerm().toLowerCase();
-      filtered = filtered.filter(s =>
-        s.firstName.toLowerCase().includes(term) ||
-        s.lastName.toLowerCase().includes(term) ||
-        s.edufsUsername.toLowerCase().includes(term)
-      );
-    }
-
-    if (this.singleAssignmentsStatusFilter() === 'approved') {
-      filtered = filtered.filter(s => s.studentAssignments[0].status === Status.Accepted);
-    } else if (this.singleAssignmentsStatusFilter() === 'rejected') {
-      filtered = filtered.filter(s => s.studentAssignments[0].status !== Status.Accepted);
-    }
-
-    return sortStudents(filtered) as Student[];
-  });
-
-  // all where there is no assignment
-  noAssignments = computed(() => {
-    let filtered = this.studentStore.students()
-      .filter((s) => s.studentAssignments.length === 0)
+  // Fused list: students with 0 or 1 assignment
+  fusedAssignments = computed(() => {
+    let filtered = this.students()
+      .filter(s => s.studentAssignments.length <= 1)
       .map(student => ({
         ...student,
         showStops: false,
         selectedStops: new Set<number>()
       } as StudentWithUI));
 
-    // Apply class filter
-    if (this.noAssignmentsClassFilter()) {
-      filtered = filtered.filter(s => s.studentClass === this.noAssignmentsClassFilter());
+    // Department filter
+    if (this.fusedDepartmentFilter()) {
+      filtered = filtered.filter(s => s.department === this.fusedDepartmentFilter());
     }
 
-    // Apply search
-    if (this.noAssignmentsSearchTerm()) {
-      const term = this.noAssignmentsSearchTerm().toLowerCase();
+    // Class filter
+    if (this.fusedClassFilter()) {
+      filtered = filtered.filter(s => s.studentClass === this.fusedClassFilter());
+    }
+
+    // Stop filter (only meaningful for assigned students)
+    if (this.fusedStopFilter()) {
+      filtered = filtered.filter(s =>
+        s.studentAssignments.length === 1 &&
+        s.studentAssignments[0].stopName === this.fusedStopFilter()
+      );
+    }
+
+    // Status filter
+    const status = this.fusedStatusFilter();
+    if (status && status !== 'all') {
+      filtered = filtered.filter(s => {
+        if (status === 'unassigned') return s.studentAssignments.length === 0;
+        if (s.studentAssignments.length === 0) return false;
+        const st = s.studentAssignments[0].status;
+        if (status === 'pending') return st === Status.Pending;
+        if (status === 'approved') return st === Status.Accepted;
+        if (status === 'rejected') return st === Status.Declined;
+        return true;
+      });
+    }
+
+    // Search
+    if (this.fusedSearchTerm()) {
+      const term = this.fusedSearchTerm().toLowerCase();
       filtered = filtered.filter(s =>
         s.firstName.toLowerCase().includes(term) ||
         s.lastName.toLowerCase().includes(term) ||
@@ -161,27 +192,33 @@ export class ListStudentsComponent {
       );
     }
 
-    if (this.noAssignmentsDepartmentFilter().length > 0) {
-      filtered = filtered.filter(s => this.noAssignmentsDepartmentFilter().includes(s.department));
-    }
-
     return sortStudents(filtered) as StudentWithUI[];
   });
 
+  // Whether there is any requested (Pending) assignment in the currently visible fused list
+  hasFusedRequested = computed(() => {
+    return this.fusedAssignments().some(s => s.studentAssignments.length === 1 && s.studentAssignments[0].status === Status.Pending);
+  });
+
+  // Approve all currently requested (Pending) students visible in the fused list
+  async approveAllRequestedInFused(): Promise<void> {
+    const candidates = this.fusedAssignments().filter(s => s.studentAssignments.length === 1 && s.studentAssignments[0].status === Status.Pending);
+    if (candidates.length === 0) return;
+    await Promise.all(candidates.map(async s => {
+      s.studentAssignments[0].status = Status.Accepted;
+      await this.studentService.updateStudent(s);
+    }));
+  }
+
+
   async deleteAssignment(student: Student, index: number) {
     student.studentAssignments.splice(index, 1);
-    return this.studentStore.updateStudent(student);
+    return this.studentService.updateStudent(student);
   }
 
   async changeAssignmentStatus(student: Student, index: number, status: Status) {
     student.studentAssignments[index].status = status;
-    await this.studentStore.updateStudent(student);
-  }
-
-  async autoApproveAll(): Promise<void> {
-    for (const student of this.singleAssignments()) {
-      await this.changeAssignmentStatus(student, 0, Status.Accepted);
-    }
+    await this.studentService.updateStudent(student);
   }
 
   async approveSingleAssignment(student: Student): Promise<void> {
@@ -211,23 +248,33 @@ export class ListStudentsComponent {
   getStatusClass(status: Status): string {
     switch (status) {
       case Status.Accepted:
-        return 'text-success font-bold';
+        return 'text-green-500 font-bold';
       case Status.Declined:
-        return 'text-error font-bold';
+        return 'text-red-500 font-bold';
       default:
-        return 'text-black font-bold';
+        return 'text-yellow-500 font-bold';
     }
   }
 
   getStatusText(status: Status): string {
     switch (status) {
       case Status.Accepted:
-        return 'Accepted';
+        return 'Approved';
       case Status.Declined:
-        return 'Declined';
+        return 'Rejected';
       default:
         return 'Pending';
     }
+  }
+
+  getFusedStatusText(student: Student): string {
+    if (student.studentAssignments.length === 0) return 'Unassigned';
+    return this.getStatusText(student.studentAssignments[0].status);
+  }
+
+  getFusedStatusClass(student: Student): string {
+    if (student.studentAssignments.length === 0) return 'text-gray-500 font-bold';
+    return this.getStatusClass(student.studentAssignments[0].status);
   }
 
   protected readonly Status = Status;
@@ -240,24 +287,8 @@ export class ListStudentsComponent {
     await this.changeAssignmentStatus(student, 0, Status.Pending);
   }
 
-  onNoAssignmentsDepartmentSelect(event: Event) {
-    const val = (event.target as HTMLSelectElement).value;
-    if (val && !this.noAssignmentsDepartmentFilter().includes(val)) {
-      this.noAssignmentsDepartmentFilter.set([...this.noAssignmentsDepartmentFilter(), val]);
-    }
-    (event.target as HTMLSelectElement).value = '';
-  }
-
-  removeNoAssignmentsDepartment(value: string) {
-    this.noAssignmentsDepartmentFilter.set(
-      this.noAssignmentsDepartmentFilter().filter(v => v !== value)
-    );
-  }
-
-  onStopSelect(student: StudentWithUI, stop: Stop, event: Event): void {
-    const isChecked = (event.target as HTMLInputElement).checked;
-
-    if (isChecked) {
+  onStopToggle(student: StudentWithUI, stop: Stop, checked: boolean): void {
+    if (checked) {
       student.selectedStops?.add(stop.id);
     } else {
       student.selectedStops?.delete(stop.id);
@@ -275,7 +306,7 @@ export class ListStudentsComponent {
     }
 
     // Get all selected stops
-    const selectedStops = this.allStops().filter(stop => student.selectedStops?.has(stop.id));
+    const selectedStops = this.stops().filter(stop => student.selectedStops?.has(stop.id));
 
     // Create assignments for all selected stops
     for (const stop of selectedStops) {
@@ -289,53 +320,29 @@ export class ListStudentsComponent {
     }
 
     // Update the student and close the popup
-    await this.studentStore.updateStudent(student);
+    await this.studentService.updateStudent(student);
     student.showStops = false;
     student.selectedStops?.clear();
   }
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const noAssignmentsStudents = this.noAssignments();
-    for (const student of noAssignmentsStudents) {
-      if (student.showStops) {
-        // Check if click is outside the popup and the toggle button
-        const popup = document.querySelector(`[data-student-id="${student.edufsUsername}"] .stops-popup`);
-        const button = document.querySelector(`[data-student-id="${student.edufsUsername}"] .toggle-stops-btn`);
-
-        if (popup && button &&
-            !popup.contains(event.target as Node) &&
-            !button.contains(event.target as Node)) {
-          student.showStops = false;
-        }
-      }
-    }
-  }
-
-  isStopSelected(student: StudentWithUI, stopId: number): boolean {
-    return student.selectedStops?.has(stopId) || false;
-  }
-
-  @ViewChild('stopsPopup') stopsPopupTemplate!: TemplateRef<any>;
   private overlayRef: OverlayRef | null = null;
   popupStudent: StudentWithUI | null = null;
-  private popupAnchor: HTMLElement | null = null;
 
   constructor(
     private overlay: Overlay,
     private viewContainerRef: ViewContainerRef,
     private positionBuilder: OverlayPositionBuilder
-  ) {}
+  ) {
+  }
 
   openStopsPopup(student: StudentWithUI, anchor: HTMLElement) {
     this.closeStopsPopup();
     this.popupStudent = student;
-    this.popupAnchor = anchor;
     const positionStrategy = this.positionBuilder
       .flexibleConnectedTo(anchor)
       .withPositions([
-        { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
-        { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }
+        {originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top'},
+        {originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top'}
       ]);
     this.overlayRef = this.overlay.create({
       positionStrategy,
@@ -347,7 +354,21 @@ export class ListStudentsComponent {
     this.overlayRef.keydownEvents().subscribe(event => {
       if (event.key === 'Escape') this.closeStopsPopup();
     });
-    this.overlayRef.attach(new TemplatePortal(this.stopsPopupTemplate, this.viewContainerRef));
+    const portal = new ComponentPortal(StopsPopupComponent, this.viewContainerRef);
+    const compRef = this.overlayRef.attach(portal);
+    compRef.instance.student = student;
+    compRef.instance.allStops = this.stops();
+    compRef.instance.cancel.subscribe(() => {
+      this.closeStopsPopup();
+      this.popupStudent?.selectedStops?.clear();
+    });
+    compRef.instance.apply.subscribe(async (stu) => {
+      await this.applyStopSelections(stu);
+      this.closeStopsPopup();
+    });
+    compRef.instance.stopToggle.subscribe(({student, stop, checked}) => {
+      this.onStopToggle(student, stop, checked);
+    });
   }
 
   closeStopsPopup() {
@@ -356,6 +377,5 @@ export class ListStudentsComponent {
       this.overlayRef = null;
     }
     this.popupStudent = null;
-    this.popupAnchor = null;
   }
 }

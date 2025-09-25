@@ -3,8 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { isValid } from '../../utilfunctions';
 import { Location } from '@angular/common';
-import { StopGroupStore } from '../../store/stopgroup.store';
 import { StopGroup } from '../../types';
+import { StopGroupService } from '../../stopgroup.service';
 
 @Component({
   selector: 'app-stopgroup-details',
@@ -13,8 +13,8 @@ import { StopGroup } from '../../types';
   templateUrl: './stopgroup-details.component.html',
 })
 export class StopgroupDetailsComponent implements OnInit {
-  private stopGroupStore = inject(StopGroupStore);
   private location: Location = inject(Location);
+  private stopGroupService = inject(StopGroupService);
 
   @Input() id: number = -1;
   @Output() cancel = new EventEmitter<void>();
@@ -28,11 +28,14 @@ export class StopgroupDetailsComponent implements OnInit {
   isPublic = signal<boolean>(false);
   stopIds = signal<number[]>([]);
   errorMessage = signal<string>('');
+  stopGroups = signal<StopGroup[]>([]);
 
   async ngOnInit() {
+    this.stopGroups.set(await this.stopGroupService.getStopGroups());
+
     let stopGroup: StopGroup | undefined = undefined;
     while (stopGroup === undefined) {
-      stopGroup = this.stopGroupStore.stopGroups().find((g) => g.id == this.id);
+      stopGroup = this.stopGroups().find((g) => g.id == this.id);
       if (stopGroup === undefined) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
@@ -70,9 +73,9 @@ export class StopgroupDetailsComponent implements OnInit {
 
     try {
       if (this.id === -1) {
-        await this.stopGroupStore.addStopGroup(stopGroup);
+        await this.stopGroupService.addStopGroup(stopGroup);
       } else {
-        await this.stopGroupStore.updateStopGroup(stopGroup);
+        await this.stopGroupService.updateStopGroup(stopGroup);
       }
     } catch (error) {
       // Error is already handled by the service
@@ -81,7 +84,7 @@ export class StopgroupDetailsComponent implements OnInit {
   }
 
   async deleteAndGoBack() {
-    await this.stopGroupStore.deleteStopGroup(this.id);
+    await this.stopGroupService.deleteStopGroup(this.id);
     this.cancel.emit();
   }
 

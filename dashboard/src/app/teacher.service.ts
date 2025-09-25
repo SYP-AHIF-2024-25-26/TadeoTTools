@@ -1,75 +1,106 @@
 import { inject, Injectable } from '@angular/core';
-import { Teacher, TeacherAssignment, Info } from './types';
-import { async, firstValueFrom } from 'rxjs';
+import { Teacher, TeacherAssignment } from './types';
+import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from './app.config';
 import { HttpClient } from '@angular/common/http';
-import { InfoStore } from './store/info.store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TeacherService {
-  baseUrl = inject(BASE_URL);
-  httpClient = inject(HttpClient);
-  private readonly infoStore = inject(InfoStore);
+  private baseUrl = inject(BASE_URL);
+  private httpClient = inject(HttpClient);
 
-  constructor() {}
-
-  async getTeachers() {
-    try {
-      return await firstValueFrom(this.httpClient.get<Teacher[]>(this.baseUrl + '/api/teachers'));
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to get teachers' });
-      throw error;
-    }
+  getTeachers() {
+    return firstValueFrom(
+      this.httpClient.get<Teacher[]>(`${this.baseUrl}/api/teachers`)
+    );
   }
 
-  async postTeacher(teacher: Teacher) {
-    try {
-      await firstValueFrom(this.httpClient.post<void>(this.baseUrl + '/api/teachers', teacher));
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to post teacher' });
-      throw error;
-    }
+  getTeacherById(edufsUsername: string) {
+    return firstValueFrom(
+      this.httpClient.get<Teacher>(`${this.baseUrl}/api/teachers/${edufsUsername}`)
+    );
   }
 
-  async deleteTeacher(edufsUsername: string) {
-    try {
-      await firstValueFrom(this.httpClient.delete<void>(this.baseUrl + '/api/teachers/' + edufsUsername));
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to delete teacher' });
-      throw error;
-    }
+  postTeacher(teacher: Teacher) {
+    return firstValueFrom(
+      this.httpClient.post<void>(`${this.baseUrl}/api/teachers`, teacher)
+    );
   }
 
-  async updateTeacher(teacher: Teacher) {
-    try {
-      await firstValueFrom(this.httpClient.put<void>(this.baseUrl + '/api/teachers', teacher));
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to update teacher' });
-      throw error;
-    }
+  deleteTeacher(edufsUsername: string) {
+    return firstValueFrom(
+      this.httpClient.delete<void>(`${this.baseUrl}/api/teachers/${edufsUsername}`)
+    );
   }
 
-  async setAssignments(edufsUsername: string, assignments: number[]): Promise<void> {
-    try {
-      await firstValueFrom(this.httpClient.put<void>(this.baseUrl + '/api/teachers/' + edufsUsername + '/assignments', assignments.map(a => ({stopId: a, teacherId: edufsUsername} as TeacherAssignment))));
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to set teacher assignments' });
-      throw error;
-    }
+  addStopToTeacher(edufsUsername: string, stopId: number) {
+    return firstValueFrom(
+      this.httpClient.put<void>(
+        `${this.baseUrl}/api/teachers/${edufsUsername}/assignments`,
+        [
+          {
+            stopId,
+            teacherId: edufsUsername
+          } as TeacherAssignment
+        ]
+      )
+    );
   }
 
-  async uploadTeachersCsv(file: File) {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
+  updateTeacher(teacher: Teacher) {
+    return firstValueFrom(
+      this.httpClient.put<void>(`${this.baseUrl}/api/teachers`, teacher)
+    );
+  }
 
-      await firstValueFrom(this.httpClient.post<void>(this.baseUrl + '/api/teachers/upload', formData));
-      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully uploaded students CSV' });
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to upload students CSV' });
-      throw error;
+  setAssignments(edufsUsername: string, assignments: number[]) {
+    const teacherAssignments: TeacherAssignment[] = assignments.map(stopId => ({
+      stopId,
+      teacherId: edufsUsername
+    }));
+
+    return firstValueFrom(
+      this.httpClient.put<void>(
+        `${this.baseUrl}/api/teachers/${edufsUsername}/assignments`,
+        teacherAssignments
+      )
+    );
+  }
+
+  uploadTeachersCsv(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return firstValueFrom(
+      this.httpClient.post<void>(`${this.baseUrl}/api/teachers/upload`, formData)
+    );
+  }
+  async getTeachersNotInStop(stopId: number): Promise<Teacher[]> {
+    const wrongTeachers = (await this.getTeachers()).filter((teacher) => {
+      if (teacher.assignedStops) {
+        return teacher.assignedStops.some((assignment) => assignment === stopId);
+      }
+      return false;
+    });
+    return (await this.getTeachers()).filter((teacher) => !wrongTeachers.includes(teacher));
+  }
+  async removeStopFromTeacher(edufsUsername: string, stopId: number) {
+    const teacher = (await this.getTeachers()).find((teacher) => teacher.edufsUsername === edufsUsername);
+    if (teacher) {
+      teacher.assignedStops = teacher.assignedStops.filter((assignment) => assignment !== stopId);
+      await this.updateTeacher(teacher);
     }
+  }
+  async setStopIdForAssignmentsOnNewStop(stopId: number) {
+    (await this.getTeachers()).forEach((teacher) => {
+      if (teacher.assignedStops.includes(-1)) {
+        teacher.assignedStops = teacher.assignedStops.map((assignment) => (assignment === -1 ? stopId : assignment));
+      }
+    });
+    (await this.getTeachers()).forEach(async (teacher) => {
+      await this.updateTeacher(teacher);
+    });
   }
 }

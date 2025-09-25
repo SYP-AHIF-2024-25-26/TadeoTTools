@@ -13,8 +13,14 @@ public static class TeacherManagementEndpoints
     {
         return Results.Ok(await TeacherFunctions.GetAllTeachersAsync(context));
     }
+    
+    public static async Task<IResult> GetTeacherById(TadeoTDbContext context, [FromRoute] string id)
+    {
+        var teacher = await TeacherFunctions.GetTeacherByUsernameAsync(context, id);
+        return teacher == null ? Results.NotFound("Teacher not found") : Results.Ok(teacher);
+    }
 
-    public static async Task<IResult> SetTeacherAssignments(TadeoTDbContext context, [FromRoute] string id, TeacherAssignment[] assignments)
+    public static async Task<IResult> SetTeacherAssignments(TadeoTDbContext context, [FromRoute] string id, TeacherAssignmentsDto[] assignments)
     {
         var teacher = await TeacherFunctions.GetTeacherByUsernameAsync(context, id);
         if (teacher == null)
@@ -23,11 +29,21 @@ public static class TeacherManagementEndpoints
         }
 
         teacher.AssignedStops.Clear();
-        teacher.AssignedStops.AddRange(assignments);
+        teacher.AssignedStops.AddRange(assignments.Select(a => new TeacherAssignment
+        {
+            TeacherId = a.TeacherId,
+            StopId = a.StopId
+        }));
         await context.SaveChangesAsync();
 
         return Results.Ok();
     }
+
+    public record TeacherAssignmentsDto(
+        string TeacherId,
+        int StopId
+    );
+    
     
     public static async Task<IResult> UploadCsvFile([FromForm] UploadTeacherCsvFileDto file, TadeoTDbContext context)
     {
