@@ -175,10 +175,10 @@ export class StopDetailsComponent implements OnInit {
         return;
       }
 
-      this.teachers.set(await this.teacherService.getTeachers());
-      this.divisions.set(await this.divisionService.getDivisions());
       this.stopGroups.set(await this.stopGroupService.getStopGroups());
+      this.divisions.set(await this.divisionService.getDivisions());
       this.students.set(await this.studentService.getStudents());
+      this.teachers.set((await this.teacherService.getTeachers()).sort((a, b) => a.lastName.localeCompare(b.lastName)));
 
       let foundStop: Stop | undefined;
 
