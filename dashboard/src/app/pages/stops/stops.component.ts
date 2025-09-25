@@ -8,12 +8,11 @@ import { DivisionService } from '../../division.service';
 import { StopGroupService } from '../../stopgroup.service';
 import { StopService } from '../../stop.service';
 import { TeacherService } from '../../teacher.service';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-stops',
   standalone: true,
-  imports: [RouterModule, FilterComponent, FormsModule, AsyncPipe],
+  imports: [RouterModule, FilterComponent, FormsModule],
   templateUrl: './stops.component.html',
 })
 export class StopsComponent {
@@ -40,7 +39,6 @@ export class StopsComponent {
     this.stops.set(await this.stopService.getStops());
     this.teachers.set(await this.teacherService.getTeachers());
   }
-
 
   // Computed properties for filters and data
   uniqueStopGroups = computed(() => {
@@ -73,8 +71,8 @@ export class StopsComponent {
     // Filter by teacher
     const teacherSearch = this.teacherSearchTerm().toLowerCase();
     if (teacherSearch) {
-      stops = stops.filter(async stop => {
-        const teachers = await this.teacherService.getTeachersOfStop(stop.id);
+      stops = stops.filter(stop => {
+        const teachers = this.teachers().filter(t => t.assignedStops.includes(stop.id));
         return teachers.some(teacher =>
           teacher.firstName.toLowerCase().includes(teacherSearch) ||
           teacher.lastName.toLowerCase().includes(teacherSearch) ||
@@ -98,17 +96,13 @@ export class StopsComponent {
     return names || 'No groups assigned';
   }
 
-  async getTeachersByStopId(stopId: number) {
-    return await this.teacherService.getTeachersOfStop(stopId);
-  }
-
-  async getTeacherNames(stopId: number): Promise<string> {
-    const teachers = await this.getTeachersByStopId(stopId);
+  getTeacherNames(stopId: number): string {
+    const teachers = this.teachers().filter(t => t.assignedStops.includes(stopId));
     if (teachers.length === 0) return 'No teachers assigned';
     return teachers.map(t => `${t.firstName} ${t.lastName}`).join(', ');
   }
 
-  async getStudentCount(stopId: number): Promise<string> {
+  getStudentCount(stopId: number): string {
     const students = this.studentStore.getStudentsByStopId(stopId);
     const requested = students.filter(s =>
       s.studentAssignments.some(a => a.stopId === stopId && a.status === Status.Pending)

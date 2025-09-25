@@ -23,12 +23,6 @@ export class TeacherService {
     );
   }
 
-  getTeachersOfStop(stopId: number) {
-    return firstValueFrom(
-      this.httpClient.get<Teacher[]>(`${this.baseUrl}/api/stops/${stopId}/teachers`)
-    );
-  }
-
   postTeacher(teacher: Teacher) {
     return firstValueFrom(
       this.httpClient.post<void>(`${this.baseUrl}/api/teachers`, teacher)

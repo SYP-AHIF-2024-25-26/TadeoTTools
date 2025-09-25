@@ -220,26 +220,22 @@ export class StopDetailsComponent implements OnInit {
     }
 
     if (this.stop().id === -1) {
-      // Store teachers assigned to the temporary stop
-      const tempAssignedTeachers = this.teachersAssignedToStop();
+      const returnedStop = await this.service.addStop(this.stop());
+      this.stop.set({ ...this.stop(), id: returnedStop.id });
 
-        const returnedStop = await this.service.addStop(this.stop());
-        this.stop.set({ ...this.stop(), id: returnedStop.id });
-
-        this.studentStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
-        this.teacherService.setStopIdForAssignmentsOnNewStop(returnedStop.id);
+      this.studentStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
+      this.teacherService.setStopIdForAssignmentsOnNewStop(returnedStop.id);
     } else {
       await this.stopService.updateStop(this.stop());
     }
-      this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
-        this.studentStore.setAssignments(student.edufsUsername);
-      });
+    this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
+      this.studentStore.setAssignments(student.edufsUsername);
+    });
 
-      (await this.teacherService.getTeachersOfStop(this.stop().id)).forEach((teacher) => {
-        this.teacherService.setAssignments(teacher.edufsUsername, teacher.assignedStops);
-      });
+    this.teachers().forEach((teacher) => {
+      this.teacherService.setAssignments(teacher.edufsUsername, teacher.assignedStops);
+    });
 
-    this.stop.set(this.emptyStop);
     this.location.back();
   }
 

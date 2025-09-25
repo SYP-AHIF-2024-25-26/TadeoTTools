@@ -27,7 +27,7 @@ export const StudentStore = signalStore(
     })();
 
     return {
-      getTeacherByUsername(edufsUsername: string): Student | undefined {
+      getStudentByUsername(edufsUsername: string): Student | undefined {
         return store.students().find((student) => student.edufsUsername === edufsUsername);
       },
       getStudentsByStopId(stopId: number): Student[] {
@@ -64,9 +64,9 @@ export const StudentStore = signalStore(
         patchState(store, { students: [...store.students()] });
       },
       async setAssignments(edufsUsername: string) {
-        const teacher = this.getTeacherByUsername(edufsUsername);
-        if (teacher) {
-          await studentService.setAssignments(edufsUsername, teacher.studentAssignments);
+        const student = this.getStudentByUsername(edufsUsername);
+        if (student) {
+          await studentService.setAssignments(edufsUsername, student.studentAssignments);
         }
       },
       async deleteAllStudents() {
