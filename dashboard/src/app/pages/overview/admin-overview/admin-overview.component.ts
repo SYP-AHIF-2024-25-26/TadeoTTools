@@ -18,9 +18,11 @@ export class AdminOverviewComponent implements OnInit {
   }
 
   async addAdmin() {
-    await this.service.addAdmin(this.addname());
-    this.addname.set('');
-    this.admins.set(await this.service.getAdmins());
+    if (this.addname().trim() !== '') {
+      await this.service.addAdmin(this.addname());
+      this.addname.set('');
+      this.admins.set(await this.service.getAdmins());
+    }
   }
 
   async deleteAdmin(name: string) {
