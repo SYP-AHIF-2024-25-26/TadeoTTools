@@ -117,7 +117,7 @@ module.exports = {
         "info": "#60a5fa",
         "success": "#3b82f6",
         "warning": "#1d4ed8",
-        "error": "#1e40af",
+        "error": "#dc2626",
         "base-content": "#ffffff",
         "neutral-content": "#ffffff",
         "primary-content": "#ffffff",
