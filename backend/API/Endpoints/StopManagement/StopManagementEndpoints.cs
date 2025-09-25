@@ -189,6 +189,7 @@ public static class StopManagementEndpoints
             .Include(stop => stop.TeacherAssignments)
             .ThenInclude(teacherAssignment => teacherAssignment.Teacher)
             .Include(stop => stop.StudentAssignments)
+            .OrderBy(stop => stop.Name)
             .ToListAsync();
         
         // Create CSV content

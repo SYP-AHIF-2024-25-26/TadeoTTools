@@ -124,7 +124,7 @@ export class StopDetailsComponent implements OnInit {
   });
 
   availableClasses = computed(() => {
-    const classes = this.studentStore.students().map(student => student.studentClass);
+    const classes = this.studentStore.students().map(student => student.studentClass).sort();
     return ['all', ...new Set(classes)].filter(Boolean);
   });
 
