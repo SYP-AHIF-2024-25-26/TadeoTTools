@@ -7,12 +7,12 @@ import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location, NgClass } from '@angular/common';
 import { LoginService } from '../../login.service';
-import { StudentStore } from '../../store/student.store';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
 import { sortStudents } from '../../utilfunctions';
 import { DivisionService } from '../../division.service';
 import { StopGroupService } from '../../stopgroup.service';
 import { TeacherService } from '../../teacher.service';
+import { StudentService } from '../../student.service';
 
 @Component({
   selector: 'app-stop-details',
@@ -26,12 +26,13 @@ export class StopDetailsComponent implements OnInit {
   private stopService = inject(StopService);
   private loginService = inject(LoginService);
   private teacherService = inject(TeacherService);
+  private studentService = inject(StudentService);
 
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
   teachers = signal<Teacher[]>([]);
+  students = signal<Student[]>([]);
 
-  protected studentStore = inject(StudentStore);
   private service: StopService = inject(StopService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
@@ -123,7 +124,7 @@ export class StopDetailsComponent implements OnInit {
   });
 
   availableClasses = computed(() => {
-    const classes = this.studentStore.students().map(student => student.studentClass).sort();
+    const classes = this.students().map(student => student.studentClass).sort();
     return ['all', ...new Set(classes)].filter(Boolean);
   });
 
@@ -149,13 +150,13 @@ export class StopDetailsComponent implements OnInit {
 
   // Filtered students assigned to the stop
   filteredAssignedStudents = computed(() => {
-    const assignedStudents = this.studentStore.getStudentsByStopId(this.stop().id);
+    const assignedStudents = this.students().filter(s => s.studentAssignments.some(a => a.stopId === this.stop().id));
     return sortStudents(this.applyStudentFilters(assignedStudents, this.assignedStudentFilterText(), this.selectedAssignedClass()));
   });
 
   studentsNotInStop = computed(() => {
-    const wrongStudents = this.studentStore.getStudentsByStopId(this.stop().id);
-    let filteredStudents = this.studentStore.students().filter((student) => !wrongStudents.includes(student));
+    const wrongStudents = this.students().filter(s => s.studentAssignments.some(a => a.stopId === this.stop().id));
+    let filteredStudents = this.students().filter((student) => !wrongStudents.includes(student));
     return sortStudents(this.applyStudentFilters(filteredStudents, this.availableStudentFilterText(), this.selectedAvailableClass()));
   });
 
@@ -177,6 +178,7 @@ export class StopDetailsComponent implements OnInit {
       this.teachers.set(await this.teacherService.getTeachers());
       this.divisions.set(await this.divisionService.getDivisions());
       this.stopGroups.set(await this.stopGroupService.getStopGroups());
+      this.students.set(await this.studentService.getStudents());
 
       let foundStop: Stop | undefined;
 
@@ -185,7 +187,7 @@ export class StopDetailsComponent implements OnInit {
         this.errorMessage.set(`Could not find stop with ID ${id}`);
       } else {
         this.stop.set({ ...foundStop });
-        const students = this.studentStore.getStudentsByStopId(foundStop.id);
+        const students = this.students().filter(s => s.studentAssignments.some(a => a.stopId === foundStop!.id));
         students.forEach(s => {
           const assignments = s.studentAssignments
             .filter(a => a.stopId === foundStop!.id)
@@ -223,13 +225,13 @@ export class StopDetailsComponent implements OnInit {
       const returnedStop = await this.service.addStop(this.stop());
       this.stop.set({ ...this.stop(), id: returnedStop.id });
 
-      this.studentStore.setStopIdForAssignmentsOnNewStop(returnedStop.id);
+      this.studentService.setStopIdForAssignmentsOnNewStop(returnedStop.id);
       this.teacherService.setStopIdForAssignmentsOnNewStop(returnedStop.id);
     } else {
       await this.stopService.updateStop(this.stop());
     }
-    this.studentStore.getStudentsByStopId(this.stop().id).forEach((student) => {
-      this.studentStore.setAssignments(student.edufsUsername);
+    this.students().forEach((student) => {
+      this.studentService.setAssignments(student.edufsUsername, student.studentAssignments);
     });
 
     this.teachers().forEach((teacher) => {
@@ -241,25 +243,10 @@ export class StopDetailsComponent implements OnInit {
 
   async deleteAndGoBack() {
     await this.stopService.deleteStop(this.stop().id);
-    this.stop.set(this.emptyStop);
     this.location.back();
   }
 
   goBack() {
-    if (this.stop().id !== -1) {
-      const currentStudents = this.studentStore.getStudentsByStopId(this.stop().id);
-      currentStudents.forEach(student => {
-        this.studentStore.removeStopFromStudent(student.edufsUsername, this.stop().id);
-      });
-      this.originalAssignments.forEach((assignments, username) => {
-        assignments.forEach(a => this.studentStore.addStopToStudent({ ...a }));
-      });
-    } else {
-      this.studentStore.getStudentsByStopId(-1).forEach((student) => {
-        this.studentStore.removeStopFromStudent(student.edufsUsername, -1);
-      });
-    }
-    this.stop.set(this.emptyStop);
     this.location.back();
   }
 
@@ -286,7 +273,13 @@ export class StopDetailsComponent implements OnInit {
       stopId: this.stop().id,
       status: Status.Pending,
     } as StudentAssignment;
-    await this.studentStore.addStopToStudent(assignment);
+    this.students.update(students => {
+      const student = students.find(s => s.edufsUsername === edufsUsername);
+      if (student && !student.studentAssignments.some(a => a.stopId === this.stop().id)) {
+        student.studentAssignments.push(assignment);
+      }
+      return [...students];
+    });
   }
 
   // Keep for backward compatibility
@@ -324,18 +317,19 @@ export class StopDetailsComponent implements OnInit {
       return [...teachers];
     });
   }
-
-  selectStudentToRemove(edufsUsername: string) {
-    this.studentStore.removeStopFromStudent(edufsUsername, this.stop().id);
-  }
-
   // Keep for backward compatibility
   onDivisionRemove(divisionId: string) {
     this.selectDivisionToRemove(divisionId);
   }
 
-  onStudentRemove(edufsUsername: string) {
-    this.studentStore.removeStopFromStudent(edufsUsername, this.stop().id);
+  removeStudent(edufsUsername: string) {
+    this.students.update(students => {
+      const student = students.find(s => s.edufsUsername === edufsUsername);
+      if (student) {
+        student.studentAssignments = student.studentAssignments.filter(a => a.stopId !== this.stop().id);
+      }
+      return [...students];
+    });
   }
 
   // No longer need to toggle badge position

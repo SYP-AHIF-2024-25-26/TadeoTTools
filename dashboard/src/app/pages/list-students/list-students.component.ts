@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {Status, Stop, Student, StudentAssignment} from '../../types';
-import {StudentStore} from '../../store/student.store';
 import {CommonModule} from '@angular/common';
 import {ChipComponent} from '../../standard-components/chip/chip.component';
 import { sortStudents } from '../../utilfunctions';
@@ -16,6 +15,7 @@ import { StopService } from '../../stop.service';
 import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {StopsPopupComponent} from "../../popups/stops-popup/stops-popup.component";
+import { StudentService } from '../../student.service';
 
 export interface StudentWithUI extends Student {
   showStops?: boolean;
@@ -29,8 +29,8 @@ export interface StudentWithUI extends Student {
   standalone: true,
 })
 export class ListStudentsComponent {
-  private studentStore = inject(StudentStore);
   private stopService = inject(StopService);
+  private studentService = inject(StudentService);
 
   // Filter and search state
   conflictsClassFilter = signal<string>('');
@@ -47,11 +47,12 @@ export class ListStudentsComponent {
 
   selectedStudent = signal<Student | null>(null);
   stops = signal<Stop[]>([]);
+  students = signal<Student[]>([]);
 
   // Get unique class names for filter dropdowns
   uniqueClasses = computed(() => {
     const classes = new Set<string>();
-    this.studentStore.students().forEach(student => {
+    this.students().forEach(student => {
       classes.add(student.studentClass);
     });
     return Array.from(classes).sort();
@@ -59,12 +60,13 @@ export class ListStudentsComponent {
 
   async ngOnInit() {
     this.stops.set(await this.stopService.getStops());
+    this.students.set(await this.studentService.getStudents());
   }
 
   // Get unique stop names for filter dropdowns
   uniqueStops = computed(() => {
     const stops = new Set<string>();
-    this.studentStore.students().forEach(student => {
+    this.students().forEach(student => {
       student.studentAssignments.forEach(assignment => {
         stops.add(assignment.stopName);
       });
@@ -74,14 +76,14 @@ export class ListStudentsComponent {
 
   uniqueDepartments = computed(() => {
     const deps = new Set<string>();
-    this.studentStore.students().forEach(s => deps.add(s.department));
+    this.students().forEach(s => deps.add(s.department));
     return Array.from(deps).sort();
   });
 
   // Unique classes for fused section; if department is 'inf', only show HIF classes
   fusedUniqueClasses = computed(() => {
     const classes = new Set<string>();
-    this.studentStore.students().forEach(student => {
+    this.students().forEach(student => {
       classes.add(student.studentClass);
     });
     let arr = Array.from(classes).sort();
@@ -108,7 +110,7 @@ export class ListStudentsComponent {
 
   // all where there is more than one assignment and at least one is pending
   conflicts = computed(() => {
-    let filtered = this.studentStore.students().filter(
+    let filtered = this.students().filter(
       (s) => s.studentAssignments.length > 1
     );
 
@@ -140,7 +142,7 @@ export class ListStudentsComponent {
 
   // Fused list: students with 0 or 1 assignment
   fusedAssignments = computed(() => {
-    let filtered = this.studentStore.students()
+    let filtered = this.students()
       .filter(s => s.studentAssignments.length <= 1)
       .map(student => ({
         ...student,
@@ -204,19 +206,19 @@ export class ListStudentsComponent {
     if (candidates.length === 0) return;
     await Promise.all(candidates.map(async s => {
       s.studentAssignments[0].status = Status.Accepted;
-      await this.studentStore.updateStudent(s);
+      await this.studentService.updateStudent(s);
     }));
   }
 
 
   async deleteAssignment(student: Student, index: number) {
     student.studentAssignments.splice(index, 1);
-    return this.studentStore.updateStudent(student);
+    return this.studentService.updateStudent(student);
   }
 
   async changeAssignmentStatus(student: Student, index: number, status: Status) {
     student.studentAssignments[index].status = status;
-    await this.studentStore.updateStudent(student);
+    await this.studentService.updateStudent(student);
   }
 
   async approveSingleAssignment(student: Student): Promise<void> {
@@ -318,7 +320,7 @@ export class ListStudentsComponent {
     }
 
     // Update the student and close the popup
-    await this.studentStore.updateStudent(student);
+    await this.studentService.updateStudent(student);
     student.showStops = false;
     student.selectedStops?.clear();
   }

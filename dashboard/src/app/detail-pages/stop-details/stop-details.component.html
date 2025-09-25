@@ -122,7 +122,7 @@
                       <span class="px-2 py-0.5 rounded-full text-xs font-medium mr-2" [ngClass]="getStatusClass(getAssignmentStatus(student))">
                         {{ getStatusLabel(getAssignmentStatus(student)) }}
                       </span>
-                      <span class="text-accent-600 font-bold text-lg cursor-pointer" (click)="onStudentRemove(student.edufsUsername)">−</span>
+                      <span class="text-accent-600 font-bold text-lg cursor-pointer" (click)="removeStudent(student.edufsUsername)">−</span>
                     </div>
                   </li>
                 }

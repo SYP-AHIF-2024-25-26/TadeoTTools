@@ -57,4 +57,17 @@ export class StudentService {
       })
     );
   }
+
+  async setStopIdForAssignmentsOnNewStop(stopId: number) {
+    (await this.getStudents()).forEach((student) => {
+      student.studentAssignments.forEach((assignment) => {
+        if (assignment.stopId === -1) {
+          assignment.stopId = stopId;
+        }
+      });
+    });
+    (await this.getStudents()).forEach(async (student) => {
+      await this.updateStudent(student);
+    });
+  }
 }

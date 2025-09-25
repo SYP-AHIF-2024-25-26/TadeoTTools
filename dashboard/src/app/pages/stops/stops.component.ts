@@ -1,13 +1,13 @@
 import {Component, computed, inject, signal} from '@angular/core';
-import {Division, Status, Stop, StopGroup, Teacher} from '../../types';
+import {Division, Status, Stop, StopGroup, Student, Teacher} from '../../types';
 import {RouterModule} from '@angular/router';
 import {FilterComponent} from '../../standard-components/filter/filter.component';
-import {StudentStore} from '../../store/student.store';
 import {FormsModule} from '@angular/forms';
 import { DivisionService } from '../../division.service';
 import { StopGroupService } from '../../stopgroup.service';
 import { StopService } from '../../stop.service';
 import { TeacherService } from '../../teacher.service';
+import { StudentService } from '../../student.service';
 
 @Component({
   selector: 'app-stops',
@@ -16,8 +16,7 @@ import { TeacherService } from '../../teacher.service';
   templateUrl: './stops.component.html',
 })
 export class StopsComponent {
-  private studentStore = inject(StudentStore);
-
+  private studentService = inject(StudentService);
   private divisionService = inject(DivisionService);
   private stopGroupService = inject(StopGroupService);
   private stopService = inject(StopService);
@@ -32,12 +31,14 @@ export class StopsComponent {
   stopGroups = signal<StopGroup[]>([]);
   stops = signal<Stop[]>([]);
   teachers = signal<Teacher[]>([]);
+  students = signal<Student[]>([]);
   
   async ngOnInit() {
     this.divisions.set(await this.divisionService.getDivisions());
     this.stopGroups.set(await this.stopGroupService.getStopGroups());
     this.stops.set(await this.stopService.getStops());
     this.teachers.set(await this.teacherService.getTeachers());
+    this.students.set(await this.studentService.getStudents());
   }
 
   // Computed properties for filters and data
@@ -103,7 +104,7 @@ export class StopsComponent {
   }
 
   getStudentCount(stopId: number): string {
-    const students = this.studentStore.getStudentsByStopId(stopId);
+    const students = this.students().filter(s => s.studentAssignments.some(a => a.stopId === stopId));
     const requested = students.filter(s =>
       s.studentAssignments.some(a => a.stopId === stopId && a.status === Status.Pending)
     ).length;
