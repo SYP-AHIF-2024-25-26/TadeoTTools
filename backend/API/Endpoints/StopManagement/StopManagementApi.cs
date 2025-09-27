@@ -50,7 +50,7 @@ public static class StopManagementApi
             .RequireAuthorization(Setup.AdminPolicyName);
         
         group.MapPut("teacher/stops", StopManagementEndpoints.UpdateStopAsTeacher)
-            .AddEndpointFilter(StopManagementValidations.UpdateStopValidationAsync)
+            .AddEndpointFilter(StopManagementValidations.UpdateStopAsTeacherValidationAsync)
             .WithName(nameof(StopManagementEndpoints.UpdateStopAsTeacher))
             .WithDescription("Update the stops assigned to a teacher")
             .Produces(StatusCodes.Status400BadRequest)

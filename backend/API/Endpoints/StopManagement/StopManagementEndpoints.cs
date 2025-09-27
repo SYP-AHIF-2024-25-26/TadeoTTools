@@ -344,7 +344,6 @@ public static class StopManagementEndpoints
         string RoomNr,
         StudentOfStopDto[] StudentAssignments
     );
-
     
     public record CreateStopRequestDto(
         string Name,
