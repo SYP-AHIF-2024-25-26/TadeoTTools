@@ -14,27 +14,31 @@ public static class StopManagementEndpoints
     {
         return Results.Ok(await StopFunctions.GetAllStopsAsync(context));
     }
-    
+
     public static async Task<IResult> GetStopById(TadeoTDbContext context, [FromRoute] int stopId)
     {
         var stop = await context.Stops
             .Include(s => s.Divisions)
             .Include(s => s.StopGroupAssignments)
             .ThenInclude(sg => sg.StopGroup)
+            .Include(stop => stop.StudentAssignments)
+            .Include(stop => stop.TeacherAssignments)
             .FirstOrDefaultAsync(s => s.Id == stopId);
         if (stop == null)
         {
             return Results.NotFound($"Stop with ID {stopId} not found");
         }
 
-        var result = new StopWithAssignmentsAndDivisionsDto(
+        var result = new StopWithEverythingDto(
             stop.Id,
             stop.Name,
             stop.RoomNr,
             stop.Description,
             stop.Divisions.Select(d => d.Id).ToArray(),
             stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
-            stop.StopGroupAssignments.Select(a => a.Order).ToArray()
+            stop.StopGroupAssignments.Select(a => a.Order).ToArray(),
+            stop.StudentAssignments.Select(sa => new StudentOfStopDto(sa.StudentId, sa.Status)).ToArray(),
+            stop.TeacherAssignments.Select(ta => ta.TeacherId).ToArray()
         );
 
         return Results.Ok(result);
@@ -53,7 +57,8 @@ public static class StopManagementEndpoints
 
                 var studentAssignments = await context.StudentAssignments
                     .Where(sa => sa.Student!.EdufsUsername == username)
-                    .Select(sa => new CorrelatingStopsDto(sa.Stop!.Name, sa.Status, sa.Stop.Description, sa.Stop.RoomNr))
+                    .Select(sa =>
+                        new CorrelatingStopsDto(sa.Stop!.Name, sa.Status, sa.Stop.Description, sa.Stop.RoomNr))
                     .ToListAsync();
 
                 return Results.Ok(studentAssignments);
@@ -61,7 +66,7 @@ public static class StopManagementEndpoints
             _ => Task.FromResult(Results.BadRequest("User information not found"))
         );
     }
-    
+
     public static async Task<IResult> GetStopsByDivisionId(TadeoTDbContext context, int divisionId)
     {
         var stops = await context.Stops
@@ -77,7 +82,7 @@ public static class StopManagementEndpoints
             .ToListAsync();
         return stops.Count == 0 ? Results.NotFound($"No stops found for division ID {divisionId}") : Results.Ok(stops);
     }
-    
+
     public static async Task<IResult> GetStopsForTeacher(TadeoTDbContext context, [FromRoute] string teacherId)
     {
         var stops = await context.Stops
@@ -93,7 +98,7 @@ public static class StopManagementEndpoints
             stop.Description
         )).ToList());
     }
-    
+
     public record StopOfTeacher(
         int Id,
         string Name,
@@ -132,33 +137,63 @@ public static class StopManagementEndpoints
 
     public static async Task<IResult> CreateStop(TadeoTDbContext context, CreateStopRequestDto createStopDto)
     {
+        var studentIds = createStopDto.StudentAssignments.Select(s => s.EdufsUsername).ToList();
+        var teacherIds = createStopDto.TeacherAssignments.ToList();
+        var divisionIds = createStopDto.DivisionIds.ToList();
+        var stopGroupIds = createStopDto.StopGroupIds.ToList();
+
+        var students = await context.Students
+            .Where(s => studentIds.Contains(s.EdufsUsername))
+            .ToDictionaryAsync(s => s.EdufsUsername);
+
+        var teachers = await context.Teachers
+            .Where(t => teacherIds.Contains(t.EdufsUsername))
+            .ToDictionaryAsync(t => t.EdufsUsername);
+
+        var divisions = await context.Divisions
+            .Where(d => divisionIds.Contains(d.Id))
+            .ToListAsync();
+
+        var stopGroups = await context.StopGroups
+            .Where(sg => stopGroupIds.Contains(sg.Id))
+            .ToDictionaryAsync(sg => sg.Id);
+
+        if (stopGroups.Count != createStopDto.StopGroupIds.Length)
+        {
+            return Results.NotFound("One or more StopGroupIds not found");
+        }
+
         var stop = new Stop
         {
             Name = createStopDto.Name,
             Description = createStopDto.Description,
             RoomNr = createStopDto.RoomNr,
-            Divisions = context.Divisions
-                .Where(d => createStopDto.DivisionIds.Contains(d.Id))
-                .ToList(),
+            StudentAssignments = createStopDto.StudentAssignments.Select(s => new StudentAssignment()
+            {
+                StudentId = s.EdufsUsername,
+                Student = students.GetValueOrDefault(s.EdufsUsername),
+                Status = s.Status
+            }).ToList(),
+            TeacherAssignments = createStopDto.TeacherAssignments.Select(t => new TeacherAssignment()
+            {
+                TeacherId = t,
+                Teacher = teachers.GetValueOrDefault(t)
+            }).ToList(),
+            Divisions = divisions
         };
+
         context.Stops.Add(stop);
 
         var groupAssignments = createStopDto.StopGroupIds
-            .Select(g =>
-                new StopGroupAssignment()
-                {
-                    StopGroupId = g,
-                    StopGroup = context.StopGroups.Find(g),
-                    StopId = stop.Id,
-                    Stop = stop,
-                    Order = 0
-                })
-            .Where(g => g.StopGroup != null)
+            .Select(g => new StopGroupAssignment()
+            {
+                StopGroupId = g,
+                StopGroup = stopGroups[g],
+                StopId = stop.Id,
+                Stop = stop,
+                Order = 0
+            })
             .ToList();
-        if (groupAssignments.Count != createStopDto.StopGroupIds.Length)
-        {
-            return Results.NotFound("StopGroupId not found");
-        }
 
         stop.StopGroupAssignments = groupAssignments;
 
@@ -167,38 +202,82 @@ public static class StopManagementEndpoints
             createStopDto.DivisionIds, createStopDto.StopGroupIds));
     }
 
-    public static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto, bool? updateOrder = true)
+    public static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto,
+        bool? updateOrder = true)
     {
+        var studentIds = updateStopDto.StudentAssignments.Select(s => s.EdufsUsername).ToList();
+        var teacherIds = updateStopDto.TeacherAssignments.ToList();
+        var divisionIds = updateStopDto.DivisionIds.ToList();
+        var stopGroupIds = updateStopDto.StopGroupIds.ToList();
 
-        var newDivisions = context.Divisions.Where(di => updateStopDto.DivisionIds.Contains(di.Id)).ToList();
+        var students = await context.Students
+            .Where(s => studentIds.Contains(s.EdufsUsername))
+            .ToDictionaryAsync(s => s.EdufsUsername);
+
+        var teachers = await context.Teachers
+            .Where(t => teacherIds.Contains(t.EdufsUsername))
+            .ToDictionaryAsync(t => t.EdufsUsername);
+
+        var divisions = await context.Divisions
+            .Where(d => divisionIds.Contains(d.Id))
+            .ToListAsync();
+
+        var stopGroups = await context.StopGroups
+            .Where(sg => stopGroupIds.Contains(sg.Id))
+            .ToDictionaryAsync(sg => sg.Id);
 
         var stop = await context.Stops
-            .Include(stop => stop.Divisions)
-            .Include(stop => stop.StopGroupAssignments)
-            .SingleOrDefaultAsync(stop => stop.Id == updateStopDto.Id);
+            .Include(s => s.Divisions)
+            .Include(s => s.StopGroupAssignments)
+            .Include(s => s.StudentAssignments)
+            .Include(s => s.TeacherAssignments)
+            .SingleOrDefaultAsync(s => s.Id == updateStopDto.Id);
 
         if (stop == null)
         {
             return Results.NotFound($"Stop with ID {updateStopDto.Id} not found");
         }
 
+        var newStudentAssignments = updateStopDto.StudentAssignments.Select(s => new StudentAssignment()
+        {
+            StudentId = s.EdufsUsername,
+            Student = students.GetValueOrDefault(s.EdufsUsername),
+            StopId = updateStopDto.Id,
+            Stop = stop,
+            Status = s.Status
+        }).ToList();
+
+        var newTeacherAssignments = updateStopDto.TeacherAssignments.Select(t => new TeacherAssignment()
+        {
+            TeacherId = t,
+            Teacher = teachers.GetValueOrDefault(t),
+            StopId = updateStopDto.Id,
+            Stop = stop
+        }).ToList();
+
         if (updateOrder == null || updateOrder == true)
         {
-            var assignments = updateStopDto.StopGroupIds.Select((id, index) => new StopGroupAssignment()
+            var newStopGroupAssignments = updateStopDto.StopGroupIds.Select((id, index) => new StopGroupAssignment()
             {
                 StopGroupId = id,
-                StopGroup = context.StopGroups.Find(id),
+                StopGroup = stopGroups.GetValueOrDefault(id),
                 StopId = stop.Id,
                 Stop = stop,
                 Order = index
-            }).ToArray();
+            }).ToList();
 
             stop.StopGroupAssignments.Clear();
-            stop.StopGroupAssignments.AddRange(assignments);
+            stop.StopGroupAssignments.AddRange(newStopGroupAssignments);
         }
 
         stop.Divisions.Clear();
-        stop.Divisions.AddRange(newDivisions);
+        stop.Divisions.AddRange(divisions);
+
+        stop.StudentAssignments.Clear();
+        stop.StudentAssignments.AddRange(newStudentAssignments);
+
+        stop.TeacherAssignments.Clear();
+        stop.TeacherAssignments.AddRange(newTeacherAssignments);
 
         stop.Name = updateStopDto.Name;
         stop.Description = updateStopDto.Description;
@@ -207,6 +286,46 @@ public static class StopManagementEndpoints
         await context.SaveChangesAsync();
         return Results.Ok();
     }
+
+
+    public static async Task<IResult> UpdateStopAsTeacher(TadeoTDbContext context,
+        UpdateStopAsTeacherRequestDto updateStopDto)
+    {
+        var studentIds = updateStopDto.StudentAssignments.Select(s => s.EdufsUsername).ToList();
+
+        var students = await context.Students
+            .Where(s => studentIds.Contains(s.EdufsUsername))
+            .ToDictionaryAsync(s => s.EdufsUsername);
+
+        var stop = await context.Stops
+            .Include(s => s.StudentAssignments)
+            .SingleOrDefaultAsync(s => s.Id == updateStopDto.Id);
+
+        if (stop == null)
+        {
+            return Results.NotFound($"Stop with ID {updateStopDto.Id} not found");
+        }
+
+        var newStudentAssignments = updateStopDto.StudentAssignments.Select(s => new StudentAssignment()
+        {
+            StudentId = s.EdufsUsername,
+            Student = students.GetValueOrDefault(s.EdufsUsername),
+            StopId = updateStopDto.Id,
+            Stop = stop,
+            Status = s.Status
+        }).ToList();
+
+        stop.StudentAssignments.Clear();
+        stop.StudentAssignments.AddRange(newStudentAssignments);
+
+        stop.Name = updateStopDto.Name;
+        stop.Description = updateStopDto.Description;
+        stop.RoomNr = updateStopDto.RoomNr;
+
+        await context.SaveChangesAsync();
+        return Results.Ok();
+    }
+
 
     public static async Task<IResult> DeleteStop(TadeoTDbContext context, [FromRoute] int stopId)
     {
@@ -232,29 +351,35 @@ public static class StopManagementEndpoints
             .Include(stop => stop.StudentAssignments)
             .OrderBy(stop => stop.Name)
             .ToListAsync();
-        
+
         // Create CSV content
         var csvBuilder = new StringBuilder();
-    
+
         // Add headers
-        csvBuilder.AppendLine("Name;Description;RoomNr;Teacher;StudentsRequested;StudentsAssigned;StopGroups;Divisions");
-    
+        csvBuilder.AppendLine(
+            "Name;Description;RoomNr;Teacher;StudentsRequested;StudentsAssigned;StopGroups;Divisions");
+
         // Add data rows
         foreach (var item in stops)
         {
             var escapedName = Utils.EscapeCsvField(item.Name);
             var escapedDescription = Utils.EscapeCsvField(item.Description);
             var escapedRoomNr = Utils.EscapeCsvField(item.RoomNr);
-            var escapedTeacher = Utils.EscapeCsvField(string.Join(",", item.TeacherAssignments.Select(t => t.Teacher?.FirstName + " " + t.Teacher?.LastName)));
-            var escapedStudentsRequested = Utils.EscapeCsvField(item.StudentAssignments.Count(sa => sa.Status == Status.PENDING).ToString());
-            var escapedStudentsAssigned = Utils.EscapeCsvField(item.StudentAssignments.Count(sa => sa.Status == Status.ACCEPTED).ToString());
+            var escapedTeacher = Utils.EscapeCsvField(string.Join(",",
+                item.TeacherAssignments.Select(t => t.Teacher?.FirstName + " " + t.Teacher?.LastName)));
+            var escapedStudentsRequested =
+                Utils.EscapeCsvField(item.StudentAssignments.Count(sa => sa.Status == Status.PENDING).ToString());
+            var escapedStudentsAssigned =
+                Utils.EscapeCsvField(item.StudentAssignments.Count(sa => sa.Status == Status.ACCEPTED).ToString());
             var escapedDivisions = Utils.EscapeCsvField(string.Join(",", item.Divisions.Select(d => d.Name)));
-            var escapedStopGroupNames = Utils.EscapeCsvField(string.Join(",", item.StopGroupAssignments.Select(a => a.StopGroup?.Name)));
-            csvBuilder.AppendLine($"{escapedName};{escapedDescription};{escapedRoomNr};{escapedTeacher};{escapedStudentsRequested};{escapedStudentsAssigned};{escapedStopGroupNames};{escapedDivisions}");
+            var escapedStopGroupNames =
+                Utils.EscapeCsvField(string.Join(",", item.StopGroupAssignments.Select(a => a.StopGroup?.Name)));
+            csvBuilder.AppendLine(
+                $"{escapedName};{escapedDescription};{escapedRoomNr};{escapedTeacher};{escapedStudentsRequested};{escapedStudentsAssigned};{escapedStopGroupNames};{escapedDivisions}");
         }
-    
+
         var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
-    
+
         return Results.File(
             fileContents: csvBytes,
             contentType: "text/csv",
@@ -268,15 +393,29 @@ public static class StopManagementEndpoints
         string Description,
         string RoomNr,
         int[] DivisionIds,
-        int[] StopGroupIds
+        int[] StopGroupIds,
+        StudentOfStopDto[] StudentAssignments,
+        string[] TeacherAssignments
     );
+
+    public record UpdateStopAsTeacherRequestDto(
+        int Id,
+        string Name,
+        string Description,
+        string RoomNr,
+        StudentOfStopDto[] StudentAssignments
+    );
+
     public record CreateStopRequestDto(
         string Name,
         string Description,
         string RoomNr,
         int[] DivisionIds,
-        int[] StopGroupIds
+        int[] StopGroupIds,
+        StudentOfStopDto[] StudentAssignments,
+        string[] TeacherAssignments
     );
+
     public record StopResponseDto(
         int Id,
         string Name,
@@ -285,6 +424,7 @@ public static class StopManagementEndpoints
         int[] DivisionIds,
         int[] StopGroupIds
     );
+
     public record CorrelatingStopsDto(
         string Name,
         Status Status,

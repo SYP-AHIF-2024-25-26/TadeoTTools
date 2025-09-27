@@ -311,7 +311,7 @@ export class ListStudentsComponent {
     // Create assignments for all selected stops
     for (const stop of selectedStops) {
       const newAssignment: StudentAssignment = {
-        studentId: student.edufsUsername,
+        edufsUsername: student.edufsUsername,
         stopId: stop.id,
         stopName: stop.name,
         status: Status.Pending

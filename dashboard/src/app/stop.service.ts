@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Stop, StopOfStudent, StopWithoutOrders } from './types';
+import { Stop, StopAsTeacher, StopOfStudent, StopWithoutOrders } from './types';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from './app.config';
@@ -38,6 +38,12 @@ export class StopService {
   updateStop(stop: StopWithoutOrders): Promise<void> {
     return firstValueFrom(
       this.httpClient.put<void>(`${this.baseUrl}/api/stops`, stop)
+    );
+  }
+
+  updateStopAsTeacher(stop: StopAsTeacher): Promise<void> {
+    return firstValueFrom(
+      this.httpClient.put<void>(`${this.baseUrl}/teacher/stops`, stop)
     );
   }
 

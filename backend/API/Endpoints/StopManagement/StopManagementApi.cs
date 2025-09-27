@@ -14,7 +14,7 @@ public static class StopManagementApi
             .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
             .RequireAuthorization(Setup.AdminPolicyName);
 
-        group.MapGet("api/stops/teacher/{teacherId}", StopManagementEndpoints.GetStopsForTeacher) // use this endpoint later!
+        group.MapGet("api/stops/teacher/{teacherId}", StopManagementEndpoints.GetStopsForTeacher)
             .WithName(nameof(StopManagementEndpoints.GetStopsForTeacher))
             .WithDescription("Get all stops assigned to a specific teacher")
             .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
@@ -44,6 +44,15 @@ public static class StopManagementApi
             .AddEndpointFilter(StopManagementValidations.UpdateStopValidationAsync)
             .WithName(nameof(StopManagementEndpoints.UpdateStop))
             .WithDescription("Update a stop")
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.AdminPolicyName);
+        
+        group.MapPut("teacher/stops", StopManagementEndpoints.UpdateStopAsTeacher)
+            .AddEndpointFilter(StopManagementValidations.UpdateStopAsTeacherValidationAsync)
+            .WithName(nameof(StopManagementEndpoints.UpdateStopAsTeacher))
+            .WithDescription("Update the stops assigned to a teacher")
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)

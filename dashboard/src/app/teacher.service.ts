@@ -93,14 +93,4 @@ export class TeacherService {
       await this.updateTeacher(teacher);
     }
   }
-  async setStopIdForAssignmentsOnNewStop(stopId: number) {
-    (await this.getTeachers()).forEach((teacher) => {
-      if (teacher.assignedStops.includes(-1)) {
-        teacher.assignedStops = teacher.assignedStops.map((assignment) => (assignment === -1 ? stopId : assignment));
-      }
-    });
-    (await this.getTeachers()).forEach(async (teacher) => {
-      await this.updateTeacher(teacher);
-    });
-  }
 }

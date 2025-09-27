@@ -117,7 +117,6 @@ export class LoginComponent implements OnInit {
       return roleResponse?.toLowerCase().includes(expectedRole) ?? false;
       
     } catch (error) {
-      console.error(`Error checking role ${roleEndpoint}:`, error);
       return false;
     }
   }
