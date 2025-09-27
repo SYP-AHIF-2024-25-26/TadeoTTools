@@ -92,7 +92,7 @@ export class StopDetailsComponent implements OnInit {
   teachersAssignedToStop = computed(() => {
     return this.stop().teacherAssignments
       ? this.stop().teacherAssignments
-          .map(a => this.teachers().find(t => t.edufsUsername === a.teacherId))
+          .map(a => this.teachers().find(t => t.edufsUsername === a))
           .filter((t): t is Teacher => t !== undefined)
       : [];
   });
@@ -182,11 +182,8 @@ export class StopDetailsComponent implements OnInit {
   });
 
   async ngOnInit() {
-    try {
-      const response = await this.loginService.performCall('is-admin');
-      this.isAdmin.set(response.includes('admin'));
-    } catch (error) {
-    }
+    const response = await this.loginService.checkUserRole('is-admin');
+    this.isAdmin.set(response);
 
     // Get stop ID from route parameters
     const params = await firstValueFrom(this.route.queryParams);
@@ -236,7 +233,6 @@ export class StopDetailsComponent implements OnInit {
     if (this.stop().id === -1) {
       const returnedStop = await this.service.addStop(this.stop());
       this.stop.set({ ...this.stop(), id: returnedStop.id });
-      this.teacherService.setStopIdForAssignmentsOnNewStop(returnedStop.id);
     } else {
       if (this.isAdmin()) {
         await this.stopService.updateStop(this.stop());
@@ -273,16 +269,6 @@ export class StopDetailsComponent implements OnInit {
     this.selectedClass.set(target.value);
   }
 
-  async onStudentClick(edufsUsername: string) {
-    this.stop.update((stop) => ({
-      ...stop,
-      studentAssignments: [
-        ...(stop.studentAssignments || []),
-        { edufsUsername, status: Status.Pending }
-      ]
-    }));
-  }
-
   selectDivisionToRemove(divisionId: string) {
     this.divisionIdToRemove = divisionId;
     this.showRemoveDivisionPopup.set(true);
@@ -296,15 +282,32 @@ export class StopDetailsComponent implements OnInit {
     this.showRemoveDivisionPopup.set(false);
   }
 
+  addTeacher(edufsUsername: string) {
+    this.stop.update((stop) => ({
+      ...stop,
+      teacherAssignments: [...(stop.teacherAssignments || []), edufsUsername]
+    }));
+  }
+
   removeTeacher(edufsUsername: string) {
-    this.stop.update((stop) => {
-      stop.teacherAssignments = stop.teacherAssignments.filter(a => a.teacherId !== edufsUsername);
-      return stop;
-    });
+    this.stop.update((stop) => ({
+      ...stop,
+      teacherAssignments: (stop.teacherAssignments || []).filter(a => a !== edufsUsername)
+    }));
   }
   // Keep for backward compatibility
   onDivisionRemove(divisionId: string) {
     this.selectDivisionToRemove(divisionId);
+  }
+
+  async onStudentClick(edufsUsername: string) {
+    this.stop.update((stop) => ({
+      ...stop,
+      studentAssignments: [
+        ...(stop.studentAssignments || []),
+        { edufsUsername, status: Status.Pending }
+      ]
+    }));
   }
 
   removeStudent(edufsUsername: string) {
@@ -348,16 +351,6 @@ export class StopDetailsComponent implements OnInit {
       case Status.Declined: return 'bg-red-200 text-red-800';
       default: return '';
     }
-  }
-
-  addTeacher(edufsUsername: string) {
-    this.stop.update((stop) => {
-      if (!stop.teacherAssignments) {
-        stop.teacherAssignments = [];
-      }
-      stop.teacherAssignments.push({teacherId: edufsUsername, stopId: this.stop().id});
-      return stop;
-    });
   }
 
   onAssignedClassSelect($event: Event) {

@@ -24,8 +24,8 @@ export class NavbarComponent {
   }
 
   async ngOnInit() {
-    const response = await this.service.performCall('is-admin');
-    this.isAdmin.set(response.includes('admin'));
+    const response = await this.service.checkUserRole('is-admin');
+    this.isAdmin.set(response);
     const colorTheme = localStorage.getItem('color-theme');
     if (colorTheme === 'dark') {
       this.isWhiteMode.set(false);

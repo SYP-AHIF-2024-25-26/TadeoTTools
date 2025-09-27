@@ -12,6 +12,18 @@ export class LoginService {
   private response = signal<string | null>(null);
   showResponse = computed(() => this.response() !== null);
 
+  async checkUserRole(expectedRole: string): Promise<boolean> {
+    try {
+      const roleResponse = await this.performCall(expectedRole);
+      if (!roleResponse) {
+        return false;
+      }
+      return roleResponse.toLowerCase().includes(expectedRole);
+    } catch (error) {
+      return false;
+    }
+  }
+
   performCall(action: string): Promise<string> {
     const route = `${this.baseUrl}/users/${action}`;
     

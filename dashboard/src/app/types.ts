@@ -24,7 +24,7 @@ export type Stop = {
   stopGroupIds: number[];
   orders: number[];
   studentAssignments: StudentAssignmentOfStop[];
-  teacherAssignments: TeacherAssignment[];
+  teacherAssignments: string[];
 };
 
 export type Teacher = {
@@ -60,12 +60,12 @@ export type StudentAssignmentOfStop = {
 export type StopWithoutOrders = {
   id: number;
   name: string;
-  roomNr: string;
   description: string;
+  roomNr: string;
   divisionIds: number[];
   stopGroupIds: number[];
   studentAssignments: StudentAssignmentOfStop[];
-  teacherAssignments: TeacherAssignment[];
+  teacherAssignments: string[];
 };
 
 export type StopAsTeacher = {

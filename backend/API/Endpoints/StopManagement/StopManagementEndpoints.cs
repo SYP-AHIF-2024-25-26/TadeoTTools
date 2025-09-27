@@ -141,11 +141,16 @@ public static class StopManagementEndpoints
             Name = createStopDto.Name,
             Description = createStopDto.Description,
             RoomNr = createStopDto.RoomNr,
-            StudentAssignments = createStopDto.StudentsAssigned.Select(s => new StudentAssignment()
+            StudentAssignments = createStopDto.StudentAssignments.Select(s => new StudentAssignment()
             {
                 StudentId = s.EdufsUsername,
                 Student = context.Students.Find(s.EdufsUsername),
                 Status = s.Status
+            }).ToList(),
+            TeacherAssignments = createStopDto.TeacherAssignments.Select(t => new TeacherAssignment()
+            {
+                TeacherId = t,
+                Teacher = context.Teachers.Find(t)
             }).ToList(),
             Divisions = context.Divisions
                 .Where(d => createStopDto.DivisionIds.Contains(d.Id))
@@ -332,9 +337,9 @@ public static class StopManagementEndpoints
         string Description,
         string RoomNr,
         int[] DivisionIds,
+        int[] StopGroupIds,
         StudentOfStopDto[] StudentAssignments,
-        string[] TeacherAssignments,
-        int[] StopGroupIds
+        string[] TeacherAssignments
     );
     
     public record UpdateStopAsTeacherRequestDto(
@@ -351,7 +356,8 @@ public static class StopManagementEndpoints
         string RoomNr,
         int[] DivisionIds,
         int[] StopGroupIds,
-        StudentOfStopDto[] StudentsAssigned
+        StudentOfStopDto[] StudentAssignments,
+        string[] TeacherAssignments
     );
     public record StopResponseDto(
         int Id,
