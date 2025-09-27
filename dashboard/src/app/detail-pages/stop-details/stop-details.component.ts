@@ -33,10 +33,11 @@ export class StopDetailsComponent implements OnInit {
   teachers = signal<Teacher[]>([]);
   students = signal<Student[]>([]);
 
+  isLoading = signal<boolean>(true);
+
   private service: StopService = inject(StopService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
-  private originalAssignments = new Map<string, StudentAssignment[]>();
 
   router = inject(Router);
 
@@ -182,30 +183,37 @@ export class StopDetailsComponent implements OnInit {
   });
 
   async ngOnInit() {
-    const response = await this.loginService.checkUserRole('is-admin', 'admin');
-    this.isAdmin.set(response);
+    this.isLoading.set(true);
+    try {
+      const response = await this.loginService.checkUserRole('is-admin', 'admin');
+      this.isAdmin.set(response);
 
-    // Get stop ID from route parameters
-    const params = await firstValueFrom(this.route.queryParams);
-    const id = params['id'] || -1;
+      const params = await firstValueFrom(this.route.queryParams);
+      const id = params['id'] || -1;
 
-    this.stopGroups.set(await this.stopGroupService.getStopGroups());
-    this.divisions.set(await this.divisionService.getDivisions());
-    this.students.set(await this.studentService.getStudents());
-    this.teachers.set((await this.teacherService.getTeachers()).sort((a, b) => a.lastName.localeCompare(b.lastName)));
+      this.stopGroups.set(await this.stopGroupService.getStopGroups());
+      this.divisions.set(await this.divisionService.getDivisions());
+      this.students.set(await this.studentService.getStudents());
+      this.teachers.set((await this.teacherService.getTeachers()).sort((a, b) => a.lastName.localeCompare(b.lastName)));
 
-    if (id === -1) {
-      this.stop.set({ ...this.emptyStop });
-      return;
-    } 
+      if (id === -1) {
+        this.stop.set({ ...this.emptyStop });
+        return;
+      } 
 
-    let foundStop: Stop | undefined;
+      let foundStop: Stop | undefined;
 
-    foundStop = await this.stopService.getStopById(Number(id));
-    if (foundStop === undefined) {
-      this.errorMessage.set(`Could not find stop with ID ${id}`);
-    } else {
-      this.stop.set({ ...foundStop });
+      foundStop = await this.stopService.getStopById(Number(id));
+      if (foundStop === undefined) {
+        this.errorMessage.set(`Could not find stop with ID ${id}`);
+      } else {
+        this.stop.set({ ...foundStop });
+      }
+    } catch (error) {
+      this.errorMessage.set('An error occurred while loading data.');
+      console.error(error);
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
