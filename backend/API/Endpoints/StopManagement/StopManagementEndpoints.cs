@@ -137,6 +137,12 @@ public static class StopManagementEndpoints
             Name = createStopDto.Name,
             Description = createStopDto.Description,
             RoomNr = createStopDto.RoomNr,
+            StudentAssignments = createStopDto.StudentsAssigned.Select(s => new StudentAssignment()
+            {
+                StudentId = s.EdufsUsername,
+                Student = context.Students.Find(s.EdufsUsername),
+                Status = s.Status
+            }).ToList(),
             Divisions = context.Divisions
                 .Where(d => createStopDto.DivisionIds.Contains(d.Id))
                 .ToList(),
@@ -169,12 +175,28 @@ public static class StopManagementEndpoints
 
     public static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto, bool? updateOrder = true)
     {
-
         var newDivisions = context.Divisions.Where(di => updateStopDto.DivisionIds.Contains(di.Id)).ToList();
-
+        var newStudents = updateStopDto.StudentsAssigned.Select(s => new StudentAssignment()
+        {
+            StudentId = s.EdufsUsername,
+            Student = context.Students.Find(s.EdufsUsername),
+            StopId = updateStopDto.Id,
+            Stop = context.Stops.Find(updateStopDto.Id),
+            Status = s.Status
+        }).ToList();
+        var newTeachers = updateStopDto.TeachersAssigned.Select(t => new TeacherAssignment()
+        {
+            TeacherId = t,
+            Teacher = context.Teachers.Find(t),
+            StopId = updateStopDto.Id,
+            Stop = context.Stops.Find(updateStopDto.Id)
+        }).ToList();
+            
         var stop = await context.Stops
             .Include(stop => stop.Divisions)
             .Include(stop => stop.StopGroupAssignments)
+            .Include(stop => stop.StudentAssignments)
+            .Include(stop => stop.TeacherAssignments)
             .SingleOrDefaultAsync(stop => stop.Id == updateStopDto.Id);
 
         if (stop == null)
@@ -199,6 +221,12 @@ public static class StopManagementEndpoints
 
         stop.Divisions.Clear();
         stop.Divisions.AddRange(newDivisions);
+        
+        stop.StudentAssignments.Clear();
+        stop.StudentAssignments.AddRange(newStudents);
+
+        stop.TeacherAssignments.Clear();
+        stop.TeacherAssignments.AddRange(newTeachers);
 
         stop.Name = updateStopDto.Name;
         stop.Description = updateStopDto.Description;
@@ -208,6 +236,38 @@ public static class StopManagementEndpoints
         return Results.Ok();
     }
 
+    public static async Task<IResult> UpdateStopAsTeacher(TadeoTDbContext context,
+        UpdateStopAsTeacherRequestDto updateStopDto)
+    {
+        var newStudents = updateStopDto.StudentsAssigned.Select(s => new StudentAssignment()
+        {
+            StudentId = s.EdufsUsername,
+            Student = context.Students.Find(s.EdufsUsername),
+            StopId = updateStopDto.Id,
+            Stop = context.Stops.Find(updateStopDto.Id),
+            Status = s.Status
+        }).ToList();
+            
+        var stop = await context.Stops
+            .Include(stop => stop.StudentAssignments)
+            .SingleOrDefaultAsync(stop => stop.Id == updateStopDto.Id);
+
+        if (stop == null)
+        {
+            return Results.NotFound($"Stop with ID {updateStopDto.Id} not found");
+        }
+        
+        stop.StudentAssignments.Clear();
+        stop.StudentAssignments.AddRange(newStudents);
+
+        stop.Name = updateStopDto.Name;
+        stop.Description = updateStopDto.Description;
+        stop.RoomNr = updateStopDto.RoomNr;
+
+        await context.SaveChangesAsync();
+        return Results.Ok();
+    }
+    
     public static async Task<IResult> DeleteStop(TadeoTDbContext context, [FromRoute] int stopId)
     {
         var stop = await context.Stops.FindAsync(stopId);
@@ -268,14 +328,30 @@ public static class StopManagementEndpoints
         string Description,
         string RoomNr,
         int[] DivisionIds,
+        StudentOfStopDto[] StudentsAssigned,
+        string[] TeachersAssigned,
         int[] StopGroupIds
     );
+    
+    public record UpdateStopAsTeacherRequestDto(
+        int Id,
+        string Name,
+        string Description,
+        string RoomNr,
+        StudentOfStopDto[] StudentsAssigned
+    );
+    public record StudentOfStopDto(
+        string EdufsUsername,
+        Status Status
+    );
+    
     public record CreateStopRequestDto(
         string Name,
         string Description,
         string RoomNr,
         int[] DivisionIds,
-        int[] StopGroupIds
+        int[] StopGroupIds,
+        StudentOfStopDto[] StudentsAssigned
     );
     public record StopResponseDto(
         int Id,

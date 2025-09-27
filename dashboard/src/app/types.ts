@@ -23,6 +23,7 @@ export type Stop = {
   divisionIds: number[];
   stopGroupIds: number[];
   orders: number[];
+  studentAssignments: StudentAssignmentOfStop[];
 };
 
 export type Teacher = {
@@ -50,6 +51,11 @@ export enum Status {
   Declined,
 }
 
+export type StudentAssignmentOfStop = {
+  studentId: string;
+  status: Status;
+}
+
 export type StopWithoutOrders = {
   id: number;
   name: string;
@@ -57,6 +63,7 @@ export type StopWithoutOrders = {
   description: string;
   divisionIds: number[];
   stopGroupIds: number[];
+  studentAssignments: StudentAssignmentOfStop[];
 };
 
 export type StopGroup = {

@@ -49,6 +49,7 @@ export class StopDetailsComponent implements OnInit {
     stopGroupIds: [],
     teachers: [],
     orders: [],
+    studentAssignments: [],
   };
   stop = signal<Stop>(this.emptyStop);
   isAdmin = signal(false);
@@ -224,15 +225,13 @@ export class StopDetailsComponent implements OnInit {
     if (this.stop().id === -1) {
       const returnedStop = await this.service.addStop(this.stop());
       this.stop.set({ ...this.stop(), id: returnedStop.id });
-
-      this.studentService.setStopIdForAssignmentsOnNewStop(returnedStop.id);
       this.teacherService.setStopIdForAssignmentsOnNewStop(returnedStop.id);
     } else {
       await this.stopService.updateStop(this.stop());
-    }
+    }/*
     this.students().forEach((student) => {
       this.studentService.setAssignments(student.edufsUsername, student.studentAssignments);
-    });
+    });*/
 
     this.teachers().forEach((teacher) => {
       this.teacherService.setAssignments(teacher.edufsUsername, teacher.assignedStops);
@@ -267,32 +266,10 @@ export class StopDetailsComponent implements OnInit {
   }
 
   async onStudentClick(edufsUsername: string) {
-    // Add the student to the stop
-    const assignment = {
-      studentId: edufsUsername,
-      stopId: this.stop().id,
-      status: Status.Pending,
-    } as StudentAssignment;
-    this.students.update(students => {
-      const student = students.find(s => s.edufsUsername === edufsUsername);
-      if (student && !student.studentAssignments.some(a => a.stopId === this.stop().id)) {
-        student.studentAssignments.push(assignment);
-      }
-      return [...students];
+    this.stop.update((stop) => {
+      stop.studentAssignments.push({studentId: edufsUsername, status: Status.Pending})
+      return stop;
     });
-  }
-
-  // Keep for backward compatibility
-  async onStudentSelect($event: Event) {
-    const target = $event.target as HTMLSelectElement;
-    const edufsUsername = target.value;
-    await this.onStudentClick(edufsUsername);
-  }
-
-  async onTeacherSelect($event: Event) {
-    const target = $event.target as HTMLSelectElement;
-    const edufsUsername = target.value;
-    await this.teacherService.addStopToTeacher(edufsUsername, this.stop().id);
   }
 
   selectDivisionToRemove(divisionId: string) {
@@ -323,12 +300,9 @@ export class StopDetailsComponent implements OnInit {
   }
 
   removeStudent(edufsUsername: string) {
-    this.students.update(students => {
-      const student = students.find(s => s.edufsUsername === edufsUsername);
-      if (student) {
-        student.studentAssignments = student.studentAssignments.filter(a => a.stopId !== this.stop().id);
-      }
-      return [...students];
+    this.stop.update((stop) => {
+      stop.studentAssignments = stop.studentAssignments.filter(a => a.studentId !== edufsUsername);
+      return stop;
     });
   }
 
