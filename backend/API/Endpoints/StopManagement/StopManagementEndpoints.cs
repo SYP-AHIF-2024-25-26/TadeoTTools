@@ -21,20 +21,24 @@ public static class StopManagementEndpoints
             .Include(s => s.Divisions)
             .Include(s => s.StopGroupAssignments)
             .ThenInclude(sg => sg.StopGroup)
+            .Include(stop => stop.StudentAssignments)
+            .Include(stop => stop.TeacherAssignments)
             .FirstOrDefaultAsync(s => s.Id == stopId);
         if (stop == null)
         {
             return Results.NotFound($"Stop with ID {stopId} not found");
         }
 
-        var result = new StopWithAssignmentsAndDivisionsDto(
+        var result = new StopWithEverythingDto(
             stop.Id,
             stop.Name,
             stop.RoomNr,
             stop.Description,
             stop.Divisions.Select(d => d.Id).ToArray(),
             stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
-            stop.StopGroupAssignments.Select(a => a.Order).ToArray()
+            stop.StopGroupAssignments.Select(a => a.Order).ToArray(),
+            stop.StudentAssignments.Select(sa => new StudentOfStopDto(sa.StudentId, sa.Status)).ToArray(),
+            stop.TeacherAssignments.Select(ta => ta.TeacherId).ToArray()
         );
 
         return Results.Ok(result);
@@ -176,7 +180,7 @@ public static class StopManagementEndpoints
     public static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto, bool? updateOrder = true)
     {
         var newDivisions = context.Divisions.Where(di => updateStopDto.DivisionIds.Contains(di.Id)).ToList();
-        var newStudents = updateStopDto.StudentsAssigned.Select(s => new StudentAssignment()
+        var newStudents = updateStopDto.StudentAssignments.Select(s => new StudentAssignment()
         {
             StudentId = s.EdufsUsername,
             Student = context.Students.Find(s.EdufsUsername),
@@ -184,7 +188,7 @@ public static class StopManagementEndpoints
             Stop = context.Stops.Find(updateStopDto.Id),
             Status = s.Status
         }).ToList();
-        var newTeachers = updateStopDto.TeachersAssigned.Select(t => new TeacherAssignment()
+        var newTeachers = updateStopDto.TeacherAssignments.Select(t => new TeacherAssignment()
         {
             TeacherId = t,
             Teacher = context.Teachers.Find(t),
@@ -239,7 +243,7 @@ public static class StopManagementEndpoints
     public static async Task<IResult> UpdateStopAsTeacher(TadeoTDbContext context,
         UpdateStopAsTeacherRequestDto updateStopDto)
     {
-        var newStudents = updateStopDto.StudentsAssigned.Select(s => new StudentAssignment()
+        var newStudents = updateStopDto.StudentAssignments.Select(s => new StudentAssignment()
         {
             StudentId = s.EdufsUsername,
             Student = context.Students.Find(s.EdufsUsername),
@@ -328,8 +332,8 @@ public static class StopManagementEndpoints
         string Description,
         string RoomNr,
         int[] DivisionIds,
-        StudentOfStopDto[] StudentsAssigned,
-        string[] TeachersAssigned,
+        StudentOfStopDto[] StudentAssignments,
+        string[] TeacherAssignments,
         int[] StopGroupIds
     );
     
@@ -338,12 +342,9 @@ public static class StopManagementEndpoints
         string Name,
         string Description,
         string RoomNr,
-        StudentOfStopDto[] StudentsAssigned
+        StudentOfStopDto[] StudentAssignments
     );
-    public record StudentOfStopDto(
-        string EdufsUsername,
-        Status Status
-    );
+
     
     public record CreateStopRequestDto(
         string Name,

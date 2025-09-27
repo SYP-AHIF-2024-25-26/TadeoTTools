@@ -47,6 +47,15 @@ public static class StopManagementApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
+            .RequireAuthorization(Setup.AdminPolicyName);
+        
+        group.MapPut("teacher/stops", StopManagementEndpoints.UpdateStopAsTeacher)
+            .AddEndpointFilter(StopManagementValidations.UpdateStopValidationAsync)
+            .WithName(nameof(StopManagementEndpoints.UpdateStopAsTeacher))
+            .WithDescription("Update the stops assigned to a teacher")
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
         group.MapDelete("api/stops/{stopId:int}", StopManagementEndpoints.DeleteStop)

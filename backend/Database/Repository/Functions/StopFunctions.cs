@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Database.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Database.Repository.Functions;
 
@@ -37,4 +38,21 @@ public record StopWithAssignmentsAndDivisionsDto(
     int[] DivisionIds,
     int[] StopGroupIds,
     int[] Orders
+);
+
+public record StopWithEverythingDto(
+    int Id,
+    string Name,
+    string RoomNr,
+    string Description,
+    int[] DivisionIds,
+    int[] StopGroupIds,
+    int[] Orders,
+    StudentOfStopDto[] StudentAssignments,
+    string[] TeacherAssignments
+);
+
+public record StudentOfStopDto(
+    string EdufsUsername,
+    Status Status
 );
