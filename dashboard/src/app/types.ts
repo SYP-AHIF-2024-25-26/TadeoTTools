@@ -1,5 +1,5 @@
 export type StudentAssignment = {
-  studentId: string;
+  edufsUsername: string;
   stopId: number;
   stopName: string;
   status: Status;
@@ -24,6 +24,7 @@ export type Stop = {
   stopGroupIds: number[];
   orders: number[];
   studentAssignments: StudentAssignmentOfStop[];
+  teacherAssignments: TeacherAssignment[];
 };
 
 export type Teacher = {
@@ -52,7 +53,7 @@ export enum Status {
 }
 
 export type StudentAssignmentOfStop = {
-  studentId: string;
+  edufsUsername: string;
   status: Status;
 }
 
@@ -64,7 +65,16 @@ export type StopWithoutOrders = {
   divisionIds: number[];
   stopGroupIds: number[];
   studentAssignments: StudentAssignmentOfStop[];
+  teacherAssignments: TeacherAssignment[];
 };
+
+export type StopAsTeacher = {
+  id: number;
+  name: string;
+  roomNr: string;
+  description: string;
+  studentAssignments: StudentAssignmentOfStop[];
+}
 
 export type StopGroup = {
   id: number;
