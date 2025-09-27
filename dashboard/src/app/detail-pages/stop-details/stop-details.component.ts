@@ -161,10 +161,12 @@ export class StopDetailsComponent implements OnInit {
   });
 
   async ngOnInit() {
-    try {
-      // Check if user is admin
-      const response = await this.loginService.performCall('is-admin');
-      this.isAdmin.set(response.includes('admin'));
+      try {
+        const response = await this.loginService.performCall('is-admin');
+        this.isAdmin.set(response.includes('admin'));
+      } catch (error) {
+        console.error('Not an admin');
+      }
 
       // Get stop ID from route parameters
       const params = await firstValueFrom(this.route.queryParams);
@@ -195,9 +197,7 @@ export class StopDetailsComponent implements OnInit {
           this.originalAssignments.set(s.edufsUsername, assignments);
         });
       }
-    } catch (error) {
-      this.errorMessage.set(`Error initializing component: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+
   }
 
   isInputValid() {
