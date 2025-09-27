@@ -182,7 +182,7 @@ export class StopDetailsComponent implements OnInit {
   });
 
   async ngOnInit() {
-    const response = await this.loginService.checkUserRole('is-admin');
+    const response = await this.loginService.checkUserRole('is-admin', 'admin');
     this.isAdmin.set(response);
 
     // Get stop ID from route parameters

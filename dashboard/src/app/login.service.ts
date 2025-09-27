@@ -12,9 +12,9 @@ export class LoginService {
   private response = signal<string | null>(null);
   showResponse = computed(() => this.response() !== null);
 
-  async checkUserRole(expectedRole: string): Promise<boolean> {
+  async checkUserRole(performCall: string, expectedRole: string): Promise<boolean> {
     try {
-      const roleResponse = await this.performCall(expectedRole);
+      const roleResponse = await this.performCall(performCall);
       if (!roleResponse) {
         return false;
       }
