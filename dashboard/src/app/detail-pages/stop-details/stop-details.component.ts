@@ -378,4 +378,14 @@ export class StopDetailsComponent implements OnInit {
   getStopGroupById(id: number) {
     return this.stopGroups().find(sg => sg.id === id);
   }
+
+  getStudentOtherAssignmentsCount(edufsUsername: string): number {
+    const assignments = this.students().find(s => s.edufsUsername === edufsUsername)?.studentAssignments
+      .filter(a => a.stopId !== this.stop().id);
+    return assignments ? assignments.length : 0;
+  }
+  
+  hasOtherAssignments(edufsUsername: string): boolean {
+    return this.getStudentOtherAssignmentsCount(edufsUsername) > 0;
+  }
 }
