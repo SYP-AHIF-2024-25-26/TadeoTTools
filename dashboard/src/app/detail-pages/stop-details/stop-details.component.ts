@@ -155,32 +155,49 @@ export class StopDetailsComponent implements OnInit {
 
   // Filtered students assigned to the stop
   filteredAssignedStudents = computed(() => {
-    const assignedStudents = this.stop().studentAssignments
-      ? this.stop().studentAssignments
-          .map(a => {
-            const student = this.students().find(s => s.edufsUsername === a.edufsUsername);
-            if (student) {
-              return {
-                ...student,
-                assignmentStatus: a.status
-              };
-            }
-            return undefined;
-          })
-          .filter((s): s is Student & { assignmentStatus: Status } => s !== undefined)
-      : [];
+    const assignedStudents = this.fetchAssignedStudents();
     return sortStudents(this.applyStudentFilters(assignedStudents, this.assignedStudentFilterText(), this.selectedAssignedClass()));
   });
 
   studentsNotInStop = computed(() => {
-    const wrongStudents = this.stop().studentAssignments
-      ? this.stop().studentAssignments
-          .map(a => this.students().find(s => s.edufsUsername === a.edufsUsername))
-          .filter((s): s is Student => s !== undefined)
-      : [];
-    let filteredStudents = this.students().filter((student) => !wrongStudents.includes(student));
-    return sortStudents(this.applyStudentFilters(filteredStudents, this.availableStudentFilterText(), this.selectedAvailableClass()));
+    const studentsInStop = this.fetchAssignedStudents();
+
+    const studentsNotInStop = this.students().filter(student => 
+      !studentsInStop.some(s => s.edufsUsername === student.edufsUsername)
+    );
+
+    const filteredStudents = studentsNotInStop.filter(student => {
+      if (student.studentAssignments && student.studentAssignments.length > 0) {
+        return !student.studentAssignments.some(assignment => assignment.status === Status.Accepted);
+      }
+      return true;
+    });
+
+    return sortStudents(
+      this.applyStudentFilters(
+        filteredStudents, 
+        this.availableStudentFilterText(), 
+        this.selectedAvailableClass()
+      )
+    );
   });
+
+  private fetchAssignedStudents() {
+    return this.stop().studentAssignments
+      ? this.stop().studentAssignments
+        .map(a => {
+          const student = this.students().find(s => s.edufsUsername === a.edufsUsername);
+          if (student) {
+            return {
+              ...student,
+              assignmentStatus: a.status
+            };
+          }
+          return undefined;
+        })
+        .filter((s): s is Student & { assignmentStatus: Status; } => s !== undefined)
+      : [];
+  }
 
   async ngOnInit() {
     this.isLoading.set(true);
