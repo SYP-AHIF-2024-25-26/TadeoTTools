@@ -249,7 +249,11 @@
                   <td>{{ student.edufsUsername }}</td>
                   <td>{{ student.firstName }} {{ student.lastName }}</td>
                   <td>{{ student.studentClass }}</td>
-                  <td>{{ student.studentAssignments[0].stopName }}</td>
+                  @if(student.studentAssignments.length === 0) {
+                    <td>--</td>
+                  } @else {
+                    <td>{{ student.studentAssignments[0].stopName }}</td>
+                  }
                   <!--<td>{{ student.department }}</td>-->
                   <td class="{{ getFusedStatusClass(student) }}">
                     {{ getFusedStatusText(student) }}
