@@ -13,6 +13,33 @@ public static class StopGroupManagementEndpoints
     {
         return Results.Ok(await StopGroupFunctions.GetPublicStopGroupsAsync(context));
     }
+    
+    public static async Task<IResult> GetGroupById(TadeoTDbContext context, [FromRoute] int groupId)
+    {
+        var group = await context.StopGroups
+            .Include(g => g.StopAssignments)
+            .FirstOrDefaultAsync(g => g.Id == groupId);
+        if (group == null)
+        {
+            return Results.NotFound($"StopGroup with {groupId} not found");
+        }
+
+        var stopIds = group.StopAssignments
+            .OrderBy(a => a.Order)
+            .Select(a => a.StopId)
+            .ToArray();
+
+        var result = new StopGroupFunctions.StopGroupWithStops(
+            group.Id,
+            group.Name,
+            group.Description,
+            group.Rank,
+            group.IsPublic,
+            stopIds
+        );
+
+        return Results.Ok(result);
+    }
 
     public static async Task<IResult> GetGroupsApi(TadeoTDbContext context)
     {

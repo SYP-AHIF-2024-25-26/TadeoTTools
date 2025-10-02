@@ -20,6 +20,7 @@ public class StopGroupFunctions
                    .ToArray()
            )).ToArrayAsync();
     }
+    
 
     public static async Task<StopGroupWithStopsPublic[]> GetPublicStopGroupsAsync(TadeoTDbContext context)
     {

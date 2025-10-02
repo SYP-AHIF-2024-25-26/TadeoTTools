@@ -1,71 +1,73 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BASE_URL } from './app.config';
-import { Student, StudentAssignment, Info } from './types';
+import { Student, StudentAssignment } from './types';
 import { firstValueFrom } from 'rxjs';
-import { InfoStore } from './store/info.store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StudentService {
-  httpClient = inject(HttpClient);
-  baseUrl = inject(BASE_URL);
-  private readonly infoStore = inject(InfoStore);
+  private httpClient = inject(HttpClient);
+  private baseUrl = inject(BASE_URL);
 
-  async getStudents(): Promise<Student[]> {
-    try {
-      return await firstValueFrom(this.httpClient.get<Student[]>(this.baseUrl + '/api/students'));
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to get students' });
-      throw error;
-    }
+  getStudents(): Promise<Student[]> {
+    return firstValueFrom(
+      this.httpClient.get<Student[]>(`${this.baseUrl}/api/students`)
+    );
   }
 
-  async updateStudent(student: Student): Promise<void> {
-    try {
-      await firstValueFrom(this.httpClient.put<void>(this.baseUrl + '/api/students/' + student.edufsUsername, student));
-      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully updated student' });
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to update student' });
-      throw error;
-    }
+  updateStudent(student: Student): Promise<void> {
+    return firstValueFrom(
+      this.httpClient.put<void>(
+        `${this.baseUrl}/api/students/${student.edufsUsername}`,
+        student
+      )
+    );
   }
 
-  async setAssignments(edufsUsername: string, assignments: StudentAssignment[]): Promise<void> {
-    try {
-      await firstValueFrom(this.httpClient.put<void>(this.baseUrl + '/api/students/' + edufsUsername + '/assignments', assignments));
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to set student assignments' });
-      throw error;
-    }
+  setAssignments(edufsUsername: string, assignments: StudentAssignment[]): Promise<void> {
+    return firstValueFrom(
+      this.httpClient.put<void>(
+        `${this.baseUrl}/api/students/${edufsUsername}/assignments`,
+        assignments
+      )
+    );
   }
 
-  async uploadStudentsCsv(file: File): Promise<void> {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
+  uploadStudentsCsv(file: File): Promise<void> {
+    const formData = new FormData();
+    formData.append('file', file);
 
-      await firstValueFrom(this.httpClient.post<void>(this.baseUrl + '/api/students/upload', formData));
-      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully uploaded students CSV' });
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to upload students CSV' });
-      throw error;
-    }
+    return firstValueFrom(
+      this.httpClient.post<void>(`${this.baseUrl}/api/students/upload`, formData)
+    );
   }
 
-  async deleteAllStudents(): Promise<void> {
-    try {
-      await firstValueFrom(this.httpClient.delete<void>(this.baseUrl + '/api/students'));
-      this.infoStore.addInfo({ id: 0, type: 'info', message: 'Successfully deleted students' });
-    } catch (error) {
-      this.infoStore.addInfo({ id: 0, type: 'error', message: 'Failed to delete students' });
-      throw error;
-    }
+  deleteAllStudents(): Promise<void> {
+    return firstValueFrom(
+      this.httpClient.delete<void>(`${this.baseUrl}/api/students`)
+    );
   }
-  async getStudentsDataFile(): Promise<Blob> {
-    return firstValueFrom(this.httpClient.get(this.baseUrl + '/api/students/csv', {
-      responseType: 'blob'
-    }));
+
+  getStudentsDataFile(): Promise<Blob> {
+    return firstValueFrom(
+      this.httpClient.get(`${this.baseUrl}/api/students/csv`, {
+        responseType: 'blob'
+      })
+    );
+  }
+
+  async setStopIdForAssignmentsOnNewStop(stopId: number) {
+    (await this.getStudents()).forEach((student) => {
+      student.studentAssignments.forEach((assignment) => {
+        if (assignment.stopId === -1) {
+          assignment.stopId = stopId;
+        }
+      });
+    });
+    (await this.getStudents()).forEach(async (student) => {
+      await this.updateStudent(student);
+    });
   }
 }
