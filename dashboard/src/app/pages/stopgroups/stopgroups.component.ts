@@ -31,6 +31,7 @@ export class StopGroupsComponent implements OnInit {
   stopGroupToRemoveFrom: StopGroup | undefined = undefined;
 
   showStopsForStopGroup = signal<StopsShownInStopGroup[]>([]);
+  showAssignedStops = signal<boolean>(false);
   showRemoveStopPopup = signal<boolean>(false);
   showRemoveGroupPopup = signal<boolean>(false);
   onlyPublicGroups = signal<boolean>(true);
@@ -40,8 +41,19 @@ export class StopGroupsComponent implements OnInit {
 
   divisionFilter = signal<number>(0);
 
-
-  filteredStops = computed(() => this.filterStopsByDivisionId(this.divisionFilter()));
+  filteredStops = computed(() => {
+    let stops = this.filterStopsByDivisionId(this.divisionFilter());
+    if (this.showAssignedStops()) {
+      return stops;
+    } else {
+      const assignedStopIds = new Set<number>();
+      this.stopGroups().forEach(group => {
+        group.stopIds.forEach(id => assignedStopIds.add(id));
+      });
+      stops = stops.filter(stop => !assignedStopIds.has(stop.id));
+    }
+    return stops;
+  });
 
   async ngOnInit() {
     await this.initialiseData();
