@@ -24,7 +24,7 @@ public static class TeacherManagementApi
             .WithDescription("Set assignments for a teacher")
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
         
 
         group.MapPost("api/teachers", TeacherManagementEndpoints.AddTeacher)

@@ -45,6 +45,28 @@ public static class StopManagementValidations
 
         return await next(context);
     }
+    public static async ValueTask<object?> UpdateStopAsTeacherValidationAsync(EndpointFilterInvocationContext context,
+        EndpointFilterDelegate next)
+    {
+        var updateStopDto = context.GetArgument<StopManagementEndpoints.UpdateStopAsTeacherRequestDto>(1);
+
+        if (updateStopDto.Name.Length == 50)
+        {
+            return Results.BadRequest("Name must be 50 characters or less.");
+        }
+
+        if (updateStopDto.Description.Length == 255)
+        {
+            return Results.BadRequest("Description must be 255 characters or less.");
+        }
+
+        if (updateStopDto.RoomNr.Length == 50)
+        {
+            return Results.BadRequest("RoomNr must be 50 characters or less.");
+        }
+
+        return await next(context);
+    }
 
     public static async ValueTask<object?> DeleteStopValidationAsync(EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
