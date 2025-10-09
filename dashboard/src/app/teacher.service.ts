@@ -35,37 +35,9 @@ export class TeacherService {
     );
   }
 
-  addStopToTeacher(edufsUsername: string, stopId: number) {
-    return firstValueFrom(
-      this.httpClient.put<void>(
-        `${this.baseUrl}/api/teachers/${edufsUsername}/assignments`,
-        [
-          {
-            stopId,
-            teacherId: edufsUsername
-          } as TeacherAssignment
-        ]
-      )
-    );
-  }
-
   updateTeacher(teacher: Teacher) {
     return firstValueFrom(
       this.httpClient.put<void>(`${this.baseUrl}/api/teachers`, teacher)
-    );
-  }
-
-  setAssignments(edufsUsername: string, assignments: number[]) {
-    const teacherAssignments: TeacherAssignment[] = assignments.map(stopId => ({
-      stopId,
-      teacherId: edufsUsername
-    }));
-
-    return firstValueFrom(
-      this.httpClient.put<void>(
-        `${this.baseUrl}/api/teachers/${edufsUsername}/assignments`,
-        teacherAssignments
-      )
     );
   }
 
@@ -76,21 +48,5 @@ export class TeacherService {
     return firstValueFrom(
       this.httpClient.post<void>(`${this.baseUrl}/api/teachers/upload`, formData)
     );
-  }
-  async getTeachersNotInStop(stopId: number): Promise<Teacher[]> {
-    const wrongTeachers = (await this.getTeachers()).filter((teacher) => {
-      if (teacher.assignedStops) {
-        return teacher.assignedStops.some((assignment) => assignment === stopId);
-      }
-      return false;
-    });
-    return (await this.getTeachers()).filter((teacher) => !wrongTeachers.includes(teacher));
-  }
-  async removeStopFromTeacher(edufsUsername: string, stopId: number) {
-    const teacher = (await this.getTeachers()).find((teacher) => teacher.edufsUsername === edufsUsername);
-    if (teacher) {
-      teacher.assignedStops = teacher.assignedStops.filter((assignment) => assignment !== stopId);
-      await this.updateTeacher(teacher);
-    }
   }
 }

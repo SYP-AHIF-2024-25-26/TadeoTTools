@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BASE_URL } from './app.config';
-import { Student, StudentAssignment } from './types';
+import { Student } from './types';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({
@@ -22,15 +22,6 @@ export class StudentService {
       this.httpClient.put<void>(
         `${this.baseUrl}/api/students/${student.edufsUsername}`,
         student
-      )
-    );
-  }
-
-  setAssignments(edufsUsername: string, assignments: StudentAssignment[]): Promise<void> {
-    return firstValueFrom(
-      this.httpClient.put<void>(
-        `${this.baseUrl}/api/students/${edufsUsername}/assignments`,
-        assignments
       )
     );
   }
