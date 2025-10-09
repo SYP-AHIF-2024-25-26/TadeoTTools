@@ -232,7 +232,6 @@
               <th>Name</th>
               <th>Class</th>
               <th>Stop</th>
-              <!--<th>Department</th> not needed because of given class-->
               <th>Assignment</th>
               <th>Action</th>
               <th>Delete</th>
@@ -254,7 +253,6 @@
                   } @else {
                     <td>{{ student.studentAssignments[0].stopName }}</td>
                   }
-                  <!--<td>{{ student.department }}</td>-->
                   <td class="{{ getFusedStatusClass(student) }}">
                     {{ getFusedStatusText(student) }}
                   </td>

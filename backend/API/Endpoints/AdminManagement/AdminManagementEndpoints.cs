@@ -7,7 +7,6 @@ namespace API.Endpoints.AdminManagement;
 
 public class AdminManagementEndpoints
 {
-
     public static async Task<IResult> AddAdmin(TadeoTDbContext context, string name)
     {
         var admin = new Admin { Id = name };

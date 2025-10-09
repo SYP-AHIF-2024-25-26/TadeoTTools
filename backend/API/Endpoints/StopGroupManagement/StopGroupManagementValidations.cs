@@ -10,12 +10,12 @@ public static class StopGroupManagementValidations
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
         var groupId = context.GetArgument<int>(2);
-        
+
         if (!await StopGroupFunctions.DoesStopGroupExistAsync(dbContext, groupId))
         {
             return Results.NotFound();
         }
-        
+
         return await next(context);
     }
 }

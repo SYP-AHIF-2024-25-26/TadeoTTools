@@ -38,10 +38,10 @@ public class Program
                 var csvFilePath = Path.Combine(importCsvPath, "TdoT_Stationsplanung_2025.csv");
                 await InitDb(csvFilePath, args);
             }
-        } else
+        }
+        else
         {
             await InitDb(null, args);
         }
     }
 }
-

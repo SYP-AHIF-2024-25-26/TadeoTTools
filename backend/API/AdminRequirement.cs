@@ -23,12 +23,14 @@ public class AdminAuthorizationHandler(TadeoTDbContext dbContext) : Authorizatio
         if (isAdmin)
         {
             context.Succeed(requirement);
-
-        } else
+        }
+        else
         {
             context.Fail(new AuthorizationFailureReason(this, "User does not have required role"));
         }
     }
 }
 
-public class AdminRequirement : IAuthorizationRequirement { }
+public class AdminRequirement : IAuthorizationRequirement
+{
+}

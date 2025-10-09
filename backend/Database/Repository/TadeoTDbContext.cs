@@ -13,11 +13,11 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<Student> Students { get; set; }
     public DbSet<Teacher> Teachers { get; set; }
     public DbSet<StudentAssignment> StudentAssignments { get; set; }
-    
+
     public DbSet<TeacherAssignment> TeacherAssignments { get; set; }
     public DbSet<FeedbackQuestion> FeedbackQuestions { get; set; }
     public DbSet<FeedbackQuestionAnswer> FeedbackQuestionAnswers { get; set; }
-    
+
     public DbSet<FeedbackOption> FeedbackOptions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -27,6 +27,5 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
             .WithOne(a => a.FeedbackQuestion)
             .HasForeignKey(a => a.FeedbackQuestionId)
             .OnDelete(DeleteBehavior.Cascade);
-        
     }
 }

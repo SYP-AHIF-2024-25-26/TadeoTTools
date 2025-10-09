@@ -11,8 +11,8 @@ public static class StudentManagementApi
             .WithName(nameof(StudentManagementEndpoints.GetAllStudents))
             .WithDescription("Get all students")
             .Produces<List<StudentFunctions.StudentDto>>();
-            //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
-        
+        //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+
         group.MapDelete("api/students", StudentManagementEndpoints.DeleteAllStudents)
             .WithName(nameof(StudentManagementEndpoints.DeleteAllStudents))
             .WithDescription("Delete all students")
@@ -41,14 +41,15 @@ public static class StudentManagementApi
 
         group.MapPost("api/students/upload", StudentManagementEndpoints.UploadCsvFile)
             .DisableAntiforgery();
-        
-        group.MapDelete("api/students/{studentId}/assignments/{stopId}", StudentManagementEndpoints.DeleteStudentAssignment)
+
+        group.MapDelete("api/students/{studentId}/assignments/{stopId:int}",
+                StudentManagementEndpoints.DeleteStudentAssignment)
             .WithName(nameof(StudentManagementEndpoints.DeleteStudentAssignment))
             .WithDescription("Delete a student assignment")
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
-        
+
         group.MapGet("api/students/csv", StudentManagementEndpoints.GetStudentsCsv)
             .WithName(nameof(StudentManagementEndpoints.GetStudentsCsv))
             .WithDescription("Get all students in a csv file")

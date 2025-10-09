@@ -29,14 +29,14 @@ public class StudentManagementEndpoints
                 StopId = rnd.Next(1, 41),
                 Status = (Status)rnd.Next(0, 3)
             }).ToListAsync();
-        
+
         var duplicateStudents = baseAssignments
             .Select(a => a.StudentId)
             .Distinct()
             .OrderBy(_ => rnd.Next())
             .Take((int)(context.Students.Count() * 0.08)) // 8% der Students
             .ToList();
-        
+
         var duplicateAssignments = new List<StudentAssignment>();
 
         foreach (var studentId in duplicateStudents)
@@ -52,6 +52,7 @@ public class StudentManagementEndpoints
                 });
             }
         }
+
         var allAssignments = baseAssignments.Concat(duplicateAssignments).ToList();
         await context.StudentAssignments.AddRangeAsync(allAssignments);
         await context.SaveChangesAsync();
@@ -91,7 +92,8 @@ public class StudentManagementEndpoints
         return Results.Ok("Student updated successfully");
     }
 
-    public static async Task<IResult> SetStudentAssignments(TadeoTDbContext context, [FromRoute] string id, StudentAssignment[] assignments)
+    public static async Task<IResult> SetStudentAssignments(TadeoTDbContext context, [FromRoute] string id,
+        StudentAssignment[] assignments)
     {
         var student = await StudentFunctions.GetStudentByEdufsUsername(context, id);
         if (student == null)
@@ -114,19 +116,22 @@ public class StudentManagementEndpoints
             using (var stream = new MemoryStream())
             {
                 await file.File.CopyToAsync(stream);
-                var csvData = Encoding.UTF8.GetString(stream.ToArray()); 
+                var csvData = Encoding.UTF8.GetString(stream.ToArray());
                 await StudentFunctions.ParseStudentsCsv(csvData, context);
             }
+
             return Results.Ok("File uploaded successfully");
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             return Results.BadRequest($"File upload failed: {e.Message}");
         }
-        
     }
-    
+
     public record UploadStudentCsvFileDto(IFormFile File);
-    public static async Task<IResult> DeleteStudentAssignment([FromRoute] string studentId, [FromRoute] int stopId, TadeoTDbContext context) 
+
+    public static async Task<IResult> DeleteStudentAssignment([FromRoute] string studentId, [FromRoute] int stopId,
+        TadeoTDbContext context)
     {
         var assignment = await context.StudentAssignments
             .FirstOrDefaultAsync(sa => sa.StudentId == studentId && sa.StopId == stopId);
@@ -148,7 +153,7 @@ public class StudentManagementEndpoints
         context.Students.RemoveRange(context.Students);
         await context.SaveChangesAsync();
     }
-    
+
     public static async Task<IResult> GetStudentsCsv(TadeoTDbContext context)
     {
         var students = await context.Students
@@ -157,12 +162,12 @@ public class StudentManagementEndpoints
             .OrderBy(s => s.StudentClass)
             .ThenBy(s => s.LastName)
             .ToListAsync();
-        
+
         var csvBuilder = new StringBuilder();
-    
+
         // Add headers
         csvBuilder.AppendLine("Vorname;Nachname;EdufsUsername;Klasse;Abteilung;Stop(s);Status");
-        
+
         // Add data rows
         foreach (var item in students)
         {
@@ -180,15 +185,16 @@ public class StudentManagementEndpoints
                 _ => item.StudentAssignments[0].Status.ToString()
             };
             var escapedStatus = Utils.EscapeCsvField(status);
-            csvBuilder.AppendLine($"{escapedFirstName};{escapedLastName};{escapedEdufsUsername};{escapedClass};{escapedDepartment};{escapedAssignments};{escapedStatus}");
+            csvBuilder.AppendLine(
+                $"{escapedFirstName};{escapedLastName};{escapedEdufsUsername};{escapedClass};{escapedDepartment};{escapedAssignments};{escapedStatus}");
         }
-    
+
         var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
-    
+
         return Results.File(
             fileContents: csvBytes,
             contentType: "text/csv",
             fileDownloadName: "students-export.csv"
         );
-    }    
+    }
 }

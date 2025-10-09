@@ -25,9 +25,9 @@ public class UserManagementEndpoints
 
         user.Department.Switch(department => data.Add($"department: {department.Name}"), _ => { });
 
-        string? role = user.IsStudent ? "Student" :
-                       user.IsTeacher ? "Teacher" :
-                       user.IsTestUser ? "Test User" : null;
+        var role = user.IsStudent ? "Student" :
+            user.IsTeacher ? "Teacher" :
+            user.IsTestUser ? "Test User" : null;
 
         if (role != null)
         {

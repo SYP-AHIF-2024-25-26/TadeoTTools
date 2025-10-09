@@ -45,6 +45,7 @@ public static class StopManagementValidations
 
         return await next(context);
     }
+
     public static async ValueTask<object?> UpdateStopAsTeacherValidationAsync(EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {

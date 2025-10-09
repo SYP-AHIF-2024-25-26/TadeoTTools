@@ -11,7 +11,7 @@ public static class TeacherManagementApi
             .WithName(nameof(TeacherManagementEndpoints.GetAllTeachers))
             .WithDescription("Get all teachers")
             .Produces<List<TeacherFunctions.TeacherWithStopsDto>>();
-        
+
         group.MapGet("api/teachers/{id}", TeacherManagementEndpoints.GetTeacherById)
             .WithName(nameof(TeacherManagementEndpoints.GetTeacherById))
             .WithDescription("Get a teacher by id")
@@ -25,7 +25,7 @@ public static class TeacherManagementApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
-        
+
 
         group.MapPost("api/teachers", TeacherManagementEndpoints.AddTeacher)
             .WithName(nameof(TeacherManagementEndpoints.AddTeacher))
@@ -33,14 +33,14 @@ public static class TeacherManagementApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
-        
+
         group.MapDelete("api/teachers/{id}", TeacherManagementEndpoints.DeleteTeacher)
             .WithName(nameof(TeacherManagementEndpoints.DeleteTeacher))
             .WithDescription("Delete a teacher")
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
-        
+
         group.MapPut("api/teachers", TeacherManagementEndpoints.UpdateTeacher)
             .WithName(nameof(TeacherManagementEndpoints.UpdateTeacher))
             .WithDescription("Update a teacher")

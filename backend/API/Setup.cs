@@ -11,27 +11,27 @@ internal static class Setup
     public const string CorsPolicyName = "AllowOrigins";
     public const string AdminPolicyName = "IsAdmin";
     public const string TeacherOrAdminPolicyName = "IsTeacherOrAdmin";
-    
+
     public static void AddLeoAuthentication(this IServiceCollection services)
     {
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.MetadataAddress
+                    = "https://auth.htl-leonding.ac.at/realms/htlleonding/.well-known/openid-configuration";
+                options.Authority = "https://auth.htl-leonding.ac.at/realms/htlleonding";
+                options.Audience = "htlleonding-service";
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.MetadataAddress
-                        = "https://auth.htl-leonding.ac.at/realms/htlleonding/.well-known/openid-configuration";
-                    options.Authority = "https://auth.htl-leonding.ac.at/realms/htlleonding";
-                    options.Audience = "htlleonding-service";
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        ValidateIssuer = true,
-                        // currently the audience is not set by KeyCloak for access_token - turn off if not using id_token (which you should do only for testing purposes)
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.FromMinutes(1)
-                    };
-                    options.RequireHttpsMetadata = false;
-                });
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    // currently the audience is not set by KeyCloak for access_token - turn off if not using id_token (which you should do only for testing purposes)
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(1)
+                };
+                options.RequireHttpsMetadata = false;
+            });
     }
 
     public static void AddSwaggerWithAuth(this IServiceCollection services)
@@ -75,13 +75,13 @@ internal static class Setup
     {
         services.AddAuthorizationBuilder()
             .AddPolicy(nameof(LeoUserRole.Student), policy => policy.Requirements
-                                              .Add(new LeoAuthRequirement(LeoUserRole.Student, true)))
+                .Add(new LeoAuthRequirement(LeoUserRole.Student, true)))
             .AddPolicy(nameof(LeoUserRole.Teacher), policy => policy.Requirements
-                                              .Add(new LeoAuthRequirement(LeoUserRole.Teacher, true)))
+                .Add(new LeoAuthRequirement(LeoUserRole.Teacher, true)))
             .AddPolicy(AdminPolicyName, policy => policy.Requirements
-                                              .Add(new AdminRequirement()))
+                .Add(new AdminRequirement()))
             .AddPolicy(TeacherOrAdminPolicyName, policy => policy.Requirements
-                                              .Add(new TeacherOrAdminRequirement()));
+                .Add(new TeacherOrAdminRequirement()));
         services.AddScoped<IAuthorizationHandler, TeacherOrAdminHandler>();
         services.AddScoped<IAuthorizationHandler, AdminAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, LeoAuthorizationHandler>();
