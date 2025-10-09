@@ -51,7 +51,6 @@
           <thead>
           <tr>
             <th></th>
-            <th>Username</th>
             <th>Name</th>
             <th>Class</th>
             <th>Department</th>
@@ -67,7 +66,6 @@
             @for (student of conflicts(); track $index) {
               <tr>
                 <th>{{ $index + 1 }}</th>
-                <td>{{ student.edufsUsername }}</td>
                 <td>{{ student.firstName }} {{ student.lastName }}</td>
                 <td>{{ student.studentClass }}</td>
                 <td>{{ student.department }}</td>
@@ -228,7 +226,6 @@
           <!-- head -->
           <thead>
             <tr>
-              <th>Username</th>
               <th>Name</th>
               <th>Class</th>
               <th>Stop</th>
@@ -245,7 +242,6 @@
             } @else {
               @for (student of fusedAssignments(); track $index) {
                 <tr>
-                  <td>{{ student.edufsUsername }}</td>
                   <td>{{ student.firstName }} {{ student.lastName }}</td>
                   <td>{{ student.studentClass }}</td>
                   @if(student.studentAssignments.length === 0) {

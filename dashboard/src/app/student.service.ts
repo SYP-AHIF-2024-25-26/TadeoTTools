@@ -26,15 +26,6 @@ export class StudentService {
     );
   }
 
-  setAssignments(edufsUsername: string, assignments: StudentAssignment[]): Promise<void> {
-    return firstValueFrom(
-      this.httpClient.put<void>(
-        `${this.baseUrl}/api/students/${edufsUsername}/assignments`,
-        assignments
-      )
-    );
-  }
-
   uploadStudentsCsv(file: File): Promise<void> {
     const formData = new FormData();
     formData.append('file', file);
