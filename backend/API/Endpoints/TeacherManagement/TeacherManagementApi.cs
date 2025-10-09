@@ -11,7 +11,7 @@ public static class TeacherManagementApi
             .WithName(nameof(TeacherManagementEndpoints.GetAllTeachers))
             .WithDescription("Get all teachers")
             .Produces<List<TeacherFunctions.TeacherWithStopsDto>>();
-        
+
         group.MapGet("api/teachers/{id}", TeacherManagementEndpoints.GetTeacherById)
             .AddEndpointFilter(TeacherManagementValidations.GetTeacherByIdValidationAsync)
             .WithName(nameof(TeacherManagementEndpoints.GetTeacherById))
@@ -27,7 +27,7 @@ public static class TeacherManagementApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
-        
+
         group.MapDelete("api/teachers/{id}", TeacherManagementEndpoints.DeleteTeacher)
             .AddEndpointFilter(TeacherManagementValidations.DeleteTeacherValidationAsync)
             .WithName(nameof(TeacherManagementEndpoints.DeleteTeacher))
@@ -35,7 +35,7 @@ public static class TeacherManagementApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
-        
+
         group.MapPut("api/teachers", TeacherManagementEndpoints.UpdateTeacher)
             .AddEndpointFilter(TeacherManagementValidations.UpdateTeacherValidationAsync)
             .WithName(nameof(TeacherManagementEndpoints.UpdateTeacher))

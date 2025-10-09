@@ -24,7 +24,8 @@ public class TadeoTDbContextFactory : IDesignTimeDbContextFactory<TadeoTDbContex
         var username = config["Database:User"];
         var password = config["Database:Password"];
 
-        Console.WriteLine($"Server={serverName};Port={serverPort};Database={databaseName};User={username};Password={password};");
+        Console.WriteLine(
+            $"Server={serverName};Port={serverPort};Database={databaseName};User={username};Password={password};");
         return $"Server={serverName};Port={serverPort};Database={databaseName};User={username};Password={password};";
     }
 

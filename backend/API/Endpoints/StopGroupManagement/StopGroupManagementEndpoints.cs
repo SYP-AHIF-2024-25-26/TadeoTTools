@@ -13,7 +13,7 @@ public static class StopGroupManagementEndpoints
     {
         return Results.Ok(await StopGroupFunctions.GetPublicStopGroupsAsync(context));
     }
-    
+
     public static async Task<IResult> GetGroupById(TadeoTDbContext context, [FromRoute] int groupId)
     {
         var group = await context.StopGroups
@@ -93,7 +93,8 @@ public static class StopGroupManagementEndpoints
         return Results.Ok();
     }
 
-    public static async Task<IResult> DeleteGroup(TadeoTDbContext context, StopGroupFunctions groups, [FromRoute] int groupId)
+    public static async Task<IResult> DeleteGroup(TadeoTDbContext context, StopGroupFunctions groups,
+        [FromRoute] int groupId)
     {
         var group = await context.StopGroups.FindAsync(groupId);
         context.StopGroups.Remove(group!);
@@ -101,7 +102,8 @@ public static class StopGroupManagementEndpoints
         return Results.Ok();
     }
 
-    public static async Task<IResult> UpdateOrder(TadeoTDbContext context, StopGroupFunctions groups, [FromBody] int[] order)
+    public static async Task<IResult> UpdateOrder(TadeoTDbContext context, StopGroupFunctions groups,
+        [FromBody] int[] order)
     {
         for (var index = 0; index < order.Length; index++)
         {
@@ -111,6 +113,7 @@ public static class StopGroupManagementEndpoints
             {
                 return Results.NotFound($"StopGroup {groupId} not found");
             }
+
             stopGroup.Rank = index;
         }
 
@@ -120,5 +123,6 @@ public static class StopGroupManagementEndpoints
     }
 
     public record CreateGroupRequestDto(string Name, string Description, bool IsPublic);
+
     public record UpdateGroupRequestDto(int Id, string Name, string Description, bool IsPublic, int[] StopIds);
 }

@@ -11,8 +11,8 @@ public static class StudentManagementApi
             .WithName(nameof(StudentManagementEndpoints.GetAllStudents))
             .WithDescription("Get all students")
             .Produces<List<StudentFunctions.StudentDto>>();
-            //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
-        
+        //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+
         group.MapDelete("api/students", StudentManagementEndpoints.DeleteAllStudents)
             .WithName(nameof(StudentManagementEndpoints.DeleteAllStudents))
             .WithDescription("Delete all students")

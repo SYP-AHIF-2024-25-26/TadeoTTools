@@ -13,7 +13,7 @@ public class TeacherFunctions
                 t.FirstName,
                 t.LastName,
                 t.AssignedStops.Select(a => a.StopId).ToArray()
-                )
+            )
         ).ToListAsync();
     }
 
@@ -24,11 +24,11 @@ public class TeacherFunctions
             .Where(t => t.EdufsUsername == edufsUsername)
             .FirstOrDefaultAsync();
     }
-    
+
     public static async Task ParseTeacherCsv(string csvData, TadeoTDbContext context)
     {
         var lines = csvData.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
-        
+
         if (lines.Length > 0)
         {
             var header = lines[0].Split(';');
@@ -55,5 +55,6 @@ public class TeacherFunctions
             throw new ArgumentException("CSV file is empty");
         }
     }
+
     public record TeacherWithStopsDto(string EdufsUsername, string FirstName, string LastName, int[] AssignedStops);
 }

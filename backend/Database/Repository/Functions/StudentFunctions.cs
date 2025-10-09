@@ -15,6 +15,7 @@ public class StudentFunctions
     );
 
     public record StudentAssignmentDto(
+        int Id,
         string StudentId,
         int StopId,
         string StopName,
@@ -32,6 +33,7 @@ public class StudentFunctions
                 student.StudentClass,
                 student.Department,
                 student.StudentAssignments.Select(assignment => new StudentAssignmentDto(
+                    assignment.Id,
                     assignment.StudentId,
                     assignment.StopId,
                     assignment.Stop!.Name,

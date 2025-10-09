@@ -1,4 +1,5 @@
 export type StudentAssignment = {
+  id?: number;
   edufsUsername: string;
   stopId: number;
   stopName: string;

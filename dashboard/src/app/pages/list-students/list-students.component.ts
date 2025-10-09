@@ -8,9 +8,7 @@ import {
 import {FormsModule} from '@angular/forms';
 import {Status, Stop, Student, StudentAssignment} from '../../types';
 import {CommonModule} from '@angular/common';
-import {ChipComponent} from '../../standard-components/chip/chip.component';
 import { sortStudents } from '../../utilfunctions';
-import { TemplatePortal } from '@angular/cdk/portal';
 import { StopService } from '../../stop.service';
 import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
@@ -60,7 +58,18 @@ export class ListStudentsComponent {
 
   async ngOnInit() {
     this.stops.set(await this.stopService.getStops());
-    this.students.set(await this.studentService.getStudents());
+    const students = await this.studentService.getStudents();
+    
+    // Sort assignments by stopId for each student
+    students.forEach(student => {
+      if (student.studentAssignments) {
+        student.studentAssignments.sort((a, b) => a.stopId - b.stopId);
+      } else {
+        student.studentAssignments = [];
+      }
+    });
+    
+    this.students.set(students);
   }
 
   // Get unique stop names for filter dropdowns
@@ -306,7 +315,8 @@ export class ListStudentsComponent {
     }
 
     // Get all selected stops
-    const selectedStops = this.stops().filter(stop => student.selectedStops?.has(stop.id));
+    const selectedStops = this.stops()
+      .filter(stop => student.selectedStops?.has(stop.id));
 
     // Create assignments for all selected stops
     for (const stop of selectedStops) {
