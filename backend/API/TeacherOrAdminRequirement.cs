@@ -17,7 +17,7 @@ public class TeacherOrAdminHandler(TadeoTDbContext dbContext) : AuthorizationHan
         if (info is LeoUser leoUser)
         {
             var role = leoUser.Role;
-            if (role >= LeoUserRole.Student)
+            if (role >= LeoUserRole.Teacher)
             {
                 context.Succeed(requirement);
                 return;
