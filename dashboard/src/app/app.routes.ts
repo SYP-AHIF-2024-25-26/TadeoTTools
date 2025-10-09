@@ -12,19 +12,21 @@ import { ListStudentsComponent } from './pages/list-students/list-students.compo
 import { FeedbackConfiguratorComponent } from './pages/feedback-configurator/feedback-configurator.component';
 import { AdminComponent } from './pages/overview/admin.component';
 import { authGuard } from './auth.guard';
+import { adminGuard } from './guards/admin.guard';
+import { adminOrTeacherGuard } from './guards/admin-or-teacher.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'stopgroups', component: StopGroupsComponent, canMatch: [authGuard] },
-  { path: 'stops', component: StopsComponent, canMatch: [authGuard] },
-  { path: 'divisions', component: DivisionsListComponent, canMatch: [authGuard] },
-  { path: 'division', component: DivisionDetailsComponent, canMatch: [authGuard] },
-  { path: 'stopgroup', component: StopgroupDetailsComponent, canMatch: [authGuard] },
-  { path: 'stop', component: StopDetailsComponent, canMatch: [authGuard] },
+  { path: 'stopgroups', component: StopGroupsComponent, canMatch: [authGuard], canActivate: [adminGuard] },
+  { path: 'stops', component: StopsComponent, canMatch: [authGuard], canActivate: [adminGuard] },
+  { path: 'divisions', component: DivisionsListComponent, canMatch: [authGuard], canActivate: [adminGuard] },
+  { path: 'division', component: DivisionDetailsComponent, canMatch: [authGuard], canActivate: [adminGuard] },
+  { path: 'stopgroup', component: StopgroupDetailsComponent, canMatch: [authGuard], canActivate: [adminGuard] },
+  { path: 'stop', component: StopDetailsComponent, canMatch: [authGuard], canActivate: [adminOrTeacherGuard] },
   { path: 'student', component: StudentComponent, canMatch: [authGuard] },
-  { path: 'teacher', component: TeacherComponent, canMatch: [authGuard] },
-  { path: 'admin', component: AdminComponent, canMatch: [authGuard] },
-  { path: 'students', component: ListStudentsComponent, canMatch: [authGuard] },
-  { path: 'feedback', component: FeedbackConfiguratorComponent, canMatch: [authGuard] },
+  { path: 'teacher', component: TeacherComponent, canMatch: [authGuard], canActivate: [adminOrTeacherGuard] },
+  { path: 'admin', component: AdminComponent, canMatch: [authGuard], canActivate: [adminGuard] },
+  { path: 'students', component: ListStudentsComponent, canMatch: [authGuard], canActivate: [adminGuard] },
+  { path: 'feedback', component: FeedbackConfiguratorComponent, canMatch: [authGuard], canActivate: [adminGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];
