@@ -56,11 +56,24 @@ public static class StopManagementEndpoints
                     return Results.BadRequest("Username not found");
 
                 var studentAssignments = await context.StudentAssignments
-                    .Where(sa => sa.Student!.EdufsUsername == username)
-                    .Select(sa =>
-                        new CorrelatingStopsDto(sa.Stop!.Name, sa.Status, sa.Stop.Description, sa.Stop.RoomNr))
+                    .Where(sa => sa.Student != null && sa.Student.EdufsUsername == username)
+                    .Select(sa => new CorrelatingStopsDto(
+                        sa.Stop!.Name,
+                        sa.Status,
+                        sa.Stop.Description,
+                        sa.Stop.RoomNr,
+                        sa.Stop.StudentAssignments
+                            .Where(otherSa => otherSa.Student != null && otherSa.Student.EdufsUsername != username && otherSa.Status != Status.DECLINED)
+                            .Select(otherSa => new OtherStudentOfStopDto(
+                                otherSa.Student!.LastName,
+                                otherSa.Student.FirstName,
+                                otherSa.Student.StudentClass,
+                                otherSa.Student.Department
+                            ))
+                            .ToList()
+                    ))
                     .ToListAsync();
-
+                
                 return Results.Ok(studentAssignments);
             },
             _ => Task.FromResult(Results.BadRequest("User information not found"))
@@ -461,6 +474,14 @@ public static class StopManagementEndpoints
         string Name,
         Status Status,
         string Description,
-        string RoomNr
+        string RoomNr,
+        List<OtherStudentOfStopDto> OtherStudents
+    );
+
+    public record OtherStudentOfStopDto(
+        string LastName,
+        string FirstName,
+        string StudentClass,
+        string Department
     );
 }

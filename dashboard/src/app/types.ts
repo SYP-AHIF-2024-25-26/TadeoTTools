@@ -45,7 +45,16 @@ export type StopOfStudent = {
   status: Status;
   description: string;
   roomNr: string;
+  otherStudents: OtherStudentsOfStop[];
 };
+
+export type OtherStudentsOfStop = {
+  lastName: string;
+  firstName: string;
+  studentClass: string;
+  department: string;
+  status: Status; // maybe?
+}
 
 export enum Status {
   Pending,
