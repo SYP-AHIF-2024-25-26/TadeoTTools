@@ -8,7 +8,7 @@ import {
 import {FormsModule} from '@angular/forms';
 import {Status, Stop, Student, StudentAssignment} from '../../types';
 import {CommonModule} from '@angular/common';
-import { sortStudents } from '../../utilfunctions';
+import { sortStudents, downloadFile } from '../../utilfunctions';
 import { StopService } from '../../stop.service';
 import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
@@ -217,17 +217,35 @@ export class ListStudentsComponent {
       s.studentAssignments[0].status = Status.Accepted;
       await this.studentService.updateStudent(s);
     }));
+    await this.refreshStudents();
   }
 
 
   async deleteAssignment(student: Student, index: number) {
     student.studentAssignments.splice(index, 1);
-    return this.studentService.updateStudent(student);
+    await this.studentService.updateStudent(student);
+    await this.refreshStudents();
   }
 
   async changeAssignmentStatus(student: Student, index: number, status: Status) {
     student.studentAssignments[index].status = status;
     await this.studentService.updateStudent(student);
+    await this.refreshStudents();
+  }
+
+  async refreshStudents() {
+    const students = await this.studentService.getStudents();
+    
+    // Sort assignments by stopId for each student
+    students.forEach(student => {
+      if (student.studentAssignments) {
+        student.studentAssignments.sort((a, b) => a.stopId - b.stopId);
+      } else {
+        student.studentAssignments = [];
+      }
+    });
+    
+    this.students.set(students);
   }
 
   async approveSingleAssignment(student: Student): Promise<void> {
@@ -333,6 +351,7 @@ export class ListStudentsComponent {
     await this.studentService.updateStudent(student);
     student.showStops = false;
     student.selectedStops?.clear();
+    await this.refreshStudents();
   }
 
   private overlayRef: OverlayRef | null = null;
@@ -387,5 +406,20 @@ export class ListStudentsComponent {
       this.overlayRef = null;
     }
     this.popupStudent = null;
+  }
+
+  exportFusedStudentsCSV(): void {
+    const students = this.fusedAssignments();
+    
+    let csvContent = 'Class;Lastname;Firstname;Status\n';
+    
+    students.forEach(student => {
+      const status = this.getFusedStatusText(student);
+      csvContent += `${student.studentClass};${student.lastName};${student.firstName};${status}\n`;
+    });
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const timestamp = new Date().toISOString().split('T')[0];
+    downloadFile(blob, `students_export_${timestamp}.csv`);
   }
 }
