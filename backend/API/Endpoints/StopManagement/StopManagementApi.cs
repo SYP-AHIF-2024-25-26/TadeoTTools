@@ -72,6 +72,13 @@ public static class StopManagementApi
             .Produces(StatusCodes.Status206PartialContent)
             .Produces(StatusCodes.Status416RangeNotSatisfiable)
             .RequireAuthorization(Setup.AdminPolicyName);
+        
+        group.MapGet("api/stops/{stopId:int}/csv", StopManagementEndpoints.GetStopCsv)
+            .WithName(nameof(StopManagementEndpoints.GetStopCsv))
+            .WithDescription("Get a stop in a csv file")
+            .Produces(StatusCodes.Status206PartialContent)
+            .Produces(StatusCodes.Status416RangeNotSatisfiable)
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
         group.MapGet("api/stops/{stopId:int}", StopManagementEndpoints.GetStopById)
             .WithName(nameof(StopManagementEndpoints.GetStopById))
