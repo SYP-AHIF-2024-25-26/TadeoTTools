@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, computed, EventEmitter, Input, Output, signal} from '@angular/core';
 import {StudentWithUI} from "../../pages/list-students/list-students.component";
 import {Status, Stop} from "../../types";
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-stops-popup',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './stops-popup.component.html'
 })
 export class StopsPopupComponent {
@@ -14,6 +15,18 @@ export class StopsPopupComponent {
   @Output() cancel = new EventEmitter<void>();
   @Output() apply = new EventEmitter<StudentWithUI>();
   @Output() stopToggle = new EventEmitter<{ student: StudentWithUI, stop: Stop, checked: boolean }>();
+
+  searchTerm = signal<string>('');
+
+  filteredStops = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.allStops;
+    }
+    return this.allStops.filter(stop => 
+      stop.name.toLowerCase().includes(term)
+    );
+  });
 
   protected readonly Status = Status;
 
