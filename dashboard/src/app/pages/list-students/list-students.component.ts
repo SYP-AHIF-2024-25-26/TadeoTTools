@@ -8,7 +8,7 @@ import {
 import {FormsModule} from '@angular/forms';
 import {Status, Stop, Student, StudentAssignment} from '../../types';
 import {CommonModule} from '@angular/common';
-import { sortStudents } from '../../utilfunctions';
+import { sortStudents, downloadFile } from '../../utilfunctions';
 import { StopService } from '../../stop.service';
 import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
@@ -387,5 +387,20 @@ export class ListStudentsComponent {
       this.overlayRef = null;
     }
     this.popupStudent = null;
+  }
+
+  exportFusedStudentsCSV(): void {
+    const students = this.fusedAssignments();
+    
+    let csvContent = 'Class;Lastname;Firstname;Status\n';
+    
+    students.forEach(student => {
+      const status = this.getFusedStatusText(student);
+      csvContent += `${student.studentClass};${student.lastName};${student.firstName};${status}\n`;
+    });
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const timestamp = new Date().toISOString().split('T')[0];
+    downloadFile(blob, `students_export_${timestamp}.csv`);
   }
 }
