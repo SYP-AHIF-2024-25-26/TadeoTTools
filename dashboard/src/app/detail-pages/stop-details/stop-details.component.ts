@@ -240,7 +240,7 @@ export class StopDetailsComponent implements OnInit {
       downloadFile(blob, 'students_of_stop_data.csv');
     } catch (error) {
       console.error('Failed to download file:', error);
-      alert('Failed to download students of stop data');
+      alert('No students found for this Stop');
     }
   }
 
