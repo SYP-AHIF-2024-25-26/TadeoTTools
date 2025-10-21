@@ -401,7 +401,7 @@ public static class StopManagementEndpoints
         var students = await context.Students
             .Include(s => s.StudentAssignments)
             .ThenInclude(studentAssignment => studentAssignment.Stop)
-            .Where(s => s.StudentAssignments.Any(sa => sa.StopId == stopId && sa.Status == Status.ACCEPTED || sa.Status == Status.PENDING))
+            .Where(s => s.StudentAssignments.Any(sa => sa.StopId == stopId && (sa.Status == Status.ACCEPTED || sa.Status == Status.PENDING)))
             .OrderBy(s => s.StudentClass)
             .ThenBy(s => s.LastName)
             .ToListAsync();
