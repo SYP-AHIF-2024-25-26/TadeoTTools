@@ -12,12 +12,6 @@ public static class FeedbackManagementApi
             .WithDescription("Get all feedback questions")
             .Produces<List<GetFeedbackQuestionDto>>();
 
-        group.MapGet("get-answers/{id:int}", FeedbackManagementEndpoints.GetAnswersOfQuestion)
-            .WithName(nameof(FeedbackManagementEndpoints.GetAnswersOfQuestion))
-            .WithDescription("Get all answers of a question")
-            .Produces<List<GetFeedbackAnswerDto>>()
-            .RequireAuthorization(Setup.AdminPolicyName);
-
         group.MapPost("add-feedbacks", FeedbackManagementEndpoints.CreateFeedback)
             .WithName(nameof(FeedbackManagementEndpoints.CreateFeedback))
             .WithDescription("Create a new feedback")
