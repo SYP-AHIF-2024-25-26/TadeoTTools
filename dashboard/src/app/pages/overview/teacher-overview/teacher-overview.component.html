@@ -3,7 +3,7 @@
 
   <!-- Add new teacher form -->
   <div class="w-full max-w-4xl">
-    <div class="my-4 flex flex-wrap gap-4 bg-base-100 rounded-lg shadow-lg p-6">
+    <div class="my-4 flex flex-wrap gap-4 bg-base-100 rounded-lg shadow-lg p-6 justify-center">
       <input
         class="input flex-1 min-w-[200px] text-lg rounded-lg px-4 py-3 bg-white dark:bg-background-800 shadow focus:shadow-lg focus:bg-background-50 transition-all outline-none"
         type="text"
@@ -22,12 +22,14 @@
         [(ngModel)]="newTeacher().lastName"
         placeholder="Last Name"
       />
-      <button
-        (click)="addTeacher()"
-        class="btn btn-primary px-6 py-3 text-lg rounded-lg shadow-lg hover:scale-105 transition-transform"
-      >
-        Add Teacher
-      </button>
+      <div class="w-full flex justify-center">
+        <button
+          (click)="addTeacher()"
+          class="btn btn-primary px-6 py-3 text-lg rounded-lg shadow-lg hover:scale-105 transition-transform"
+        >
+          Add Teacher
+        </button>
+      </div>
     </div>
   </div>
 
@@ -59,7 +61,7 @@
   </div>
 
   <!-- Teachers table -->
-  <div class="mt-4 w-full max-w-4xl">
+  <div class="hidden md:block mt-4 w-full max-w-4xl">
     <div class="overflow-x-auto rounded-lg shadow-lg bg-base-100">
       <div class="max-h-[60vh] overflow-y-auto">
         <table class="w-full border-separate border-spacing-0">
@@ -165,4 +167,73 @@
       </div>
     </div>
   </div>
+
+  <!-- Mobile teacher cards -->
+  <div class="md:hidden mt-4 w-full max-w-4xl space-y-4">
+    @for (teacher of filteredTeachers(); track teacher.edufsUsername) {
+      <div class="card bg-white dark:bg-background-800 shadow-lg rounded-xl border border-base-200">
+        <div class="card-body p-4">
+          @if (editingTeacher()?.edufsUsername === teacher.edufsUsername) {
+            <!-- Edit Mode -->
+            <div class="space-y-4">
+              <div>
+                <label for="edit-username" class="text-xs font-semibold text-text-600 dark:text-text-400">Username</label>
+                <input id="edit-username" type="text" class="input input-bordered w-full mt-1 bg-base-200 dark:bg-background-700 cursor-not-allowed" [(ngModel)]="editingTeacher()!.edufsUsername" readonly />
+              </div>
+              <div>
+                <label for="edit-firstName" class="text-xs font-semibold text-text-600 dark:text-text-400">First Name</label>
+                <input id="edit-firstName" type="text" class="input input-bordered w-full mt-1" [(ngModel)]="editingTeacher()!.firstName" />
+              </div>
+              <div>
+                <label for="edit-lastName" class="text-xs font-semibold text-text-600 dark:text-text-400">Last Name</label>
+                <input id="edit-lastName" type="text" class="input input-bordered w-full mt-1" [(ngModel)]="editingTeacher()!.lastName" />
+              </div>
+              <div class="flex items-center gap-2 pt-2">
+                <span class="text-xs font-semibold text-text-600 dark:text-text-400">Assigned Stops:</span>
+                <span class="text-sm px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">{{editingTeacher()!.assignedStops.length}} stops</span>
+              </div>
+            </div>
+            <div class="card-actions justify-end mt-4">
+              <button (click)="cancelEdit()" class="btn btn-ghost">Cancel</button>
+              <button (click)="saveEdit()" class="btn btn-success">Save</button>
+            </div>
+          } @else {
+            <!-- View Mode -->
+            <div class="flex justify-between items-start">
+              <div>
+                <h2 class="card-title text-lg font-bold">{{ teacher.firstName }} {{ teacher.lastName }}</h2>
+                <p class="text-sm text-text-500">{{ teacher.edufsUsername }}</p>
+              </div>
+              <span class="text-sm px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">{{ teacher.assignedStops.length }} stops</span>
+            </div>
+            <div class="card-actions justify-end mt-4">
+              <button (click)="startEdit(teacher)" class="btn btn-ghost btn-sm" title="Edit">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path>
+                </svg>
+                Edit
+              </button>
+              <button (click)="deleteTeacher(teacher.edufsUsername)" class="btn btn-error btn-sm" title="Delete">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m10 0H5"></path>
+                </svg>
+                Delete
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    }
+    @if (filteredTeachers().length === 0) {
+      <div class="text-center py-10 text-text-500">
+        <div class="flex flex-col items-center gap-2">
+          <svg class="w-8 h-8 text-text-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          No teachers found
+        </div>
+      </div>
+    }
+  </div>
+
 </div>
