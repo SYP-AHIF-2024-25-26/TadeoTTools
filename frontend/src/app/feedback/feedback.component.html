@@ -2,13 +2,13 @@
 <div class="flex flex-col h-screen overflow-y-scroll">
   <app-header [showWelcomeText]="false"/>
   <!-- Main Content -->
-  <div class="flex-1 bg-gray-50 overflow-auto flex flex-col items-center  p-4">
+  <div class="flex-1 bg-gray-50 overflow-auto flex flex-col items-center mb-20 p-4">
 
     @if (!feedbackAlreadySubmitted() && !isSubmitted()) {
       <!-- Feedback Form -->
-      <div class="w-full mt-6 max-w-md shadow-lg border-0 bg-white rounded-lg overflow-hidden">
+      <div class="w-full mt-6 max-w-md shadow-lg border-0 bg-white rounded-lg overflow-hidden flex flex-col max-h-[75vh]">
         <!-- Progress Header -->
-        <div class="p-6 pb-2">
+        <div class="p-6 pb-2 flex-shrink-0">
           <div class="flex justify-between items-center mb-2">
             <span class="text-sm font-medium text-gray-500">Frage {{ currentQuestionIndex() + 1 }} von {{ questions().length }}</span>
             <span class="text-sm font-medium text-orange-500">{{ progressPercentage() }}%</span>
@@ -21,100 +21,99 @@
           </div>
         </div>
 
-        <!-- Question Content -->
-        <div class="p-6 pt-4">
+        <!-- Question Content - Scrollable Area -->
+        <div class="p-6 pt-4 flex-1 overflow-y-auto">
           <h3 class="text-xl font-bold mb-6 text-gray-800">
             {{ currentQuestion().question }}
           </h3>
 
-          <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()">
-            <!-- Text Input Question -->
-            @if (currentQuestion().type === 'text') {
-              <input
-                type="text"
-                formControlName="answer"
-                [placeholder]="currentQuestion().placeholder || 'Enter your answer'"
-                class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                autofocus
-              />
-            }
+          <!-- Text Input Question -->
+          @if (currentQuestion().type === 'text') {
+            <input
+              type="text"
+              [value]="currentAnswer()"
+              (input)="updateTextAnswer($any($event.target).value)"
+              [placeholder]="currentQuestion().placeholder || 'Enter your answer'"
+              class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              autofocus
+            />
+          }
 
-            <!-- Multiple Choice Question -->
-            @if (currentQuestion().type === 'choice') {
-              <div class="space-y-3">
-                @for (option of currentQuestion().options; track option) {
+          <!-- Multiple Choice Question -->
+          @if (currentQuestion().type === 'choice') {
+            <div class="space-y-3">
+              @for (option of currentQuestion().options; track option) {
+                <div
+                  class="flex items-center"
+                >
                   <div
-                    class="flex items-center"
+                    (click)="selectOption(option)"
+                    class="w-full flex items-center p-3 border rounded-lg cursor-pointer transition-colors"
+                    [class.bg-orange-50]="currentAnswer() === option"
+                    [class.border-orange-300]="currentAnswer() === option"
+                    [class.border-gray-200]="currentAnswer() !== option"
+                  >
+                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center mr-3"
+                         [class.border-orange-500]="currentAnswer() === option"
+                         [class.border-gray-300]="currentAnswer() !== option">
+                      @if (currentAnswer() === option) {
+                        <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                      }
+                    </div>
+                    <span>{{ option }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Rating Question -->
+          @if (currentQuestion().type === 'rating') {
+            <div class="mb-4">
+              <div class="flex justify-between items-center">
+                @for (rating of getRatingRange(); track rating; let i = $index) {
+                  <div
+                    (click)="selectRating(rating)"
+                    class="flex flex-col items-center cursor-pointer group"
                   >
                     <div
-                      (click)="selectOption(option)"
-                      class="w-full flex items-center p-3 border rounded-lg cursor-pointer transition-colors"
-                      [class.bg-orange-50]="feedbackForm.get('answer')?.value === option"
-                      [class.border-orange-300]="feedbackForm.get('answer')?.value === option"
-                      [class.border-gray-200]="feedbackForm.get('answer')?.value !== option"
+                      class="w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-colors"
+                      [class.bg-orange-500]="currentAnswer() === rating.toString()"
+                      [class.text-white]="currentAnswer() === rating.toString()"
+                      [class.bg-gray-100]="currentAnswer() !== rating.toString()"
+                      [class.hover:bg-orange-100]="currentAnswer() !== rating.toString()"
                     >
-                      <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center mr-3"
-                           [class.border-orange-500]="feedbackForm.get('answer')?.value === option"
-                           [class.border-gray-300]="feedbackForm.get('answer')?.value !== option">
-                        @if (feedbackForm.get('answer')?.value === option) {
-                          <div class="w-3 h-3 rounded-full bg-orange-500"></div>
-                        }
-                      </div>
-                      <span>{{ option }}</span>
+                      {{ rating }}
                     </div>
+                    <span
+                      class="text-xs text-center transition-colors"
+                      [class.text-orange-500]="currentAnswer() === rating.toString()"
+                      [class.text-gray-500]="currentAnswer() !== rating.toString()"
+                      [class.group-hover:text-orange-400]="currentAnswer() !== rating.toString()"
+                    >
+                  {{ getRatingLabel(rating) }}
+                </span>
                   </div>
+
+                  <!-- Divider between ratings -->
+                  @if (i < getRatingRange().length - 1) {
+                    <div class="flex-1 h-px bg-gray-200 self-center"></div>
+                  }
                 }
               </div>
-            }
+            </div>
+          }
 
-            <!-- Rating Question -->
-            @if (currentQuestion().type === 'rating') {
-              <div class="mb-4">
-                <div class="flex justify-between items-center">
-                  @for (rating of getRatingRange(); track rating; let i = $index) {
-                    <div
-                      (click)="selectRating(rating)"
-                      class="flex flex-col items-center cursor-pointer group"
-                    >
-                      <div
-                        class="w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-colors"
-                        [class.bg-orange-500]="feedbackForm.get('answer')?.value === rating.toString()"
-                        [class.text-white]="feedbackForm.get('answer')?.value === rating.toString()"
-                        [class.bg-gray-100]="feedbackForm.get('answer')?.value !== rating.toString()"
-                        [class.hover:bg-orange-100]="feedbackForm.get('answer')?.value !== rating.toString()"
-                      >
-                        {{ rating }}
-                      </div>
-                      <span
-                        class="text-xs text-center transition-colors"
-                        [class.text-orange-500]="feedbackForm.get('answer')?.value === rating.toString()"
-                        [class.text-gray-500]="feedbackForm.get('answer')?.value !== rating.toString()"
-                        [class.group-hover:text-orange-400]="feedbackForm.get('answer')?.value !== rating.toString()"
-                      >
-                    {{ getRatingLabel(rating) }}
-                  </span>
-                    </div>
-
-                    <!-- Divider between ratings -->
-                    @if (i < getRatingRange().length - 1) {
-                      <div class="flex-1 h-px bg-gray-200 self-center"></div>
-                    }
-                  }
-                </div>
-              </div>
-            }
-
-            <!-- Error message for required questions -->
-            @if (showError()) {
-              <div class="mt-2 text-red-500 text-sm">
-                {{ currentQuestion().required ? 'Diese Frage muss beantwortet werden' : '' }}
-              </div>
-            }
-          </form>
+          <!-- Error message for required questions -->
+          @if (showError()) {
+            <div class="mt-2 text-red-500 text-sm">
+              {{ currentQuestion().required ? 'Diese Frage muss beantwortet werden' : '' }}
+            </div>
+          }
         </div>
 
-        <!-- Form Footer -->
-        <div class="px-6 py-4 flex justify-between">
+        <!-- Form Footer - Fixed at bottom -->
+        <div class="px-6 py-4 flex justify-between flex-shrink-0 border-t border-gray-100">
           <button
             type="button"
             (click)="goToPrevious()"
@@ -176,4 +175,3 @@
     </div>
   </div>
 </div>
-

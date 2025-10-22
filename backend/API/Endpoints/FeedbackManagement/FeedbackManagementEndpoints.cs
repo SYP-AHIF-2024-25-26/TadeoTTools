@@ -11,8 +11,9 @@ public static class FeedbackManagementEndpoints
     public static async Task<IResult> GetFeedbackQuestions(TadeoTDbContext context)
     {
         var questions = await context.FeedbackQuestions
-            .Select(f => new GetFeedbackQuestionDto(f.Id, f.Question, f.Type.ToString(), f.Required, f.Placeholder,
-                f.Options != null ? f.Options.Select(o => o.Value).ToArray() : null, f.MinRating, f.MaxRating,
+            .Select(f => new GetFeedbackQuestionDto(
+                f.Id, f.Question, f.Type.ToString(), f.Required, f.Placeholder,
+                f.Options != null ? f.Options.OrderBy(o => o.Id).Select(o => o.Value).ToArray() : null, f.MinRating, f.MaxRating,
                 f.RatingLabels, f.Order))
             .ToListAsync();
 
@@ -20,12 +21,7 @@ public static class FeedbackManagementEndpoints
 
         return Results.Ok(sortedQuestions);
     }
-
-
-    public static async Task<IResult> GetAnswersOfQuestion([FromRoute] int id, TadeoTDbContext context)
-        => Results.Ok(await context.FeedbackQuestionAnswers.Where(f => f.FeedbackQuestionId == id)
-            .Select(f => new GetFeedbackAnswerDto(f.Answer)).ToListAsync());
-
+    
     public static async Task<IResult> CreateFeedback(CreateFeedbackRequestDto[] feedbackRequestDtos,
         TadeoTDbContext context)
     {
@@ -117,17 +113,29 @@ public static class FeedbackManagementEndpoints
 
     private static async Task UpdateFeedbackQuestion(UpsertFeedbackQuestionDto dto, TadeoTDbContext context)
     {
-        var existingQuestion = await context.FeedbackQuestions.FindAsync(dto.Id!.Value);
+        var existingQuestion = await context.FeedbackQuestions
+            .Include(q => q.Options)
+            .FirstOrDefaultAsync(q => q.Id == dto.Id!.Value);
+        
         if (existingQuestion != null)
         {
             existingQuestion.Question = dto.Question;
             existingQuestion.Type = dto.Type.ToLower();
             existingQuestion.Required = dto.Required;
             existingQuestion.Placeholder = dto.Placeholder;
-            existingQuestion.Options = dto.Options?.Select(o => new FeedbackOption
+            
+            // Clear existing options to prevent duplicates
+            existingQuestion.Options?.Clear();
+            
+            // Add new options
+            if (dto.Options != null)
             {
-                Value = o
-            }).ToList();
+                existingQuestion.Options = dto.Options.Select(o => new FeedbackOption
+                {
+                    Value = o
+                }).ToList();
+            }
+            
             existingQuestion.MinRating = dto.MinRating;
             existingQuestion.MaxRating = dto.MaxRating;
             existingQuestion.RatingLabels = dto.RatingLabels;
