@@ -59,9 +59,16 @@ export class StopService {
     );
   }
 
-  getStopDataFile(): Promise<Blob> {
+  getStopsDataFile(): Promise<Blob> {
     return firstValueFrom(
       this.httpClient.get(`${this.baseUrl}/api/stops/csv`, {
+        responseType: 'blob'
+      })
+    );
+  }
+  getStopDataFile(id: number): Promise<Blob> {
+    return firstValueFrom(
+      this.httpClient.get(`${this.baseUrl}/api/stops/${id}/csv`, {
         responseType: 'blob'
       })
     );

@@ -23,6 +23,7 @@ public class TeacherOrAdminHandler(TadeoTDbContext dbContext) : AuthorizationHan
                 return;
             }
         }
+
         var userId = user.FindFirst("preferred_username")?.Value;
         if (userId != null)
         {
@@ -38,5 +39,6 @@ public class TeacherOrAdminHandler(TadeoTDbContext dbContext) : AuthorizationHan
     }
 }
 
-public class TeacherOrAdminRequirement : IAuthorizationRequirement { }
-
+public class TeacherOrAdminRequirement : IAuthorizationRequirement
+{
+}

@@ -24,7 +24,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<TadeoTDbContext>(options =>
     options.UseMySQL(connectionString!)); // ServiceLifetime Transient
 
-builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddProblemDetails();
 
 builder.Services.AddScoped<DivisionFunctions>();
@@ -43,7 +44,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(Setup.CorsPolicyName,
         policyBuilder =>
         {
-            policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:4300", "http://localhost:51566", "http://localhost:5005");
+            policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:4300", "http://localhost:51566",
+                "http://localhost:5005");
             policyBuilder.AllowAnyHeader();
             policyBuilder.AllowAnyMethod();
             policyBuilder.AllowCredentials();
@@ -90,7 +92,8 @@ try
     {
         app.Logger.LogInformation("Importing data ...");
         await CsvImporter.ImportCsvFileAsync("TdoT_Stationsplanung_2025.csv", context);
-    } else
+    }
+    else
     {
         app.Logger.LogInformation("Database already contains data.");
     }
@@ -108,7 +111,8 @@ try
         // Teachers.csv just for testing purposes right now
         await CsvImporter.ImportTeachersAsync("Teachers.csv", context);
     }
-} catch (Exception e)
+}
+catch (Exception e)
 {
     app.Logger.LogError(e.Message);
 }

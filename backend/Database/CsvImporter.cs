@@ -5,14 +5,15 @@ namespace Database;
 
 public class CsvImporter
 {
-
-    public static List<Division> StaticDivisions { get; set; } = [
+    public static List<Division> StaticDivisions { get; set; } =
+    [
         new Division { Name = "HIF", Color = "#004f9f" },
         new Division { Name = "HITM", Color = "#6cb6dd" },
         new Division { Name = "HEL", Color = "#be1522" },
         new Division { Name = "HBG", Color = "#f18800" },
         new Division { Name = "ALL", Color = "#7ebf74" },
-        ];
+    ];
+
     public static async Task ImportCsvFileAsync(string path, TadeoTDbContext context)
     {
         var lines = await File.ReadAllLinesAsync(path);
@@ -60,7 +61,8 @@ public class CsvImporter
                         .SelectMany(d => StaticDivisions.Where(sd => sd.Name == d))
                         .ToList()
                 };
-                stop.StopGroupAssignments.ForEach(sga => {
+                stop.StopGroupAssignments.ForEach(sga =>
+                {
                     sga.Stop = stop;
                     sga.StopGroup!.StopAssignments.Add(sga);
                 });
@@ -72,16 +74,13 @@ public class CsvImporter
                 .SelectMany(s => s.StopGroupAssignments.Where(sga => sga.StopGroup == sg))
                 .ToList();
             int rank = 1;
-            sg.StopAssignments.ForEach(sa =>
-            {
-                sa.Order = rank++;
-            });
+            sg.StopAssignments.ForEach(sa => { sa.Order = rank++; });
         });
         await context.StopGroups.AddRangeAsync(stopGroups);
         await context.Stops.AddRangeAsync(stops);
         await context.SaveChangesAsync();
     }
-    
+
     public static async Task ImportStudentsAsync(string path, TadeoTDbContext context)
     {
         var lines = await File.ReadAllLinesAsync(path);
@@ -96,7 +95,7 @@ public class CsvImporter
                 StudentClass = cols[3],
                 Department = cols[4],
             });
-        
+
         await context.Students.AddRangeAsync(students);
         await context.SaveChangesAsync();
     }

@@ -19,7 +19,7 @@ public static class StopManagementApi
             .WithDescription("Get all stops assigned to a specific teacher")
             .Produces<List<StopWithAssignmentsAndDivisionsDto>>()
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
-            
+
         group.MapGet("stops", StopManagementEndpoints.GetPublicStops)
             .WithName(nameof(StopManagementEndpoints.GetPublicStops))
             .WithDescription("Get all stops that are publicly available to see")
@@ -48,7 +48,7 @@ public static class StopManagementApi
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
-        
+
         group.MapPut("teacher/stops", StopManagementEndpoints.UpdateStopAsTeacher)
             .AddEndpointFilter(StopManagementValidations.UpdateStopAsTeacherValidationAsync)
             .WithName(nameof(StopManagementEndpoints.UpdateStopAsTeacher))
@@ -73,13 +73,20 @@ public static class StopManagementApi
             .Produces(StatusCodes.Status416RangeNotSatisfiable)
             .RequireAuthorization(Setup.AdminPolicyName);
         
+        group.MapGet("api/stops/{stopId:int}/csv", StopManagementEndpoints.GetStopCsv)
+            .WithName(nameof(StopManagementEndpoints.GetStopCsv))
+            .WithDescription("Get a stop in a csv file")
+            .Produces(StatusCodes.Status206PartialContent)
+            .Produces(StatusCodes.Status416RangeNotSatisfiable)
+            .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+
         group.MapGet("api/stops/{stopId:int}", StopManagementEndpoints.GetStopById)
             .WithName(nameof(StopManagementEndpoints.GetStopById))
             .WithDescription("Get a stop by its id")
             .Produces<StopWithAssignmentsAndDivisionsDto>()
             .Produces(StatusCodes.Status404NotFound)
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName); // fix later to admin only
-        
+
         group.MapGet("api/stops/by-division", StopManagementEndpoints.GetStopsByDivisionId)
             .WithName(nameof(StopManagementEndpoints.GetStopsByDivisionId))
             .WithDescription("Get all stops filtered by divisionId query parameter")

@@ -17,7 +17,7 @@ public static class StopGroupManagementApi
             .WithDescription("Get all stop groups")
             .Produces<List<StopGroup>>()
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName); // fix later to admin only
-        
+
         group.MapGet("api/groups/{groupId:int}", StopGroupManagementEndpoints.GetGroupById)
             .WithName(nameof(StopGroupManagementEndpoints.GetGroupById))
             .WithDescription("Get a stop group by its id")

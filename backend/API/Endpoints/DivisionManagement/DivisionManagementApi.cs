@@ -12,7 +12,7 @@ public static class DivisionManagementApi
             .WithName(nameof(DivisionManagementEndpoints.GetDivisions))
             .WithDescription("Get all divisions without images")
             .Produces<List<DivisionFunctions.DivisionWithoutImageDto>>();
-        
+
         group.MapPost("api/divisions", DivisionManagementEndpoints.CreateDivision)
             .AddEndpointFilter(DivisionManagementValidations.CreateDivisionValidationAsync)
             .WithName(nameof(DivisionManagementEndpoints.CreateDivision))
@@ -63,7 +63,7 @@ public static class DivisionManagementApi
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status200OK)
             .RequireAuthorization(Setup.AdminPolicyName);
-        
+
         group.MapGet("api/divisions/csv", DivisionManagementEndpoints.GetDivisionsCsv)
             .WithName(nameof(DivisionManagementEndpoints.GetDivisionsCsv))
             .WithDescription("Get all divisions in a csv file")

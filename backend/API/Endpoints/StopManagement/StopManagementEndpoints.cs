@@ -56,11 +56,24 @@ public static class StopManagementEndpoints
                     return Results.BadRequest("Username not found");
 
                 var studentAssignments = await context.StudentAssignments
-                    .Where(sa => sa.Student!.EdufsUsername == username)
-                    .Select(sa =>
-                        new CorrelatingStopsDto(sa.Stop!.Name, sa.Status, sa.Stop.Description, sa.Stop.RoomNr))
+                    .Where(sa => sa.Student != null && sa.Student.EdufsUsername == username)
+                    .Select(sa => new CorrelatingStopsDto(
+                        sa.Stop!.Name,
+                        sa.Status,
+                        sa.Stop.Description,
+                        sa.Stop.RoomNr,
+                        sa.Stop.StudentAssignments
+                            .Where(otherSa => otherSa.Student != null && otherSa.Student.EdufsUsername != username && otherSa.Status != Status.DECLINED)
+                            .Select(otherSa => new OtherStudentOfStopDto(
+                                otherSa.Student!.LastName,
+                                otherSa.Student.FirstName,
+                                otherSa.Student.StudentClass,
+                                otherSa.Student.Department
+                            ))
+                            .ToList()
+                    ))
                     .ToListAsync();
-
+                
                 return Results.Ok(studentAssignments);
             },
             _ => Task.FromResult(Results.BadRequest("User information not found"))
@@ -351,15 +364,11 @@ public static class StopManagementEndpoints
             .Include(stop => stop.StudentAssignments)
             .OrderBy(stop => stop.Name)
             .ToListAsync();
-
-        // Create CSV content
+        
         var csvBuilder = new StringBuilder();
-
-        // Add headers
         csvBuilder.AppendLine(
             "Name;Description;RoomNr;Teacher;StudentsRequested;StudentsAssigned;StopGroups;Divisions");
 
-        // Add data rows
         foreach (var item in stops)
         {
             var escapedName = Utils.EscapeCsvField(item.Name);
@@ -384,6 +393,42 @@ public static class StopManagementEndpoints
             fileContents: csvBytes,
             contentType: "text/csv",
             fileDownloadName: "stops-export.csv"
+        );
+    }
+
+    public static async Task<IResult> GetStopCsv(TadeoTDbContext context, [FromRoute] int stopId)
+    {
+        var students = await context.Students
+            .Include(s => s.StudentAssignments)
+            .ThenInclude(studentAssignment => studentAssignment.Stop)
+            .Where(s => s.StudentAssignments.Any(sa => sa.StopId == stopId && (sa.Status == Status.ACCEPTED || sa.Status == Status.PENDING)))
+            .OrderBy(s => s.StudentClass)
+            .ThenBy(s => s.LastName)
+            .ToListAsync();
+        
+        if (students.Count == 0)
+        {
+            return Results.NotFound($"No students found for stop with ID {stopId}");
+        }
+        var csvBuilder = new StringBuilder();
+        csvBuilder.AppendLine("Class;Lastname;Firstname;Status");
+        foreach (var student in students)
+        {
+            var escapedClass = Utils.EscapeCsvField(student.StudentClass);
+            var escapedLastname = Utils.EscapeCsvField(student.LastName);
+            var escapedFirstname = Utils.EscapeCsvField(student.FirstName);
+            var escapedStatus = Utils.EscapeCsvField(student.StudentAssignments
+                .First(sa => sa.StopId == stopId && sa.Status is Status.ACCEPTED or Status.PENDING)
+                .Status
+                .ToString());
+            csvBuilder.AppendLine($"{escapedClass};{escapedLastname};{escapedFirstname};{escapedStatus}");
+        }
+        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+        
+        return Results.File(
+            fileContents: csvBytes,
+            contentType: "text/csv",
+            fileDownloadName: "stop-export.csv"
         );
     }
 
@@ -429,6 +474,14 @@ public static class StopManagementEndpoints
         string Name,
         Status Status,
         string Description,
-        string RoomNr
+        string RoomNr,
+        List<OtherStudentOfStopDto> OtherStudents
+    );
+
+    public record OtherStudentOfStopDto(
+        string LastName,
+        string FirstName,
+        string StudentClass,
+        string Department
     );
 }

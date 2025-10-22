@@ -5,6 +5,7 @@ import {FeedbackService} from "../../../feedback.service";
 import { StopGroupService } from '../../../stopgroup.service';
 import { StopService } from '../../../stop.service';
 import { DivisionService } from '../../../division.service';
+import { downloadFile } from '../../../utilfunctions';
 
 @Component({
   selector: 'app-data-page',
@@ -68,7 +69,7 @@ export class DataPageComponent {
   async downloadQuestionAnswers() {
     try {
       const blob = await this.feedbackService.getFeedbackQuestionAnswersFile();
-      this.downloadFile(blob, 'feedback_answers.csv');
+      downloadFile(blob, 'feedback_answers.csv');
     } catch (error) {
       console.error('Failed to download file:', error);
       alert('Failed to download feedback answers');
@@ -78,46 +79,31 @@ export class DataPageComponent {
   async downloadStudentsData() {
     try {
       const blob = await this.studentService.getStudentsDataFile();
-      this.downloadFile(blob, 'students_data.csv');
+      downloadFile(blob, 'students_data.csv');
     } catch (error) {
       console.error('Failed to download file:', error);
       alert('Failed to download students data');
     }
   }
 
-  async downloadStopData() {
+  async downloadStopsData() {
     try {
-      const blob = await this.stopService.getStopDataFile();
-      this.downloadFile(blob, 'stop_data.csv');
+      const blob = await this.stopService.getStopsDataFile();
+      downloadFile(blob, 'stops_data.csv');
     } catch (error) {
       console.error('Failed to download file:', error);
-      alert('Failed to download stop data');
+      alert('Failed to download stops data');
     }
   }
-
-
 
   async downloadDivisionData() {
     try {
       const blob = await this.divisionService.getDivisionDataFile();
-      this.downloadFile(blob, 'division_data.csv');
+      downloadFile(blob, 'division_data.csv');
     } catch (error) {
       console.error('Failed to download file:', error);
       alert('Failed to download division data');
     }
   }
 
-  private downloadFile(blob: Blob, filename: string) {
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-
-    document.body.appendChild(a);
-    a.click();
-
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-  }
 }

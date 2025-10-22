@@ -3,7 +3,7 @@ import { StopService } from '../../stop.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Division, Status, Stop, StopGroup, Student, StudentAssignment, Teacher } from '../../types';
-import { isValid } from '../../utilfunctions';
+import { downloadFile, isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location, NgClass } from '@angular/common';
 import { LoginService } from '../../login.service';
@@ -231,6 +231,16 @@ export class StopDetailsComponent implements OnInit {
       console.error(error);
     } finally {
       this.isLoading.set(false);
+    }
+  }
+
+  async downloadStudentsOfStopData() {
+    try {
+      const blob = await this.stopService.getStopDataFile(this.stop().id);
+      downloadFile(blob, 'students_of_stop_data.csv');
+    } catch (error) {
+      console.error('Failed to download file:', error);
+      alert('No students found for this Stop');
     }
   }
 

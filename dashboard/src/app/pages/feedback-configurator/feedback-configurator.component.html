@@ -30,13 +30,13 @@
       </div>
       <div class="mt-6 bg-background-100 text-text-950 rounded-lg p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400">
         <h2 class="text-xl font-semibold mb-4">Feedback Form Configuration</h2>
-        <div class="flex items-center space-x-4 text-text-900">
+        <form [formGroup]="configForm" class="flex items-center space-x-4 text-text-900">
           <div class="flex-1">
             <label for="formTitle" class="block text-sm font-medium mb-1">Form Title</label>
             <input
               type="text"
               id="formTitle"
-              [ngModel]="formTitle()" (ngModelChange)="formTitle.set($event)"
+              formControlName="title"
               class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
               placeholder="Enter form title"
             >
@@ -46,12 +46,12 @@
             <input
               type="text"
               id="formSubtitle"
-              [ngModel]="formSubtitle()" (ngModelChange)="formSubtitle.set($event)"
+              formControlName="subtitle"
               class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
               placeholder="Enter form subtitle"
             >
           </div>
-        </div>
+        </form>
       </div>
     </header>
 
@@ -68,8 +68,8 @@
           <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
             <header class="w-full max-w-md mx-auto flex flex-col items-center mb-8">
               <h2 class="text-3xl font-bold text-center bg-gradient-to-r from-red-700 to-orange-500 bg-clip-text text-transparent">
-                {{ formTitle() || 'Willkommen am' }}<br />
-                {{ formSubtitle() || 'Tag der offenen Tür!' }}
+                {{ formTitle() }}<br />
+                {{ formSubtitle() }}
               </h2>
             </header>
 
@@ -98,7 +98,8 @@
                 @if (currentPreviewQuestion()?.type === 'text') {
                   <input
                     type="text"
-                    [ngModel]="previewAnswer()" (ngModelChange)="previewAnswer.set($event)"
+                    [value]="currentPreviewAnswer()"
+                    (input)="updatePreviewAnswer($any($event.target).value)"
                     [placeholder]="currentPreviewQuestion()?.placeholder || 'Enter your answer'"
                     class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-400"
                   >
@@ -112,14 +113,14 @@
                         <div
                           (click)="selectPreviewOption(option)"
                           class="w-full flex items-center p-3 border rounded-lg cursor-pointer transition-colors"
-                          [class.bg-orange-50]="previewAnswer() === option"
-                          [class.border-orange-300]="previewAnswer() === option"
-                          [class.border-gray-200]="previewAnswer() !== option"
+                          [class.bg-orange-50]="currentPreviewAnswer() === option"
+                          [class.border-orange-300]="currentPreviewAnswer() === option"
+                          [class.border-gray-200]="currentPreviewAnswer() !== option"
                         >
                           <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center mr-3"
-                               [class.border-orange-500]="previewAnswer() === option"
-                               [class.border-gray-300]="previewAnswer() !== option">
-                            @if (previewAnswer() === option) {
+                               [class.border-orange-500]="currentPreviewAnswer() === option"
+                               [class.border-gray-300]="currentPreviewAnswer() !== option">
+                            @if (currentPreviewAnswer() === option) {
                               <div class="w-3 h-3 rounded-full bg-orange-500"></div>
                             }
                           </div>
@@ -141,18 +142,18 @@
                         >
                           <div
                             class="w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-colors"
-                            [class.bg-orange-500]="previewAnswer() === rating.toString()"
-                            [class.text-white]="previewAnswer() === rating.toString()"
-                            [class.bg-gray-100]="previewAnswer() !== rating.toString()"
-                            [class.hover:bg-orange-100]="previewAnswer() !== rating.toString()"
+                            [class.bg-orange-500]="currentPreviewAnswer() === rating.toString()"
+                            [class.text-white]="currentPreviewAnswer() === rating.toString()"
+                            [class.bg-gray-100]="currentPreviewAnswer() !== rating.toString()"
+                            [class.hover:bg-orange-100]="currentPreviewAnswer() !== rating.toString()"
                           >
                             {{ rating }}
                           </div>
                           <span
                             class="text-xs text-center transition-colors"
-                            [class.text-orange-500]="previewAnswer() === rating.toString()"
-                            [class.text-gray-500]="previewAnswer() !== rating.toString()"
-                            [class.group-hover:text-orange-400]="previewAnswer() !== rating.toString()"
+                            [class.text-orange-500]="currentPreviewAnswer() === rating.toString()"
+                            [class.text-gray-500]="currentPreviewAnswer() !== rating.toString()"
+                            [class.group-hover:text-orange-400]="currentPreviewAnswer() !== rating.toString()"
                           >
                             {{ getPreviewRatingLabel(rating) }}
                           </span>
@@ -302,9 +303,10 @@
 
     <!-- Question Editor Modal -->
     @if (showQuestionEditor()) {
-      <div class="fixed inset-0 bg-black bg-opacity-50 text-text-950 flex items-center justify-center z-50">
-        <div class="bg-background-100 rounded-lg shadow-xl w-full max-w-2xl p-6 mx-4">
-          <div class="flex justify-between items-center mb-4">
+      <div class="fixed inset-0 bg-black bg-opacity-50 text-text-950 flex items-center justify-center z-50 p-4">
+        <div class="bg-background-100 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+          <!-- Fixed Header -->
+          <div class="flex justify-between items-center p-6 pb-4 border-b border-background-200">
             <h3 class="text-xl font-semibold text-text-950">
               {{ editingIndex() === -1 ? 'Add New Question' : 'Edit Question' }}
             </h3>
@@ -315,152 +317,164 @@
             </button>
           </div>
 
-          <form [formGroup]="questionForm" (ngSubmit)="saveQuestion()">
-            <div class="mb-4">
-              <label for="question" class="block text-sm font-medium text-text-950 mb-1">Question Text</label>
-              <input
-                type="text"
-                id="question"
-                formControlName="question"
-                class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
-                placeholder="Enter your question"
-              >
-              @if (questionForm.get('question')?.invalid && questionForm.get('question')?.touched) {
-                <div class="text-red-500 text-sm mt-1">
-                  Question text is required
+          <!-- Scrollable Content -->
+          <div class="overflow-y-auto flex-1 p-6">
+            <form [formGroup]="questionForm" (ngSubmit)="saveQuestion()" id="questionEditorForm">
+              <div class="mb-4">
+                <label for="question" class="block text-sm font-medium text-text-950 mb-1">Question Text</label>
+                <input
+                  type="text"
+                  id="question"
+                  formControlName="question"
+                  class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+                  placeholder="Enter your question"
+                >
+                @if (questionForm.get('question')?.invalid && questionForm.get('question')?.touched) {
+                  <div class="text-red-500 text-sm mt-1">
+                    Question text is required
+                  </div>
+                }
+              </div>
+
+              <div class="mb-4">
+                <label for="type" class="block text-sm font-medium text-text-950 bg-background-100 mb-1">Question Type</label>
+                <select
+                  id="type"
+                  formControlName="type"
+                  class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+                >
+                  <option value="text">Text Input</option>
+                  <option value="choice">Multiple Choice</option>
+                  <option value="rating">Rating</option>
+                </select>
+              </div>
+
+              <!-- Options for Multiple Choice -->
+              @if (questionForm.get('type')?.value === 'choice') {
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-text-900 mb-1">Answer Options</label>
+                  <div formArrayName="options" class="space-y-2">
+                    @for (control of optionsArray.controls; track control; let i = $index) {
+                      <div class="flex items-center">
+                        <input
+                          [formControlName]="i"
+                          type="text"
+                          class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+                          [class.border-red-500]="hasDuplicateOption(i)"
+                          [class.bg-red-50]="hasDuplicateOption(i)"
+                          placeholder="Option {{ i + 1 }}"
+                        >
+                        @if (optionsArray.controls.length > 1) {
+                          <button
+                            type="button"
+                            (click)="removeOption(i); $event.stopPropagation()"
+                            class="ml-2 text-gray-400 hover:text-red-500 flex-shrink-0"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        }
+                      </div>
+                      @if (hasDuplicateOption(i)) {
+                        <div class="text-red-500 text-xs mt-1">
+                          This option name already exists. Please use a unique name.
+                        </div>
+                      }
+                    }
+                  </div>
+                  <button
+                    type="button"
+                    (click)="addOption()"
+                    class="mt-2 px-3 py-1 bg-background-300 hover:bg-background-400 rounded-md text-text-900 text-sm flex items-center"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Option
+                  </button>
                 </div>
               }
-            </div>
 
-            <div class="mb-4">
-              <label for="type" class="block text-sm font-medium text-text-950 bg-background-100 mb-1">Question Type</label>
-              <select
-                id="type"
-                formControlName="type"
-                class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
-              >
-                <option value="text">Text Input</option>
-                <option value="choice">Multiple Choice</option>
-                <option value="rating">Rating</option>
-              </select>
-            </div>
-
-            <!-- Options for Multiple Choice -->
-            @if (questionForm.get('type')?.value === 'choice') {
-              <div class="mb-4">
-                <label class="block text-sm font-medium text-text-900 mb-1">Answer Options</label>
-                <div formArrayName="options" class="space-y-2">
-                  @for (option of optionsArray.controls; track $index; let i = $index) {
-                    <div class="flex items-center">
+              <!-- Settings for Rating -->
+              @if (questionForm.get('type')?.value === 'rating') {
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-text-950 mb-1">Rating Scale</label>
+                  <div class="flex items-center space-x-4">
+                    <div class="flex-1">
+                      <label for="minRating" class="block text-xs text-text-900 mb-1">Minimum</label>
                       <input
-                        [formControlName]="i"
-                        type="text"
+                        type="number"
+                        id="minRating"
+                        formControlName="minRating"
+                        min="0"
+                        max="10"
                         class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
-                        placeholder="Option {{ i + 1 }}"
                       >
-                      @if (optionsArray.controls.length > 1) {
-                        <button
-                          type="button"
-                          (click)="removeOption(i)"
-                          class="ml-2 text-gray-400 hover:text-red-500"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      }
                     </div>
-                  }
+                    <div class="flex-1">
+                      <label for="maxRating" class="block text-xs text-text-900 mb-1">Maximum</label>
+                      <input
+                        type="number"
+                        id="maxRating"
+                        formControlName="maxRating"
+                        min="1"
+                        max="10"
+                        class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+                      >
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <label for="ratingLabels" class="block text-xs text-text-900 mb-1">Labels (comma separated, e.g. "Poor, Average, Excellent")</label>
+                    <input
+                      type="text"
+                      id="ratingLabels"
+                      formControlName="ratingLabels"
+                      class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+                      placeholder="Poor, Average, Excellent"
+                    >
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  (click)="addOption()"
-                  class="mt-2 px-3 py-1 bg-background-300 hover:bg-background-400 rounded-md text-text-900 text-sm flex items-center"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Add Option
-                </button>
-              </div>
-            }
+              }
 
-            <!-- Settings for Rating -->
-            @if (questionForm.get('type')?.value === 'rating') {
               <div class="mb-4">
-                <label class="block text-sm font-medium text-text-950 mb-1">Rating Scale</label>
-                <div class="flex items-center space-x-4">
-                  <div class="flex-1">
-                    <label for="minRating" class="block text-xs text-text-900 mb-1">Minimum</label>
-                    <input
-                      type="number"
-                      id="minRating"
-                      formControlName="minRating"
-                      min="0"
-                      max="10"
-                      class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
-                    >
-                  </div>
-                  <div class="flex-1">
-                    <label for="maxRating" class="block text-xs text-text-900 mb-1">Maximum</label>
-                    <input
-                      type="number"
-                      id="maxRating"
-                      formControlName="maxRating"
-                      min="1"
-                      max="10"
-                      class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
-                    >
-                  </div>
-                </div>
-                <div class="mt-2">
-                  <label for="ratingLabels" class="block text-xs text-text-900 mb-1">Labels (comma separated, e.g. "Poor, Average, Excellent")</label>
-                  <input
-                    type="text"
-                    id="ratingLabels"
-                    formControlName="ratingLabels"
-                    class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
-                    placeholder="Poor, Average, Excellent"
-                  >
-                </div>
+                <label for="placeholder" class="block text-sm font-medium mb-1">Answer Placeholder</label>
+                <input
+                  type="text"
+                  id="placeholder"
+                  formControlName="placeholder"
+                  class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+                  placeholder="e.g., Enter your answer"
+                >
               </div>
-            }
 
-            <div class="mb-4">
-              <label for="placeholder" class="block text-sm font-medium mb-1">Answer Placeholder</label>
-              <input
-                type="text"
-                id="placeholder"
-                formControlName="placeholder"
-                class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
-                placeholder="e.g., Enter your answer"
-              >
-            </div>
+              <div class="mb-4">
+                <label class="flex items-center">
+                  <input type="checkbox" formControlName="required" class="h-4 w-4 border-gray-300 rounded">
+                  <span class="ml-2 text-sm text-text-950">Required question</span>
+                </label>
+              </div>
+            </form>
+          </div>
 
-            <div class="mb-4">
-              <label class="flex items-center">
-                <input type="checkbox" formControlName="required" class="h-4 w-4 border-gray-300 rounded">
-                <span class="ml-2 text-sm text-text-950">Required question</span>
-              </label>
-            </div>
-
-            <div class="flex justify-end space-x-3">
-              <button
-                type="button"
-                (click)="closeQuestionEditor()"
-                class="rounded-lg px-4 py-2 text-white bg-gray-400 hover:bg-gray-500"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                [disabled]="questionForm.invalid"
-                class="btn btn-primary"
-              >
-                Save Question
-              </button>
-            </div>
-          </form>
+          <!-- Fixed Footer -->
+          <div class="flex justify-end space-x-3 p-6 pt-4 border-t border-background-200">
+            <button
+              type="button"
+              (click)="closeQuestionEditor()"
+              class="rounded-lg px-4 py-2 text-white bg-gray-400 hover:bg-gray-500"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="questionEditorForm"
+              [disabled]="questionForm.invalid || hasDuplicateOptions()"
+              class="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Save Question
+            </button>
+          </div>
         </div>
       </div>
     }
