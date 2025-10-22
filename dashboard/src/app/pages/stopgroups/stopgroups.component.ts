@@ -37,6 +37,7 @@ export class StopGroupsComponent implements OnInit {
   onlyPublicGroups = signal<boolean>(true);
 
   showGroupDetailPopUp = signal<boolean>(false);
+  showAddStopDropDownPopup = signal<boolean>(false);
   groupIdDetail: number = -1;
 
   divisionFilter = signal<number>(0);
@@ -53,6 +54,11 @@ export class StopGroupsComponent implements OnInit {
       stops = stops.filter(stop => !assignedStopIds.has(stop.id));
     }
     return stops;
+  });
+
+  stopsNotInStopGroup = computed(() => {
+    let stopsInStopGroup = this.stopGroups().find(group => group.id == this.groupIdDetail)?.stopIds;
+    return this.stops().filter(stop => !stopsInStopGroup?.includes(stop.id));
   });
 
   async ngOnInit() {
@@ -120,6 +126,12 @@ export class StopGroupsComponent implements OnInit {
     this.hasChanged.set(true);
   }
 
+  addStopBtnClick(stopId: number) {
+    this.stopGroups().find((group) => group.id == this.groupIdDetail)?.stopIds.push(stopId);
+    this.hasChanged.set(true);
+    this.showAddStopDropDownPopup.set(false);
+  }
+
   dropGroup(event: CdkDragDrop<any, any>) {
     moveItemInArray(this.stopGroups(), event.previousIndex, event.currentIndex);
     this.hasChanged.set(true);
@@ -165,4 +177,8 @@ export class StopGroupsComponent implements OnInit {
     this.stopGroups.set(await this.stopGroupService.getStopGroups());
   }
 
+  openAddStopPopup(group: StopGroup) {
+    this.groupIdDetail = group.id;
+    this.showAddStopDropDownPopup.set(true);
+  }
 }
