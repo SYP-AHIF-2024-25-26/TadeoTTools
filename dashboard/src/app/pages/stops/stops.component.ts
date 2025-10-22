@@ -32,7 +32,7 @@ export class StopsComponent {
   stops = signal<Stop[]>([]);
   teachers = signal<Teacher[]>([]);
   students = signal<Student[]>([]);
-  
+
   async ngOnInit() {
     this.stops.set(await this.stopService.getStops());
     this.stopGroups.set(await this.stopGroupService.getStopGroups());
@@ -53,7 +53,7 @@ export class StopsComponent {
     let stops = divisionId
       ? this.stops().filter(stop => stop.divisionIds.includes(divisionId))
       : this.stops();
-      
+
     // Filter by stop name
     const nameSearch = this.stopNameSearchTerm().toLowerCase();
     if (nameSearch) {
