@@ -68,6 +68,7 @@ export class StopDetailsComponent implements OnInit {
   selectedAvailableClass = signal<string>('all');
 
   inactiveDivisions = computed(() => this.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id)));
+  inactiveStopGroups = computed(() => this.stopGroups().filter((g) => !this.stop()?.stopGroupIds.includes(g.id)));
 
   errorMessage = signal<string | null>(null);
 
@@ -75,13 +76,17 @@ export class StopDetailsComponent implements OnInit {
   showRemoveDivisionPopup = signal<boolean>(false);
   divisionIdToRemove: string = '';
 
+  showRemoveStopGroupPopup = signal<boolean>(false);
+  stopGroupIdToRemove: string = '';
+
   // No longer tracking badge position
 
   // Section expansion states
   expandedSections = signal<{[key: string]: boolean}>({
     students: true,
     teachers: true,
-    divisions: true
+    divisions: true,
+    stopGroups: true
   });
 
   toggleSection(section: string) {
@@ -162,7 +167,7 @@ export class StopDetailsComponent implements OnInit {
   studentsNotInStop = computed(() => {
     const studentsInStop = this.fetchAssignedStudents();
 
-    const studentsNotInStop = this.students().filter(student => 
+    const studentsNotInStop = this.students().filter(student =>
       !studentsInStop.some(s => s.edufsUsername === student.edufsUsername)
     );
 
@@ -175,8 +180,8 @@ export class StopDetailsComponent implements OnInit {
 
     return sortStudents(
       this.applyStudentFilters(
-        filteredStudents, 
-        this.availableStudentFilterText(), 
+        filteredStudents,
+        this.availableStudentFilterText(),
         this.selectedAvailableClass()
       )
     );
@@ -216,7 +221,7 @@ export class StopDetailsComponent implements OnInit {
       if (id === -1) {
         this.stop.set({ ...this.emptyStop });
         return;
-      } 
+      }
 
       let foundStop: Stop | undefined;
 
@@ -297,6 +302,34 @@ export class StopDetailsComponent implements OnInit {
         return stop;
       });
     }
+  }
+
+  async onStopGroupSelect($event: Event) {
+    const target = $event.target as HTMLSelectElement;
+    const stopGroupId = parseInt(target.value);
+    if (!this.stop().stopGroupIds.includes(stopGroupId) && this.stopGroups().find((g) => g.id === stopGroupId)) {
+      this.stop.update((stop) => {
+        stop.stopGroupIds = [stopGroupId, ...stop.stopGroupIds];
+        return stop;
+      });
+    }
+  }
+
+  selectStopGroupToRemove(stopGroupId: string) {
+    this.stopGroupIdToRemove = stopGroupId;
+    this.showRemoveStopGroupPopup.set(true);
+  }
+
+  onStopGroupRemove(stopGroupId: string) {
+    this.selectStopGroupToRemove(stopGroupId);
+  }
+
+  confirmStopGroupRemove() {
+    this.stop.update((stop) => {
+      stop.stopGroupIds = stop.stopGroupIds.filter((ids) => ids !== Number.parseInt(this.stopGroupIdToRemove));
+      return stop;
+    });
+    this.showRemoveStopGroupPopup.set(false);
   }
 
   onClassSelect($event: Event) {
@@ -411,7 +444,7 @@ export class StopDetailsComponent implements OnInit {
       .filter(a => a.stopId !== this.stop().id);
     return assignments ? assignments.length : 0;
   }
-  
+
   hasOtherAssignments(edufsUsername: string): boolean {
     return this.getStudentOtherAssignmentsCount(edufsUsername) > 0;
   }
