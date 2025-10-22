@@ -8,7 +8,7 @@
       <h3 class="mb-2 text-lg font-semibold">Conflicts (Multiple Pending Requests)</h3>
     </div>
     <div
-      class="collapse-content text-primary-content peer-checked:bg-white peer-checked:dark:bg-background-800 peer-checked:text-secondary-content min-w-0 px-20"
+      class="collapse-content text-primary-content peer-checked:bg-white peer-checked:dark:bg-background-800 peer-checked:text-secondary-content min-w-0 md:px-20"
     >
       <!-- Filter and search controls -->
       <div class="flex flex-wrap gap-4 mb-4">
@@ -45,7 +45,8 @@
         </div>
       </div>
 
-      <div class="w-full max-w-full overflow-x-auto table-zebra rounded-box border border-base-content/5 bg-base-100 max-h-[400px] overflow-y-scroll">
+      <div
+        class="hidden md:block w-full max-w-full overflow-x-auto table-zebra rounded-box border border-base-content/5 bg-base-100 max-h-[400px] overflow-y-scroll">
         <table class="table">
           <!-- head -->
           <thead>
@@ -80,6 +81,38 @@
           </tbody>
         </table>
       </div>
+      <!-- Mobile Card View -->
+      <div class="md:hidden space-y-4">
+        @if (conflicts().length === 0) {
+          <p class="text-center py-4">No students with conflicting assignments</p>
+        } @else {
+          @for (student of conflicts(); track $index) {
+            <div class="bg-background-100 dark:bg-background-900 rounded-lg shadow p-4">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="font-bold text-lg">{{ student.firstName }} {{ student.lastName }}</p>
+                  <p class="text-sm text-text-600 dark:text-text-400">{{ student.studentClass }}</p>
+                </div>
+              </div>
+              <div class="mt-3 pt-3 border-t border-background-200 dark:border-background-700">
+                <p class="text-sm font-semibold text-text-700 dark:text-text-300 mb-2">Assignments:</p>
+                <ul class="space-y-1 list-disc list-inside">
+                  @for (assignment of student.studentAssignments; track assignment.id) {
+                    <li class="text-sm">
+                      {{ assignment.stopName }}
+                    </li>
+                  }
+                </ul>
+              </div>
+              <div class="mt-4 flex">
+                <button class="btn btn-sm btn-primary" (click)="showConflictDetails(student)">
+                  View Requests
+                </button>
+              </div>
+            </div>
+          }
+        }
+      </div>
     </div>
   </div>
 
@@ -87,7 +120,8 @@
   <!-- Conflict Details Modal -->
   @if (selectedStudent()) {
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[80vh] overflow-y-auto">
+      <div
+        class="bg-white dark:bg-background-800 p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[80vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-xl font-bold">
             Request Details for {{ selectedStudent()!.firstName }} {{ selectedStudent()!.lastName }}
@@ -95,7 +129,7 @@
           <button class="btn btn-sm btn-circle" (click)="closeConflictDetails()">✕</button>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="hidden md:block overflow-x-auto">
           <table class="table table-zebra w-full">
             <thead>
               <tr>
@@ -136,6 +170,36 @@
             </tbody>
           </table>
         </div>
+        <!-- Mobile Card View -->
+        <div class="md:hidden space-y-4">
+          @for (assignment of selectedStudent()!.studentAssignments; track $index) {
+            <div class="bg-background-100 dark:bg-background-900 rounded-lg shadow p-4">
+              <div class="flex justify-between items-start">
+                <p class="font-bold">{{ assignment.stopName }}</p>
+                <span class="text-sm font-semibold px-2 py-1 rounded {{ getStatusClass(assignment.status) }}">
+                  {{ getStatusText(assignment.status) }}
+                </span>
+              </div>
+              <div class="mt-4 pt-4 border-t border-background-200 dark:border-background-700 flex flex-wrap gap-2">
+                @if (assignment.status === Status.Pending) {
+                  <button class="btn btn-sm btn-success flex-1" (click)="approveAssignment(selectedStudent()!, $index)">
+                    Accept
+                  </button>
+                  <button class="btn btn-sm btn-error flex-1" (click)="rejectAssignment(selectedStudent()!, $index)">
+                    Reject
+                  </button>
+                } @else {
+                  <button class="btn btn-sm btn-primary flex-1" (click)="undoAssignment(selectedStudent()!, $index)">
+                    Undo
+                  </button>
+                }
+                <button class="btn btn-sm btn-outline btn-error" (click)="deleteAssignment(selectedStudent()!, $index)">
+                  Delete
+                </button>
+              </div>
+            </div>
+          }
+        </div>
 
         <div class="mt-4 flex justify-end">
           <button class="btn btn-primary" (click)="closeConflictDetails()">Close</button>
@@ -153,7 +217,7 @@
       <h3 class="mb-2 text-lg font-semibold">Assignment (No Assignments / Single Assignments)</h3>
     </div>
     <div
-      class="collapse-content text-primary-content peer-checked:bg-white peer-checked:dark:bg-background-800 peer-checked:text-secondary-content min-w-0 px-20"
+      class="collapse-content text-primary-content peer-checked:bg-white peer-checked:dark:bg-background-800 peer-checked:text-secondary-content min-w-0 p-0 md:px-20"
     >
       <!-- Filter and search controls -->
       <div class="flex flex-row flex-wrap gap-4 mb-4">
@@ -227,7 +291,8 @@
         </div>
       </div>
 
-      <div class="overflow-x-auto w-full max-w-full table-zebra table-lg rounded-box border border-base-content/5 bg-base-100 block max-h-[400px] overflow-y-scroll">
+      <div
+        class="hidden md:block overflow-x-auto w-full max-w-full table-zebra table-lg rounded-box border border-base-content/5 bg-base-100 block max-h-[400px] overflow-y-scroll">
         <table class="table">
           <!-- head -->
           <thead>
@@ -294,6 +359,55 @@
             }
           </tbody>
         </table>
+      </div>
+      <!-- Mobile Card View -->
+      <div class="md:hidden space-y-4">
+        @if (fusedAssignments().length === 0) {
+          <p class="text-center py-4">No students found</p>
+        } @else {
+          @for (student of fusedAssignments(); track $index) {
+            <div class="bg-background-100 dark:bg-background-900 rounded-lg shadow p-4">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="font-bold text-lg">{{ student.firstName }} {{ student.lastName }}</p>
+                  <p class="text-sm text-text-600 dark:text-text-400">{{ student.studentClass }}</p>
+                </div>
+                <span class="text-sm font-semibold px-2 py-1 rounded {{ getFusedStatusClass(student) }}">
+                  {{ getFusedStatusText(student) }}
+                </span>
+              </div>
+              <div class="mt-3 pt-3 border-t border-background-200 dark:border-background-700">
+                <p class="text-sm">
+                  <span class="text-text-600 dark:text-text-400">Stop:</span>
+                  {{ student.studentAssignments.length > 0 ? student.studentAssignments[0].stopName : '--' }}
+                </p>
+              </div>
+              <div class="mt-3 flex flex-wrap gap-2 items-center">
+                @if (student.studentAssignments.length === 0) {
+                  <button class="btn btn-sm btn-primary flex-grow" #stopsBtn
+                          (click)="$event.stopPropagation(); openStopsPopup(student, stopsBtn)">Assign Stop
+                  </button>
+                } @else {
+                  @if (student.studentAssignments[0].status === Status.Pending) {
+                    <button class="btn btn-sm btn-success flex-grow" (click)="approveSingleAssignment(student)">
+                      Approve
+                    </button>
+                    <button class="btn btn-sm btn-warning flex-grow" (click)="rejectSingleAssignment(student)">
+                      Reject
+                    </button>
+                  } @else {
+                    <button class="btn btn-sm btn-secondary flex-grow" (click)="undoSingleAssignment(student)">
+                      Set to Pending
+                    </button>
+                  }
+                  <button class="btn btn-sm btn-error btn-outline" (click)="deleteAssignment(student, 0)">
+                    Delete
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        }
       </div>
     </div>
   </div>
