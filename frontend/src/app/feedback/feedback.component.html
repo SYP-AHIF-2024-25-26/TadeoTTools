@@ -2,13 +2,13 @@
 <div class="flex flex-col h-screen overflow-y-scroll">
   <app-header [showWelcomeText]="false"/>
   <!-- Main Content -->
-  <div class="flex-1 bg-gray-50 overflow-auto flex flex-col items-center mb-20 p-4">
+  <div class="flex-1 bg-gray-50 overflow-auto flex flex-col items-center p-4 pb-24">
 
     @if (!feedbackAlreadySubmitted() && !isSubmitted()) {
       <!-- Feedback Form -->
-      <div class="w-full mt-6 max-w-md shadow-lg border-0 bg-white rounded-lg overflow-hidden flex flex-col max-h-[75vh]">
-        <!-- Progress Header -->
-        <div class="p-6 pb-2 flex-shrink-0">
+      <div class="w-full mt-4 mb-6 max-w-md shadow-lg border-0 bg-white rounded-lg overflow-hidden flex flex-col max-h-[65vh]">
+        <!-- Progress Header - Fixed -->
+        <div class="p-4 pb-2 flex-shrink-0">
           <div class="flex justify-between items-center mb-2">
             <span class="text-sm font-medium text-gray-500">Frage {{ currentQuestionIndex() + 1 }} von {{ questions().length }}</span>
             <span class="text-sm font-medium text-orange-500">{{ progressPercentage() }}%</span>
@@ -21,12 +21,15 @@
           </div>
         </div>
 
-        <!-- Question Content - Scrollable Area -->
-        <div class="p-6 pt-4 flex-1 overflow-y-auto">
-          <h3 class="text-xl font-bold mb-6 text-gray-800">
+        <!-- Question Title - Fixed -->
+        <div class="px-4 pt-3 pb-2 flex-shrink-0">
+          <h3 class="text-lg font-bold text-gray-800">
             {{ currentQuestion().question }}
           </h3>
+        </div>
 
+        <!-- Answer Section - Scrollable -->
+        <div class="px-4 pt-3 pb-4 flex-1 overflow-y-auto min-h-0">
           <!-- Text Input Question -->
           @if (currentQuestion().type === 'text') {
             <input
@@ -113,7 +116,7 @@
         </div>
 
         <!-- Form Footer - Fixed at bottom -->
-        <div class="px-6 py-4 flex justify-between flex-shrink-0 border-t border-gray-100">
+        <div class="px-4 py-3 flex justify-between flex-shrink-0 border-t border-gray-100">
           <button
             type="button"
             (click)="goToPrevious()"
