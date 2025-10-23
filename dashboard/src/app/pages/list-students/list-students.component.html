@@ -87,7 +87,7 @@
           <p class="text-center py-4">No students with conflicting assignments</p>
         } @else {
           @for (student of conflicts(); track $index) {
-            <div class="bg-background-100 dark:bg-background-900 rounded-lg shadow p-4">
+            <div class="bg-white dark:bg-background-100 rounded-lg shadow p-4">
               <div class="flex justify-between items-start">
                 <div>
                   <p class="font-bold text-lg">{{ student.firstName }} {{ student.lastName }}</p>
@@ -366,7 +366,7 @@
           <p class="text-center py-4">No students found</p>
         } @else {
           @for (student of fusedAssignments(); track $index) {
-            <div class="bg-background-100 dark:bg-background-900 rounded-lg shadow p-4">
+            <div class="bg-white dark:bg-background-100 rounded-lg shadow p-4">
               <div class="flex justify-between items-start">
                 <div>
                   <p class="font-bold text-lg">{{ student.firstName }} {{ student.lastName }}</p>
