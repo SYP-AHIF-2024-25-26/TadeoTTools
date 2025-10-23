@@ -1,5 +1,10 @@
-<div class="m-4 flex h-screen w-full flex-col items-center">
-  <div class="mx-10 flex flex-wrap gap-5">
+<div class="flex h-screen w-full flex-col items-center">
+  <div class="flex justify-center mt-4 mb-2">
+    <button class="btn btn-primary" (click)="showDivisionPopUp(-1)">
+      New Division
+    </button>
+  </div>
+  <div class="flex justify-center flex-wrap gap-5">
     @for (division of divisions(); track $index) {
       <div
         class="m-2 flex w-64 flex-col flex-wrap justify-between rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
@@ -29,9 +34,6 @@
       </div>
     }
   </div>
-  <button class="ml-12 mt-7 btn btn-primary" (click)="showDivisionPopUp(-1)">
-    New Division
-  </button>
 </div>
 
 @if (showRemoveDivisionPopUp()) {

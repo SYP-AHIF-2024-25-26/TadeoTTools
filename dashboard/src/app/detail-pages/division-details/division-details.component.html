@@ -1,57 +1,83 @@
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-  <div
-    class="m-6 p-8 inline-flex w-[600px] flex-col items-center rounded-lg bg-background-100 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
-  >
-    @if(id == -1) {
-      <h4 class="text-2xl mb-6">New Division</h4>
-    }
-    <input
-      class="mb-6 w-full rounded bg-primary-200 px-4 py-2 text-text-950 input"
-      type="text"
-      [value]="name()"
-      [(ngModel)]="name"
-      name="name"
-      id="name"
-    />
-    @if (filePreview != null) {
-      <div class="mt-6 mb-6">
-        <p class="mb-3">File Preview</p>
-        <img class="h-32 w-32 object-cover" [src]="filePreview" alt="File preview" />
-      </div>
-    } @else {
-      <div class="mt-6 mb-6">
-        <img
-          class="h-32 w-32 object-cover"
-          [src]="baseUrl + '/divisions/' + id + '/image?timestamp=1234567890'"
-          alt="Division Picture will load here"
-        />
-      </div>
-    }
-    <form (submit)="submitDivisionDetail()" class="flex w-full flex-col items-center">
-      <div class="mb-6 w-full">
-        <label for="color" class="mb-3 block">Color</label>
-        <div class="flex items-center space-x-4">
-          <input class="h-10 w-20" type="color" [value]="color()" [(ngModel)]="color" name="color" id="color" />
-          <div class="h-10 w-20 rounded" [style.backgroundColor]="color()"></div>
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div class="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-background-100">
+            <!-- Form Header -->
+            <div class="mb-6 flex items-center justify-between border-b border-background-200 pb-4 dark:border-background-700">
+              <h2 class="text-2xl font-bold text-text-900 dark:text-text-100">
+                {{ id === -1 ? 'Add New Division' : 'Edit Division' }}
+              </h2>
+              <button (click)="cancelPopup()" class="btn btn-circle btn-ghost btn-sm">✕</button>
+            </div>
+
+            <!-- Error Message -->
+            @if (errorMessage()) {
+              <div role="alert" class="alert alert-error mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ errorMessage() }}</span>
+              </div>
+            }
+
+            <!-- Form -->
+            <form (ngSubmit)="submitDivisionDetail()" class="space-y-4">
+              <!-- Division Name -->
+              <div class="form-control">
+                <label class="label" for="name">
+                  <span class="label-text text-text-700 dark:text-text-300">Division Name</span>
+                </label>
+                <input type="text" id="name" placeholder="e.g. Informatik" class="input input-bordered w-full bg-background-50 dark:bg-background-700 text-text-700 dark:text-text-300" [(ngModel)]="name" name="name" />
+              </div>
+
+              <!-- Division Color -->
+              <div class="form-control">
+                <label class="label" for="color">
+                  <span class="label-text text-text-700 dark:text-text-300">Color</span>
+                </label>
+                <div class="flex items-center gap-4">
+                  <input type="color" id="color" class="input input-bordered h-12 w-24 p-1" [(ngModel)]="color" name="color" />
+                  <div class="h-12 w-24 rounded-lg border border-base-300" [style.backgroundColor]="color()"></div>
+                </div>
+              </div>
+
+              <!-- File Upload -->
+              <div class="form-control">
+                <label class="label" for="file">
+                  <span class="label-text text-text-700 dark:text-text-300">Division Image (SVG, PNG, JPG)</span>
+                </label>
+                <input type="file" id="file" (change)="onFileChange($event)" class="file-input file-input-bordered w-full bg-background-50 dark:bg-background-700 text-text-700 dark:text-text-300" accept="image/jpeg,image/png,image/svg+xml" />
+              </div>
+
+              <!-- Image Preview -->
+              @if (filePreview) {
+                <div class="mt-4">
+                  <label class="label"><span class="label-text">New Image Preview:</span></label>
+                  <div class="flex items-center gap-4">
+                    <img [src]="filePreview" alt="Image Preview" class="h-20 w-20 rounded-lg border border-base-300 object-cover" />
+                    <button type="button" (click)="deleteImage()" class="btn btn-outline btn-error btn-sm">Remove</button>
+                  </div>
+                </div>
+              } @else if (id !== -1) {
+                <div class="mt-4">
+                  <label class="label"><span class="label-text">Current Image:</span></label>
+                  <div class="flex items-center gap-4">
+                    <img [src]="baseUrl + '/divisions/' + id + '/image'" alt="Current Division Image" class="h-20 w-20 rounded-lg border border-base-300 object-cover" />
+                    <button type="button" (click)="deleteImage()" class="btn btn-outline btn-error btn-sm">Delete Image</button>
+                  </div>
+                </div>
+              }
+
+              <!-- Action Buttons -->
+              <div class="flex flex-col-reverse sm:flex-row sm:justify-between gap-4 pt-6">
+                <div>
+                  @if (id !== -1) {
+                    <button type="button" (click)="deleteAndGoBack()" class="btn btn-error w-full sm:w-auto">Delete Division</button>
+                  }
+                </div>
+                <div class="flex flex-col-reverse sm:flex-row gap-4">
+                  <button type="button" (click)="cancelPopup()" class="btn btn-ghost w-full sm:w-auto text-text-700 dark:text-text-300">Cancel</button>
+                  <button type="submit" class="btn btn-primary w-full sm:w-auto">{{ id === -1 ? 'Add Division' : 'Save Changes' }}</button>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
-
-      <div class="mb-6 w-full">
-        <label for="file" class="mb-3 block">Upload Image</label>
-        <input class="w-full rounded py-2" type="file" id="file" accept=".jpg, .jpeg, .png, .svg" (change)="onFileChange($event)" />
-
-        @if (errorMessage() != null) {
-          <p class="mt-4 text-red-700">{{ errorMessage() }}</p>
-        }
-      </div>
-      <div class="flex w-full justify-end space-x-4">
-        <button type="submit" class="rounded bg-primary-200 p-2 hover:bg-primary-300">Submit</button>
-        <button (click)="cancelPopup()" type="button" class="rounded bg-gray-400 p-2 hover:bg-gray-500">Cancel</button>
-        @if (id != -1) {
-          <button (click)="deleteAndGoBack()" type="button" class="rounded bg-accent-200 p-2 hover:bg-accent-300">Delete</button>
-          <button (click)="deleteImage()" type="button" class="rounded bg-accent-200 p-2 text-text-950 hover:bg-accent-300">Delete Image</button>
-        }
-      </div>
-    </form>
-  </div>
-</div>
