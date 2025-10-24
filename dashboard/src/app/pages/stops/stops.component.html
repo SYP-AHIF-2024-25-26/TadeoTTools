@@ -51,7 +51,7 @@
     <div class="form-control w-full sm:w-auto sm:max-w-xs">
       <label class="label">
         <span class="label-text">Division Filter</span>
-        <app-filter [elements]="divisions()" (filter)="divisionFilter.set($event)"></app-filter>
+        <app-filter #divisionFilterComponent [elements]="divisions()" (filter)="divisionFilter.set($event)"></app-filter>
       </label>
   </div>
 

@@ -1,4 +1,4 @@
-import {Component, computed, inject, signal} from '@angular/core';
+import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import {Division, Status, Stop, StopGroup, Student, Teacher} from '../../types';
 import {RouterModule} from '@angular/router';
 import {FilterComponent} from '../../standard-components/filter/filter.component';
@@ -16,6 +16,8 @@ import { StudentService } from '../../student.service';
   templateUrl: './stops.component.html',
 })
 export class StopsComponent {
+  @ViewChild('divisionFilterComponent') divisionFilterComponent!: FilterComponent;
+
   private studentService = inject(StudentService);
   private divisionService = inject(DivisionService);
   private stopGroupService = inject(StopGroupService);
@@ -47,20 +49,19 @@ export class StopsComponent {
     return [...new Set(stopGroups.map(sg => sg.name))].sort();
   });
 
+  // src/app/pages/stops/stops.component.ts
   filteredStops = computed(() => {
-    // Filter by division
-    const divisionId = this.divisionFilter();
+    const divisionId = Number(this.divisionFilter());
+    // Guard and coerce divisionIds elements to numbers
     let stops = divisionId
-      ? this.stops().filter(stop => stop.divisionIds.includes(divisionId))
+      ? this.stops().filter(stop => (stop.divisionIds ?? []).some(d => Number(d) === divisionId))
       : this.stops();
 
-    // Filter by stop name
     const nameSearch = this.stopNameSearchTerm().toLowerCase();
     if (nameSearch) {
       stops = stops.filter(stop => stop.name.toLowerCase().includes(nameSearch));
     }
 
-    // Filter by stop group
     const stopGroupName = this.stopGroupFilter();
     if (stopGroupName) {
       const stopGroup = this.stopGroups().find(sg => sg.name === stopGroupName);
@@ -69,7 +70,6 @@ export class StopsComponent {
       }
     }
 
-    // Filter by teacher
     const teacherSearch = this.teacherSearchTerm().toLowerCase();
     if (teacherSearch) {
       stops = stops.filter(stop => {
@@ -81,9 +81,9 @@ export class StopsComponent {
         );
       });
     }
-
     return stops;
   });
+
 
   getGroupById(sgId: number): StopGroup | null {
     return this.stopGroups().find((sg) => sg.id === sgId) || null;
@@ -127,6 +127,7 @@ export class StopsComponent {
     this.stopNameSearchTerm.set('');
     this.stopGroupFilter.set('');
     this.teacherSearchTerm.set('');
+    this.divisionFilterComponent.clearFilter();
     this.divisionFilter.set(0);
   }
 }

@@ -29,6 +29,7 @@ export class DivisionsListComponent {
   async deleteDivision() {
     await this.divisionService.deleteDivision(this.divisionIdToRemove);
     this.showRemoveDivisionPopUp.set(false);
+    this.divisions.set(await this.divisionService.getDivisions());
   }
 
   showDeletePopup(divisionId: number): void {
