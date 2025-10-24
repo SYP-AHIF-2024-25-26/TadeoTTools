@@ -319,7 +319,7 @@
       <!-- Header -->
       <div class="p-4 border-b border-background-200 dark:border-background-700 flex justify-between items-center">
         <h3 class="text-lg font-semibold text-text-900 dark:text-text-100">Add Stop</h3>
-        <button (click)="showAddStopDropDownPopup.set(false)" class="btn btn-ghost btn-sm btn-circle">
+        <button (click)="showAddStopDropDownPopup.set(false)" class="btn btn-ghost btn-sm btn-circle text-text-900 dark:text-text-100">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
@@ -334,7 +334,7 @@
               <span class="text-sm font-medium text-text-900 dark:text-text-100">{{ stop.name }}</span>
             </div>
           }
-          @if (filteredStops().length === 0) {
+          @if (stopsNotInStopGroup().length === 0) {
             <div class="text-center py-12">
               <p class="text-sm text-text-500">No available stops to add.</p>
             </div>
@@ -344,6 +344,3 @@
     </div>
   </div>
 }
-
-
-

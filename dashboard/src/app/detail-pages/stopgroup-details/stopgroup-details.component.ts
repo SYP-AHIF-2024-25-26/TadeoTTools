@@ -47,11 +47,19 @@ export class StopgroupDetailsComponent implements OnInit {
   }
 
   isInputValid(): boolean {
-    if (!isValid(this.name(), 50)) {
+    if (this.name() === '') {
+      this.errorMessage.set('Name is required');
+      return false;
+    }
+    else if (!isValid(this.name(), 50)) {
       this.errorMessage.set('Name is invalid, must be less than 50 characters');
       return false;
     }
-    if (!isValid(this.description(), 255)) {
+    if (this.description() === '') {
+      this.errorMessage.set('Description is required');
+      return false;
+    }
+    else if (!isValid(this.description(), 255)) {
       this.errorMessage.set('Description is invalid, must be less than 255 characters');
       return false;
     }
