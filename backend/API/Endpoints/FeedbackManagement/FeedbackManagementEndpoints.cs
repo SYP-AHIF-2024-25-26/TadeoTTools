@@ -30,6 +30,7 @@ public static class FeedbackManagementEndpoints
             return Results.BadRequest("No feedback provided");
         }
 
+        // Validate all questions exist before creating session
         foreach (var feedbackRequestDto in feedbackRequestDtos)
         {
             if (await context.FeedbackQuestions
@@ -37,17 +38,30 @@ public static class FeedbackManagementEndpoints
             {
                 return Results.BadRequest($"Question with id {feedbackRequestDto.QuestionId} was not found");
             }
+        }
 
+        // Create a new feedback session with timestamp
+        var feedbackSession = new FeedbackSession
+        {
+            Timestamp = DateTime.UtcNow
+        };
+        await context.FeedbackSessions.AddAsync(feedbackSession);
+        await context.SaveChangesAsync(); // Save to get the session ID
+
+        // Create all answers associated with this session
+        foreach (var feedbackRequestDto in feedbackRequestDtos)
+        {
             await context.FeedbackQuestionAnswers.AddAsync(new FeedbackQuestionAnswer
             {
                 Answer = feedbackRequestDto.Answer,
-                FeedbackQuestionId = feedbackRequestDto.QuestionId
+                FeedbackQuestionId = feedbackRequestDto.QuestionId,
+                FeedbackSessionId = feedbackSession.Id
             });
         }
 
         await context.SaveChangesAsync();
 
-        return Results.Ok();
+        return Results.Ok(new { SessionId = feedbackSession.Id, Timestamp = feedbackSession.Timestamp });
     }
 
     public static async Task<IResult> SaveFeedbackQuestions(UpsertFeedbackQuestionDto[] dtos, TadeoTDbContext context)
@@ -80,8 +94,13 @@ public static class FeedbackManagementEndpoints
     {
         var feedbackAnswers = await context.FeedbackQuestionAnswers
             .Include(f => f.FeedbackQuestion)
+            .Include(f => f.FeedbackSession)
+            .OrderBy(f => f.FeedbackSessionId)
+            .ThenBy(f => f.FeedbackQuestionId)
             .Select(f => new
             {
+                SessionId = f.FeedbackSessionId,
+                Timestamp = f.FeedbackSession!.Timestamp,
                 f.FeedbackQuestion!.Question,
                 f.Answer
             })
@@ -91,7 +110,7 @@ public static class FeedbackManagementEndpoints
         var csvBuilder = new StringBuilder();
 
         // Add headers
-        csvBuilder.AppendLine("Question;Answer");
+        csvBuilder.AppendLine("SessionId;Timestamp;Question;Answer");
 
         // Add data rows
         foreach (var item in feedbackAnswers)
@@ -99,7 +118,7 @@ public static class FeedbackManagementEndpoints
             var escapedQuestion = Utils.EscapeCsvField(item.Question);
             var escapedAnswer = Utils.EscapeCsvField(item.Answer);
 
-            csvBuilder.AppendLine($"{escapedQuestion};{escapedAnswer}");
+            csvBuilder.AppendLine($"{item.SessionId};{item.Timestamp:yyyy-MM-dd HH:mm:ss};{escapedQuestion};{escapedAnswer}");
         }
 
         var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());

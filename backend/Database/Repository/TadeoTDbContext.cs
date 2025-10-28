@@ -19,6 +19,7 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<FeedbackQuestionAnswer> FeedbackQuestionAnswers { get; set; }
 
     public DbSet<FeedbackOption> FeedbackOptions { get; set; }
+    public DbSet<FeedbackSession> FeedbackSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +27,12 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
             .HasMany(q => q.FeedbackQuestionAnswers)
             .WithOne(a => a.FeedbackQuestion)
             .HasForeignKey(a => a.FeedbackQuestionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<FeedbackSession>()
+            .HasMany(s => s.FeedbackQuestionAnswers)
+            .WithOne(a => a.FeedbackSession)
+            .HasForeignKey(a => a.FeedbackSessionId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
