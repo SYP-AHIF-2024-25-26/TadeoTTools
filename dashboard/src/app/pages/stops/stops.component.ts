@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, ViewChild } from '@angular/core';
+import { Component, computed, inject, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import {Division, Status, Stop, StopGroup, Student, Teacher} from '../../types';
 import {RouterModule} from '@angular/router';
 import {FilterComponent} from '../../standard-components/filter/filter.component';
@@ -8,12 +8,14 @@ import { StopGroupService } from '../../stopgroup.service';
 import { StopService } from '../../stop.service';
 import { TeacherService } from '../../teacher.service';
 import { StudentService } from '../../student.service';
+import { FilterStateService } from '../../state/filter-state.service';
 
 @Component({
   selector: 'app-stops',
   standalone: true,
   imports: [RouterModule, FilterComponent, FormsModule],
   templateUrl: './stops.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StopsComponent {
   @ViewChild('divisionFilterComponent') divisionFilterComponent!: FilterComponent;
@@ -24,10 +26,12 @@ export class StopsComponent {
   private stopService = inject(StopService);
   private teacherService = inject(TeacherService);
 
-  divisionFilter = signal<number>(0);
-  stopNameSearchTerm = signal<string>('');
-  stopGroupFilter = signal<string>('');
-  teacherSearchTerm = signal<string>('');
+  // use shared filter state service so filters persist across navigation
+  private filterState = inject(FilterStateService);
+  readonly divisionFilter = this.filterState.divisionFilter;
+  readonly stopNameSearchTerm = this.filterState.stopNameSearchTerm;
+  readonly stopGroupFilter = this.filterState.stopGroupFilter;
+  readonly teacherSearchTerm = this.filterState.teacherSearchTerm;
 
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
@@ -124,10 +128,7 @@ export class StopsComponent {
 
   // Reset filters
   clearFilters(): void {
-    this.stopNameSearchTerm.set('');
-    this.stopGroupFilter.set('');
-    this.teacherSearchTerm.set('');
     this.divisionFilterComponent.clearFilter();
-    this.divisionFilter.set(0);
+    this.filterState.clear();
   }
 }
