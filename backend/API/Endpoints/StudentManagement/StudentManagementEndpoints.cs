@@ -15,50 +15,6 @@ public class StudentManagementEndpoints
         return Results.Ok(await StudentFunctions.GetAllStudentsAsync(context));
     }
 
-    public static async Task<IResult> GenerateRandomAssignments(TadeoTDbContext context)
-    {
-        var rnd = new Random();
-        var allStudentUsernames = await context.Students.Select(s => s.EdufsUsername).ToListAsync();
-        var skippedStudents = allStudentUsernames.OrderBy(_ => rnd.Next()).Take(20).ToList();
-
-        var baseAssignments = await context.Students
-            .Where(s => !skippedStudents.Contains(s.EdufsUsername))
-            .Select(s => new StudentAssignment
-            {
-                StudentId = s.EdufsUsername,
-                StopId = rnd.Next(1, 41),
-                Status = (Status)rnd.Next(0, 3)
-            }).ToListAsync();
-
-        var duplicateStudents = baseAssignments
-            .Select(a => a.StudentId)
-            .Distinct()
-            .OrderBy(_ => rnd.Next())
-            .Take((int)(context.Students.Count() * 0.08)) // 8% der Students
-            .ToList();
-
-        var duplicateAssignments = new List<StudentAssignment>();
-
-        foreach (var studentId in duplicateStudents)
-        {
-            var extraCount = rnd.Next(1, 3); // 1 or 2 additional assignments
-            for (var i = 0; i < extraCount; i++)
-            {
-                duplicateAssignments.Add(new StudentAssignment
-                {
-                    StudentId = studentId,
-                    StopId = rnd.Next(1, 41),
-                    Status = (Status)rnd.Next(0, 3)
-                });
-            }
-        }
-
-        var allAssignments = baseAssignments.Concat(duplicateAssignments).ToList();
-        await context.StudentAssignments.AddRangeAsync(allAssignments);
-        await context.SaveChangesAsync();
-        return Results.Ok();
-    }
-
     public static async Task<IResult> UpdateStudent(TadeoTDbContext context, StudentFunctions.StudentDto studentDto)
     {
         var student = await context.Students
@@ -90,22 +46,6 @@ public class StudentManagementEndpoints
         await context.SaveChangesAsync();
 
         return Results.Ok("Student updated successfully");
-    }
-
-    public static async Task<IResult> SetStudentAssignments(TadeoTDbContext context, [FromRoute] string id,
-        StudentAssignment[] assignments)
-    {
-        var student = await StudentFunctions.GetStudentByEdufsUsername(context, id);
-        if (student == null)
-        {
-            return Results.NotFound("Student not found");
-        }
-
-        student.StudentAssignments.Clear();
-        student.StudentAssignments.AddRange(assignments);
-        await context.SaveChangesAsync();
-
-        return Results.Ok();
     }
 
     public static async Task<IResult> UploadCsvFile([FromForm] UploadStudentCsvFileDto file, TadeoTDbContext context)
