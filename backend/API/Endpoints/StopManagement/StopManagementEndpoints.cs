@@ -402,7 +402,7 @@ public static class StopManagementEndpoints
                 $"{escapedName};{escapedDescription};{escapedRoomNr};{escapedTeacher};{escapedStudentsRequested};{escapedStudentsAssigned};{escapedStopGroupNames};{escapedDivisions}");
         }
 
-        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+        var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
 
         return Results.File(
             fileContents: csvBytes,
@@ -441,7 +441,7 @@ public static class StopManagementEndpoints
             csvBuilder.AppendLine($"{escapedClass};{escapedLastname};{escapedFirstname};{escapedStatus}");
         }
 
-        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+        var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
 
         return Results.File(
             fileContents: csvBytes,

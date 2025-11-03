@@ -129,7 +129,7 @@ public class StudentManagementEndpoints
                 $"{escapedFirstName};{escapedLastName};{escapedEdufsUsername};{escapedClass};{escapedDepartment};{escapedAssignments};{escapedStatus}");
         }
 
-        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+        var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
 
         return Results.File(
             fileContents: csvBytes,
