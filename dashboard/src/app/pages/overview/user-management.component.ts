@@ -8,9 +8,9 @@ import { StudentService } from '../../student.service';
 @Component({
   selector: 'app-overview',
   imports: [AdminOverviewComponent, DataPageComponent, TeacherOverviewComponent, DeletePopupComponent],
-  templateUrl: './admin.component.html',
+  templateUrl: './user-management.component.html',
 })
-export class AdminComponent {
+export class UserManagementComponent {
   private studentService = inject(StudentService);
   showDeleteStudentsPopup = signal<boolean>(false);
 
