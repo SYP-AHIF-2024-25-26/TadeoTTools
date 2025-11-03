@@ -12,7 +12,6 @@ import { FilterStateService } from '../../state/filter-state.service';
 
 @Component({
   selector: 'app-stops',
-  standalone: true,
   imports: [RouterModule, FilterComponent, FormsModule],
   templateUrl: './stops.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +37,7 @@ export class StopsComponent {
   stops = signal<Stop[]>([]);
   teachers = signal<Teacher[]>([]);
   students = signal<Student[]>([]);
+  showFilters = signal<boolean>(false);
 
   async ngOnInit() {
     this.stops.set(await this.stopService.getStops());
