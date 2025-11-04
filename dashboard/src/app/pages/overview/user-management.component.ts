@@ -5,6 +5,8 @@ import { TeacherOverviewComponent } from './teacher-overview/teacher-overview.co
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
 import { StudentService } from '../../student.service';
 
+type TabType = 'teachers' | 'admins' | 'data';
+
 @Component({
   selector: 'app-overview',
   imports: [AdminOverviewComponent, DataPageComponent, TeacherOverviewComponent, DeletePopupComponent],
@@ -12,7 +14,9 @@ import { StudentService } from '../../student.service';
 })
 export class UserManagementComponent {
   private studentService = inject(StudentService);
+  
   showDeleteStudentsPopup = signal<boolean>(false);
+  activeTab = signal<TabType>('teachers');
 
   async deleteAllStudents() {
     await this.studentService.deleteAllStudents();
