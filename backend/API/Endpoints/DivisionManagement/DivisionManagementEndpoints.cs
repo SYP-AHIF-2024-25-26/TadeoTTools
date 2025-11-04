@@ -101,7 +101,7 @@ public static class DivisionManagementEndpoints
             csvBuilder.AppendLine($"{escapedName};{escapedColor};{escapedStops}");
         }
 
-        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+        var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
 
         return Results.File(
             fileContents: csvBytes,

@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace API.Endpoints;
 
 public static class Utils
@@ -14,5 +16,16 @@ public static class Utils
         }
 
         return field;
+    }
+
+    // Returns bytes encoded as UTF-8 with a BOM (UTF8-BOM)
+    public static byte[] ToUtf8Bom(string content)
+    {
+        var bom = Encoding.UTF8.GetPreamble(); // EF BB BF
+        var body = Encoding.UTF8.GetBytes(content);
+        var bytes = new byte[bom.Length + body.Length];
+        Buffer.BlockCopy(bom, 0, bytes, 0, bom.Length);
+        Buffer.BlockCopy(body, 0, bytes, bom.Length, body.Length);
+        return bytes;
     }
 }
