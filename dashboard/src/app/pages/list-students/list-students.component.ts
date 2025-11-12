@@ -30,18 +30,12 @@ export class ListStudentsComponent {
   private stopService = inject(StopService);
   private studentService = inject(StudentService);
 
-  // Filter and search state
-  conflictsClassFilter = signal<string>('');
-  conflictsStopFilter = signal<string>('');
-  conflictsSearchTerm = signal<string>('');
-
-
-  // Fused (Single + No Requests)
-  fusedClassFilter = signal<string>('');
-  fusedDepartmentFilter = signal<string>('');
-  fusedStopFilter = signal<string>('');
-  fusedSearchTerm = signal<string>('');
-  fusedStatusFilter = signal<string>('all');
+  // Unified filter and search state
+  classFilter = signal<string>('');
+  departmentFilter = signal<string>('');
+  stopFilter = signal<string>('');
+  searchTerm = signal<string>('');
+  statusFilter = signal<string>('all');
 
   selectedStudent = signal<Student | null>(null);
   stops = signal<Stop[]>([]);
@@ -89,14 +83,14 @@ export class ListStudentsComponent {
     return Array.from(deps).sort();
   });
 
-  // Unique classes for fused section; if department is 'inf', only show HIF classes
-  fusedUniqueClasses = computed(() => {
+  // Remove the old fusedUniqueClasses and add unified version
+  filteredUniqueClasses = computed(() => {
     const classes = new Set<string>();
     this.students().forEach(student => {
       classes.add(student.studentClass);
     });
     let arr = Array.from(classes).sort();
-    const dep = this.fusedDepartmentFilter()?.toLowerCase();
+    const dep = this.departmentFilter()?.toLowerCase();
     switch (dep) {
       case 'informatik':
         arr = arr.filter(c => c?.toLowerCase().includes('hif'));
@@ -113,87 +107,54 @@ export class ListStudentsComponent {
       default:
         break;
     }
-
     return arr;
   });
 
-  // all where there is more than one assignment and at least one is pending
-  conflicts = computed(() => {
-    let filtered = this.students().filter(
-      (s) => s.studentAssignments.length > 1
-    );
-
-    // Apply class filter
-    if (this.conflictsClassFilter()) {
-      filtered = filtered.filter(s => s.studentClass === this.conflictsClassFilter());
-    }
-
-    // Apply stop filter
-    if (this.conflictsStopFilter()) {
-      filtered = filtered.filter(s =>
-        s.studentAssignments.some(a => a.stopName === this.conflictsStopFilter())
-      );
-    }
-
-    // Apply search
-    if (this.conflictsSearchTerm()) {
-      const term = this.conflictsSearchTerm().toLowerCase();
-      filtered = filtered.filter(s =>
-        s.firstName.toLowerCase().includes(term) ||
-        s.lastName.toLowerCase().includes(term) ||
-        s.edufsUsername.toLowerCase().includes(term)
-      );
-    }
-
-    return sortStudents(filtered) as Student[];
-  });
-
-
-  // Fused list: students with 0 or 1 assignment
-  fusedAssignments = computed(() => {
-    let filtered = this.students()
-      .filter(s => s.studentAssignments.length <= 1)
-      .map(student => ({
-        ...student,
-        showStops: false,
-        selectedStops: new Set<number>()
-      } as StudentWithUI));
+  // Remove conflicts and fusedAssignments, replace with single unified list
+  filteredStudents = computed(() => {
+    let filtered = this.students().map(student => ({
+      ...student,
+      showStops: false,
+      selectedStops: new Set<number>()
+    } as StudentWithUI));
 
     // Department filter
-    if (this.fusedDepartmentFilter()) {
-      filtered = filtered.filter(s => s.department === this.fusedDepartmentFilter());
+    if (this.departmentFilter()) {
+      filtered = filtered.filter(s => s.department === this.departmentFilter());
     }
 
     // Class filter
-    if (this.fusedClassFilter()) {
-      filtered = filtered.filter(s => s.studentClass === this.fusedClassFilter());
+    if (this.classFilter()) {
+      filtered = filtered.filter(s => s.studentClass === this.classFilter());
     }
 
-    // Stop filter (only meaningful for assigned students)
-    if (this.fusedStopFilter()) {
+    // Stop filter
+    if (this.stopFilter()) {
       filtered = filtered.filter(s =>
-        s.studentAssignments.length === 1 &&
-        s.studentAssignments[0].stopName === this.fusedStopFilter()
+        s.studentAssignments.some(a => a.stopName === this.stopFilter())
       );
     }
 
     // Status filter
-    const status = this.fusedStatusFilter();
+    const status = this.statusFilter();
     if (status && status !== 'all') {
       filtered = filtered.filter(s => {
         if (status === 'unassigned') return s.studentAssignments.length === 0;
+        if (status === 'conflict') return s.studentAssignments.length > 1;
         if (s.studentAssignments.length === 0) return false;
-        const st = s.studentAssignments[0].status;
-        if (status === 'pending') return st === Status.Pending;
-        if (status === 'approved') return st === Status.Accepted;
-        if (status === 'rejected') return st === Status.Declined;
-        return true;
+        const hasStatus = s.studentAssignments.some(a => {
+          if (status === 'pending') return a.status === Status.Pending;
+          if (status === 'approved') return a.status === Status.Accepted;
+          if (status === 'rejected') return a.status === Status.Declined;
+          return false;
+        });
+        return hasStatus;
       });
     }
 
     // Search
-    if (this.fusedSearchTerm()) {
-      const term = this.fusedSearchTerm().toLowerCase();
+    if (this.searchTerm()) {
+      const term = this.searchTerm().toLowerCase();
       filtered = filtered.filter(s =>
         s.firstName.toLowerCase().includes(term) ||
         s.lastName.toLowerCase().includes(term) ||
@@ -204,22 +165,30 @@ export class ListStudentsComponent {
     return sortStudents(filtered) as StudentWithUI[];
   });
 
-  // Whether there is any requested (Pending) assignment in the currently visible fused list
-  hasFusedRequested = computed(() => {
-    return this.fusedAssignments().some(s => s.studentAssignments.length === 1 && s.studentAssignments[0].status === Status.Pending);
+  // Whether there is any requested (Pending) assignment in the currently visible list
+  hasRequested = computed(() => {
+    return this.filteredStudents().some(s => 
+      s.studentAssignments.some(a => a.status === Status.Pending)
+    );
   });
 
-  // Approve all currently requested (Pending) students visible in the fused list
-  async approveAllRequestedInFused(): Promise<void> {
-    const candidates = this.fusedAssignments().filter(s => s.studentAssignments.length === 1 && s.studentAssignments[0].status === Status.Pending);
-    if (candidates.length === 0) return;
-    await Promise.all(candidates.map(async s => {
-      s.studentAssignments[0].status = Status.Accepted;
-      await this.studentService.updateStudent(s);
-    }));
-    await this.refreshStudents();
+  // Approve all currently requested (Pending) students visible in the list
+  async approveAllRequested(): Promise<void> {
+    const updates: Promise<void>[] = [];
+    
+    for (const student of this.filteredStudents()) {
+      const pendingAssignments = student.studentAssignments.filter(a => a.status === Status.Pending);
+      if (pendingAssignments.length > 0) {
+        pendingAssignments.forEach(a => a.status = Status.Accepted);
+        updates.push(this.studentService.updateStudent(student));
+      }
+    }
+    
+    if (updates.length > 0) {
+      await Promise.all(updates);
+      await this.refreshStudents();
+    }
   }
-
 
   async deleteAssignment(student: Student, index: number) {
     student.studentAssignments.splice(index, 1);
@@ -294,13 +263,15 @@ export class ListStudentsComponent {
     }
   }
 
-  getFusedStatusText(student: Student): string {
+  getStudentStatusText(student: Student): string {
     if (student.studentAssignments.length === 0) return 'Unassigned';
+    if (student.studentAssignments.length > 1) return 'Conflict';
     return this.getStatusText(student.studentAssignments[0].status);
   }
 
-  getFusedStatusClass(student: Student): string {
+  getStudentStatusClass(student: Student): string {
     if (student.studentAssignments.length === 0) return 'text-gray-500 font-bold';
+    if (student.studentAssignments.length > 1) return 'text-orange-500 font-bold';
     return this.getStatusClass(student.studentAssignments[0].status);
   }
 
@@ -409,12 +380,12 @@ export class ListStudentsComponent {
   }
 
   exportFusedStudentsCSV(): void {
-    const students = this.fusedAssignments();
+    const students = this.filteredStudents();
     
     let csvContent = 'Class;Lastname;Firstname;Status\n';
     
     students.forEach(student => {
-      const status = this.getFusedStatusText(student);
+      const status = this.getStudentStatusText(student);
       csvContent += `${student.studentClass};${student.lastName};${student.firstName};${status}\n`;
     });
     
