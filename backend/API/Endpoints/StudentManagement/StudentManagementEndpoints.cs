@@ -99,23 +99,26 @@ public class StudentManagementEndpoints
         var students = await context.Students
             .Include(s => s.StudentAssignments)
             .ThenInclude(studentAssignment => studentAssignment.Stop)
-            .OrderBy(s => s.StudentClass)
+            .OrderBy(s => s.Department)
+            .ThenBy(s => s.StudentClass)
+            .ThenBy(s => s.EdufsUsername)
             .ThenBy(s => s.LastName)
+            .ThenBy(s => s.FirstName)
             .ToListAsync();
 
         var csvBuilder = new StringBuilder();
 
-        // Add headers
-        csvBuilder.AppendLine("Vorname;Nachname;EdufsUsername;Klasse;Abteilung;Stop(s);Status");
+        // Add headers (ordered as: Department;Klasse;EdufsUsername;Nachname;Vorname)
+        csvBuilder.AppendLine("Abteilung;Klasse;EdufsUsername;Nachname;Vorname;Stop(s);Status");
 
-        // Add data rows
+        // Add data rows (ordered as above)
         foreach (var item in students)
         {
-            var escapedFirstName = Utils.EscapeCsvField(item.FirstName);
-            var escapedLastName = Utils.EscapeCsvField(item.LastName);
-            var escapedEdufsUsername = Utils.EscapeCsvField(item.EdufsUsername);
-            var escapedClass = Utils.EscapeCsvField(item.StudentClass);
             var escapedDepartment = Utils.EscapeCsvField(item.Department);
+            var escapedClass = Utils.EscapeCsvField(item.StudentClass);
+            var escapedEdufsUsername = Utils.EscapeCsvField(item.EdufsUsername);
+            var escapedLastName = Utils.EscapeCsvField(item.LastName);
+            var escapedFirstName = Utils.EscapeCsvField(item.FirstName);
             var escapedAssignments =
                 Utils.EscapeCsvField(string.Join(",", item.StudentAssignments.Select(s => s.Stop.Name)));
             var status = item.StudentAssignments.Count switch
@@ -126,7 +129,7 @@ public class StudentManagementEndpoints
             };
             var escapedStatus = Utils.EscapeCsvField(status);
             csvBuilder.AppendLine(
-                $"{escapedFirstName};{escapedLastName};{escapedEdufsUsername};{escapedClass};{escapedDepartment};{escapedAssignments};{escapedStatus}");
+                $"{escapedDepartment};{escapedClass};{escapedEdufsUsername};{escapedLastName};{escapedFirstName};{escapedAssignments};{escapedStatus}");
         }
 
         var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
