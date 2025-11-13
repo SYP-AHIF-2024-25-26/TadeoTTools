@@ -37,6 +37,39 @@ public static class StudentManagementValidations
         return await next(context);
     }
 
+    public static async ValueTask<object?> CreateStudentValidationAsync(EndpointFilterInvocationContext context,
+        EndpointFilterDelegate next)
+    {
+        var studentDto = context.GetArgument<StudentManagementEndpoints.StudentNoAssignmentsDto>(1);
+
+        if (string.IsNullOrWhiteSpace(studentDto.EdufsUsername))
+        {
+            return Results.BadRequest("EdufsUsername is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(studentDto.FirstName))
+        {
+            return Results.BadRequest("FirstName is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(studentDto.LastName))
+        {
+            return Results.BadRequest("LastName is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(studentDto.StudentClass))
+        {
+            return Results.BadRequest("StudentClass is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(studentDto.Department))
+        {
+            return Results.BadRequest("Department is required.");
+        }
+
+        return await next(context);
+    }
+
     public static async ValueTask<object?> UploadCsvFileValidationAsync(EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {

@@ -13,6 +13,15 @@ public static class StudentManagementApi
             .Produces<List<StudentFunctions.StudentDto>>();
         //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
+        group.MapPost("api/students", StudentManagementEndpoints.CreateStudent)
+            .AddEndpointFilter(StudentManagementValidations.CreateStudentValidationAsync)
+            .WithName(nameof(StudentManagementEndpoints.CreateStudent))
+            .WithDescription("Create a new student")
+            .Produces(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status409Conflict)
+            .RequireAuthorization(Setup.AdminPolicyName);
+
         group.MapDelete("api/students", StudentManagementEndpoints.DeleteAllStudents)
             .WithName(nameof(StudentManagementEndpoints.DeleteAllStudents))
             .WithDescription("Delete all students")

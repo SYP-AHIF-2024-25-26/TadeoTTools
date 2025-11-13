@@ -14,6 +14,40 @@ public class StudentManagementEndpoints
     {
         return Results.Ok(await StudentFunctions.GetAllStudentsAsync(context));
     }
+    
+    public record StudentNoAssignmentsDto(
+        string EdufsUsername,
+        string FirstName,
+        string LastName,
+        string StudentClass,
+        string Department
+    );
+
+
+    public static async Task<IResult> CreateStudent(TadeoTDbContext context, StudentNoAssignmentsDto studentDto)
+    {
+        // Check if student already exists
+        var existing = await context.Students.FirstOrDefaultAsync(s => s.EdufsUsername == studentDto.EdufsUsername);
+        if (existing != null)
+        {
+            return Results.Conflict("A student with the same EdufsUsername already exists.");
+        }
+
+        var student = new Student
+        {
+            EdufsUsername = studentDto.EdufsUsername,
+            FirstName = studentDto.FirstName,
+            LastName = studentDto.LastName,
+            StudentClass = studentDto.StudentClass,
+            Department = studentDto.Department,
+            StudentAssignments = new List<StudentAssignment>()
+        };
+
+        context.Students.Add(student);
+        await context.SaveChangesAsync();
+
+        return Results.Ok("Student created successfully");
+    }
 
     public static async Task<IResult> UpdateStudent(TadeoTDbContext context, StudentFunctions.StudentDto studentDto)
     {
