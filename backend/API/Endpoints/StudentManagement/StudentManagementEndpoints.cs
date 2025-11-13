@@ -15,50 +15,6 @@ public class StudentManagementEndpoints
         return Results.Ok(await StudentFunctions.GetAllStudentsAsync(context));
     }
 
-    public static async Task<IResult> GenerateRandomAssignments(TadeoTDbContext context)
-    {
-        var rnd = new Random();
-        var allStudentUsernames = await context.Students.Select(s => s.EdufsUsername).ToListAsync();
-        var skippedStudents = allStudentUsernames.OrderBy(_ => rnd.Next()).Take(20).ToList();
-
-        var baseAssignments = await context.Students
-            .Where(s => !skippedStudents.Contains(s.EdufsUsername))
-            .Select(s => new StudentAssignment
-            {
-                StudentId = s.EdufsUsername,
-                StopId = rnd.Next(1, 41),
-                Status = (Status)rnd.Next(0, 3)
-            }).ToListAsync();
-
-        var duplicateStudents = baseAssignments
-            .Select(a => a.StudentId)
-            .Distinct()
-            .OrderBy(_ => rnd.Next())
-            .Take((int)(context.Students.Count() * 0.08)) // 8% der Students
-            .ToList();
-
-        var duplicateAssignments = new List<StudentAssignment>();
-
-        foreach (var studentId in duplicateStudents)
-        {
-            var extraCount = rnd.Next(1, 3); // 1 or 2 additional assignments
-            for (var i = 0; i < extraCount; i++)
-            {
-                duplicateAssignments.Add(new StudentAssignment
-                {
-                    StudentId = studentId,
-                    StopId = rnd.Next(1, 41),
-                    Status = (Status)rnd.Next(0, 3)
-                });
-            }
-        }
-
-        var allAssignments = baseAssignments.Concat(duplicateAssignments).ToList();
-        await context.StudentAssignments.AddRangeAsync(allAssignments);
-        await context.SaveChangesAsync();
-        return Results.Ok();
-    }
-
     public static async Task<IResult> UpdateStudent(TadeoTDbContext context, StudentFunctions.StudentDto studentDto)
     {
         var student = await context.Students
@@ -90,22 +46,6 @@ public class StudentManagementEndpoints
         await context.SaveChangesAsync();
 
         return Results.Ok("Student updated successfully");
-    }
-
-    public static async Task<IResult> SetStudentAssignments(TadeoTDbContext context, [FromRoute] string id,
-        StudentAssignment[] assignments)
-    {
-        var student = await StudentFunctions.GetStudentByEdufsUsername(context, id);
-        if (student == null)
-        {
-            return Results.NotFound("Student not found");
-        }
-
-        student.StudentAssignments.Clear();
-        student.StudentAssignments.AddRange(assignments);
-        await context.SaveChangesAsync();
-
-        return Results.Ok();
     }
 
     public static async Task<IResult> UploadCsvFile([FromForm] UploadStudentCsvFileDto file, TadeoTDbContext context)
@@ -159,23 +99,26 @@ public class StudentManagementEndpoints
         var students = await context.Students
             .Include(s => s.StudentAssignments)
             .ThenInclude(studentAssignment => studentAssignment.Stop)
-            .OrderBy(s => s.StudentClass)
+            .OrderBy(s => s.Department)
+            .ThenBy(s => s.StudentClass)
+            .ThenBy(s => s.EdufsUsername)
             .ThenBy(s => s.LastName)
+            .ThenBy(s => s.FirstName)
             .ToListAsync();
 
         var csvBuilder = new StringBuilder();
 
-        // Add headers
-        csvBuilder.AppendLine("Vorname;Nachname;EdufsUsername;Klasse;Abteilung;Stop(s);Status");
+        // Add headers (ordered as: Department;Klasse;EdufsUsername;Nachname;Vorname)
+        csvBuilder.AppendLine("Abteilung;Klasse;EdufsUsername;Nachname;Vorname;Stop(s);Status");
 
-        // Add data rows
+        // Add data rows (ordered as above)
         foreach (var item in students)
         {
-            var escapedFirstName = Utils.EscapeCsvField(item.FirstName);
-            var escapedLastName = Utils.EscapeCsvField(item.LastName);
-            var escapedEdufsUsername = Utils.EscapeCsvField(item.EdufsUsername);
-            var escapedClass = Utils.EscapeCsvField(item.StudentClass);
             var escapedDepartment = Utils.EscapeCsvField(item.Department);
+            var escapedClass = Utils.EscapeCsvField(item.StudentClass);
+            var escapedEdufsUsername = Utils.EscapeCsvField(item.EdufsUsername);
+            var escapedLastName = Utils.EscapeCsvField(item.LastName);
+            var escapedFirstName = Utils.EscapeCsvField(item.FirstName);
             var escapedAssignments =
                 Utils.EscapeCsvField(string.Join(",", item.StudentAssignments.Select(s => s.Stop.Name)));
             var status = item.StudentAssignments.Count switch
@@ -186,10 +129,10 @@ public class StudentManagementEndpoints
             };
             var escapedStatus = Utils.EscapeCsvField(status);
             csvBuilder.AppendLine(
-                $"{escapedFirstName};{escapedLastName};{escapedEdufsUsername};{escapedClass};{escapedDepartment};{escapedAssignments};{escapedStatus}");
+                $"{escapedDepartment};{escapedClass};{escapedEdufsUsername};{escapedLastName};{escapedFirstName};{escapedAssignments};{escapedStatus}");
         }
 
-        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+        var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
 
         return Results.File(
             fileContents: csvBytes,
