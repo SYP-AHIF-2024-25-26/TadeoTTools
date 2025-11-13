@@ -1,59 +1,76 @@
 <div class="m-4 flex flex-col items-center text-text-950 dark:text-text-100 min-h-screen">
   <h2 class="my-6 text-2xl font-bold self-center">Stops Overview</h2>
 
-  <!-- Action Buttons -->
-  <div class="flex justify-center gap-4 mb-6">
+  <!-- Action Buttons and Filter Toggle -->
+  <div class="flex flex-wrap justify-center gap-4 mb-6">
     <button [routerLink]="['/stop']" class="btn btn-primary">
       Add Stop
     </button>
     <button (click)="clearFilters()" class="btn btn-outline hover:btn-primary">
       Clear Filters
     </button>
+    <button 
+      (click)="showFilters.set(!showFilters())" 
+      class="btn btn-outline hover:btn-primary"
+      [title]="showFilters() ? 'Hide Filters' : 'Show Filters'"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+      </svg>
+      @if (showFilters()) {
+        Hide
+      } @else {
+        Show
+      }
+    </button>
   </div>
 
-  <!-- Filters Section (Visible on all screen sizes) -->
-  <div class="flex flex-wrap justify-center gap-4 mb-4 mx-4 w-full max-w-6xl">
-    <!-- Stop Name Search -->
-    <div class="form-control w-full sm:w-auto sm:max-w-xs">
-      <label class="label">
-        <span class="label-text">Stop Name Filter</span>
-      </label>
-      <input type="text" placeholder="Search stop names..."
-             class="input input-bordered placeholder-black dark:placeholder-white w-full bg-primary-300 hover:bg-primary-400"
-             [(ngModel)]="stopNameSearchTerm"/>
-    </div>
+  <!-- Expandable Filters Section -->
+  @if (showFilters()) {
+    <div class="flex flex-wrap justify-center gap-4 mb-4 mx-4 w-full max-w-6xl">
+      <!-- Stop Name Search -->
+      <div class="form-control w-full sm:w-auto sm:max-w-xs">
+        <label class="label">
+          <span class="label-text">Stop Name Filter</span>
+        </label>
+        <input type="text" placeholder="Search stop names..."
+               class="input input-bordered placeholder-black dark:placeholder-white w-full bg-primary-300 hover:bg-primary-400"
+               [(ngModel)]="stopNameSearchTerm"/>
+      </div>
 
-    <!-- Stop Group Filter -->
-    <div class="form-control w-full sm:w-auto sm:max-w-xs">
-      <label class="label">
-        <span class="label-text">Stop Group Filter</span>
-      </label>
-      <select class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
-              [(ngModel)]="stopGroupFilter">
-        <option value="">All Stop Groups</option>
-        @for (groupName of uniqueStopGroups(); track groupName) {
-          <option [value]="groupName">{{ groupName }}</option>
-        }
-      </select>
-    </div>
+      <!-- Stop Group Filter -->
+      <div class="form-control w-full sm:w-auto sm:max-w-xs">
+        <label class="label">
+          <span class="label-text">Stop Group Filter</span>
+        </label>
+        <select class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
+                [(ngModel)]="stopGroupFilter">
+          <option value="">All Stop Groups</option>
+          @for (groupName of uniqueStopGroups(); track groupName) {
+            <option [value]="groupName">{{ groupName }}</option>
+          }
+        </select>
+      </div>
 
-    <!-- Teacher Search -->
-    <div class="form-control w-full sm:w-auto sm:max-w-xs">
-      <label class="label">
-        <span class="label-text">Responsible Teachers Filter</span>
-      </label>
-      <input type="text" placeholder="Search teachers..."
-             class="input placeholder-black dark:placeholder-white input-bordered w-full bg-primary-300 hover:bg-primary-400"
-             [(ngModel)]="teacherSearchTerm"/>
-    </div>
+      <!-- Teacher Search -->
+      <div class="form-control w-full sm:w-auto sm:max-w-xs">
+        <label class="label">
+          <span class="label-text">Responsible Teachers Filter</span>
+        </label>
+        <input type="text" placeholder="Search teachers..."
+               class="input placeholder-black dark:placeholder-white input-bordered w-full bg-primary-300 hover:bg-primary-400"
+               [(ngModel)]="teacherSearchTerm"/>
+      </div>
 
-    <!-- Division Filter (Replaced app-filter with a multi-select for demo) -->
-    <div class="form-control w-full sm:w-auto sm:max-w-xs">
-      <label class="label">
-        <span class="label-text">Division Filter</span>
+      <!-- Division Filter -->
+      <div class="form-control w-full sm:w-auto sm:max-w-xs">
+        <label class="label">
+          <span class="label-text">Division Filter</span>
+        </label>
         <app-filter #divisionFilterComponent [elements]="divisions()" (filter)="divisionFilter.set($event)"></app-filter>
-      </label>
-  </div>
+      </div>
+    </div>
+  }
 
   <!-- ################################## -->
   <!-- DESKTOP: Stops Table (md and up) -->
@@ -189,5 +206,4 @@
   <div class="mt-4 text-sm text-text-600 dark:text-text-400 pb-8">
     Showing {{ filteredStops().length }} of {{ stops().length }} stops
   </div>
-</div>
 </div>

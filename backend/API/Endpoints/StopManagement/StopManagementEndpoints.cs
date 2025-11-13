@@ -44,6 +44,7 @@ public static class StopManagementEndpoints
         return Results.Ok(result);
     }
 
+
     public static async Task<IResult> GetCorrelatingStops(TadeoTDbContext context, HttpContext httpContext)
     {
         var userInfo = httpContext.User.GetLeoUserInformation();
@@ -55,25 +56,39 @@ public static class StopManagementEndpoints
                 if (string.IsNullOrEmpty(username))
                     return Results.BadRequest("Username not found");
 
-                var studentAssignments = await context.StudentAssignments
+                var intermediateData = await context.StudentAssignments
                     .Where(sa => sa.Student != null && sa.Student.EdufsUsername == username)
-                    .Select(sa => new CorrelatingStopsDto(
+                    .Select(sa => new
+                    {
                         sa.Stop!.Name,
                         sa.Status,
                         sa.Stop.Description,
                         sa.Stop.RoomNr,
-                        sa.Stop.StudentAssignments
-                            .Where(otherSa => otherSa.Student != null && otherSa.Student.EdufsUsername != username && otherSa.Status != Status.DECLINED)
+                        OtherStudents = sa.Stop.StudentAssignments
+                            .Where(otherSa =>
+                                otherSa.Student != null && otherSa.Student.EdufsUsername != username &&
+                                otherSa.Status != Status.DECLINED)
                             .Select(otherSa => new OtherStudentOfStopDto(
                                 otherSa.Student!.LastName,
                                 otherSa.Student.FirstName,
                                 otherSa.Student.StudentClass,
                                 otherSa.Student.Department
                             ))
+                    })
+                    .ToListAsync();
+
+                var studentAssignments = intermediateData
+                    .Select(data => new CorrelatingStopsDto(
+                        data.Name,
+                        data.Status,
+                        data.Description,
+                        data.RoomNr,
+                        data.OtherStudents
+                            .OrderBy(s => s.StudentClass)
+                            .ThenBy(s => s.LastName)
                             .ToList()
                     ))
-                    .ToListAsync();
-                
+                    .ToList();
                 return Results.Ok(studentAssignments);
             },
             _ => Task.FromResult(Results.BadRequest("User information not found"))
@@ -364,7 +379,7 @@ public static class StopManagementEndpoints
             .Include(stop => stop.StudentAssignments)
             .OrderBy(stop => stop.Name)
             .ToListAsync();
-        
+
         var csvBuilder = new StringBuilder();
         csvBuilder.AppendLine(
             "Name;Description;RoomNr;Teacher;StudentsRequested;StudentsAssigned;StopGroups;Divisions");
@@ -387,7 +402,7 @@ public static class StopManagementEndpoints
                 $"{escapedName};{escapedDescription};{escapedRoomNr};{escapedTeacher};{escapedStudentsRequested};{escapedStudentsAssigned};{escapedStopGroupNames};{escapedDivisions}");
         }
 
-        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+        var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
 
         return Results.File(
             fileContents: csvBytes,
@@ -401,30 +416,38 @@ public static class StopManagementEndpoints
         var students = await context.Students
             .Include(s => s.StudentAssignments)
             .ThenInclude(studentAssignment => studentAssignment.Stop)
-            .Where(s => s.StudentAssignments.Any(sa => sa.StopId == stopId && (sa.Status == Status.ACCEPTED || sa.Status == Status.PENDING)))
-            .OrderBy(s => s.StudentClass)
+            .Where(s => s.StudentAssignments.Any(sa =>
+                sa.StopId == stopId && (sa.Status == Status.ACCEPTED || sa.Status == Status.PENDING)))
+            .OrderBy(s => s.Department)
+            .ThenBy(s => s.StudentClass)
+            .ThenBy(s => s.EdufsUsername)
             .ThenBy(s => s.LastName)
+            .ThenBy(s => s.FirstName)
             .ToListAsync();
-        
+
         if (students.Count == 0)
         {
             return Results.NotFound($"No students found for stop with ID {stopId}");
         }
+
         var csvBuilder = new StringBuilder();
-        csvBuilder.AppendLine("Class;Lastname;Firstname;Status");
+        csvBuilder.AppendLine("Abteilung;Klasse;EdufsUsername;Nachname;Vorname;Status");
         foreach (var student in students)
         {
+            var escapedDepartment = Utils.EscapeCsvField(student.Department);
             var escapedClass = Utils.EscapeCsvField(student.StudentClass);
+            var escapedEdufsUsername = Utils.EscapeCsvField(student.EdufsUsername);
             var escapedLastname = Utils.EscapeCsvField(student.LastName);
             var escapedFirstname = Utils.EscapeCsvField(student.FirstName);
             var escapedStatus = Utils.EscapeCsvField(student.StudentAssignments
                 .First(sa => sa.StopId == stopId && sa.Status is Status.ACCEPTED or Status.PENDING)
                 .Status
                 .ToString());
-            csvBuilder.AppendLine($"{escapedClass};{escapedLastname};{escapedFirstname};{escapedStatus}");
+            csvBuilder.AppendLine($"{escapedDepartment};{escapedClass};{escapedEdufsUsername};{escapedLastname};{escapedFirstname};{escapedStatus}");
         }
-        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
-        
+
+        var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
+
         return Results.File(
             fileContents: csvBytes,
             contentType: "text/csv",

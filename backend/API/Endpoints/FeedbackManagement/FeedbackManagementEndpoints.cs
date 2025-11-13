@@ -121,7 +121,7 @@ public static class FeedbackManagementEndpoints
             csvBuilder.AppendLine($"{item.SessionId};{item.Timestamp:yyyy-MM-dd HH:mm:ss};{escapedQuestion};{escapedAnswer}");
         }
 
-        var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+        var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
 
         return Results.File(
             fileContents: csvBytes,
