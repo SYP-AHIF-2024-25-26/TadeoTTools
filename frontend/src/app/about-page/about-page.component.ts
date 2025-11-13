@@ -10,4 +10,10 @@ import { NgOptimizedImage } from '@angular/common';
   styleUrl: './about-page.component.css',
   standalone: true,
 })
-export class AboutPageComponent {}
+export class AboutPageComponent {
+
+  resetGuideApp() {
+    localStorage.clear();
+    window.location.reload();
+  }
+}

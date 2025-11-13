@@ -7,10 +7,6 @@
       @for (group of groups(); track group.id) {
         <app-guide-card class="mt-6" [stopGroup]="group" [id]="group.id.toString()" (openStopPage)="openStopPage(group)"> </app-guide-card>
       }
-
-      <button class="mx-4 mt-8 h-10 rounded-2xl bg-orange-500 text-base font-medium text-white" (click)="resetGuideApp()">
-        Leitfaden zurücksetzen
-      </button>
     }
   </div>
 
