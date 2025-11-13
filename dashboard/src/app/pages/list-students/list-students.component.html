@@ -76,12 +76,17 @@
 
   <!-- Desktop Table View -->
   <div class="hidden md:block overflow-x-auto w-full max-w-full table-zebra rounded-box border border-base-content/5 bg-base-100 max-h-[600px] overflow-y-scroll">
-    <table class="table">
+    <table class="table table-fixed">
+      <colgroup>
+        <col style="width: 8rem;" />
+        <col style="width: 10rem;" />
+        <col style="width: 14rem;" />
+        <col style="width: 18rem;" />
+      </colgroup>
       <thead>
         <tr>
           <th>Name</th>
           <th>Class</th>
-          <th>Department</th>
           <th>Status</th>
           <th>Assignments</th>
           <th>Action</th>
@@ -97,7 +102,6 @@
             <tr>
               <td>{{ student.firstName }} {{ student.lastName }}</td>
               <td>{{ student.studentClass }}</td>
-              <td>{{ student.department }}</td>
               <td class="{{ getStudentStatusClass(student) }}">
                 {{ getStudentStatusText(student) }}
               </td>
@@ -231,7 +235,13 @@
         </div>
 
         <div class="hidden md:block overflow-x-auto">
-          <table class="table table-zebra w-full">
+          <table class="table table-zebra table-fixed w-full">
+            <colgroup>
+              <col style="width: 18rem;" />
+              <col style="width: 10rem;" />
+              <col style="width: 16rem;" />
+              <col style="width: 8rem;" />
+            </colgroup>
             <thead>
               <tr>
                 <th>Stop Name</th>
