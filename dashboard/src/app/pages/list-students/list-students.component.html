@@ -1,78 +1,141 @@
 <div class="container mx-auto px-4 py-8 text-text-950">
-  <h2 class="my-6 text-2xl font-bold">Student Assignment Manager</h2>
+  <h2 class="my-6 text-2xl font-bold">Student Manager</h2>
 
-  <!-- Filter and search controls -->
-  <div class="flex flex-wrap gap-4 mb-4">
-    <div class="form-control">
-      <label class="label">
-        <span class="label-text">Department</span>
-      </label>
-      <select class="select select-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400" [(ngModel)]="departmentFilter">
-        <option value="">All Departments</option>
-        @for (dep of uniqueDepartments(); track dep) {
-          <option [value]="dep">{{ dep }}</option>
-        }
-      </select>
+  <!-- Filter and actions bar -->
+  <div class="mb-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <!-- Filters -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 flex-1">
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Department</span>
+        </label>
+        <select class="select select-bordered w-full bg-primary-300 hover:bg-primary-400" [(ngModel)]="departmentFilter">
+          <option value="">All Departments</option>
+          @for (dep of uniqueDepartments(); track dep) {
+            <option [value]="dep">{{ dep }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Class Filter</span>
+        </label>
+        <select class="select select-bordered w-full bg-primary-300 hover:bg-primary-400" [(ngModel)]="classFilter">
+          <option value="">All Classes</option>
+          @for (className of filteredUniqueClasses(); track className) {
+            <option [value]="className">{{ className }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Stop Filter</span>
+        </label>
+        <select class="select select-bordered w-full bg-primary-300 hover:bg-primary-400" [(ngModel)]="stopFilter">
+          <option value="">All Stops</option>
+          @for (stopName of uniqueStops(); track stopName) {
+            <option [value]="stopName">{{ stopName }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Status</span>
+        </label>
+        <select class="select select-bordered w-full bg-primary-300 hover:bg-primary-400" [(ngModel)]="statusFilter">
+          <option value="all">All</option>
+          <option value="unassigned">Unassigned</option>
+          <option value="conflict">Conflicts</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Search</span>
+        </label>
+        <input type="text" placeholder="Search by (user)name" class="input input-bordered w-full h-12"
+               [(ngModel)]="searchTerm" />
+      </div>
     </div>
 
-    <div class="form-control">
-      <label class="label">
-        <span class="label-text">Class Filter</span>
-      </label>
-      <select class="select select-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400" [(ngModel)]="classFilter">
-        <option value="">All Classes</option>
-        @for (className of filteredUniqueClasses(); track className) {
-          <option [value]="className">{{ className }}</option>
-        }
-      </select>
-    </div>
-
-    <div class="form-control">
-      <label class="label">
-        <span class="label-text">Stop Filter</span>
-      </label>
-      <select class="select select-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400" [(ngModel)]="stopFilter">
-        <option value="">All Stops</option>
-        @for (stopName of uniqueStops(); track stopName) {
-          <option [value]="stopName">{{ stopName }}</option>
-        }
-      </select>
-    </div>
-
-    <div class="form-control">
-      <label class="label">
-        <span class="label-text">Status</span>
-      </label>
-      <select class="select select-bordered w-full max-w-xs bg-primary-300 hover:bg-primary-400" [(ngModel)]="statusFilter">
-        <option value="all">All</option>
-        <option value="unassigned">Unassigned</option>
-        <option value="conflict">Conflicts</option>
-        <option value="pending">Pending</option>
-        <option value="approved">Approved</option>
-        <option value="rejected">Rejected</option>
-      </select>
-    </div>
-
-    <div class="form-control">
-      <label class="label">
-        <span class="label-text">Search</span>
-      </label>
-      <input type="text" placeholder="Search by (user)name" class="input input-bordered w-full max-w-xs h-12"
-             [(ngModel)]="searchTerm" />
-    </div>
-
-    <div class="flex flex-col justify-end">
-      <button class="btn btn-success text-text-950 dark:text-text-100" (click)="approveAllRequested()" [disabled]="!hasRequested()">
+    <!-- Actions -->
+    <div class="flex flex-wrap gap-2 md:justify-end">
+      <button class="btn btn-md btn-success text-text-950 dark:text-text-100 whitespace-nowrap"
+              (click)="approveAllRequested()" [disabled]="!hasRequested()">
         Approve All Requested
       </button>
-    </div>
-
-    <div class="flex flex-col justify-end">
-      <button class="btn btn-primary" (click)="exportFusedStudentsCSV()">
+      <button class="btn btn-md btn-primary whitespace-nowrap" (click)="exportFusedStudentsCSV()">
         Export CSV
+      </button>
+      <button class="btn btn-md btn-primary whitespace-nowrap" (click)="openAddStudentDialog()">
+        Add Student
       </button>
     </div>
   </div>
+
+  <!-- Add Student Modal -->
+  @if (showAddStudent()) {
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white dark:bg-background-800 p-6 rounded-lg shadow-lg w-full max-w-xl">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">Add Student</h3>
+          <button class="btn btn-sm btn-circle" (click)="closeAddStudentDialog()">✕</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-control md:col-span-2">
+            <label class="label"><span class="label-text">EduFS Username</span></label>
+            <input class="input input-bordered"
+                   [(ngModel)]="newStudent.edufsUsername"
+                   placeholder="e.g. if123456" />
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text">First Name</span></label>
+            <input class="input input-bordered"
+                   [(ngModel)]="newStudent.firstName"
+                   placeholder="First name" />
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text">Last Name</span></label>
+            <input class="input input-bordered"
+                   [(ngModel)]="newStudent.lastName"
+                   placeholder="Last name" />
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text">Class</span></label>
+            <input class="input input-bordered"
+                   [(ngModel)]="newStudent.studentClass"
+                   placeholder="e.g. 5AHIF" />
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text">Department</span></label>
+            <select class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
+                    [(ngModel)]="newStudent.department">
+              <option value="">Select department</option>
+              @for (dep of uniqueDepartments(); track dep) {
+                <option [value]="dep">{{ dep }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-2">
+          <button class="btn btn-ghost" (click)="closeAddStudentDialog()">Cancel</button>
+          <button class="btn btn-primary"
+                  (click)="saveNewStudent()"
+                  [disabled]="!newStudent.edufsUsername || !newStudent.firstName || !newStudent.lastName || !newStudent.studentClass || !newStudent.department">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- Desktop Table View -->
   <div class="hidden md:block overflow-x-auto w-full max-w-full table-zebra rounded-box border border-base-content/5 bg-base-100 max-h-[600px] overflow-y-scroll">

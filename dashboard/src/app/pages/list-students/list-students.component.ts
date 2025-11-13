@@ -41,6 +41,17 @@ export class ListStudentsComponent {
   stops = signal<Stop[]>([]);
   students = signal<Student[]>([]);
 
+  // Add-student modal state
+  showAddStudent = signal<boolean>(false);
+  newStudent: Student = {
+    edufsUsername: '',
+    firstName: '',
+    lastName: '',
+    studentClass: '',
+    department: '',
+    studentAssignments: []
+  };
+
   // Get unique class names for filter dropdowns
   uniqueClasses = computed(() => {
     const classes = new Set<string>();
@@ -53,7 +64,7 @@ export class ListStudentsComponent {
   async ngOnInit() {
     this.stops.set(await this.stopService.getStops());
     const students = await this.studentService.getStudents();
-    
+
     // Sort assignments by stopId for each student
     students.forEach(student => {
       if (student.studentAssignments) {
@@ -62,7 +73,7 @@ export class ListStudentsComponent {
         student.studentAssignments = [];
       }
     });
-    
+
     this.students.set(students);
   }
 
@@ -167,7 +178,7 @@ export class ListStudentsComponent {
 
   // Whether there is any requested (Pending) assignment in the currently visible list
   hasRequested = computed(() => {
-    return this.filteredStudents().some(s => 
+    return this.filteredStudents().some(s =>
       s.studentAssignments.some(a => a.status === Status.Pending)
     );
   });
@@ -175,7 +186,7 @@ export class ListStudentsComponent {
   // Approve all currently requested (Pending) students visible in the list
   async approveAllRequested(): Promise<void> {
     const updates: Promise<void>[] = [];
-    
+
     for (const student of this.filteredStudents()) {
       const pendingAssignments = student.studentAssignments.filter(a => a.status === Status.Pending);
       if (pendingAssignments.length > 0) {
@@ -183,11 +194,40 @@ export class ListStudentsComponent {
         updates.push(this.studentService.updateStudent(student));
       }
     }
-    
+
     if (updates.length > 0) {
       await Promise.all(updates);
       await this.refreshStudents();
     }
+  }
+
+  openAddStudentDialog() {
+    this.newStudent = {
+      edufsUsername: '',
+      firstName: '',
+      lastName: '',
+      studentClass: '',
+      department: '',
+      studentAssignments: []
+    };
+    this.showAddStudent.set(true);
+  }
+
+  closeAddStudentDialog() {
+    this.showAddStudent.set(false);
+  }
+
+  async saveNewStudent() {
+    const s = this.newStudent;
+    // minimal validation
+    if (!s.edufsUsername || !s.firstName || !s.lastName || !s.studentClass || !s.department) {
+      return;
+    }
+    // ensure no stops are sent initially
+    s.studentAssignments = [];
+    await this.studentService.createStudent(s);
+    await this.refreshStudents();
+    this.showAddStudent.set(false);
   }
 
   async deleteAssignment(student: Student, index: number) {
@@ -204,7 +244,7 @@ export class ListStudentsComponent {
 
   async refreshStudents() {
     const students = await this.studentService.getStudents();
-    
+
     // Sort assignments by stopId for each student
     students.forEach(student => {
       if (student.studentAssignments) {
@@ -213,7 +253,7 @@ export class ListStudentsComponent {
         student.studentAssignments = [];
       }
     });
-    
+
     this.students.set(students);
   }
 
@@ -381,14 +421,14 @@ export class ListStudentsComponent {
 
   exportFusedStudentsCSV(): void {
     const students = this.filteredStudents();
-    
+
     let csvContent = 'Class;Lastname;Firstname;Status\n';
-    
+
     students.forEach(student => {
       const status = this.getStudentStatusText(student);
       csvContent += `${student.studentClass};${student.lastName};${student.firstName};${status}\n`;
     });
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const timestamp = new Date().toISOString().split('T')[0];
     downloadFile(blob, `students_export_${timestamp}.csv`);

@@ -26,6 +26,15 @@ export class StudentService {
     );
   }
 
+  createStudent(student: Student): Promise<void> {
+    return firstValueFrom(
+      this.httpClient.post<void>(
+        `${this.baseUrl}/api/students`,
+        student
+      )
+    );
+  }
+
   uploadStudentsCsv(file: File): Promise<void> {
     const formData = new FormData();
     formData.append('file', file);
