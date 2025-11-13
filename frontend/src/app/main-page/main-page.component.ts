@@ -33,9 +33,4 @@ export class MainPageComponent {
     localStorage.setItem(CURRENT_STOP_GROUP_PREFIX, JSON.stringify(stopGroup));
     await this.router.navigate(['/tour', stopGroup.id]);
   }
-
-  resetGuideApp() {
-    localStorage.clear();
-    window.location.reload();
-  }
 }
