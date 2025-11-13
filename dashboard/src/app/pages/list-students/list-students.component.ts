@@ -43,6 +43,7 @@ export class ListStudentsComponent {
 
   // Add-student modal state
   showAddStudent = signal<boolean>(false);
+  addStudentError = signal<string | null>(null);
   newStudent: Student = {
     edufsUsername: '',
     firstName: '',
@@ -210,10 +211,12 @@ export class ListStudentsComponent {
       department: '',
       studentAssignments: []
     };
+    this.addStudentError.set(null);
     this.showAddStudent.set(true);
   }
 
   closeAddStudentDialog() {
+    this.addStudentError.set(null);
     this.showAddStudent.set(false);
   }
 
@@ -225,9 +228,26 @@ export class ListStudentsComponent {
     }
     // ensure no stops are sent initially
     s.studentAssignments = [];
-    await this.studentService.createStudent(s);
-    await this.refreshStudents();
-    this.showAddStudent.set(false);
+    try {
+      await this.studentService.createStudent(s);
+      await this.refreshStudents();
+      this.showAddStudent.set(false);
+      this.addStudentError.set(null);
+    } catch (err: any) {
+      // Try to extract a meaningful backend error message
+      let message = 'Failed to create student. Please try again.';
+      const e = err?.error ?? err;
+      if (e) {
+        if (typeof e === 'string') {
+          message = e;
+        } else if (typeof e?.message === 'string' && e.message.trim().length > 0) {
+          message = e.message;
+        } else if (typeof err?.message === 'string' && err.message.trim().length > 0) {
+          message = err.message;
+        }
+      }
+      this.addStudentError.set(message);
+    }
   }
 
   async deleteAssignment(student: Student, index: number) {
