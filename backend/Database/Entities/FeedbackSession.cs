@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace Database.Entities;
-
+/*
 public class FeedbackSession
 {
     [Key]
@@ -11,4 +11,4 @@ public class FeedbackSession
     
     public List<FeedbackQuestionAnswer> FeedbackQuestionAnswers { get; set; } = [];
 }
-
+*/
