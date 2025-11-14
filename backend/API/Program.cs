@@ -86,8 +86,8 @@ var context = scope.ServiceProvider.GetService<TadeoTDbContext>();
 
 try
 {
-    app.Logger.LogInformation("Ensure database is created...");
-    await context!.Database.EnsureCreatedAsync();
+    app.Logger.LogInformation("Ensure Migrations are applied and Database is created...");
+    await context!.Database.MigrateAsync();
     if (!await context.Divisions.AnyAsync())
     {
         app.Logger.LogInformation("Importing data ...");
