@@ -44,7 +44,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(Setup.CorsPolicyName,
         policyBuilder =>
         {
-            policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:4300", "http://localhost:51566",
+            policyBuilder.WithOrigins("https://tadeot.htl-leonding.ac.at", "http://localhost:4200", "http://localhost:4300", "http://localhost:51566",
                 "http://localhost:5005");
             policyBuilder.AllowAnyHeader();
             policyBuilder.AllowAnyMethod();
