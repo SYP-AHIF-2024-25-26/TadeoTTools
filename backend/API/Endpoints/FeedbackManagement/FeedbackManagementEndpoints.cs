@@ -1,7 +1,6 @@
 using System.Text;
 using Database.Entities;
 using Database.Repository;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints.FeedbackManagement;
