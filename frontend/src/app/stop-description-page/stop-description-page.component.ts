@@ -34,4 +34,8 @@ export class StopDescriptionPageComponent {
     this.stop.set(JSON.parse(localStorage.getItem(CURRENT_STOP_PREFIX)!) as Stop);
     this.currentStopGroup.set(JSON.parse(localStorage.getItem(CURRENT_STOP_GROUP_PREFIX)!) as StopGroup);
   }
+
+  async goBack() {
+    await this.router.navigate(['/tour', this.stopGroupId]);
+  }
 }

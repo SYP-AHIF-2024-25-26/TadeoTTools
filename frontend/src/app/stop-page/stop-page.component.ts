@@ -73,4 +73,8 @@ export class StopPageComponent {
       (a, b) => a.orders[a.stopGroupIds.indexOf(this.parentStopGroup().id)]! - b.orders[b.stopGroupIds.indexOf(this.parentStopGroup().id)]!
     );
   }
+
+  async goBack() {
+    await this.router.navigate(['/main']);
+  }
 }
