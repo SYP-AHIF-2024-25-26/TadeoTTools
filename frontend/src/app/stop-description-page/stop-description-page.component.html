@@ -27,12 +27,17 @@
   </button>
 
   <app-description-container
-    class="mb-28"
+    class="mb-4"
     [title]="stop().name"
     [description]="stop().description"
     [roomNr]="stop().roomNr"
     [divisionIds]="stop().divisionIds"
   />
+
+  <div class="mb-28 flex flex-col items-center">
+    <h2 class="text-xl font-bold">Bewertung</h2>
+    <app-star-rating [rating]="rating()" (ratingChange)="onRatingChanged($event)" />
+  </div>
 </div>
 <div class="fixed bottom-0 left-0 right-0 mx-2">
   <app-navbar [mode]="'station'" />

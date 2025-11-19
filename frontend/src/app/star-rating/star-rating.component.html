@@ -1,0 +1,17 @@
+<div class="flex justify-start">
+  @for (star of stars; track star) {
+    <span
+      (click)="rate(star)"
+      (keydown.enter)="rate(star)"
+      (mouseenter)="hoverRating = star"
+      (mouseleave)="hoverRating = 0"
+      [class.text-yellow-400]="star <= (hoverRating || rating)"
+      class="text-4xl text-gray-300 cursor-pointer transition-colors duration-200"
+      tabindex="0"
+      role="button"
+    >
+      &#9733;
+    </span>
+  }
+</div>
+
