@@ -1,10 +1,4 @@
-import {
-  Component,
-  computed,
-  inject,
-  signal,
-  ViewContainerRef
-} from '@angular/core';
+import { Component, computed, inject, signal, ViewContainerRef, WritableSignal } from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {Status, Stop, Student, StudentAssignment} from '../../types';
 import {CommonModule} from '@angular/common';
@@ -30,6 +24,8 @@ export class ListStudentsComponent {
   private stopService = inject(StopService);
   private studentService = inject(StudentService);
 
+  selectedStudentFile: WritableSignal<File | null> = signal(null);
+
   // Unified filter and search state
   classFilter = signal<string>('');
   departmentFilter = signal<string>('');
@@ -52,6 +48,21 @@ export class ListStudentsComponent {
     department: '',
     studentAssignments: []
   };
+
+  // Collapsible data section state
+  dataCollapsed = signal<boolean>(true);
+
+  toggleDataCollapsed(): void {
+    this.dataCollapsed.set(!this.dataCollapsed());
+  }
+
+  clearFilters(): void {
+    this.classFilter.set('');
+    this.departmentFilter.set('');
+    this.stopFilter.set('');
+    this.searchTerm.set('');
+    this.statusFilter.set('all');
+  }
 
   // Get unique class names for filter dropdowns
   uniqueClasses = computed(() => {
@@ -183,6 +194,37 @@ export class ListStudentsComponent {
       s.studentAssignments.some(a => a.status === Status.Pending)
     );
   });
+
+  onStudentFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedStudentFile.set(input.files[0]);
+    }
+  }
+
+  async submitStudentsCsv(): Promise<void> {
+    if (!this.selectedStudentFile) {
+      alert('Please select a CSV file first');
+      return;
+    }
+
+    try {
+      await this.studentService.uploadStudentsCsv(this.selectedStudentFile() as File);
+      location.reload();
+    } catch (error) {
+      console.error('Error uploading CSV:', error);
+    }
+  }
+
+  async downloadStudentsData() {
+    try {
+      const blob = await this.studentService.getStudentsDataFile();
+      downloadFile(blob, 'students_data.csv');
+    } catch (error) {
+      console.error('Failed to download file:', error);
+      alert('Failed to download students data');
+    }
+  }
 
   // Approve all currently requested (Pending) students visible in the list
   async approveAllRequested(): Promise<void> {
