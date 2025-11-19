@@ -1,6 +1,6 @@
-<div class="flex min-h-screen w-full flex-col overflow-y-scroll bg-gray-50">
+<div class="flex min-h-screen w-full flex-col overflow-y-scroll bg-gray-50 touch-pan-y select-none">
   <div>
-    <app-header />
+    <app-header [showWelcomeText]="false" />
   </div>
 
   <app-breadcrumb [name]="currentStopGroup().name" [stopGroupId]="currentStopGroup().id" />

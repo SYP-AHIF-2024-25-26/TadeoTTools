@@ -1,4 +1,4 @@
-import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { Component, HostListener, inject, signal, WritableSignal } from '@angular/core';
 import { GuideCardComponent } from '../guide-card/guide-card.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { HeaderComponent } from '../header/header.component';
@@ -19,6 +19,11 @@ export class MainPageComponent {
   private router = inject(Router);
   groups: WritableSignal<StopGroup[]> = signal([]);
   showResetButton: WritableSignal<boolean> = signal(false);
+
+  @HostListener('swipeleft')
+  onSwipeRight() {
+    this.router.navigate(['/map']);
+  }
 
   async ngOnInit() {
     await this.onLoad();

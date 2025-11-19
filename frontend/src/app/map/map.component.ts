@@ -1,6 +1,7 @@
-import { Component, computed, Input, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, Input, signal } from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-map',
@@ -11,13 +12,23 @@ import { NavbarComponent } from '../navbar/navbar.component';
 })
 export class MapComponent {
   @Input() roomNr: string | undefined;
-
+  private router = inject(Router);
   images = ['assets/stockwerk-U.png', 'assets/stockwerk-E.png', 'assets/stockwerk-1.png'];
 
   currentFloor = signal(1);
   currentFloorSymbol = computed(() => {
     return ['Untergeschoss', 'Erdgeschoss', '1. Stock'][this.currentFloor()];
   });
+
+  @HostListener('swipeleft')
+  onSwipeLeft() {
+    this.router.navigate(['/feedback']);
+  }
+
+  @HostListener('swiperight')
+  onSwipeRight() {
+    this.router.navigate(['/main']);
+  }
 
   ngOnInit() {
     if (this.roomNr) {

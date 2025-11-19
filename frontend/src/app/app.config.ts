@@ -1,9 +1,11 @@
-import { ApplicationConfig, InjectionToken, provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, InjectionToken, provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
+import { HAMMER_GESTURE_CONFIG, HammerModule } from '@angular/platform-browser';
+import { MyHammerConfig } from '../hammer-config';
 
 export const BASE_URL = new InjectionToken<string>('BaseUrl');
 
@@ -26,5 +28,7 @@ export const appConfig: ApplicationConfig = {
       }
     },
     provideHttpClient(withFetch()),
+    importProvidersFrom(HammerModule),
+    { provide: HAMMER_GESTURE_CONFIG, useClass: MyHammerConfig }
   ],
 };

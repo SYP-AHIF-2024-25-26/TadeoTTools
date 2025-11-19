@@ -1,8 +1,9 @@
-import { Component, computed, inject, type OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, type OnInit, signal, ChangeDetectionStrategy, HostListener } from '@angular/core';
 import { FeedbackQuestion, FeedbackSubmission } from '../types';
 import { ApiFetchService } from '../api-fetch.service';
 import { HeaderComponent } from '../header/header.component';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-feedback',
@@ -35,6 +36,17 @@ export class FeedbackComponent implements OnInit{
   })
 
   private apiFetchService = inject(ApiFetchService)
+  private router = inject(Router)
+
+  @HostListener('swipeleft')
+  onSwipeLeft() {
+    this.router.navigate(['/about']);
+  }
+
+  @HostListener('swiperight')
+  onSwipeRight() {
+    this.router.navigate(['/map']);
+  }
 
   async ngOnInit(): Promise<void> {
     await this.loadQuestions();
