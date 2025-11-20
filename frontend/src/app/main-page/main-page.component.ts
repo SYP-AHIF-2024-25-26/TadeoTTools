@@ -1,4 +1,4 @@
-import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { Component, HostListener, inject, signal, WritableSignal } from '@angular/core';
 import { GuideCardComponent } from '../guide-card/guide-card.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { HeaderComponent } from '../header/header.component';
@@ -20,6 +20,11 @@ export class MainPageComponent {
   groups: WritableSignal<StopGroup[]> = signal([]);
   showResetButton: WritableSignal<boolean> = signal(false);
 
+  @HostListener('swipeleft')
+  onSwipeRight() {
+    this.router.navigate(['/map']);
+  }
+
   async ngOnInit() {
     await this.onLoad();
   }
@@ -32,10 +37,5 @@ export class MainPageComponent {
   async openStopPage(stopGroup: StopGroup) {
     localStorage.setItem(CURRENT_STOP_GROUP_PREFIX, JSON.stringify(stopGroup));
     await this.router.navigate(['/tour', stopGroup.id]);
-  }
-
-  resetGuideApp() {
-    localStorage.clear();
-    window.location.reload();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input, Signal, signal, ViewChildren, WritableSignal } from '@angular/core';
+import { Component, computed, HostListener, inject, Input, Signal, signal, ViewChildren, WritableSignal } from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
@@ -34,6 +34,11 @@ export class StopPageComponent {
       )
     )
   );
+
+  @HostListener('swiperight')
+  onSwipeRight() {
+    this.goBack();
+  }
 
   async ngOnInit() {
     if (this.stopGroupId === undefined) {
@@ -72,5 +77,9 @@ export class StopPageComponent {
     return this.stops().sort(
       (a, b) => a.orders[a.stopGroupIds.indexOf(this.parentStopGroup().id)]! - b.orders[b.stopGroupIds.indexOf(this.parentStopGroup().id)]!
     );
+  }
+
+  async goBack() {
+    await this.router.navigate(['/main']);
   }
 }

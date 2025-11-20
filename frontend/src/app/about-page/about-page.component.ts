@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { HeaderComponent } from '../header/header.component';
-import { NgOptimizedImage } from '@angular/common';
+import { Router } from '@angular/router';
+import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-about-page',
@@ -10,4 +11,17 @@ import { NgOptimizedImage } from '@angular/common';
   styleUrl: './about-page.component.css',
   standalone: true,
 })
-export class AboutPageComponent {}
+export class AboutPageComponent {
+
+  private router = inject(Router);
+
+  resetGuideApp() {
+    localStorage.clear();
+    window.location.reload();
+  }
+
+  @HostListener('swiperight')
+  onSwipeRight() {
+    this.router.navigate(['/feedback']);
+  }
+}
