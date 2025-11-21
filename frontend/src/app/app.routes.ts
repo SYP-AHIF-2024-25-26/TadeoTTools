@@ -8,7 +8,7 @@ import { FeedbackComponent } from './feedback/feedback.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent },
-  { path: 'feedback', component: FeedbackComponent },
+  { path: 'evaluation', component: FeedbackComponent },
   { path: 'main', component: MainPageComponent },
   { path: 'tour/:stopGroupId', component: StopPageComponent },
   { path: 'tour/:stopGroupId/stop/:stopId', component: StopDescriptionPageComponent },
