@@ -22,7 +22,7 @@ export class MapComponent {
 
   @HostListener('swipeleft')
   onSwipeLeft() {
-    this.router.navigate(['/evaluation']);
+    this.router.navigate(['/feedback']);
   }
 
   @HostListener('swiperight')

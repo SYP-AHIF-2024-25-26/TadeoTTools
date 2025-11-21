@@ -22,6 +22,6 @@ export class AboutPageComponent {
 
   @HostListener('swiperight')
   onSwipeRight() {
-    this.router.navigate(['/evaluation']);
+    this.router.navigate(['/feedback']);
   }
 }
