@@ -128,10 +128,7 @@ export class StopGroupsComponent implements OnInit {
 
   addStopBtnClick(stopId: number) {
     let stopsInGroup = this.stopGroups().find((group) => group.id == this.groupIdDetail);
-    console.log('stopsInGroup before: ', stopsInGroup);
     stopsInGroup?.stopIds.unshift(stopId);
-    console.log('stopsInGroup after: ', stopsInGroup);
-    this.hasChanged.set(true);
     this.hasChanged.set(true);
     this.showAddStopDropDownPopup.set(false);
   }

@@ -15,7 +15,6 @@ export class StudentComponent implements OnInit{
 
   async ngOnInit() {
     this.stops.set(await this.stopService.getStopsOfStudent());
-    console.log(this.stops());
   }
   getStatusName(status: Status): string {
     return Status[status];

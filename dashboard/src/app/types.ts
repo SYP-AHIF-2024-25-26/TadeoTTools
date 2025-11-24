@@ -38,7 +38,7 @@ export type Teacher = {
 export type TeacherAssignment = {
   teacherId: string;
   stopId: number;
-}
+};
 
 export type StopOfStudent = {
   name: string;
