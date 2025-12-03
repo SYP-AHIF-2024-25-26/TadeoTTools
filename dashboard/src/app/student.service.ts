@@ -28,10 +28,7 @@ export class StudentService {
 
   createStudent(student: Student): Promise<void> {
     return firstValueFrom(
-      this.httpClient.post<void>(
-        `${this.baseUrl}/api/students`,
-        student
-      )
+      this.httpClient.post<void>(`${this.baseUrl}/api/students`, student)
     );
   }
 
@@ -40,7 +37,10 @@ export class StudentService {
     formData.append('file', file);
 
     return firstValueFrom(
-      this.httpClient.post<void>(`${this.baseUrl}/api/students/upload`, formData)
+      this.httpClient.post<void>(
+        `${this.baseUrl}/api/students/upload`,
+        formData
+      )
     );
   }
 
@@ -53,7 +53,7 @@ export class StudentService {
   getStudentsDataFile(): Promise<Blob> {
     return firstValueFrom(
       this.httpClient.get(`${this.baseUrl}/api/students/csv`, {
-        responseType: 'blob'
+        responseType: 'blob',
       })
     );
   }

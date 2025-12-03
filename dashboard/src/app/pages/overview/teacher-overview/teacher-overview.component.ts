@@ -8,7 +8,7 @@ import { Teacher } from '../../../types';
   selector: 'app-teacher-overview',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './teacher-overview.component.html'
+  templateUrl: './teacher-overview.component.html',
 })
 export class TeacherOverviewComponent {
   private teacherService = inject(TeacherService);
@@ -22,10 +22,11 @@ export class TeacherOverviewComponent {
     const query = this.searchQuery().toLowerCase();
     if (!query) return this.teachers();
 
-    return this.teachers().filter(teacher =>
-      teacher.edufsUsername.toLowerCase().includes(query) ||
-      teacher.firstName.toLowerCase().includes(query) ||
-      teacher.lastName.toLowerCase().includes(query)
+    return this.teachers().filter(
+      (teacher) =>
+        teacher.edufsUsername.toLowerCase().includes(query) ||
+        teacher.firstName.toLowerCase().includes(query) ||
+        teacher.lastName.toLowerCase().includes(query)
     );
   });
 
@@ -36,7 +37,9 @@ export class TeacherOverviewComponent {
   async loadTeachers() {
     try {
       const teachers = await this.teacherService.getTeachers();
-      this.teachers.set(teachers.sort((a, b) => a.lastName.localeCompare(b.lastName)));
+      this.teachers.set(
+        teachers.sort((a, b) => a.lastName.localeCompare(b.lastName))
+      );
     } catch (error) {
       console.error('Failed to load teachers:', error);
     }
@@ -72,7 +75,11 @@ export class TeacherOverviewComponent {
   }
 
   async addTeacher() {
-    if (this.newTeacher()?.edufsUsername && this.newTeacher()?.firstName && this.newTeacher()?.lastName) {
+    if (
+      this.newTeacher()?.edufsUsername &&
+      this.newTeacher()?.firstName &&
+      this.newTeacher()?.lastName
+    ) {
       try {
         await this.teacherService.postTeacher(this.newTeacher() as Teacher);
         await this.loadTeachers();

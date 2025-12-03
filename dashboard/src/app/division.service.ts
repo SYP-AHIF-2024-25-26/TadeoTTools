@@ -30,7 +30,7 @@ export class DivisionService {
     const formData = new FormData();
     formData.append('id', id.toString());
     formData.append('image', image);
-    
+
     return firstValueFrom(
       this.httpClient.put<void>(`${this.baseUrl}/api/divisions/image`, formData)
     );
@@ -44,20 +44,24 @@ export class DivisionService {
 
   deleteDivision(divisionId: number): Promise<void> {
     return firstValueFrom(
-      this.httpClient.delete<void>(`${this.baseUrl}/api/divisions/${divisionId}`)
+      this.httpClient.delete<void>(
+        `${this.baseUrl}/api/divisions/${divisionId}`
+      )
     );
   }
-  
+
   deleteDivisionImg(divisionId: number): Promise<void> {
     return firstValueFrom(
-      this.httpClient.delete<void>(`${this.baseUrl}/api/divisions/${divisionId}/image`)
+      this.httpClient.delete<void>(
+        `${this.baseUrl}/api/divisions/${divisionId}/image`
+      )
     );
   }
 
   getDivisionDataFile(): Promise<Blob> {
     return firstValueFrom(
       this.httpClient.get(`${this.baseUrl}/api/divisions/csv`, {
-        responseType: 'blob'
+        responseType: 'blob',
       })
     );
   }

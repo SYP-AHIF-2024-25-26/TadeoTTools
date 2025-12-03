@@ -2,7 +2,15 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { StopService } from '../../stop.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Division, Status, Stop, StopGroup, Student, StudentAssignment, Teacher } from '../../types';
+import {
+  Division,
+  Status,
+  Stop,
+  StopGroup,
+  Student,
+  StudentAssignment,
+  Teacher,
+} from '../../types';
 import { downloadFile, isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location, NgClass } from '@angular/common';
@@ -67,8 +75,12 @@ export class StopDetailsComponent implements OnInit {
   selectedAssignedClass = signal<string>('all');
   selectedAvailableClass = signal<string>('all');
 
-  inactiveDivisions = computed(() => this.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id)));
-  inactiveStopGroups = computed(() => this.stopGroups().filter((g) => !this.stop()?.stopGroupIds.includes(g.id)));
+  inactiveDivisions = computed(() =>
+    this.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id))
+  );
+  inactiveStopGroups = computed(() =>
+    this.stopGroups().filter((g) => !this.stop()?.stopGroupIds.includes(g.id))
+  );
 
   errorMessage = signal<string | null>(null);
 
@@ -82,30 +94,34 @@ export class StopDetailsComponent implements OnInit {
   // No longer tracking badge position
 
   // Section expansion states
-  expandedSections = signal<{[key: string]: boolean}>({
+  expandedSections = signal<{ [key: string]: boolean }>({
     students: true,
     teachers: true,
     divisions: true,
-    stopGroups: true
+    stopGroups: true,
   });
 
   toggleSection(section: string) {
-    this.expandedSections.update(sections => {
+    this.expandedSections.update((sections) => {
       return { ...sections, [section]: !sections[section] };
     });
   }
 
   teachersAssignedToStop = computed(() => {
     return this.stop().teacherAssignments
-      ? this.stop().teacherAssignments
-          .map(a => this.teachers().find(t => t.edufsUsername === a))
+      ? this.stop()
+          .teacherAssignments.map((a) =>
+            this.teachers().find((t) => t.edufsUsername === a)
+          )
           .filter((t): t is Teacher => t !== undefined)
       : [];
   });
 
   teachersAvailableForAssignment = computed(() => {
     const assignedTeachers = this.teachersAssignedToStop();
-    return this.teachers().filter((teacher) => !assignedTeachers.includes(teacher));
+    return this.teachers().filter(
+      (teacher) => !assignedTeachers.includes(teacher)
+    );
   });
 
   // Filter function to apply common filtering logic for teachers
@@ -114,10 +130,11 @@ export class StopDetailsComponent implements OnInit {
 
     if (filterText.trim() !== '') {
       const searchText = filterText.toLowerCase().trim();
-      filteredTeachers = filteredTeachers.filter(teacher =>
-        teacher.firstName.toLowerCase().includes(searchText) ||
-        teacher.lastName.toLowerCase().includes(searchText) ||
-        teacher.edufsUsername.toLowerCase().includes(searchText)
+      filteredTeachers = filteredTeachers.filter(
+        (teacher) =>
+          teacher.firstName.toLowerCase().includes(searchText) ||
+          teacher.lastName.toLowerCase().includes(searchText) ||
+          teacher.edufsUsername.toLowerCase().includes(searchText)
       );
     }
 
@@ -126,32 +143,47 @@ export class StopDetailsComponent implements OnInit {
 
   // Filtered teachers assigned to the stop
   filteredAssignedTeachers = computed(() => {
-    return this.applyTeacherFilters(this.teachersAssignedToStop(), this.assignedTeacherFilterText());
+    return this.applyTeacherFilters(
+      this.teachersAssignedToStop(),
+      this.assignedTeacherFilterText()
+    );
   });
 
   teachersNotInStop = computed(() => {
-    return this.applyTeacherFilters(this.teachersAvailableForAssignment(), this.availableTeacherFilterText());
+    return this.applyTeacherFilters(
+      this.teachersAvailableForAssignment(),
+      this.availableTeacherFilterText()
+    );
   });
 
   availableClasses = computed(() => {
-    const classes = this.students().map(student => student.studentClass).sort();
+    const classes = this.students()
+      .map((student) => student.studentClass)
+      .sort();
     return ['all', ...new Set(classes)].filter(Boolean);
   });
 
   // Filter function to apply common filtering logic for students
-  private applyStudentFilters(students: any[], filterText: string, selectedClass: string) {
+  private applyStudentFilters(
+    students: any[],
+    filterText: string,
+    selectedClass: string
+  ) {
     let filteredStudents = students;
 
     if (selectedClass !== 'all') {
-      filteredStudents = filteredStudents.filter(student => student.studentClass === selectedClass);
+      filteredStudents = filteredStudents.filter(
+        (student) => student.studentClass === selectedClass
+      );
     }
 
     if (filterText.trim() !== '') {
       const searchText = filterText.toLowerCase().trim();
-      filteredStudents = filteredStudents.filter(student =>
-        student.firstName.toLowerCase().includes(searchText) ||
-        student.lastName.toLowerCase().includes(searchText) ||
-        student.edufsUsername.toLowerCase().includes(searchText)
+      filteredStudents = filteredStudents.filter(
+        (student) =>
+          student.firstName.toLowerCase().includes(searchText) ||
+          student.lastName.toLowerCase().includes(searchText) ||
+          student.edufsUsername.toLowerCase().includes(searchText)
       );
     }
 
@@ -161,19 +193,28 @@ export class StopDetailsComponent implements OnInit {
   // Filtered students assigned to the stop
   filteredAssignedStudents = computed(() => {
     const assignedStudents = this.fetchAssignedStudents();
-    return sortStudents(this.applyStudentFilters(assignedStudents, this.assignedStudentFilterText(), this.selectedAssignedClass()));
+    return sortStudents(
+      this.applyStudentFilters(
+        assignedStudents,
+        this.assignedStudentFilterText(),
+        this.selectedAssignedClass()
+      )
+    );
   });
 
   studentsNotInStop = computed(() => {
     const studentsInStop = this.fetchAssignedStudents();
 
-    const studentsNotInStop = this.students().filter(student =>
-      !studentsInStop.some(s => s.edufsUsername === student.edufsUsername)
+    const studentsNotInStop = this.students().filter(
+      (student) =>
+        !studentsInStop.some((s) => s.edufsUsername === student.edufsUsername)
     );
 
-    const filteredStudents = studentsNotInStop.filter(student => {
+    const filteredStudents = studentsNotInStop.filter((student) => {
       if (student.studentAssignments && student.studentAssignments.length > 0) {
-        return !student.studentAssignments.some(assignment => assignment.status === Status.Accepted);
+        return !student.studentAssignments.some(
+          (assignment) => assignment.status === Status.Accepted
+        );
       }
       return true;
     });
@@ -189,25 +230,32 @@ export class StopDetailsComponent implements OnInit {
 
   private fetchAssignedStudents() {
     return this.stop().studentAssignments
-      ? this.stop().studentAssignments
-        .map(a => {
-          const student = this.students().find(s => s.edufsUsername === a.edufsUsername);
-          if (student) {
-            return {
-              ...student,
-              assignmentStatus: a.status
-            };
-          }
-          return undefined;
-        })
-        .filter((s): s is Student & { assignmentStatus: Status; } => s !== undefined)
+      ? this.stop()
+          .studentAssignments.map((a) => {
+            const student = this.students().find(
+              (s) => s.edufsUsername === a.edufsUsername
+            );
+            if (student) {
+              return {
+                ...student,
+                assignmentStatus: a.status,
+              };
+            }
+            return undefined;
+          })
+          .filter(
+            (s): s is Student & { assignmentStatus: Status } => s !== undefined
+          )
       : [];
   }
 
   async ngOnInit() {
     this.isLoading.set(true);
     try {
-      const response = await this.loginService.checkUserRole('is-admin', 'admin');
+      const response = await this.loginService.checkUserRole(
+        'is-admin',
+        'admin'
+      );
       this.isAdmin.set(response);
 
       const params = await firstValueFrom(this.route.queryParams);
@@ -216,7 +264,11 @@ export class StopDetailsComponent implements OnInit {
       this.stopGroups.set(await this.stopGroupService.getStopGroups());
       this.divisions.set(await this.divisionService.getDivisions());
       this.students.set(await this.studentService.getStudents());
-      this.teachers.set((await this.teacherService.getTeachers()).sort((a, b) => a.lastName.localeCompare(b.lastName)));
+      this.teachers.set(
+        (await this.teacherService.getTeachers()).sort((a, b) =>
+          a.lastName.localeCompare(b.lastName)
+        )
+      );
 
       if (id === -1) {
         this.stop.set({ ...this.emptyStop });
@@ -296,7 +348,10 @@ export class StopDetailsComponent implements OnInit {
   async onDivisionSelect($event: Event) {
     const target = $event.target as HTMLSelectElement;
     const divisionId = parseInt(target.value);
-    if (!this.stop().divisionIds.includes(divisionId) && this.divisions().find((d) => d.id === divisionId)) {
+    if (
+      !this.stop().divisionIds.includes(divisionId) &&
+      this.divisions().find((d) => d.id === divisionId)
+    ) {
       this.stop.update((stop) => {
         stop.divisionIds = [divisionId, ...stop.divisionIds];
         return stop;
@@ -307,7 +362,10 @@ export class StopDetailsComponent implements OnInit {
   async onStopGroupSelect($event: Event) {
     const target = $event.target as HTMLSelectElement;
     const stopGroupId = parseInt(target.value);
-    if (!this.stop().stopGroupIds.includes(stopGroupId) && this.stopGroups().find((g) => g.id === stopGroupId)) {
+    if (
+      !this.stop().stopGroupIds.includes(stopGroupId) &&
+      this.stopGroups().find((g) => g.id === stopGroupId)
+    ) {
       this.stop.update((stop) => {
         stop.stopGroupIds = [stopGroupId, ...stop.stopGroupIds];
         return stop;
@@ -326,7 +384,9 @@ export class StopDetailsComponent implements OnInit {
 
   confirmStopGroupRemove() {
     this.stop.update((stop) => {
-      stop.stopGroupIds = stop.stopGroupIds.filter((ids) => ids !== Number.parseInt(this.stopGroupIdToRemove));
+      stop.stopGroupIds = stop.stopGroupIds.filter(
+        (ids) => ids !== Number.parseInt(this.stopGroupIdToRemove)
+      );
       return stop;
     });
     this.showRemoveStopGroupPopup.set(false);
@@ -344,7 +404,9 @@ export class StopDetailsComponent implements OnInit {
 
   confirmDivisionRemove() {
     this.stop.update((stop) => {
-      stop.divisionIds = stop.divisionIds.filter((ids) => ids !== Number.parseInt(this.divisionIdToRemove));
+      stop.divisionIds = stop.divisionIds.filter(
+        (ids) => ids !== Number.parseInt(this.divisionIdToRemove)
+      );
       return stop;
     });
     this.showRemoveDivisionPopup.set(false);
@@ -353,14 +415,16 @@ export class StopDetailsComponent implements OnInit {
   addTeacher(edufsUsername: string) {
     this.stop.update((stop) => ({
       ...stop,
-      teacherAssignments: [...(stop.teacherAssignments || []), edufsUsername]
+      teacherAssignments: [...(stop.teacherAssignments || []), edufsUsername],
     }));
   }
 
   removeTeacher(edufsUsername: string) {
     this.stop.update((stop) => ({
       ...stop,
-      teacherAssignments: (stop.teacherAssignments || []).filter(a => a !== edufsUsername)
+      teacherAssignments: (stop.teacherAssignments || []).filter(
+        (a) => a !== edufsUsername
+      ),
     }));
   }
   // Keep for backward compatibility
@@ -373,8 +437,8 @@ export class StopDetailsComponent implements OnInit {
       ...stop,
       studentAssignments: [
         ...(stop.studentAssignments || []),
-        { edufsUsername, status: Status.Pending }
-      ]
+        { edufsUsername, status: Status.Pending },
+      ],
     }));
   }
 
@@ -382,8 +446,8 @@ export class StopDetailsComponent implements OnInit {
     this.stop.update((stop) => ({
       ...stop,
       studentAssignments: (stop.studentAssignments || []).filter(
-        a => a.edufsUsername !== edufsUsername
-      )
+        (a) => a.edufsUsername !== edufsUsername
+      ),
     }));
   }
 
@@ -399,25 +463,35 @@ export class StopDetailsComponent implements OnInit {
   }
 
   getAssignmentStatus(student: Student): Status {
-    const assignment = this.stop().studentAssignments?.find(a => a.edufsUsername === student.edufsUsername);
+    const assignment = this.stop().studentAssignments?.find(
+      (a) => a.edufsUsername === student.edufsUsername
+    );
     return assignment ? assignment.status : Status.Pending;
   }
 
   getStatusLabel(status: Status): string {
-    switch(status) {
-      case Status.Pending: return 'Pending';
-      case Status.Accepted: return 'Accepted';
-      case Status.Declined: return 'Declined';
-      default: return 'Unknown';
+    switch (status) {
+      case Status.Pending:
+        return 'Pending';
+      case Status.Accepted:
+        return 'Accepted';
+      case Status.Declined:
+        return 'Declined';
+      default:
+        return 'Unknown';
     }
   }
 
   getStatusClass(status: Status): string {
-    switch(status) {
-      case Status.Pending: return 'bg-yellow-200 text-yellow-800';
-      case Status.Accepted: return 'bg-green-200 text-green-800';
-      case Status.Declined: return 'bg-red-200 text-red-800';
-      default: return '';
+    switch (status) {
+      case Status.Pending:
+        return 'bg-yellow-200 text-yellow-800';
+      case Status.Accepted:
+        return 'bg-green-200 text-green-800';
+      case Status.Declined:
+        return 'bg-red-200 text-red-800';
+      default:
+        return '';
     }
   }
 
@@ -432,16 +506,17 @@ export class StopDetailsComponent implements OnInit {
   protected readonly Status = Status;
 
   getDivisionById(id: number): Division | undefined {
-    return this.divisions().find(d => d.id === id);
+    return this.divisions().find((d) => d.id === id);
   }
 
   getStopGroupById(id: number) {
-    return this.stopGroups().find(sg => sg.id === id);
+    return this.stopGroups().find((sg) => sg.id === id);
   }
 
   getStudentOtherAssignmentsCount(edufsUsername: string): number {
-    const assignments = this.students().find(s => s.edufsUsername === edufsUsername)?.studentAssignments
-      .filter(a => a.stopId !== this.stop().id);
+    const assignments = this.students()
+      .find((s) => s.edufsUsername === edufsUsername)
+      ?.studentAssignments.filter((a) => a.stopId !== this.stop().id);
     return assignments ? assignments.length : 0;
   }
 

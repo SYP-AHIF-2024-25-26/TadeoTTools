@@ -1,10 +1,10 @@
 <div class="flex h-screen w-full flex-col items-center">
-  <div class="flex justify-center mt-4 mb-2">
+  <div class="mb-2 mt-4 flex justify-center">
     <button class="btn btn-primary" (click)="showDivisionPopUp(-1)">
       New Division
     </button>
   </div>
-  <div class="flex justify-center flex-wrap gap-5">
+  <div class="flex flex-wrap justify-center gap-5">
     @for (division of divisions(); track $index) {
       <div
         class="m-2 flex w-64 flex-col flex-wrap justify-between rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
@@ -13,21 +13,32 @@
           <div class="flex w-3/4">
             <p class="font-bold text-text-950">{{ division.name }}</p>
           </div>
-          <div class="m-auto h-8 w-8 self-end justify-self-end rounded-md" [style.background-color]="division.color"></div>
+          <div
+            class="m-auto h-8 w-8 self-end justify-self-end rounded-md"
+            [style.background-color]="division.color"
+          ></div>
         </div>
         <img
           class="h-32 w-32 object-cover"
-          [src]="baseUrl + '/divisions/' + division.id + '/image?timestamp=1234567890'"
+          [src]="
+            baseUrl +
+            '/divisions/' +
+            division.id +
+            '/image?timestamp=1234567890'
+          "
           (error)="hideImage($event)"
         />
         <div class="flex">
           <button
-            class="mb-1 mt-4 btn btn-primary shadow-lg"
+            class="btn btn-primary mb-1 mt-4 shadow-lg"
             (click)="showDivisionPopUp(division.id)"
           >
             Details
           </button>
-          <button class="my-1 ml-auto mt-4 shadow-lg btn btn-outline btn-error" (click)="showDeletePopup(division.id)">
+          <button
+            class="btn btn-outline btn-error my-1 ml-auto mt-4 shadow-lg"
+            (click)="showDeletePopup(division.id)"
+          >
             Delete
           </button>
         </div>

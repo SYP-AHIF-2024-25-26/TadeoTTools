@@ -1,5 +1,5 @@
 {
-  "printWidth": 150,
+  "printWidth": 80,
   "tabWidth": 2,
   "useTabs": false,
   "semi": true,
@@ -9,5 +9,7 @@
   "arrowParens": "always",
   "htmlWhitespaceSensitivity": "css",
   "endOfLine": "lf",
-  "plugins": ["prettier-plugin-tailwindcss"]
+  "plugins": [
+    "prettier-plugin-tailwindcss"
+  ]
 }

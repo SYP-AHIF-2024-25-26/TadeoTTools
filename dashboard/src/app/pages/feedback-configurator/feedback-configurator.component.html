@@ -2,80 +2,139 @@
   <div class="container mx-auto px-4 py-8">
     <!-- Header -->
     <header class="mb-8">
-      <div class="hidden md:flex items-center justify-between">
+      <div class="hidden items-center justify-between md:flex">
         <div class="flex items-center">
           <h1 class="text-2xl font-bold text-text-950">Feedback</h1>
         </div>
         <div class="flex flex-row space-x-4">
           <button
             (click)="togglePreview()"
-            class="px-4 py-2 bg-secondary-200 hover:bg-secondary-300 rounded-md text-text-950 mr-2 flex items-center"
+            class="mr-2 flex items-center rounded-md bg-secondary-200 px-4 py-2 text-text-950 hover:bg-secondary-300"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
             </svg>
             {{ isPreviewMode() ? 'Exit Preview' : 'Preview Form' }}
           </button>
-          <button
-            (click)="saveQuestions()"
-            class="btn btn-primary"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+          <button (click)="saveQuestions()" class="btn btn-primary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+              />
             </svg>
             Save Changes
           </button>
         </div>
       </div>
-      <div class="md:hidden ">
-        <div class="flex items-center justify-center mb-5">
+      <div class="md:hidden">
+        <div class="mb-5 flex items-center justify-center">
           <h1 class="text-2xl font-bold text-text-950">Feedback</h1>
         </div>
         <div class="flex flex-row space-x-4">
           <button
             (click)="togglePreview()"
-            class="px-4 py-2 bg-secondary-200 hover:bg-secondary-300 rounded-md text-text-950 mr-2 flex items-center"
+            class="mr-2 flex items-center rounded-md bg-secondary-200 px-4 py-2 text-text-950 hover:bg-secondary-300"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
             </svg>
             {{ isPreviewMode() ? 'Exit Preview' : 'Preview Form' }}
           </button>
-          <button
-            (click)="saveQuestions()"
-            class="btn btn-primary"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+          <button (click)="saveQuestions()" class="btn btn-primary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+              />
             </svg>
             Save Changes
           </button>
         </div>
       </div>
-      <div class="mt-6 bg-background-100 text-text-950 rounded-lg p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400">
-        <h2 class="text-xl font-semibold mb-4">Feedback Form Configuration</h2>
-        <form [formGroup]="configForm" class="flex items-center space-x-4 text-text-900">
+      <div
+        class="mt-6 rounded-lg bg-background-100 p-6 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+      >
+        <h2 class="mb-4 text-xl font-semibold">Feedback Form Configuration</h2>
+        <form
+          [formGroup]="configForm"
+          class="flex items-center space-x-4 text-text-900"
+        >
           <div class="flex-1">
-            <label for="formTitle" class="block text-sm font-medium mb-1">Form Title</label>
+            <label for="formTitle" class="mb-1 block text-sm font-medium"
+              >Form Title</label
+            >
             <input
               type="text"
               id="formTitle"
               formControlName="title"
-              class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+              class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
               placeholder="Enter form title"
-            >
+            />
           </div>
           <div class="flex-1">
-            <label for="formSubtitle" class="block text-sm font-medium text-text-900 mb-1">Form Subtitle</label>
+            <label
+              for="formSubtitle"
+              class="mb-1 block text-sm font-medium text-text-900"
+              >Form Subtitle</label
+            >
             <input
               type="text"
               id="formSubtitle"
               formControlName="subtitle"
-              class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+              class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
               placeholder="Enter form subtitle"
-            >
+            />
           </div>
         </form>
       </div>
@@ -84,40 +143,61 @@
     <!-- Preview Mode -->
     @if (isPreviewMode()) {
       <div class="mb-8">
-        <div class="bg-background-100 rounded-lg p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400">
-          <div class="flex justify-between items-center mb-4">
+        <div
+          class="rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+        >
+          <div class="mb-4 flex items-center justify-between">
             <h2 class="text-lg font-semibold text-text-950">Form Preview</h2>
-            <span class="text-sm text-text-950">This is how users will see your form</span>
+            <span class="text-sm text-text-950"
+              >This is how users will see your form</span
+            >
           </div>
 
           <!-- Embedded Form Preview -->
-          <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-            <header class="w-full max-w-md mx-auto flex flex-col items-center mb-8">
-              <h2 class="text-3xl font-bold text-center bg-gradient-to-r from-red-700 to-orange-500 bg-clip-text text-transparent">
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <header
+              class="mx-auto mb-8 flex w-full max-w-md flex-col items-center"
+            >
+              <h2
+                class="bg-gradient-to-r from-red-700 to-orange-500 bg-clip-text text-center text-3xl font-bold text-transparent"
+              >
                 {{ formTitle() }}<br />
                 {{ formSubtitle() }}
               </h2>
             </header>
 
-            <div class="w-full max-w-md mx-auto shadow-md border border-gray-100 rounded-lg overflow-hidden">
+            <div
+              class="mx-auto w-full max-w-md overflow-hidden rounded-lg border border-gray-100 shadow-md"
+            >
               <!-- Progress Header -->
-              <div class="p-4 pb-2 bg-white">
-                <div class="flex justify-between items-center mb-2">
-                  <span class="text-sm font-medium text-gray-500">Question {{ previewQuestionIndex() + 1 }} of {{ questions().length }}</span>
-                  <span class="text-sm font-medium text-orange-500">{{ previewProgressPercentage() }}%</span>
+              <div class="bg-white p-4 pb-2">
+                <div class="mb-2 flex items-center justify-between">
+                  <span class="text-sm font-medium text-gray-500"
+                    >Question {{ previewQuestionIndex() + 1 }} of
+                    {{ questions().length }}</span
+                  >
+                  <span class="text-sm font-medium text-orange-500"
+                    >{{ previewProgressPercentage() }}%</span
+                  >
                 </div>
-                <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  class="h-2 w-full overflow-hidden rounded-full bg-gray-100"
+                >
                   <div
                     class="h-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-300"
-                    [style.width.%]="previewProgressPercentage()">
-                  </div>
+                    [style.width.%]="previewProgressPercentage()"
+                  ></div>
                 </div>
               </div>
 
               <!-- Question Content -->
-              <div class="p-4 pt-2 bg-white">
-                <h3 class="text-xl font-bold mb-4 text-gray-500">
-                  {{ questions().length > 0 ? questions()[previewQuestionIndex()].question : 'No questions added yet' }}
+              <div class="bg-white p-4 pt-2">
+                <h3 class="mb-4 text-xl font-bold text-gray-500">
+                  {{
+                    questions().length > 0
+                      ? questions()[previewQuestionIndex()].question
+                      : 'No questions added yet'
+                  }}
                 </h3>
 
                 <!-- Text Input Question -->
@@ -126,28 +206,51 @@
                     type="text"
                     [value]="currentPreviewAnswer()"
                     (input)="updatePreviewAnswer($any($event.target).value)"
-                    [placeholder]="currentPreviewQuestion()?.placeholder || 'Enter your answer'"
-                    class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-400"
-                  >
+                    [placeholder]="
+                      currentPreviewQuestion()?.placeholder ||
+                      'Enter your answer'
+                    "
+                    class="w-full rounded-lg border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-400"
+                  />
                 }
 
                 <!-- Multiple Choice Question -->
-                @if (currentPreviewQuestion()?.type === 'choice' && currentPreviewQuestion()?.options) {
+                @if (
+                  currentPreviewQuestion()?.type === 'choice' &&
+                  currentPreviewQuestion()?.options
+                ) {
                   <div class="space-y-3">
-                    @for (option of currentPreviewQuestion()?.options; track option) {
+                    @for (
+                      option of currentPreviewQuestion()?.options;
+                      track option
+                    ) {
                       <div class="flex items-center">
                         <div
                           (click)="selectPreviewOption(option)"
-                          class="w-full flex items-center p-3 border rounded-lg cursor-pointer transition-colors"
-                          [class.bg-orange-50]="currentPreviewAnswer() === option"
-                          [class.border-orange-300]="currentPreviewAnswer() === option"
-                          [class.border-gray-200]="currentPreviewAnswer() !== option"
+                          class="flex w-full cursor-pointer items-center rounded-lg border p-3 transition-colors"
+                          [class.bg-orange-50]="
+                            currentPreviewAnswer() === option
+                          "
+                          [class.border-orange-300]="
+                            currentPreviewAnswer() === option
+                          "
+                          [class.border-gray-200]="
+                            currentPreviewAnswer() !== option
+                          "
                         >
-                          <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center mr-3"
-                               [class.border-orange-500]="currentPreviewAnswer() === option"
-                               [class.border-gray-300]="currentPreviewAnswer() !== option">
+                          <div
+                            class="mr-3 flex h-5 w-5 items-center justify-center rounded-full border-2"
+                            [class.border-orange-500]="
+                              currentPreviewAnswer() === option
+                            "
+                            [class.border-gray-300]="
+                              currentPreviewAnswer() !== option
+                            "
+                          >
                             @if (currentPreviewAnswer() === option) {
-                              <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                              <div
+                                class="h-3 w-3 rounded-full bg-orange-500"
+                              ></div>
                             }
                           </div>
                           <span>{{ option }}</span>
@@ -160,26 +263,44 @@
                 <!-- Rating Question -->
                 @if (currentPreviewQuestion()?.type === 'rating') {
                   <div class="mb-4">
-                    <div class="flex justify-between items-center">
-                      @for (rating of getPreviewRatingRange(); track rating; let i = $index) {
+                    <div class="flex items-center justify-between">
+                      @for (
+                        rating of getPreviewRatingRange();
+                        track rating;
+                        let i = $index
+                      ) {
                         <div
                           (click)="selectPreviewRating(rating)"
-                          class="flex flex-col items-center cursor-pointer group"
+                          class="group flex cursor-pointer flex-col items-center"
                         >
                           <div
-                            class="w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-colors"
-                            [class.bg-orange-500]="currentPreviewAnswer() === rating.toString()"
-                            [class.text-white]="currentPreviewAnswer() === rating.toString()"
-                            [class.bg-gray-100]="currentPreviewAnswer() !== rating.toString()"
-                            [class.hover:bg-orange-100]="currentPreviewAnswer() !== rating.toString()"
+                            class="mb-1 flex h-10 w-10 items-center justify-center rounded-full transition-colors"
+                            [class.bg-orange-500]="
+                              currentPreviewAnswer() === rating.toString()
+                            "
+                            [class.text-white]="
+                              currentPreviewAnswer() === rating.toString()
+                            "
+                            [class.bg-gray-100]="
+                              currentPreviewAnswer() !== rating.toString()
+                            "
+                            [class.hover:bg-orange-100]="
+                              currentPreviewAnswer() !== rating.toString()
+                            "
                           >
                             {{ rating }}
                           </div>
                           <span
-                            class="text-xs text-center transition-colors"
-                            [class.text-orange-500]="currentPreviewAnswer() === rating.toString()"
-                            [class.text-gray-500]="currentPreviewAnswer() !== rating.toString()"
-                            [class.group-hover:text-orange-400]="currentPreviewAnswer() !== rating.toString()"
+                            class="text-center text-xs transition-colors"
+                            [class.text-orange-500]="
+                              currentPreviewAnswer() === rating.toString()
+                            "
+                            [class.text-gray-500]="
+                              currentPreviewAnswer() !== rating.toString()
+                            "
+                            [class.group-hover:text-orange-400]="
+                              currentPreviewAnswer() !== rating.toString()
+                            "
                           >
                             {{ getPreviewRatingLabel(rating) }}
                           </span>
@@ -187,7 +308,9 @@
 
                         <!-- Divider between ratings -->
                         @if (i < getPreviewRatingRange().length - 1) {
-                          <div class="flex-1 h-px bg-gray-200 self-center"></div>
+                          <div
+                            class="h-px flex-1 self-center bg-gray-200"
+                          ></div>
                         }
                       }
                     </div>
@@ -196,31 +319,64 @@
               </div>
 
               <!-- Form Footer -->
-              <div class="px-4 py-3 flex justify-between bg-white">
+              <div class="flex justify-between bg-white px-4 py-3">
                 <button
                   (click)="previousPreviewQuestion()"
                   [disabled]="previewQuestionIndex() === 0"
-                  class="flex items-center text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-md"
+                  class="flex items-center rounded-md px-4 py-2 text-gray-500 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="mr-1 inline h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 19l-7-7 7-7"
+                    />
                   </svg>
                   Previous
                 </button>
 
                 <button
                   (click)="nextPreviewQuestion()"
-                  class="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-4 py-2 rounded-md"
+                  class="rounded-md bg-gradient-to-r from-orange-400 to-orange-500 px-4 py-2 text-white"
                 >
                   @if (previewQuestionIndex() === questions().length - 1) {
                     Submit
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="ml-1 inline h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                      />
                     </svg>
                   } @else {
                     Next
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="ml-1 inline h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   }
                 </button>
@@ -233,21 +389,34 @@
 
     <!-- Questions Management -->
     @if (!isPreviewMode()) {
-      <div class="bg-background-100 text-text-950 rounded-lg p-6 mb-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400">
-        <div class="flex justify-between items-center mb-4">
+      <div
+        class="mb-6 rounded-lg bg-background-100 p-6 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+      >
+        <div class="mb-4 flex items-center justify-between">
           <h2 class="text-lg font-semibold">Questions</h2>
           <button
             (click)="addNewQuestion()"
-            class="px-3 py-2 bg-primary-300 hover:bg-primary-400 rounded-md text-text-950 text-sm flex items-center"
+            class="flex items-center rounded-md bg-primary-300 px-3 py-2 text-sm text-text-950 hover:bg-primary-400"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             Add Question
           </button>
         </div>
 
-        <div class="text-sm text-text-900 mb-4">
+        <div class="mb-4 text-sm text-text-900">
           Drag and drop to reorder questions. Click on a question to edit it.
         </div>
 
@@ -256,17 +425,30 @@
           @for (question of questions(); track question; let i = $index) {
             <div
               cdkDrag
-              class="hover:border rounded-lg p-4 bg-background-300 hover:border-primary-300 transition-colors cursor-move flex items-center"
+              class="flex cursor-move items-center rounded-lg bg-background-300 p-4 transition-colors hover:border hover:border-primary-300"
             >
               <!-- Drag Handle -->
-              <div cdkDragHandle class="mr-3 text-text-950 cursor-grab">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              <div cdkDragHandle class="mr-3 cursor-grab text-text-950">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 </svg>
               </div>
 
               <!-- Question Number -->
-              <div class="w-8 h-8 rounded-full bg-primary-100 text-text-950 flex items-center justify-center font-medium mr-3">
+              <div
+                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 font-medium text-text-950"
+              >
                 {{ i + 1 }}
               </div>
 
@@ -275,9 +457,15 @@
                 <p class="font-medium text-text-950">{{ question.question }}</p>
                 <p class="text-sm text-text-950">
                   {{ question.required ? 'Required' : 'Optional' }} ·
-                  {{ question.type === 'text' ? 'Text input' :
-                  question.type === 'choice' ? 'Multiple choice' :
-                    question.type === 'rating' ? 'Rating' : 'Text input' }}
+                  {{
+                    question.type === 'text'
+                      ? 'Text input'
+                      : question.type === 'choice'
+                        ? 'Multiple choice'
+                        : question.type === 'rating'
+                          ? 'Rating'
+                          : 'Text input'
+                  }}
                 </p>
               </div>
 
@@ -288,8 +476,19 @@
                   class="p-1 text-text-950"
                   title="Edit question"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
                   </svg>
                 </button>
                 <button
@@ -297,8 +496,19 @@
                   class="p-1 text-text-950 hover:text-red-500"
                   title="Delete question"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
                   </svg>
                 </button>
               </div>
@@ -307,17 +517,38 @@
 
           <!-- Empty State -->
           @if (questions().length === 0) {
-            <div class="border border-dashed border-background-300 rounded-lg p-8 text-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p class="text-text-950 mb-4">No questions added yet</p>
-              <button
-                (click)="addNewQuestion()"
-                class="btn btn-primary"
+            <div
+              class="rounded-lg border border-dashed border-background-300 p-8 text-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mx-auto mb-3 h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p class="mb-4 text-text-950">No questions added yet</p>
+              <button (click)="addNewQuestion()" class="btn btn-primary">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="mr-1 h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
                 Add Your First Question
               </button>
@@ -329,45 +560,80 @@
 
     <!-- Question Editor Modal -->
     @if (showQuestionEditor()) {
-      <div class="fixed inset-0 bg-black bg-opacity-50 text-text-950 flex items-center justify-center z-50 p-4">
-        <div class="bg-background-100 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+      <div
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 text-text-950"
+      >
+        <div
+          class="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-lg bg-background-100 shadow-xl"
+        >
           <!-- Fixed Header -->
-          <div class="flex justify-between items-center p-6 pb-4 border-b border-background-200">
+          <div
+            class="flex items-center justify-between border-b border-background-200 p-6 pb-4"
+          >
             <h3 class="text-xl font-semibold text-text-950">
               {{ editingIndex() === -1 ? 'Add New Question' : 'Edit Question' }}
             </h3>
-            <button (click)="closeQuestionEditor()" class="text-text-900 hover:text-text-950">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <button
+              (click)="closeQuestionEditor()"
+              class="text-text-900 hover:text-text-950"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
 
           <!-- Scrollable Content -->
-          <div class="overflow-y-auto flex-1 p-6">
-            <form [formGroup]="questionForm" (ngSubmit)="saveQuestion()" id="questionEditorForm">
+          <div class="flex-1 overflow-y-auto p-6">
+            <form
+              [formGroup]="questionForm"
+              (ngSubmit)="saveQuestion()"
+              id="questionEditorForm"
+            >
               <div class="mb-4">
-                <label for="question" class="block text-sm font-medium text-text-950 mb-1">Question Text</label>
+                <label
+                  for="question"
+                  class="mb-1 block text-sm font-medium text-text-950"
+                  >Question Text</label
+                >
                 <input
                   type="text"
                   id="question"
                   formControlName="question"
-                  class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+                  class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
                   placeholder="Enter your question"
-                >
-                @if (questionForm.get('question')?.invalid && questionForm.get('question')?.touched) {
-                  <div class="text-red-500 text-sm mt-1">
+                />
+                @if (
+                  questionForm.get('question')?.invalid &&
+                  questionForm.get('question')?.touched
+                ) {
+                  <div class="mt-1 text-sm text-red-500">
                     Question text is required
                   </div>
                 }
               </div>
 
               <div class="mb-4">
-                <label for="type" class="block text-sm font-medium text-text-950 bg-background-100 mb-1">Question Type</label>
+                <label
+                  for="type"
+                  class="mb-1 block bg-background-100 text-sm font-medium text-text-950"
+                  >Question Type</label
+                >
                 <select
                   id="type"
                   formControlName="type"
-                  class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+                  class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
                 >
                   <option value="text">Text Input</option>
                   <option value="choice">Multiple Choice</option>
@@ -378,33 +644,51 @@
               <!-- Options for Multiple Choice -->
               @if (questionForm.get('type')?.value === 'choice') {
                 <div class="mb-4">
-                  <label class="block text-sm font-medium text-text-900 mb-1">Answer Options</label>
+                  <label class="mb-1 block text-sm font-medium text-text-900"
+                    >Answer Options</label
+                  >
                   <div formArrayName="options" class="space-y-2">
-                    @for (control of optionsArray.controls; track control; let i = $index) {
+                    @for (
+                      control of optionsArray.controls;
+                      track control;
+                      let i = $index
+                    ) {
                       <div class="flex items-center">
                         <input
                           [formControlName]="i"
                           type="text"
-                          class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+                          class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
                           [class.border-red-500]="hasDuplicateOption(i)"
                           [class.bg-red-50]="hasDuplicateOption(i)"
                           placeholder="Option {{ i + 1 }}"
-                        >
+                        />
                         @if (optionsArray.controls.length > 1) {
                           <button
                             type="button"
                             (click)="removeOption(i); $event.stopPropagation()"
-                            class="ml-2 text-gray-400 hover:text-red-500 flex-shrink-0"
+                            class="ml-2 flex-shrink-0 text-gray-400 hover:text-red-500"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-5 w-5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
                             </svg>
                           </button>
                         }
                       </div>
                       @if (hasDuplicateOption(i)) {
-                        <div class="text-red-500 text-xs mt-1">
-                          This option name already exists. Please use a unique name.
+                        <div class="mt-1 text-xs text-red-500">
+                          This option name already exists. Please use a unique
+                          name.
                         </div>
                       }
                     }
@@ -412,10 +696,21 @@
                   <button
                     type="button"
                     (click)="addOption()"
-                    class="mt-2 px-3 py-1 bg-background-300 hover:bg-background-400 rounded-md text-text-900 text-sm flex items-center"
+                    class="mt-2 flex items-center rounded-md bg-background-300 px-3 py-1 text-sm text-text-900 hover:bg-background-400"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="mr-1 h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      />
                     </svg>
                     Add Option
                   </button>
@@ -425,70 +720,95 @@
               <!-- Settings for Rating -->
               @if (questionForm.get('type')?.value === 'rating') {
                 <div class="mb-4">
-                  <label class="block text-sm font-medium text-text-950 mb-1">Rating Scale</label>
+                  <label class="mb-1 block text-sm font-medium text-text-950"
+                    >Rating Scale</label
+                  >
                   <div class="flex items-center space-x-4">
                     <div class="flex-1">
-                      <label for="minRating" class="block text-xs text-text-900 mb-1">Minimum</label>
+                      <label
+                        for="minRating"
+                        class="mb-1 block text-xs text-text-900"
+                        >Minimum</label
+                      >
                       <input
                         type="number"
                         id="minRating"
                         formControlName="minRating"
                         min="0"
                         max="10"
-                        class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
-                      >
+                        class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                      />
                     </div>
                     <div class="flex-1">
-                      <label for="maxRating" class="block text-xs text-text-900 mb-1">Maximum</label>
+                      <label
+                        for="maxRating"
+                        class="mb-1 block text-xs text-text-900"
+                        >Maximum</label
+                      >
                       <input
                         type="number"
                         id="maxRating"
                         formControlName="maxRating"
                         min="1"
                         max="10"
-                        class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
-                      >
+                        class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                      />
                     </div>
                   </div>
                   <div class="mt-2">
-                    <label for="ratingLabels" class="block text-xs text-text-900 mb-1">Labels (comma separated, e.g. "Poor, Average, Excellent")</label>
+                    <label
+                      for="ratingLabels"
+                      class="mb-1 block text-xs text-text-900"
+                      >Labels (comma separated, e.g. "Poor, Average,
+                      Excellent")</label
+                    >
                     <input
                       type="text"
                       id="ratingLabels"
                       formControlName="ratingLabels"
-                      class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+                      class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
                       placeholder="Poor, Average, Excellent"
-                    >
+                    />
                   </div>
                 </div>
               }
 
               <div class="mb-4">
-                <label for="placeholder" class="block text-sm font-medium mb-1">Answer Placeholder</label>
+                <label for="placeholder" class="mb-1 block text-sm font-medium"
+                  >Answer Placeholder</label
+                >
                 <input
                   type="text"
                   id="placeholder"
                   formControlName="placeholder"
-                  class="w-full px-3 py-2 border bg-background-50 border-background-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-300"
+                  class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
                   placeholder="e.g., Enter your answer"
-                >
+                />
               </div>
 
               <div class="mb-4">
                 <label class="flex items-center">
-                  <input type="checkbox" formControlName="required" class="h-4 w-4 border-gray-300 rounded">
-                  <span class="ml-2 text-sm text-text-950">Required question</span>
+                  <input
+                    type="checkbox"
+                    formControlName="required"
+                    class="h-4 w-4 rounded border-gray-300"
+                  />
+                  <span class="ml-2 text-sm text-text-950"
+                    >Required question</span
+                  >
                 </label>
               </div>
             </form>
           </div>
 
           <!-- Fixed Footer -->
-          <div class="flex justify-end space-x-3 p-6 pt-4 border-t border-background-200">
+          <div
+            class="flex justify-end space-x-3 border-t border-background-200 p-6 pt-4"
+          >
             <button
               type="button"
               (click)="closeQuestionEditor()"
-              class="rounded-lg px-4 py-2 text-white bg-gray-400 hover:bg-gray-500"
+              class="rounded-lg bg-gray-400 px-4 py-2 text-white hover:bg-gray-500"
             >
               Cancel
             </button>
@@ -496,7 +816,7 @@
               type="submit"
               form="questionEditorForm"
               [disabled]="questionForm.invalid || hasDuplicateOptions()"
-              class="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              class="btn btn-primary disabled:cursor-not-allowed disabled:opacity-50"
             >
               Save Question
             </button>

@@ -26,7 +26,8 @@
 
 .from-red-700 {
   --tw-gradient-from: #b91c1c;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(185, 28, 28, 0));
+  --tw-gradient-stops:
+    var(--tw-gradient-from), var(--tw-gradient-to, rgba(185, 28, 28, 0));
 }
 
 .to-orange-500 {

@@ -8,7 +8,12 @@ import { NgOptimizedImage } from '@angular/common';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterModule, RouterLinkActive, AdminDropdownComponent, NgOptimizedImage],
+  imports: [
+    RouterModule,
+    RouterLinkActive,
+    AdminDropdownComponent,
+    NgOptimizedImage,
+  ],
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent {
@@ -20,7 +25,9 @@ export class NavbarComponent {
 
   async logout() {
     // Redirect back to the dashboard base path after logout to stay under /admin/
-    await this.keycloak.logout({ redirectUri: window.location.origin + '/admin/' });
+    await this.keycloak.logout({
+      redirectUri: window.location.origin + '/admin/',
+    });
   }
 
   async ngOnInit() {

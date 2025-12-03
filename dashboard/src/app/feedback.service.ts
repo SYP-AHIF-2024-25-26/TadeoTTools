@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
-import { FeedbackQuestion } from "./pages/feedback-configurator/feedback-configurator.component";
-import { firstValueFrom } from "rxjs";
-import { BASE_URL } from "./app.config";
+import { HttpClient } from '@angular/common/http';
+import { FeedbackQuestion } from './pages/feedback-configurator/feedback-configurator.component';
+import { firstValueFrom } from 'rxjs';
+import { BASE_URL } from './app.config';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FeedbackService {
   private httpClient = inject(HttpClient);
@@ -13,7 +13,9 @@ export class FeedbackService {
 
   getAllFeedbackQuestions(): Promise<FeedbackQuestion[]> {
     return firstValueFrom(
-      this.httpClient.get<FeedbackQuestion[]>(`${this.baseUrl}/feedback-questions`)
+      this.httpClient.get<FeedbackQuestion[]>(
+        `${this.baseUrl}/feedback-questions`
+      )
     );
   }
 
@@ -26,7 +28,7 @@ export class FeedbackService {
   getFeedbackQuestionAnswersFile(): Promise<Blob> {
     return firstValueFrom(
       this.httpClient.get(`${this.baseUrl}/get-answers-csv`, {
-        responseType: 'blob'
+        responseType: 'blob',
       })
     );
   }

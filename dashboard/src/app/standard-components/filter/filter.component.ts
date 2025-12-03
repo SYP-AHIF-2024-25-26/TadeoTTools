@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  signal,
+  SimpleChanges,
+} from '@angular/core';
 import { Division } from '../../types';
 import { FormsModule } from '@angular/forms';
 import { filter } from 'rxjs';

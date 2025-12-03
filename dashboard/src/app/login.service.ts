@@ -10,7 +10,10 @@ export class LoginService {
   private httpClient = inject(HttpClient);
   private baseUrl = inject(BASE_URL);
 
-  async checkUserRole(performCall: string, expectedRole: string): Promise<boolean> {
+  async checkUserRole(
+    performCall: string,
+    expectedRole: string
+  ): Promise<boolean> {
     try {
       const roleResponse = await this.performCall(performCall);
       if (!roleResponse) {
@@ -25,8 +28,6 @@ export class LoginService {
   performCall(action: string): Promise<string> {
     const route = `${this.baseUrl}/users/${action}`;
 
-    return firstValueFrom(
-      this.httpClient.get(route, { responseType: 'text' })
-    );
+    return firstValueFrom(this.httpClient.get(route, { responseType: 'text' }));
   }
 }

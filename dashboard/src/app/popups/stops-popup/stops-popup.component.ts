@@ -1,12 +1,19 @@
-import {Component, computed, EventEmitter, Input, Output, signal} from '@angular/core';
-import {StudentWithUI} from "../../pages/list-students/list-students.component";
-import {Status, Stop} from "../../types";
-import {FormsModule} from '@angular/forms';
+import {
+  Component,
+  computed,
+  EventEmitter,
+  Input,
+  Output,
+  signal,
+} from '@angular/core';
+import { StudentWithUI } from '../../pages/list-students/list-students.component';
+import { Status, Stop } from '../../types';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-stops-popup',
   imports: [FormsModule],
-  templateUrl: './stops-popup.component.html'
+  templateUrl: './stops-popup.component.html',
 })
 export class StopsPopupComponent {
   @Input() student!: StudentWithUI;
@@ -14,7 +21,11 @@ export class StopsPopupComponent {
 
   @Output() cancel = new EventEmitter<void>();
   @Output() apply = new EventEmitter<StudentWithUI>();
-  @Output() stopToggle = new EventEmitter<{ student: StudentWithUI, stop: Stop, checked: boolean }>();
+  @Output() stopToggle = new EventEmitter<{
+    student: StudentWithUI;
+    stop: Stop;
+    checked: boolean;
+  }>();
 
   searchTerm = signal<string>('');
 
@@ -23,7 +34,7 @@ export class StopsPopupComponent {
     if (!term) {
       return this.allStops;
     }
-    return this.allStops.filter(stop => 
+    return this.allStops.filter((stop) =>
       stop.name.toLowerCase().includes(term)
     );
   });

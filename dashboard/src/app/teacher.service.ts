@@ -19,7 +19,9 @@ export class TeacherService {
 
   getTeacherById(edufsUsername: string) {
     return firstValueFrom(
-      this.httpClient.get<Teacher>(`${this.baseUrl}/api/teachers/${edufsUsername}`)
+      this.httpClient.get<Teacher>(
+        `${this.baseUrl}/api/teachers/${edufsUsername}`
+      )
     );
   }
 
@@ -31,7 +33,9 @@ export class TeacherService {
 
   deleteTeacher(edufsUsername: string) {
     return firstValueFrom(
-      this.httpClient.delete<void>(`${this.baseUrl}/api/teachers/${edufsUsername}`)
+      this.httpClient.delete<void>(
+        `${this.baseUrl}/api/teachers/${edufsUsername}`
+      )
     );
   }
 
@@ -46,7 +50,10 @@ export class TeacherService {
     formData.append('file', file);
 
     return firstValueFrom(
-      this.httpClient.post<void>(`${this.baseUrl}/api/teachers/upload`, formData)
+      this.httpClient.post<void>(
+        `${this.baseUrl}/api/teachers/upload`,
+        formData
+      )
     );
   }
 }

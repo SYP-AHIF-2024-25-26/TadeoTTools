@@ -137,7 +137,6 @@ body {
   }
 }
 
-
 /* Limit DaisyUI collapse checkbox click area to the arrow only on stopgroups */
 /* Keep it minimal and scoped so other collapses (like list-students) are unaffected */
 .collapse.collapse-arrow {
@@ -145,11 +144,11 @@ body {
 }
 .collapse.collapse-arrow > input.collapse-checkbox {
   position: absolute;
-  top: 0;               /* align with the top of the header */
-  right: 0;             /* place over the arrow area on the right */
-  width: 2.75rem;       /* approximate width of the arrow click target */
-  height: 4.5rem;       /* cover the header area, not the content */
-  opacity: 0;           /* invisible but clickable */
+  top: 0; /* align with the top of the header */
+  right: 0; /* place over the arrow area on the right */
+  width: 2.75rem; /* approximate width of the arrow click target */
+  height: 4.5rem; /* cover the header area, not the content */
+  opacity: 0; /* invisible but clickable */
   cursor: pointer;
-  z-index: 10;          /* above header contents so it’s clickable */
+  z-index: 10; /* above header contents so it’s clickable */
 }

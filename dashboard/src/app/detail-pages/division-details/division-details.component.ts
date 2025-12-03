@@ -1,4 +1,12 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { BASE_URL } from '../../app.config';
@@ -56,9 +64,16 @@ export class DivisionDetailsComponent implements OnInit {
     this.errorMessage.set(null);
 
     if (file) {
-      const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/svg+xml'];
+      const validFileTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/jpg',
+        'image/svg+xml',
+      ];
       if (!validFileTypes.includes(file.type)) {
-        this.errorMessage.set('Invalid file type. Please upload a JPG, JPEG, or PNG file.');
+        this.errorMessage.set(
+          'Invalid file type. Please upload a JPG, JPEG, or PNG file.'
+        );
         this.selectedFile = null;
         return;
       }

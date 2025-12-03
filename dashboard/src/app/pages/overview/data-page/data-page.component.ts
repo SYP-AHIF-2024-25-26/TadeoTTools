@@ -1,7 +1,7 @@
-import {Component, inject, signal, WritableSignal} from '@angular/core';
-import {StudentService} from "../../../student.service";
-import {TeacherService} from "../../../teacher.service";
-import {FeedbackService} from "../../../feedback.service";
+import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { StudentService } from '../../../student.service';
+import { TeacherService } from '../../../teacher.service';
+import { FeedbackService } from '../../../feedback.service';
 import { StopGroupService } from '../../../stopgroup.service';
 import { StopService } from '../../../stop.service';
 import { DivisionService } from '../../../division.service';
@@ -11,18 +11,17 @@ import { downloadFile } from '../../../utilfunctions';
   selector: 'app-data-page',
   imports: [],
   templateUrl: './data-page.component.html',
-  standalone: true
+  standalone: true,
 })
 export class DataPageComponent {
-
   selectedStudentFile: WritableSignal<File | null> = signal(null);
   selectedTeacherFile: WritableSignal<File | null> = signal(null);
   private studentService = inject(StudentService);
   private teacherService = inject(TeacherService);
-  private feedbackService = inject(FeedbackService)
-  private stopService = inject(StopService)
-  private stopGroupService = inject(StopGroupService)
-  private divisionService = inject(DivisionService)
+  private feedbackService = inject(FeedbackService);
+  private stopService = inject(StopService);
+  private stopGroupService = inject(StopGroupService);
+  private divisionService = inject(DivisionService);
 
   onStudentFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -38,7 +37,9 @@ export class DataPageComponent {
     }
 
     try {
-      await this.studentService.uploadStudentsCsv(this.selectedStudentFile() as File);
+      await this.studentService.uploadStudentsCsv(
+        this.selectedStudentFile() as File
+      );
       location.reload();
     } catch (error) {
       console.error('Error uploading CSV:', error);
@@ -59,7 +60,9 @@ export class DataPageComponent {
     }
 
     try {
-      await this.teacherService.uploadTeachersCsv(this.selectedTeacherFile() as File);
+      await this.teacherService.uploadTeachersCsv(
+        this.selectedTeacherFile() as File
+      );
       location.reload();
     } catch (error) {
       console.error('Error uploading CSV:', error);
@@ -105,5 +108,4 @@ export class DataPageComponent {
       alert('Failed to download division data');
     }
   }
-
 }

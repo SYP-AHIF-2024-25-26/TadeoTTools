@@ -1,4 +1,4 @@
-import {StudentWithUI} from "./pages/list-students/list-students.component";
+import { StudentWithUI } from './pages/list-students/list-students.component';
 
 export function isValid(input: string | null, maxLength: number): boolean {
   return input != null && input.length > 0 && input.length <= maxLength;
@@ -6,7 +6,9 @@ export function isValid(input: string | null, maxLength: number): boolean {
 
 import { Student } from './types';
 
-export function sortStudents(students: StudentWithUI[] | Student[]): StudentWithUI[] | Student[] {
+export function sortStudents(
+  students: StudentWithUI[] | Student[]
+): StudentWithUI[] | Student[] {
   return students.sort((a, b) => {
     if (a.studentClass < b.studentClass) return -1;
     if (a.studentClass > b.studentClass) return 1;
@@ -14,7 +16,6 @@ export function sortStudents(students: StudentWithUI[] | Student[]): StudentWith
     return a.lastName.localeCompare(b.lastName);
   });
 }
-
 
 export function downloadFile(blob: Blob, filename: string) {
   const url = window.URL.createObjectURL(blob);

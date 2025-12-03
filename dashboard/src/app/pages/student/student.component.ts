@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { StopOfStudent } from '../../types';
 import { StopService } from '../../stop.service';
 import { Status } from '../../types';
@@ -8,7 +8,7 @@ import { Status } from '../../types';
   imports: [],
   templateUrl: './student.component.html',
 })
-export class StudentComponent implements OnInit{
+export class StudentComponent implements OnInit {
   private stopService: StopService = inject(StopService);
 
   stops = signal<StopOfStudent[]>([]);

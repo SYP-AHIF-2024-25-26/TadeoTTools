@@ -1,6 +1,13 @@
-import {Component, ElementRef, HostListener, inject, signal, ViewChild} from '@angular/core';
-import {NgClass} from '@angular/common';
-import {Router} from '@angular/router';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import { NgClass } from '@angular/common';
+import { Router } from '@angular/router';
 import Keycloak from 'keycloak-js';
 
 @Component({
@@ -8,7 +15,7 @@ import Keycloak from 'keycloak-js';
   imports: [NgClass],
   templateUrl: './admin-dropdown.component.html',
 })
-export class AdminDropdownComponent{
+export class AdminDropdownComponent {
   isOpen = signal(false);
   private readonly router = inject(Router);
   private readonly keycloak = inject(Keycloak);
@@ -29,7 +36,9 @@ export class AdminDropdownComponent{
       if (!this.keycloak.authenticated) {
         return;
       }
-      await this.keycloak.logout({ redirectUri: window.location.origin + '/admin/' });
+      await this.keycloak.logout({
+        redirectUri: window.location.origin + '/admin/',
+      });
     }
     this.isOpen.set(false);
   }
@@ -37,7 +46,10 @@ export class AdminDropdownComponent{
   @HostListener('document:mousedown', ['$event'])
   onClickOutside(event: MouseEvent) {
     if (!this.isOpen()) return;
-    if (this.dropdownRef && !this.dropdownRef.nativeElement.contains(event.target)) {
+    if (
+      this.dropdownRef &&
+      !this.dropdownRef.nativeElement.contains(event.target)
+    ) {
       this.isOpen.set(false);
     }
   }

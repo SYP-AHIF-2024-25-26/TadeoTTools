@@ -1,4 +1,10 @@
-import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginService } from '../login.service';
 import Keycloak from 'keycloak-js';
@@ -14,17 +20,17 @@ export class LoginComponent implements OnInit {
   public readonly response: WritableSignal<string | null> = signal(null);
   public readonly loading: WritableSignal<boolean> = signal(false);
   public readonly error: WritableSignal<string | null> = signal(null);
-  
+
   private service: LoginService = inject(LoginService);
   private readonly router = inject(Router);
   private readonly keycloak = inject(Keycloak);
-  
+
   protected isLoggedIn = this.keycloak.authenticated ?? false;
 
   public async ngOnInit(): Promise<void> {
     this.loading.set(true);
     this.error.set(null);
-    
+
     try {
       if (this.keycloak.authenticated) {
         await this.handleAuthenticatedUser();
@@ -41,8 +47,8 @@ export class LoginComponent implements OnInit {
 
   private async initiateLogin(): Promise<void> {
     try {
-      await this.keycloak.login({ 
-        redirectUri: window.location.origin + window.location.pathname 
+      await this.keycloak.login({
+        redirectUri: window.location.origin + window.location.pathname,
       });
     } catch (error) {
       console.error('Keycloak login error:', error);
@@ -58,14 +64,13 @@ export class LoginComponent implements OnInit {
 
     try {
       const userExists = await this.service.performCall('in-database');
-      
+
       if (userExists === 'false') {
         this.response.set('User not in database, please contact admin');
         await this.logout();
         return;
       }
       await this.determineUserRoleAndNavigate();
-      
     } catch (error) {
       console.error('Error handling authenticated user:', error);
       this.error.set('Failed to process user authentication');
@@ -95,7 +100,6 @@ export class LoginComponent implements OnInit {
 
       console.warn('User has no valid role assigned');
       this.response.set('No valid role assigned. Please contact admin.');
-      
     } catch (error) {
       console.error('Error determining user role:', error);
       throw new Error('Failed to determine user permissions');
@@ -106,16 +110,15 @@ export class LoginComponent implements OnInit {
     try {
       const roleResponse = await this.service.performCall(roleEndpoint);
       this.response.set(roleResponse);
-      
+
       const roleMap: Record<string, string> = {
         'is-admin': 'admin',
         'is-teacher': 'teacher',
-        'at-least-student': 'student'
+        'at-least-student': 'student',
       };
-      
+
       const expectedRole = roleMap[roleEndpoint];
       return roleResponse?.toLowerCase().includes(expectedRole) ?? false;
-      
     } catch (error) {
       return false;
     }
@@ -124,7 +127,7 @@ export class LoginComponent implements OnInit {
   private async logout(): Promise<void> {
     try {
       await this.keycloak.logout({
-        redirectUri: window.location.origin
+        redirectUri: window.location.origin,
       });
     } catch (error) {
       console.error('Logout error:', error);

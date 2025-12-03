@@ -1,43 +1,68 @@
 <div class="m-6 text-text-950">
-  <h2 class="my-8 text-3xl font-bold text-center">
+  <h2 class="my-8 text-center text-3xl font-bold">
     Welcome to the TadeoT Stop Management!
   </h2>
   @if (!stops() || stops().length === 0) {
-    <div class="text-xl text-center font-semibold">
+    <div class="text-center text-xl font-semibold">
       No stops available. Please contact your teacher or administrator.
     </div>
   } @else {
-    <div class="text-xl text-center font-semibold">
+    <div class="text-center text-xl font-semibold">
       Here are your possible stops:
     </div>
   }
 
   @for (stop of stops(); track $index) {
-    <div class="mt-10 flex flex-col gap-4 rounded-2xls bg-background-100 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 p-6 md:w-2/3 ml-auto mr-auto">
-      <h3 class="text-2xl font-semibold text-center">{{ stop.name }}</h3>
-      <p class="text-lg">📌 <span class="font-medium">Description:</span><br/> {{ stop.description }}</p>
-      <p class="text-lg">🏠 <span class="font-medium">Room Number:</span><br/> {{ stop.roomNr }}</p>
-      <p class="text-lg">📊 <span class="font-medium">Status:</span><br/> {{ getStatusName(stop.status) }}</p>
+    <div
+      class="rounded-2xls ml-auto mr-auto mt-10 flex flex-col gap-4 bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 md:w-2/3"
+    >
+      <h3 class="text-center text-2xl font-semibold">{{ stop.name }}</h3>
+      <p class="text-lg">
+        📌 <span class="font-medium">Description:</span><br />
+        {{ stop.description }}
+      </p>
+      <p class="text-lg">
+        🏠 <span class="font-medium">Room Number:</span><br />
+        {{ stop.roomNr }}
+      </p>
+      <p class="text-lg">
+        📊 <span class="font-medium">Status:</span><br />
+        {{ getStatusName(stop.status) }}
+      </p>
 
       @if (stop.otherStudents && stop.otherStudents.length > 0) {
         <div class="mt-4">
-          <h4 class="text-xl font-semibold mb-3">👥 Students in this Stop:</h4>
+          <h4 class="mb-3 text-xl font-semibold">👥 Students in this Stop:</h4>
           <div class="overflow-x-auto">
-            <table class="min-w-full bg-background-50 dark:bg-background-200 rounded-lg overflow-hidden">
+            <table
+              class="min-w-full overflow-hidden rounded-lg bg-background-50 dark:bg-background-200"
+            >
               <thead class="bg-secondary-200 dark:bg-accent-500">
                 <tr>
-                  <th class="px-4 py-3 text-left text-sm font-semibold">Last Name</th>
-                  <th class="px-4 py-3 text-left text-sm font-semibold">First Name</th>
-                  <th class="px-4 py-3 text-left text-sm font-semibold">Class</th>
-                  <th class="px-4 py-3 text-left text-sm font-semibold">Department</th>
+                  <th class="px-4 py-3 text-left text-sm font-semibold">
+                    Last Name
+                  </th>
+                  <th class="px-4 py-3 text-left text-sm font-semibold">
+                    First Name
+                  </th>
+                  <th class="px-4 py-3 text-left text-sm font-semibold">
+                    Class
+                  </th>
+                  <th class="px-4 py-3 text-left text-sm font-semibold">
+                    Department
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 @for (student of stop.otherStudents; track $index) {
-                  <tr class="border-b border-background-200 dark:border-background-300 hover:bg-background-100 dark:hover:bg-background-300">
+                  <tr
+                    class="border-b border-background-200 hover:bg-background-100 dark:border-background-300 dark:hover:bg-background-300"
+                  >
                     <td class="px-4 py-3 text-sm">{{ student.lastName }}</td>
                     <td class="px-4 py-3 text-sm">{{ student.firstName }}</td>
-                    <td class="px-4 py-3 text-sm">{{ student.studentClass }}</td>
+                    <td class="px-4 py-3 text-sm">
+                      {{ student.studentClass }}
+                    </td>
                     <td class="px-4 py-3 text-sm">{{ student.department }}</td>
                   </tr>
                 }
@@ -46,7 +71,9 @@
           </div>
         </div>
       } @else {
-        <p class="mt-4 text-center text-sm text-gray-500">No other students registered for this stop yet.</p>
+        <p class="mt-4 text-center text-sm text-gray-500">
+          No other students registered for this stop yet.
+        </p>
       }
     </div>
   }

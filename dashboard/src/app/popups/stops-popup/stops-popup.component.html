@@ -1,34 +1,41 @@
-<div class="z-[9999] mt-2 bg-base-100 border border-base-300 rounded-lg shadow-xl max-h-[400px] overflow-y-auto w-64 stops-popup">
+<div
+  class="stops-popup z-[9999] mt-2 max-h-[400px] w-64 overflow-y-auto rounded-lg border border-base-300 bg-base-100 shadow-xl"
+>
   <div class="p-4">
     <div class="mb-3">
-      <input type="text" 
-             placeholder="Search stops..." 
-             class="input input-bordered input-sm w-full" 
-             [(ngModel)]="searchTerm" />
+      <input
+        type="text"
+        placeholder="Search stops..."
+        class="input input-sm input-bordered w-full"
+        [(ngModel)]="searchTerm"
+      />
     </div>
-    
-    <div class="max-h-[200px] overflow-y-auto mb-4">
+
+    <div class="mb-4 max-h-[200px] overflow-y-auto">
       @for (stop of filteredStops(); track stop.id) {
         <div class="form-control">
-          <label class="label cursor-pointer hover:bg-base-200 rounded-lg px-2">
+          <label class="label cursor-pointer rounded-lg px-2 hover:bg-base-200">
             <span class="label-text mr-2">{{ stop.name }}</span>
-            <input type="checkbox" class="checkbox"
-                   [checked]="isStopSelected(student!, stop.id)"
-                   (change)="onToggle(stop, $event)" />
+            <input
+              type="checkbox"
+              class="checkbox"
+              [checked]="isStopSelected(student!, stop.id)"
+              (change)="onToggle(stop, $event)"
+            />
           </label>
         </div>
       }
       @if (filteredStops().length === 0) {
-        <div class="text-center text-gray-500 py-4">
-          No stops found
-        </div>
+        <div class="py-4 text-center text-gray-500">No stops found</div>
       }
     </div>
-    <div class="flex justify-end gap-2 pt-2 border-t border-base-300">
-      <button class="btn btn-sm btn-ghost" (click)="onCancel()">Cancel</button>
-      <button class="btn btn-sm btn-primary"
-              (click)="onApply()"
-              [disabled]="!(student.selectedStops?.size)">
+    <div class="flex justify-end gap-2 border-t border-base-300 pt-2">
+      <button class="btn btn-ghost btn-sm" (click)="onCancel()">Cancel</button>
+      <button
+        class="btn btn-primary btn-sm"
+        (click)="onApply()"
+        [disabled]="!student.selectedStops?.size"
+      >
         Apply
       </button>
     </div>

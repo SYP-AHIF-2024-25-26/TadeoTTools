@@ -13,12 +13,12 @@
 </div> -->
 
 <!-- Main Content Container with Tabs -->
-<div class="max-w-7xl mx-auto px-6 py-8">
+<div class="mx-auto max-w-7xl px-6 py-8">
   <!-- Horizontal Tab Navigation -->
-  <div class="border-b border-background-300 dark:border-background-700 mb-6">
-    <div class="flex gap-2 justify-center">
+  <div class="mb-6 border-b border-background-300 dark:border-background-700">
+    <div class="flex justify-center gap-2">
       <button
-        class="px-6 py-3 text-sm transition-all duration-200 rounded-t-lg"
+        class="rounded-t-lg px-6 py-3 text-sm transition-all duration-200"
         [class.bg-primary]="activeTab() === 'teachers'"
         [class.font-bold]="activeTab() === 'teachers'"
         [class.text-text-950]="activeTab() === 'teachers'"
@@ -31,9 +31,9 @@
       >
         Teacher Overview
       </button>
-      
+
       <button
-        class="px-6 py-3 text-sm transition-all duration-200 rounded-t-lg"
+        class="rounded-t-lg px-6 py-3 text-sm transition-all duration-200"
         [class.bg-primary]="activeTab() === 'admins'"
         [class.font-bold]="activeTab() === 'admins'"
         [class.text-text-950]="activeTab() === 'admins'"
@@ -46,9 +46,9 @@
       >
         Admin Overview
       </button>
-      
+
       <button
-        class="px-6 py-3 text-sm transition-all duration-200 rounded-t-lg"
+        class="rounded-t-lg px-6 py-3 text-sm transition-all duration-200"
         [class.bg-primary]="activeTab() === 'data'"
         [class.font-bold]="activeTab() === 'data'"
         [class.text-text-950]="activeTab() === 'data'"

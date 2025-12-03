@@ -30,7 +30,10 @@
     >
       <div class="py-1">
         @for (item of items; track $index) {
-          <a (click)="selectItem(item)" class="block cursor-pointer px-4 py-2 text-sm text-text-700 hover:bg-background-100">
+          <a
+            (click)="selectItem(item)"
+            class="block cursor-pointer px-4 py-2 text-sm text-text-700 hover:bg-background-100"
+          >
             {{ item }}
           </a>
         }

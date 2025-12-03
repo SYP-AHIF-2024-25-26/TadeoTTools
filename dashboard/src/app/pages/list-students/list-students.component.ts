@@ -1,12 +1,23 @@
-import { Component, computed, inject, signal, ViewContainerRef, WritableSignal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  ViewContainerRef,
+  WritableSignal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Status, Stop, Student, StudentAssignment } from '../../types';
 import { CommonModule } from '@angular/common';
 import { sortStudents, downloadFile } from '../../utilfunctions';
 import { StopService } from '../../stop.service';
-import { Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
+import {
+  Overlay,
+  OverlayPositionBuilder,
+  OverlayRef,
+} from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { StopsPopupComponent } from "../../popups/stops-popup/stops-popup.component";
+import { StopsPopupComponent } from '../../popups/stops-popup/stops-popup.component';
 import { StudentService } from '../../student.service';
 
 export interface StudentWithUI extends Student {
@@ -46,7 +57,7 @@ export class ListStudentsComponent {
     lastName: '',
     studentClass: '',
     department: '',
-    studentAssignments: []
+    studentAssignments: [],
   };
 
   // Collapsible data section state
@@ -67,7 +78,7 @@ export class ListStudentsComponent {
   // Get unique class names for filter dropdowns
   uniqueClasses = computed(() => {
     const classes = new Set<string>();
-    this.students().forEach(student => {
+    this.students().forEach((student) => {
       classes.add(student.studentClass);
     });
     return Array.from(classes).sort();
@@ -78,7 +89,7 @@ export class ListStudentsComponent {
     const students = await this.studentService.getStudents();
 
     // Sort assignments by stopId for each student
-    students.forEach(student => {
+    students.forEach((student) => {
       if (student.studentAssignments) {
         student.studentAssignments.sort((a, b) => a.stopId - b.stopId);
       } else {
@@ -92,8 +103,8 @@ export class ListStudentsComponent {
   // Get unique stop names for filter dropdowns
   uniqueStops = computed(() => {
     const stops = new Set<string>();
-    this.students().forEach(student => {
-      student.studentAssignments.forEach(assignment => {
+    this.students().forEach((student) => {
+      student.studentAssignments.forEach((assignment) => {
         stops.add(assignment.stopName);
       });
     });
@@ -102,30 +113,30 @@ export class ListStudentsComponent {
 
   uniqueDepartments = computed(() => {
     const deps = new Set<string>();
-    this.students().forEach(s => deps.add(s.department));
+    this.students().forEach((s) => deps.add(s.department));
     return Array.from(deps).sort();
   });
 
   // Remove the old fusedUniqueClasses and add unified version
   filteredUniqueClasses = computed(() => {
     const classes = new Set<string>();
-    this.students().forEach(student => {
+    this.students().forEach((student) => {
       classes.add(student.studentClass);
     });
     let arr = Array.from(classes).sort();
     const dep = this.departmentFilter()?.toLowerCase();
     switch (dep) {
       case 'informatik':
-        arr = arr.filter(c => c?.toLowerCase().includes('hif'));
+        arr = arr.filter((c) => c?.toLowerCase().includes('hif'));
         break;
       case 'medizintechnik':
-        arr = arr.filter(c => c?.toLowerCase().includes('hbg'));
+        arr = arr.filter((c) => c?.toLowerCase().includes('hbg'));
         break;
       case 'medientechnik':
-        arr = arr.filter(c => c?.toLowerCase().includes('hitm'));
+        arr = arr.filter((c) => c?.toLowerCase().includes('hitm'));
         break;
       case 'elektrotechnik':
-        arr = arr.filter(c => c?.toLowerCase().includes('hel'));
+        arr = arr.filter((c) => c?.toLowerCase().includes('hel'));
         break;
       default:
         break;
@@ -135,37 +146,42 @@ export class ListStudentsComponent {
 
   // Remove conflicts and fusedAssignments, replace with single unified list
   filteredStudents = computed(() => {
-    let filtered = this.students().map(student => ({
-      ...student,
-      showStops: false,
-      selectedStops: new Set<number>()
-    } as StudentWithUI));
+    let filtered = this.students().map(
+      (student) =>
+        ({
+          ...student,
+          showStops: false,
+          selectedStops: new Set<number>(),
+        }) as StudentWithUI
+    );
 
     // Department filter
     if (this.departmentFilter()) {
-      filtered = filtered.filter(s => s.department === this.departmentFilter());
+      filtered = filtered.filter(
+        (s) => s.department === this.departmentFilter()
+      );
     }
 
     // Class filter
     if (this.classFilter()) {
-      filtered = filtered.filter(s => s.studentClass === this.classFilter());
+      filtered = filtered.filter((s) => s.studentClass === this.classFilter());
     }
 
     // Stop filter
     if (this.stopFilter()) {
-      filtered = filtered.filter(s =>
-        s.studentAssignments.some(a => a.stopName === this.stopFilter())
+      filtered = filtered.filter((s) =>
+        s.studentAssignments.some((a) => a.stopName === this.stopFilter())
       );
     }
 
     // Status filter
     const status = this.statusFilter();
     if (status && status !== 'all') {
-      filtered = filtered.filter(s => {
+      filtered = filtered.filter((s) => {
         if (status === 'unassigned') return s.studentAssignments.length === 0;
         if (status === 'conflict') return s.studentAssignments.length > 1;
         if (s.studentAssignments.length === 0) return false;
-        const hasStatus = s.studentAssignments.some(a => {
+        const hasStatus = s.studentAssignments.some((a) => {
           if (status === 'pending') return a.status === Status.Pending;
           if (status === 'approved') return a.status === Status.Accepted;
           if (status === 'rejected') return a.status === Status.Declined;
@@ -178,10 +194,11 @@ export class ListStudentsComponent {
     // Search
     if (this.searchTerm()) {
       const term = this.searchTerm().toLowerCase();
-      filtered = filtered.filter(s =>
-        s.firstName.toLowerCase().includes(term) ||
-        s.lastName.toLowerCase().includes(term) ||
-        s.edufsUsername.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (s) =>
+          s.firstName.toLowerCase().includes(term) ||
+          s.lastName.toLowerCase().includes(term) ||
+          s.edufsUsername.toLowerCase().includes(term)
       );
     }
 
@@ -190,8 +207,8 @@ export class ListStudentsComponent {
 
   // Whether there is any requested (Pending) assignment in the currently visible list
   hasRequested = computed(() => {
-    return this.filteredStudents().some(s =>
-      s.studentAssignments.some(a => a.status === Status.Pending)
+    return this.filteredStudents().some((s) =>
+      s.studentAssignments.some((a) => a.status === Status.Pending)
     );
   });
 
@@ -209,7 +226,9 @@ export class ListStudentsComponent {
     }
 
     try {
-      await this.studentService.uploadStudentsCsv(this.selectedStudentFile() as File);
+      await this.studentService.uploadStudentsCsv(
+        this.selectedStudentFile() as File
+      );
       location.reload();
     } catch (error) {
       console.error('Error uploading CSV:', error);
@@ -231,9 +250,11 @@ export class ListStudentsComponent {
     const updates: Promise<void>[] = [];
 
     for (const student of this.filteredStudents()) {
-      const pendingAssignments = student.studentAssignments.filter(a => a.status === Status.Pending);
+      const pendingAssignments = student.studentAssignments.filter(
+        (a) => a.status === Status.Pending
+      );
       if (pendingAssignments.length > 0) {
-        pendingAssignments.forEach(a => a.status = Status.Accepted);
+        pendingAssignments.forEach((a) => (a.status = Status.Accepted));
         updates.push(this.studentService.updateStudent(student));
       }
     }
@@ -251,7 +272,7 @@ export class ListStudentsComponent {
       lastName: '',
       studentClass: '',
       department: '',
-      studentAssignments: []
+      studentAssignments: [],
     };
     this.addStudentError.set(null);
     this.showAddStudent.set(true);
@@ -265,7 +286,13 @@ export class ListStudentsComponent {
   async saveNewStudent() {
     const s = this.newStudent;
     // minimal validation
-    if (!s.edufsUsername || !s.firstName || !s.lastName || !s.studentClass || !s.department) {
+    if (
+      !s.edufsUsername ||
+      !s.firstName ||
+      !s.lastName ||
+      !s.studentClass ||
+      !s.department
+    ) {
       return;
     }
     // ensure no stops are sent initially
@@ -282,9 +309,15 @@ export class ListStudentsComponent {
       if (e) {
         if (typeof e === 'string') {
           message = e;
-        } else if (typeof e?.message === 'string' && e.message.trim().length > 0) {
+        } else if (
+          typeof e?.message === 'string' &&
+          e.message.trim().length > 0
+        ) {
           message = e.message;
-        } else if (typeof err?.message === 'string' && err.message.trim().length > 0) {
+        } else if (
+          typeof err?.message === 'string' &&
+          err.message.trim().length > 0
+        ) {
           message = err.message;
         }
       }
@@ -298,7 +331,11 @@ export class ListStudentsComponent {
     await this.refreshStudents();
   }
 
-  async changeAssignmentStatus(student: Student, index: number, status: Status) {
+  async changeAssignmentStatus(
+    student: Student,
+    index: number,
+    status: Status
+  ) {
     student.studentAssignments[index].status = status;
     await this.studentService.updateStudent(student);
     await this.refreshStudents();
@@ -308,7 +345,7 @@ export class ListStudentsComponent {
     const students = await this.studentService.getStudents();
 
     // Sort assignments by stopId for each student
-    students.forEach(student => {
+    students.forEach((student) => {
       if (student.studentAssignments) {
         student.studentAssignments.sort((a, b) => a.stopId - b.stopId);
       } else {
@@ -331,15 +368,32 @@ export class ListStudentsComponent {
     this.selectedStudent.set(null);
   }
 
-  async approveAssignment(student: Student, assignmentIndex: number): Promise<void> {
-    await this.changeAssignmentStatus(student, assignmentIndex, Status.Accepted);
+  async approveAssignment(
+    student: Student,
+    assignmentIndex: number
+  ): Promise<void> {
+    await this.changeAssignmentStatus(
+      student,
+      assignmentIndex,
+      Status.Accepted
+    );
   }
 
-  async rejectAssignment(student: Student, assignmentIndex: number): Promise<void> {
-    await this.changeAssignmentStatus(student, assignmentIndex, Status.Declined);
+  async rejectAssignment(
+    student: Student,
+    assignmentIndex: number
+  ): Promise<void> {
+    await this.changeAssignmentStatus(
+      student,
+      assignmentIndex,
+      Status.Declined
+    );
   }
 
-  async undoAssignment(student: Student, assignmentIndex: number): Promise<void> {
+  async undoAssignment(
+    student: Student,
+    assignmentIndex: number
+  ): Promise<void> {
     await this.changeAssignmentStatus(student, assignmentIndex, Status.Pending);
   }
 
@@ -372,8 +426,10 @@ export class ListStudentsComponent {
   }
 
   getStudentStatusClass(student: Student): string {
-    if (student.studentAssignments.length === 0) return 'text-gray-500 font-bold';
-    if (student.studentAssignments.length > 1) return 'text-orange-500 font-bold';
+    if (student.studentAssignments.length === 0)
+      return 'text-gray-500 font-bold';
+    if (student.studentAssignments.length > 1)
+      return 'text-orange-500 font-bold';
     return this.getStatusClass(student.studentAssignments[0].status);
   }
 
@@ -406,8 +462,9 @@ export class ListStudentsComponent {
     }
 
     // Get all selected stops
-    const selectedStops = this.stops()
-      .filter(stop => student.selectedStops?.has(stop.id));
+    const selectedStops = this.stops().filter((stop) =>
+      student.selectedStops?.has(stop.id)
+    );
 
     // Create assignments for all selected stops
     for (const stop of selectedStops) {
@@ -415,7 +472,7 @@ export class ListStudentsComponent {
         edufsUsername: student.edufsUsername,
         stopId: stop.id,
         stopName: stop.name,
-        status: Status.Pending
+        status: Status.Pending,
       };
       student.studentAssignments.push(newAssignment);
     }
@@ -440,20 +497,28 @@ export class ListStudentsComponent {
     const positionStrategy = this.positionBuilder
       .flexibleConnectedTo(anchor)
       .withPositions([
-        { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
-        { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }
+        {
+          originX: 'start',
+          originY: 'bottom',
+          overlayX: 'start',
+          overlayY: 'top',
+        },
+        { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' },
       ]);
     this.overlayRef = this.overlay.create({
       positionStrategy,
       hasBackdrop: true,
       backdropClass: 'cdk-overlay-transparent-backdrop',
-      scrollStrategy: this.overlay.scrollStrategies.reposition()
+      scrollStrategy: this.overlay.scrollStrategies.reposition(),
     });
     this.overlayRef.backdropClick().subscribe(() => this.closeStopsPopup());
     this.overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
       if (event.key === 'Escape') this.closeStopsPopup();
     });
-    const portal = new ComponentPortal(StopsPopupComponent, this.viewContainerRef);
+    const portal = new ComponentPortal(
+      StopsPopupComponent,
+      this.viewContainerRef
+    );
     const compRef = this.overlayRef.attach(portal);
     compRef.instance.student = student;
     compRef.instance.allStops = this.stops();
@@ -465,9 +530,19 @@ export class ListStudentsComponent {
       await this.applyStopSelections(stu);
       this.closeStopsPopup();
     });
-    compRef.instance.stopToggle.subscribe(({ student, stop, checked }: { student: StudentWithUI, stop: Stop, checked: boolean }) => {
-      this.onStopToggle(student, stop, checked);
-    });
+    compRef.instance.stopToggle.subscribe(
+      ({
+        student,
+        stop,
+        checked,
+      }: {
+        student: StudentWithUI;
+        stop: Stop;
+        checked: boolean;
+      }) => {
+        this.onStopToggle(student, stop, checked);
+      }
+    );
   }
 
   closeStopsPopup() {
@@ -483,7 +558,7 @@ export class ListStudentsComponent {
 
     let csvContent = 'Class;Lastname;Firstname;Status\n';
 
-    students.forEach(student => {
+    students.forEach((student) => {
       const status = this.getStudentStatusText(student);
       csvContent += `${student.studentClass};${student.lastName};${student.firstName};${status}\n`;
     });

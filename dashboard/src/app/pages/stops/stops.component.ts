@@ -1,8 +1,22 @@
-import { Component, computed, inject, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import {Division, Status, Stop, StopGroup, Student, Teacher} from '../../types';
-import {RouterModule} from '@angular/router';
-import {FilterComponent} from '../../standard-components/filter/filter.component';
-import {FormsModule} from '@angular/forms';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import {
+  Division,
+  Status,
+  Stop,
+  StopGroup,
+  Student,
+  Teacher,
+} from '../../types';
+import { RouterModule } from '@angular/router';
+import { FilterComponent } from '../../standard-components/filter/filter.component';
+import { FormsModule } from '@angular/forms';
 import { DivisionService } from '../../division.service';
 import { StopGroupService } from '../../stopgroup.service';
 import { StopService } from '../../stop.service';
@@ -17,7 +31,8 @@ import { FilterStateService } from '../../state/filter-state.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StopsComponent {
-  @ViewChild('divisionFilterComponent') divisionFilterComponent!: FilterComponent;
+  @ViewChild('divisionFilterComponent')
+  divisionFilterComponent!: FilterComponent;
 
   private studentService = inject(StudentService);
   private divisionService = inject(DivisionService);
@@ -50,7 +65,7 @@ export class StopsComponent {
   // Computed properties for filters and data
   uniqueStopGroups = computed(() => {
     const stopGroups = this.stopGroups();
-    return [...new Set(stopGroups.map(sg => sg.name))].sort();
+    return [...new Set(stopGroups.map((sg) => sg.name))].sort();
   });
 
   // src/app/pages/stops/stops.component.ts
@@ -58,36 +73,48 @@ export class StopsComponent {
     const divisionId = Number(this.divisionFilter());
     // Guard and coerce divisionIds elements to numbers
     let stops = divisionId
-      ? this.stops().filter(stop => (stop.divisionIds ?? []).some(d => Number(d) === divisionId))
+      ? this.stops().filter((stop) =>
+          (stop.divisionIds ?? []).some((d) => Number(d) === divisionId)
+        )
       : this.stops();
 
     const nameSearch = this.stopNameSearchTerm().toLowerCase();
     if (nameSearch) {
-      stops = stops.filter(stop => stop.name.toLowerCase().includes(nameSearch));
+      stops = stops.filter((stop) =>
+        stop.name.toLowerCase().includes(nameSearch)
+      );
     }
 
     const stopGroupName = this.stopGroupFilter();
     if (stopGroupName) {
-      const stopGroup = this.stopGroups().find(sg => sg.name === stopGroupName);
+      const stopGroup = this.stopGroups().find(
+        (sg) => sg.name === stopGroupName
+      );
       if (stopGroup) {
-        stops = stops.filter(stop => stop.stopGroupIds.includes(stopGroup.id));
+        stops = stops.filter((stop) =>
+          stop.stopGroupIds.includes(stopGroup.id)
+        );
       }
     }
 
     const teacherSearch = this.teacherSearchTerm().toLowerCase();
     if (teacherSearch) {
-      stops = stops.filter(stop => {
-        const teachers = this.teachers().filter(t => t.assignedStops.includes(stop.id));
-        return teachers.some(teacher =>
-          teacher.firstName.toLowerCase().includes(teacherSearch) ||
-          teacher.lastName.toLowerCase().includes(teacherSearch) ||
-          `${teacher.firstName} ${teacher.lastName}`.toLowerCase().includes(teacherSearch)
+      stops = stops.filter((stop) => {
+        const teachers = this.teachers().filter((t) =>
+          t.assignedStops.includes(stop.id)
+        );
+        return teachers.some(
+          (teacher) =>
+            teacher.firstName.toLowerCase().includes(teacherSearch) ||
+            teacher.lastName.toLowerCase().includes(teacherSearch) ||
+            `${teacher.firstName} ${teacher.lastName}`
+              .toLowerCase()
+              .includes(teacherSearch)
         );
       });
     }
     return stops;
   });
-
 
   getGroupById(sgId: number): StopGroup | null {
     return this.stopGroups().find((sg) => sg.id === sgId) || null;
@@ -95,33 +122,41 @@ export class StopsComponent {
 
   getStopGroupNames(stopGroupIds: number[]): string {
     const names = stopGroupIds
-      .map(id => this.getGroupById(id)?.name)
-      .filter(name => name)
+      .map((id) => this.getGroupById(id)?.name)
+      .filter((name) => name)
       .join(', ');
     return names || 'No groups assigned';
   }
 
   getTeacherNames(stopId: number): string {
-    const teachers = this.teachers().filter(t => t.assignedStops.includes(stopId));
+    const teachers = this.teachers().filter((t) =>
+      t.assignedStops.includes(stopId)
+    );
     if (teachers.length === 0) return 'No teachers assigned';
-    return teachers.map(t => `${t.firstName} ${t.lastName}`).join(', ');
+    return teachers.map((t) => `${t.firstName} ${t.lastName}`).join(', ');
   }
 
   getStudentCount(stopId: number): string {
-    const students = this.students().filter(s => s.studentAssignments.some(a => a.stopId === stopId));
-    const requested = students.filter(s =>
-      s.studentAssignments.some(a => a.stopId === stopId && a.status === Status.Pending)
+    const students = this.students().filter((s) =>
+      s.studentAssignments.some((a) => a.stopId === stopId)
+    );
+    const requested = students.filter((s) =>
+      s.studentAssignments.some(
+        (a) => a.stopId === stopId && a.status === Status.Pending
+      )
     ).length;
-    const assigned = students.filter(s =>
-      s.studentAssignments.some(a => a.stopId === stopId && a.status === Status.Accepted)
+    const assigned = students.filter((s) =>
+      s.studentAssignments.some(
+        (a) => a.stopId === stopId && a.status === Status.Accepted
+      )
     ).length;
     return `${requested} / ${assigned}`;
   }
 
   getDivisionNames(divisionIds: number[]): string {
     const names = divisionIds
-      .map(id => this.divisions().find(d => d.id === id)?.name)
-      .filter(name => name)
+      .map((id) => this.divisions().find((d) => d.id === id)?.name)
+      .filter((name) => name)
       .join(', ');
     return names || 'No departments';
   }

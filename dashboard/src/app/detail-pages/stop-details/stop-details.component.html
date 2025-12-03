@@ -1,21 +1,27 @@
-<div class="mt-4 md:mt-10 w-full max-w-5xl mx-auto p-4 sm:p-6 rounded-lg bg-background-100 shadow-lg">
+<div
+  class="mx-auto mt-4 w-full max-w-5xl rounded-lg bg-background-100 p-4 shadow-lg sm:p-6 md:mt-10"
+>
   @if (stop().id == -1) {
     <h4 class="text-xl text-text-950">New Stop</h4>
   } @else {
     <h4 class="text-xl text-text-950">Edit Stop</h4>
   }
-  @if(isLoading()) {
-    <div class="flex justify-center items-center h-32">
-      <div class="loader ease-linear rounded-full border-8 border-t-8 border-primary-200 h-12 w-12"></div>
+  @if (isLoading()) {
+    <div class="flex h-32 items-center justify-center">
+      <div
+        class="loader h-12 w-12 rounded-full border-8 border-t-8 border-primary-200 ease-linear"
+      ></div>
     </div>
   } @else {
     <form (submit)="submitStopDetail()" class="mt-4">
       <div class="mb-4">
         <div class="mb-4 mt-2">
-          <label for="name" class="block text-sm font-medium text-text-950 mb-1">Name</label>
+          <label for="name" class="mb-1 block text-sm font-medium text-text-950"
+            >Name</label
+          >
           @if (stop().id == -1) {
             <input
-              class="w-full rounded-lg border px-4 py-2 text-text-950 bg-background-50"
+              class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
               type="text"
               [value]="stop().name"
               [(ngModel)]="stop().name"
@@ -24,7 +30,7 @@
             />
           } @else {
             <input
-              class="w-full rounded-lg border px-4 py-2 text-text-950 bg-background-50"
+              class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
               type="text"
               [value]="stop().name"
               [(ngModel)]="stop().name"
@@ -35,9 +41,13 @@
         </div>
 
         <div class="mb-4">
-          <label for="description" class="block text-sm font-medium text-text-950 mb-1">Description</label>
+          <label
+            for="description"
+            class="mb-1 block text-sm font-medium text-text-950"
+            >Description</label
+          >
           <textarea
-            class="w-full rounded-lg border px-4 py-2 text-text-950 bg-background-50"
+            class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
             [value]="stop().description"
             [(ngModel)]="stop().description"
             name="description"
@@ -47,9 +57,13 @@
         </div>
 
         <div class="mb-2">
-          <label for="roomNr" class="block text-sm font-medium text-text-950 mb-1">Room Number</label>
+          <label
+            for="roomNr"
+            class="mb-1 block text-sm font-medium text-text-950"
+            >Room Number</label
+          >
           <input
-            class="w-full rounded-lg border px-4 py-2 text-text-950 bg-background-50"
+            class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
             type="text"
             [value]="stop().roomNr"
             [(ngModel)]="stop().roomNr"
@@ -63,7 +77,11 @@
         @if (isAdmin()) {
           <div class="mb-6 mt-4">
             <form>
-              <label for="stopgroups" class="block text-sm font-medium text-text-950">Add Stop Group</label>
+              <label
+                for="stopgroups"
+                class="block text-sm font-medium text-text-950"
+                >Add Stop Group</label
+              >
               <select
                 id="stopgroups"
                 (change)="onStopGroupSelect($event)"
@@ -76,19 +94,25 @@
               </select>
             </form>
           </div>
-          <div class="text-sm font-medium text-text-950 mb-2">Selected Stop Groups</div>
-          <div class="w-full overflow-y-auto border border-primary-200 rounded-lg bg-background-50">
+          <div class="mb-2 text-sm font-medium text-text-950">
+            Selected Stop Groups
+          </div>
+          <div
+            class="w-full overflow-y-auto rounded-lg border border-primary-200 bg-background-50"
+          >
             <ul class="divide-y divide-primary-100">
               @for (id of stop().stopGroupIds; track $index) {
                 <li
-                  class="px-4 py-2 hover:bg-primary-100 cursor-pointer text-sm text-text-950"
+                  class="cursor-pointer px-4 py-2 text-sm text-text-950 hover:bg-primary-100"
                   (click)="onStopGroupRemove(id.toString())"
                 >
                   {{ getStopGroupById(id)!.name }}
                 </li>
               }
               @if (stop().stopGroupIds.length === 0) {
-                <li class="px-4 py-2 text-text-900 text-sm">No stop groups assigned</li>
+                <li class="px-4 py-2 text-sm text-text-900">
+                  No stop groups assigned
+                </li>
               }
             </ul>
           </div>
@@ -98,79 +122,117 @@
               <div class="ml-1 flex flex-wrap gap-2">
                 @for (stopGroupId of stop().stopGroupIds; track $index) {
                   <span
-                    class="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-800 shadow-sm">
-                        {{ getStopGroupById(stopGroupId)!.name }}
-                      </span>
+                    class="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-800 shadow-sm"
+                  >
+                    {{ getStopGroupById(stopGroupId)!.name }}
+                  </span>
                 }
               </div>
             } @else {
-              <p class="ml-4 text-text-900 text-sm">No stop groups assigned</p>
+              <p class="ml-4 text-sm text-text-900">No stop groups assigned</p>
             }
           </div>
-          }
-        </div>
+        }
+      </div>
       <div class="mb-4">
-        <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('students')">
+        <div
+          class="mb-2 flex cursor-pointer items-center justify-between rounded-lg bg-primary-200 p-2 pl-5"
+          (click)="toggleSection('students')"
+        >
           <h1 class="text-lg font-medium text-text-950">Students</h1>
-          <span class="text-text-900">{{ expandedSections()['students'] ? '▼' : '►' }}</span>
+          <span class="text-text-900">{{
+            expandedSections()['students'] ? '▼' : '►'
+          }}</span>
         </div>
-        <div [ngClass]="{'hidden': !expandedSections()['students']}">
-          <div class="flex flex-col md:flex-row gap-4 mt-4">
+        <div [ngClass]="{ hidden: !expandedSections()['students'] }">
+          <div class="mt-4 flex flex-col gap-4 md:flex-row">
             <!-- Selected Students (Left Side) -->
             <div class="w-full md:w-1/2">
-              <div class="text-sm font-medium text-text-950 mb-2">Assigned Students</div>
+              <div class="mb-2 text-sm font-medium text-text-950">
+                Assigned Students
+              </div>
               <!-- Assigned Students Filter -->
               <div class="mb-4">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between mb-2 gap-4">
-                  <div class="flex items-center w-full sm:w-auto">
-                    <label for="assignedClassFilter"
-                           class="mr-2 text-sm font-medium text-text-950 flex-shrink-0">Class:</label>
+                <div
+                  class="mb-2 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div class="flex w-full items-center sm:w-auto">
+                    <label
+                      for="assignedClassFilter"
+                      class="mr-2 flex-shrink-0 text-sm font-medium text-text-950"
+                      >Class:</label
+                    >
                     <select
                       id="assignedClassFilter"
                       (change)="onAssignedClassSelect($event)"
-                      class="w-full sm:w-auto rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
+                      class="w-full rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300 sm:w-auto"
                     >
                       @for (className of availableClasses(); track className) {
-                        <option [value]="className" [selected]="selectedAssignedClass() === className">
+                        <option
+                          [value]="className"
+                          [selected]="selectedAssignedClass() === className"
+                        >
                           {{ className === 'all' ? 'All Classes' : className }}
                         </option>
                       }
                     </select>
                   </div>
-                  <div class="flex items-center w-full sm:w-auto">
-                    <label for="assignedStudentFilter" class="mr-2 text-sm font-medium text-text-950 flex-shrink-0">Search:</label>
+                  <div class="flex w-full items-center sm:w-auto">
+                    <label
+                      for="assignedStudentFilter"
+                      class="mr-2 flex-shrink-0 text-sm font-medium text-text-950"
+                      >Search:</label
+                    >
                     <input
                       id="assignedStudentFilter"
                       type="text"
                       [ngModel]="assignedStudentFilterText()"
                       (ngModelChange)="assignedStudentFilterText.set($event)"
                       placeholder="Name or username"
-                      class="w-full sm:w-auto rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
+                      class="w-full rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300 sm:w-auto"
                       name="assignedStudentFilter"
                     />
                   </div>
                 </div>
               </div>
-              <div class="h-56 w-full overflow-y-auto border border-primary-200 rounded-lg bg-background-50">
+              <div
+                class="h-56 w-full overflow-y-auto rounded-lg border border-primary-200 bg-background-50"
+              >
                 <ul class="divide-y divide-primary-100">
-                  @for (student of filteredAssignedStudents(); track student.edufsUsername) {
+                  @for (
+                    student of filteredAssignedStudents();
+                    track student.edufsUsername
+                  ) {
                     <li
-                      class="px-4 py-2 hover:bg-primary-100 text-sm text-text-950 flex justify-between items-center"
+                      class="flex items-center justify-between px-4 py-2 text-sm text-text-950 hover:bg-primary-100"
                     >
                       <div>
                         {{ student.lastName + ' ' + student.firstName }}
-                        <span class="text-xs text-text-900 ml-2">({{ student.studentClass }})</span>
+                        <span class="ml-2 text-xs text-text-900"
+                          >({{ student.studentClass }})</span
+                        >
                       </div>
                       <div class="flex items-center">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-medium mr-2" [ngClass]="getStatusClass(getAssignmentStatus(student))">
+                        <span
+                          class="mr-2 rounded-full px-2 py-0.5 text-xs font-medium"
+                          [ngClass]="
+                            getStatusClass(getAssignmentStatus(student))
+                          "
+                        >
                           {{ getStatusLabel(getAssignmentStatus(student)) }}
                         </span>
-                        <span class="text-accent-600 font-bold text-lg cursor-pointer" (click)="removeStudent(student.edufsUsername)">−</span>
+                        <span
+                          class="cursor-pointer text-lg font-bold text-accent-600"
+                          (click)="removeStudent(student.edufsUsername)"
+                          >−</span
+                        >
                       </div>
                     </li>
                   }
                   @if (filteredAssignedStudents().length === 0) {
-                    <li class="px-4 py-2 text-text-900 text-sm">No students assigned</li>
+                    <li class="px-4 py-2 text-sm text-text-900">
+                      No students assigned
+                    </li>
                   }
                 </ul>
               </div>
@@ -178,121 +240,195 @@
 
             <!-- Available Students (Right Side) -->
             <div class="w-full md:w-1/2">
-              <div class="text-sm font-medium text-text-950 mb-2">Available Students (no accepted assignments)</div>
+              <div class="mb-2 text-sm font-medium text-text-950">
+                Available Students (no accepted assignments)
+              </div>
               <!-- Available Students Filter -->
               <div class="mb-4">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between mb-2 gap-4">
-                  <div class="flex items-center w-full sm:w-auto">
-                    <label for="availableClassFilter" class="mr-2 text-sm font-medium text-text-950 flex-shrink-0">Class:</label>
+                <div
+                  class="mb-2 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div class="flex w-full items-center sm:w-auto">
+                    <label
+                      for="availableClassFilter"
+                      class="mr-2 flex-shrink-0 text-sm font-medium text-text-950"
+                      >Class:</label
+                    >
                     <select
                       id="availableClassFilter"
                       (change)="onAvailableClassSelect($event)"
-                      class="w-full sm:w-auto rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
+                      class="w-full rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300 sm:w-auto"
                     >
                       @for (className of availableClasses(); track className) {
-                        <option [value]="className" [selected]="selectedAvailableClass() === className">
+                        <option
+                          [value]="className"
+                          [selected]="selectedAvailableClass() === className"
+                        >
                           {{ className === 'all' ? 'All Classes' : className }}
                         </option>
                       }
                     </select>
                   </div>
-                  <div class="flex items-center w-full sm:w-auto">
-                    <label for="availableStudentFilter" class="mr-2 text-sm font-medium text-text-950 flex-shrink-0">Search:</label>
+                  <div class="flex w-full items-center sm:w-auto">
+                    <label
+                      for="availableStudentFilter"
+                      class="mr-2 flex-shrink-0 text-sm font-medium text-text-950"
+                      >Search:</label
+                    >
                     <input
                       id="availableStudentFilter"
                       type="text"
                       [ngModel]="availableStudentFilterText()"
                       (ngModelChange)="availableStudentFilterText.set($event)"
                       placeholder="Name or username"
-                      class="w-full sm:w-auto rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
+                      class="w-full rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300 sm:w-auto"
                       name="availableStudentFilter"
                     />
                   </div>
                 </div>
               </div>
-              <div class="h-56 w-full overflow-y-auto border border-primary-200 rounded-lg bg-background-50">
+              <div
+                class="h-56 w-full overflow-y-auto rounded-lg border border-primary-200 bg-background-50"
+              >
                 <ul class="divide-y divide-primary-100">
-                  @for (student of studentsNotInStop(); track student.edufsUsername) {
+                  @for (
+                    student of studentsNotInStop();
+                    track student.edufsUsername
+                  ) {
                     <li
-                      class="px-4 py-2 hover:bg-primary-100 text-sm text-text-950 flex justify-between items-center"
+                      class="flex items-center justify-between px-4 py-2 text-sm text-text-950 hover:bg-primary-100"
                     >
                       <div>
                         {{ student.lastName + ' ' + student.firstName }}
-                        <span class="text-xs text-text-900 ml-2">({{ student.studentClass }})</span>
-                        @if(hasOtherAssignments(student.edufsUsername)) {
-                          <span class="ml-2 text-amber-700 text-sm font-medium">
-                            ({{ getStudentOtherAssignmentsCount(student.edufsUsername) }} Request{{ getStudentOtherAssignmentsCount(student.edufsUsername) > 1 ? 's' : '' }})
+                        <span class="ml-2 text-xs text-text-900"
+                          >({{ student.studentClass }})</span
+                        >
+                        @if (hasOtherAssignments(student.edufsUsername)) {
+                          <span class="ml-2 text-sm font-medium text-amber-700">
+                            ({{
+                              getStudentOtherAssignmentsCount(
+                                student.edufsUsername
+                              )
+                            }}
+                            Request{{
+                              getStudentOtherAssignmentsCount(
+                                student.edufsUsername
+                              ) > 1
+                                ? 's'
+                                : ''
+                            }})
                           </span>
                         }
-
                       </div>
                       <div class="flex items-center">
-                        <span class="text-primary-600 font-bold text-lg cursor-pointer" (click)="onStudentClick(student.edufsUsername)">+</span>
+                        <span
+                          class="cursor-pointer text-lg font-bold text-primary-600"
+                          (click)="onStudentClick(student.edufsUsername)"
+                          >+</span
+                        >
                       </div>
                     </li>
                   }
                   @if (studentsNotInStop().length === 0) {
-                    <li class="px-4 py-2 text-text-900 text-sm">No more students available</li>
+                    <li class="px-4 py-2 text-sm text-text-900">
+                      No more students available
+                    </li>
                   }
                 </ul>
               </div>
             </div>
           </div>
         </div>
-        <button (click)="downloadStudentsOfStopData()" type="button"
-                class="btn btn-primary btn-sm self-start mt-4 gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
-               stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        <button
+          (click)="downloadStudentsOfStopData()"
+          type="button"
+          class="btn btn-primary btn-sm mt-4 gap-2 self-start"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="mr-1 h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            />
           </svg>
           Download Students of Stop
         </button>
       </div>
       @if (isAdmin()) {
         <div class="mb-4">
-          <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('teachers')">
+          <div
+            class="mb-2 flex cursor-pointer items-center justify-between rounded-lg bg-primary-200 p-2 pl-5"
+            (click)="toggleSection('teachers')"
+          >
             <h1 class="text-lg font-medium text-text-950">Teachers</h1>
-            <span class="text-text-900">{{ expandedSections()['teachers'] ? '▼' : '►' }}</span>
+            <span class="text-text-900">{{
+              expandedSections()['teachers'] ? '▼' : '►'
+            }}</span>
           </div>
-          <div [ngClass]="{'hidden': !expandedSections()['teachers']}">
-            <div class="flex flex-col md:flex-row gap-4 mt-4">
+          <div [ngClass]="{ hidden: !expandedSections()['teachers'] }">
+            <div class="mt-4 flex flex-col gap-4 md:flex-row">
               <!-- Selected Teachers (Left Side) -->
               <div class="w-full md:w-1/2">
-                <div class="text-sm font-medium text-text-950 mb-2">Assigned Teachers</div>
+                <div class="mb-2 text-sm font-medium text-text-950">
+                  Assigned Teachers
+                </div>
                 <!-- Assigned Teachers Filter -->
                 <div class="mb-4">
-                  <div class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between mb-2 gap-4">
-                    <div class="flex items-center w-full sm:w-auto">
-                      <label for="assignedTeacherFilter" class="mr-2 text-sm font-medium text-text-950 flex-shrink-0">Search:</label>
+                  <div
+                    class="mb-2 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div class="flex w-full items-center sm:w-auto">
+                      <label
+                        for="assignedTeacherFilter"
+                        class="mr-2 flex-shrink-0 text-sm font-medium text-text-950"
+                        >Search:</label
+                      >
                       <input
                         id="assignedTeacherFilter"
                         type="text"
                         [ngModel]="assignedTeacherFilterText()"
                         (ngModelChange)="assignedTeacherFilterText.set($event)"
                         placeholder="Name or username"
-                        class="w-full sm:w-auto rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
+                        class="w-full rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300 sm:w-auto"
                         name="assignedTeacherFilter"
                       />
                     </div>
                   </div>
                 </div>
-                <div class="h-56 w-full overflow-y-auto border border-primary-200 rounded-lg bg-background-50">
+                <div
+                  class="h-56 w-full overflow-y-auto rounded-lg border border-primary-200 bg-background-50"
+                >
                   <ul class="divide-y divide-primary-100">
-                    @for (teacher of filteredAssignedTeachers(); track teacher.edufsUsername) {
+                    @for (
+                      teacher of filteredAssignedTeachers();
+                      track teacher.edufsUsername
+                    ) {
                       <li
-                        class="px-4 py-2 hover:bg-primary-100 text-sm text-text-950 flex justify-between items-center"
+                        class="flex items-center justify-between px-4 py-2 text-sm text-text-950 hover:bg-primary-100"
                       >
                         <div>
                           {{ teacher.lastName + ' ' + teacher.firstName }}
                         </div>
                         <div class="flex items-center">
-                          <span class="text-accent-600 font-bold text-lg cursor-pointer" (click)="removeTeacher(teacher.edufsUsername)">−</span>
+                          <span
+                            class="cursor-pointer text-lg font-bold text-accent-600"
+                            (click)="removeTeacher(teacher.edufsUsername)"
+                            >−</span
+                          >
                         </div>
                       </li>
                     }
                     @if (filteredAssignedTeachers().length === 0) {
-                      <li class="px-4 py-2 text-text-900 text-sm">No teachers assigned</li>
+                      <li class="px-4 py-2 text-sm text-text-900">
+                        No teachers assigned
+                      </li>
                     }
                   </ul>
                 </div>
@@ -300,40 +436,59 @@
 
               <!-- Available Teachers (Right Side) -->
               <div class="w-full md:w-1/2">
-                <div class="text-sm font-medium text-text-950 mb-2">Available Teachers</div>
+                <div class="mb-2 text-sm font-medium text-text-950">
+                  Available Teachers
+                </div>
                 <!-- Available Teachers Filter -->
                 <div class="mb-4">
-                  <div class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between mb-2 gap-4">
-                    <div class="flex items-center w-full sm:w-auto">
-                      <label for="availableTeacherFilter" class="mr-2 text-sm font-medium text-text-950 flex-shrink-0">Search:</label>
+                  <div
+                    class="mb-2 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div class="flex w-full items-center sm:w-auto">
+                      <label
+                        for="availableTeacherFilter"
+                        class="mr-2 flex-shrink-0 text-sm font-medium text-text-950"
+                        >Search:</label
+                      >
                       <input
                         id="availableTeacherFilter"
                         type="text"
                         [ngModel]="availableTeacherFilterText()"
                         (ngModelChange)="availableTeacherFilterText.set($event)"
                         placeholder="Name or username"
-                        class="w-full sm:w-auto rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
+                        class="w-full rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300 sm:w-auto"
                         name="availableTeacherFilter"
                       />
                     </div>
                   </div>
                 </div>
-                <div class="h-56 w-full overflow-y-auto border border-primary-200 rounded-lg bg-background-50">
+                <div
+                  class="h-56 w-full overflow-y-auto rounded-lg border border-primary-200 bg-background-50"
+                >
                   <ul class="divide-y divide-primary-100">
-                    @for (teacher of teachersNotInStop(); track teacher.edufsUsername) {
+                    @for (
+                      teacher of teachersNotInStop();
+                      track teacher.edufsUsername
+                    ) {
                       <li
-                        class="px-4 py-2 hover:bg-primary-100 text-sm text-text-950 flex justify-between items-center"
+                        class="flex items-center justify-between px-4 py-2 text-sm text-text-950 hover:bg-primary-100"
                       >
                         <div>
                           {{ teacher.lastName + ' ' + teacher.firstName }}
                         </div>
                         <div class="flex items-center">
-                          <span class="text-primary-600 font-bold text-lg cursor-pointer" (click)="addTeacher(teacher.edufsUsername)">+</span>
+                          <span
+                            class="cursor-pointer text-lg font-bold text-primary-600"
+                            (click)="addTeacher(teacher.edufsUsername)"
+                            >+</span
+                          >
                         </div>
                       </li>
                     }
                     @if (teachersNotInStop().length === 0) {
-                      <li class="px-4 py-2 text-text-900 text-sm">No more teachers available</li>
+                      <li class="px-4 py-2 text-sm text-text-900">
+                        No more teachers available
+                      </li>
                     }
                   </ul>
                 </div>
@@ -344,15 +499,24 @@
       }
 
       <div class="mb-4">
-        <div class="flex items-center justify-between mb-2 bg-primary-200 p-2 pl-5 rounded-lg cursor-pointer" (click)="toggleSection('divisions')">
+        <div
+          class="mb-2 flex cursor-pointer items-center justify-between rounded-lg bg-primary-200 p-2 pl-5"
+          (click)="toggleSection('divisions')"
+        >
           <h1 class="text-lg font-medium text-text-950">Divisions</h1>
-          <span class="text-text-900">{{ expandedSections()['divisions'] ? '▼' : '►' }}</span>
+          <span class="text-text-900">{{
+            expandedSections()['divisions'] ? '▼' : '►'
+          }}</span>
         </div>
-        <div [ngClass]="{'hidden': !expandedSections()['divisions']}">
+        <div [ngClass]="{ hidden: !expandedSections()['divisions'] }">
           @if (isAdmin()) {
             <div class="mb-6 mt-4">
               <form>
-                <label for="divisions" class="block text-sm font-medium text-text-950">Add Division</label>
+                <label
+                  for="divisions"
+                  class="block text-sm font-medium text-text-950"
+                  >Add Division</label
+                >
                 <select
                   id="divisions"
                   (change)="onDivisionSelect($event)"
@@ -360,26 +524,36 @@
                 >
                   <option value="0" selected>Select Division</option>
                   @for (division of inactiveDivisions(); track division.id) {
-                    <option value="{{ division.id }}">{{ division.name }}</option>
+                    <option value="{{ division.id }}">
+                      {{ division.name }}
+                    </option>
                   }
                 </select>
               </form>
             </div>
-            <div class="text-sm font-medium text-text-950 mb-2">Selected Divisions</div>
-            <div class="w-full overflow-y-auto border border-primary-200 rounded-lg bg-background-50">
+            <div class="mb-2 text-sm font-medium text-text-950">
+              Selected Divisions
+            </div>
+            <div
+              class="w-full overflow-y-auto rounded-lg border border-primary-200 bg-background-50"
+            >
               <ul class="divide-y divide-primary-100">
                 @for (id of stop().divisionIds; track $index) {
                   <li
-                    class="px-4 py-2 hover:bg-primary-100 cursor-pointer text-sm text-text-950"
+                    class="cursor-pointer px-4 py-2 text-sm text-text-950 hover:bg-primary-100"
                     (click)="onDivisionRemove(id.toString())"
                   >
                     {{ getDivisionById(id)!.name }}
-                    <span class="inline-block w-4 h-4 ml-2 rounded-full"
-                          [style.background-color]="getDivisionById(id)!.color"></span>
+                    <span
+                      class="ml-2 inline-block h-4 w-4 rounded-full"
+                      [style.background-color]="getDivisionById(id)!.color"
+                    ></span>
                   </li>
                 }
                 @if (stop().divisionIds.length === 0) {
-                  <li class="px-4 py-2 text-text-900 text-sm">No divisions assigned</li>
+                  <li class="px-4 py-2 text-sm text-text-900">
+                    No divisions assigned
+                  </li>
                 }
               </ul>
             </div>
@@ -389,15 +563,18 @@
                 <div class="ml-1 flex flex-wrap gap-2">
                   @for (id of stop().divisionIds; track $index) {
                     <span
-                      class="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-800 shadow-sm">
-                    {{ getDivisionById(id)!.name }}
-                      <span class="inline-block w-4 h-4 ml-2 rounded-full"
-                            [style.background-color]="getDivisionById(id)!.color"></span>
-                  </span>
+                      class="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-800 shadow-sm"
+                    >
+                      {{ getDivisionById(id)!.name }}
+                      <span
+                        class="ml-2 inline-block h-4 w-4 rounded-full"
+                        [style.background-color]="getDivisionById(id)!.color"
+                      ></span>
+                    </span>
                   }
                 </div>
               } @else {
-                <p class="ml-4 text-text-900 text-sm">No divisions assigned</p>
+                <p class="ml-4 text-sm text-text-900">No divisions assigned</p>
               }
             </div>
           }
@@ -407,17 +584,29 @@
       @if (errorMessage() != null) {
         <p class="text-red-700">{{ errorMessage() }}</p>
       }
-      <div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-2">
-        <button type="submit" class="btn btn-primary btn-sm gap-2 w-full sm:w-auto">Submit</button>
+      <div class="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <button
+          type="submit"
+          class="btn btn-primary btn-sm w-full gap-2 sm:w-auto"
+        >
+          Submit
+        </button>
 
-        <button (click)="goBack()" type="button"
-                class="btn btn-sm bg-primary-200 text-text-800 hover:bg-primary-300 w-full sm:w-auto">Cancel
+        <button
+          (click)="goBack()"
+          type="button"
+          class="btn btn-sm w-full bg-primary-200 text-text-800 hover:bg-primary-300 sm:w-auto"
+        >
+          Cancel
         </button>
         @if (stop().id != -1) {
-          <button (click)="deleteAndGoBack()" type="button"
-                  class="btn btn-sm bg-red-600 hover:bg-accent-300 gap-2 w-full sm:w-auto sm:ml-auto">Delete
+          <button
+            (click)="deleteAndGoBack()"
+            type="button"
+            class="btn btn-sm w-full gap-2 bg-red-600 hover:bg-accent-300 sm:ml-auto sm:w-auto"
+          >
+            Delete
           </button>
-
         }
       </div>
     </form>

@@ -25,7 +25,9 @@ export class StopService {
 
   getStopsOfTeacher(teacherId: string): Promise<Stop[]> {
     return firstValueFrom(
-      this.httpClient.get<Stop[]>(`${this.baseUrl}/api/stops/teacher/${teacherId}`)
+      this.httpClient.get<Stop[]>(
+        `${this.baseUrl}/api/stops/teacher/${teacherId}`
+      )
     );
   }
 
@@ -49,7 +51,10 @@ export class StopService {
 
   updateStopWithoutOrder(stop: StopWithoutOrders): Promise<void> {
     return firstValueFrom(
-      this.httpClient.put<void>(`${this.baseUrl}/api/stops?updateOrder=false`, stop)
+      this.httpClient.put<void>(
+        `${this.baseUrl}/api/stops?updateOrder=false`,
+        stop
+      )
     );
   }
 
@@ -62,14 +67,14 @@ export class StopService {
   getStopsDataFile(): Promise<Blob> {
     return firstValueFrom(
       this.httpClient.get(`${this.baseUrl}/api/stops/csv`, {
-        responseType: 'blob'
+        responseType: 'blob',
       })
     );
   }
   getStopDataFile(id: number): Promise<Blob> {
     return firstValueFrom(
       this.httpClient.get(`${this.baseUrl}/api/stops/${id}/csv`, {
-        responseType: 'blob'
+        responseType: 'blob',
       })
     );
   }
@@ -85,7 +90,9 @@ export class StopService {
       return this.getStops();
     }
     return firstValueFrom(
-      this.httpClient.get<Stop[]>(`${this.baseUrl}/api/stops?divisionId=${divisionId}`)
+      this.httpClient.get<Stop[]>(
+        `${this.baseUrl}/api/stops?divisionId=${divisionId}`
+      )
     );
   }
 }

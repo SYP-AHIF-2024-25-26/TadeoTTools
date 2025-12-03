@@ -1,5 +1,11 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 import { RouterLink } from '@angular/router';
 import { Division, Info, Stop, StopGroup } from '../../types';
 import { InfoPopupComponent } from '../../popups/info-popup/info-popup.component';
@@ -13,7 +19,15 @@ import { StopService } from '../../stop.service';
 @Component({
   selector: 'app-stopgroups',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, RouterLink, InfoPopupComponent, FilterComponent, DeletePopupComponent, StopgroupDetailsComponent],
+  imports: [
+    CdkDropList,
+    CdkDrag,
+    RouterLink,
+    InfoPopupComponent,
+    FilterComponent,
+    DeletePopupComponent,
+    StopgroupDetailsComponent,
+  ],
   templateUrl: './stopgroups.component.html',
 })
 export class StopGroupsComponent implements OnInit {
@@ -55,7 +69,9 @@ export class StopGroupsComponent implements OnInit {
   });
 
   stopsNotInStopGroup = computed(() => {
-    let stopsInStopGroup = this.stopGroups().find((group) => group.id == this.groupIdDetail)?.stopIds;
+    let stopsInStopGroup = this.stopGroups().find(
+      (group) => group.id == this.groupIdDetail
+    )?.stopIds;
     return this.stops().filter((stop) => !stopsInStopGroup?.includes(stop.id));
   });
 
@@ -72,7 +88,9 @@ export class StopGroupsComponent implements OnInit {
 
   toggleShowStops() {
     setTimeout(() => {
-      const checkboxes = document.querySelectorAll('.collapse-checkbox') as NodeListOf<HTMLInputElement>;
+      const checkboxes = document.querySelectorAll(
+        '.collapse-checkbox'
+      ) as NodeListOf<HTMLInputElement>;
       checkboxes.forEach((checkbox) => {
         checkbox.checked = false;
       });
@@ -80,7 +98,10 @@ export class StopGroupsComponent implements OnInit {
   }
 
   addInfo(type: string, message: string): void {
-    const maxId = this.infos().reduce((max, item) => (item.id > max ? item.id : max), 0);
+    const maxId = this.infos().reduce(
+      (max, item) => (item.id > max ? item.id : max),
+      0
+    );
     const info = {
       id: maxId + 1,
       type: type,
@@ -108,15 +129,26 @@ export class StopGroupsComponent implements OnInit {
         event.container.data.splice(event.currentIndex, 0, stopId);
       }
     } else if (event.container === event.previousContainer) {
-      moveItemInArray(event.previousContainer.data, event.previousIndex, event.currentIndex);
+      moveItemInArray(
+        event.previousContainer.data,
+        event.previousIndex,
+        event.currentIndex
+      );
     } else {
-      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
     }
     this.hasChanged.set(true);
   }
 
   addStopBtnClick(stopId: number) {
-    let stopsInGroup = this.stopGroups().find((group) => group.id == this.groupIdDetail);
+    let stopsInGroup = this.stopGroups().find(
+      (group) => group.id == this.groupIdDetail
+    );
     stopsInGroup?.stopIds.unshift(stopId);
     this.hasChanged.set(true);
     this.showAddStopDropDownPopup.set(false);
@@ -131,11 +163,16 @@ export class StopGroupsComponent implements OnInit {
     if (divisionId === 0) {
       return this.stops();
     }
-    return this.stops().filter((stop) => Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId));
+    return this.stops().filter(
+      (stop) =>
+        Array.isArray(stop.divisionIds) && stop.divisionIds.includes(divisionId)
+    );
   }
 
   saveChanges() {
-    this.stopGroupService.updateStopGroupOrder(this.stopGroups().map((group) => group.id));
+    this.stopGroupService.updateStopGroupOrder(
+      this.stopGroups().map((group) => group.id)
+    );
     this.stopGroups().forEach(async (group) => {
       await this.stopGroupService.updateStopGroup(group);
     });
@@ -150,7 +187,10 @@ export class StopGroupsComponent implements OnInit {
 
   removeStop() {
     if (this.stopGroupToRemoveFrom !== undefined) {
-      this.stopGroupToRemoveFrom.stopIds = this.stopGroupToRemoveFrom.stopIds.filter((sId) => sId !== this.stopIdToRemove);
+      this.stopGroupToRemoveFrom.stopIds =
+        this.stopGroupToRemoveFrom.stopIds.filter(
+          (sId) => sId !== this.stopIdToRemove
+        );
       this.showRemoveStopPopup.set(false);
       this.hasChanged.set(true);
     }

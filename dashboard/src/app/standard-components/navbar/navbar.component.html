@@ -1,29 +1,62 @@
 <div class="sticky top-0 z-50 bg-background-400 shadow">
-  <nav class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-text-900">
+  <nav
+    class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-text-900"
+  >
     <!-- Logo -->
     <a [routerLink]="['/']" class="flex items-center">
-      <img ngSrc="assets/Leonding_Logo.svg" priority alt="Leonding Logo" class="h-8" height="29" width="128">
+      <img
+        ngSrc="assets/Leonding_Logo.svg"
+        priority
+        alt="Leonding Logo"
+        class="h-8"
+        height="29"
+        width="128"
+      />
     </a>
 
     <!-- Nav Links (desktop) -->
-    <div class="hidden md:flex md:items-center md:justify-start space-x-4">
+    <div class="hidden space-x-4 md:flex md:items-center md:justify-start">
       @if (isAdmin()) {
-        <button class="px-3 py-2" [routerLink]="['/students']"
-                routerLinkActive="bg-primary underline font-medium rounded">Students
+        <button
+          class="px-3 py-2"
+          [routerLink]="['/students']"
+          routerLinkActive="bg-primary underline font-medium rounded"
+        >
+          Students
         </button>
-        <button class="px-3 py-2" [routerLink]="['/stopgroups']"
-                routerLinkActive="bg-primary underline font-medium rounded">StopGroups
+        <button
+          class="px-3 py-2"
+          [routerLink]="['/stopgroups']"
+          routerLinkActive="bg-primary underline font-medium rounded"
+        >
+          StopGroups
         </button>
-        <button class="px-3 py-2" [routerLink]="['/stops']" routerLinkActive="bg-primary underline font-medium rounded">
+        <button
+          class="px-3 py-2"
+          [routerLink]="['/stops']"
+          routerLinkActive="bg-primary underline font-medium rounded"
+        >
           Stops
         </button>
-        <button class="px-3 py-2" [routerLink]="['/divisions']"
-                routerLinkActive="bg-primary underline font-medium rounded">Divisions
+        <button
+          class="px-3 py-2"
+          [routerLink]="['/divisions']"
+          routerLinkActive="bg-primary underline font-medium rounded"
+        >
+          Divisions
         </button>
-        <button class="px-3 py-2" [routerLink]="['/feedback']"
-                routerLinkActive="bg-primary underline font-medium rounded">Feedback
+        <button
+          class="px-3 py-2"
+          [routerLink]="['/feedback']"
+          routerLinkActive="bg-primary underline font-medium rounded"
+        >
+          Feedback
         </button>
-        <button class="px-3 py-2" [routerLink]="['/user-management']" routerLinkActive="bg-primary underline font-medium rounded">
+        <button
+          class="px-3 py-2"
+          [routerLink]="['/user-management']"
+          routerLinkActive="bg-primary underline font-medium rounded"
+        >
           User Management
         </button>
       }
@@ -37,9 +70,9 @@
           (click)="changeDarkMode()"
         />
         <div
-          class="ml-8 md:p-0 peer relative h-6 w-11 rounded-full bg-background-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-background-50 after:transition-all after:content-[''] peer-checked:bg-background-600 peer-checked:after:translate-x-full peer-checked:after:border-white"
+          class="peer relative ml-8 h-6 w-11 rounded-full bg-background-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-background-50 after:transition-all after:content-[''] peer-checked:bg-background-600 peer-checked:after:translate-x-full peer-checked:after:border-white md:p-0"
         ></div>
-        <span class="hidden md:block ms-2">Theme</span>
+        <span class="ms-2 hidden md:block">Theme</span>
       </label>
 
       <!-- Admin/User Logic -->
@@ -57,9 +90,18 @@
         class="inline-flex items-center justify-center rounded p-2 text-text-900 hover:bg-background-300 focus:outline-none"
         (click)="mobileMenuOpen.set(!mobileMenuOpen())"
       >
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
-            [attr.d]="mobileMenuOpen() ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'"
+            [attr.d]="
+              mobileMenuOpen()
+                ? 'M6 18L18 6M6 6l12 12'
+                : 'M4 6h16M4 12h16M4 18h16'
+            "
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
@@ -70,21 +112,52 @@
       <!-- Mobile Menu Dropdown -->
       @if (mobileMenuOpen()) {
         <div
-          class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-background-100 dark:bg-background-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-background-100 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-background-800"
+        >
           <div class="py-1">
             @if (isAdmin()) {
-              <a class="block px-4 py-2 text-sm text-text-900 dark:text-text-100" (click)="mobileMenuOpen.set(false)"
-                 [routerLink]="['/students']" routerLinkActive="bg-primary font-medium">Students</a>
-              <a class="block px-4 py-2 text-sm text-text-900 dark:text-text-100" (click)="mobileMenuOpen.set(false)"
-                 [routerLink]="['/stopgroups']" routerLinkActive="bg-primary font-medium">StopGroups</a>
-              <a class="block px-4 py-2 text-sm text-text-900 dark:text-text-100" (click)="mobileMenuOpen.set(false)"
-                 [routerLink]="['/stops']" routerLinkActive="bg-primary font-medium">Stops</a>
-              <a class="block px-4 py-2 text-sm text-text-900 dark:text-text-100" (click)="mobileMenuOpen.set(false)"
-                 [routerLink]="['/divisions']" routerLinkActive="bg-primary font-medium">Divisions</a>
-              <a class="block px-4 py-2 text-sm text-text-900 dark:text-text-100" (click)="mobileMenuOpen.set(false)"
-                 [routerLink]="['/feedback']" routerLinkActive="bg-primary font-medium">Feedback</a>
-              <a class="block px-4 py-2 text-sm text-text-900 dark:text-text-100" (click)="mobileMenuOpen.set(false)"
-                 [routerLink]="['/user-management']" routerLinkActive="bg-primary font-medium">User Management</a>
+              <a
+                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
+                (click)="mobileMenuOpen.set(false)"
+                [routerLink]="['/students']"
+                routerLinkActive="bg-primary font-medium"
+                >Students</a
+              >
+              <a
+                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
+                (click)="mobileMenuOpen.set(false)"
+                [routerLink]="['/stopgroups']"
+                routerLinkActive="bg-primary font-medium"
+                >StopGroups</a
+              >
+              <a
+                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
+                (click)="mobileMenuOpen.set(false)"
+                [routerLink]="['/stops']"
+                routerLinkActive="bg-primary font-medium"
+                >Stops</a
+              >
+              <a
+                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
+                (click)="mobileMenuOpen.set(false)"
+                [routerLink]="['/divisions']"
+                routerLinkActive="bg-primary font-medium"
+                >Divisions</a
+              >
+              <a
+                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
+                (click)="mobileMenuOpen.set(false)"
+                [routerLink]="['/feedback']"
+                routerLinkActive="bg-primary font-medium"
+                >Feedback</a
+              >
+              <a
+                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
+                (click)="mobileMenuOpen.set(false)"
+                [routerLink]="['/user-management']"
+                routerLinkActive="bg-primary font-medium"
+                >User Management</a
+              >
             }
           </div>
         </div>

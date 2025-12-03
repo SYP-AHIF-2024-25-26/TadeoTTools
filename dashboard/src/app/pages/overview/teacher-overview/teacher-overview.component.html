@@ -3,29 +3,31 @@
 
   <!-- Add new teacher form -->
   <div class="w-full max-w-4xl">
-    <div class="my-4 flex flex-wrap gap-4 bg-base-100 rounded-lg shadow-lg p-6 justify-center">
+    <div
+      class="my-4 flex flex-wrap justify-center gap-4 rounded-lg bg-base-100 p-6 shadow-lg"
+    >
       <input
-        class="input flex-1 min-w-[200px] text-lg rounded-lg px-4 py-3 bg-white dark:bg-background-800 shadow focus:shadow-lg focus:bg-background-50 transition-all outline-none"
+        class="input min-w-[200px] flex-1 rounded-lg bg-white px-4 py-3 text-lg shadow outline-none transition-all focus:bg-background-50 focus:shadow-lg dark:bg-background-800"
         type="text"
         [(ngModel)]="newTeacher().edufsUsername"
         placeholder="EduFS Username"
       />
       <input
-        class="input flex-1 min-w-[200px] text-lg rounded-lg px-4 py-3 bg-white dark:bg-background-800 shadow focus:shadow-lg focus:bg-background-50 transition-all outline-none"
+        class="input min-w-[200px] flex-1 rounded-lg bg-white px-4 py-3 text-lg shadow outline-none transition-all focus:bg-background-50 focus:shadow-lg dark:bg-background-800"
         type="text"
         [(ngModel)]="newTeacher().firstName"
         placeholder="First Name"
       />
       <input
-        class="input flex-1 min-w-[200px] text-lg rounded-lg px-4 py-3 bg-white dark:bg-background-800 shadow focus:shadow-lg focus:bg-background-50 transition-all outline-none"
+        class="input min-w-[200px] flex-1 rounded-lg bg-white px-4 py-3 text-lg shadow outline-none transition-all focus:bg-background-50 focus:shadow-lg dark:bg-background-800"
         type="text"
         [(ngModel)]="newTeacher().lastName"
         placeholder="Last Name"
       />
-      <div class="w-full flex justify-center">
+      <div class="flex w-full justify-center">
         <button
           (click)="addTeacher()"
-          class="btn btn-primary px-6 py-3 text-lg rounded-lg shadow-lg hover:scale-105 transition-transform"
+          class="btn btn-primary rounded-lg px-6 py-3 text-lg shadow-lg transition-transform hover:scale-105"
         >
           Add Teacher
         </button>
@@ -34,17 +36,17 @@
   </div>
 
   <!-- Search -->
-  <div class="w-full max-w-4xl mb-2">
+  <div class="mb-2 w-full max-w-4xl">
     <div class="relative">
       <input
         type="text"
         [value]="searchQuery()"
         (input)="searchQuery.set($any($event.target).value)"
         placeholder="Search teachers..."
-        class="input w-full rounded-lg px-4 py-3 pl-12 text-lg bg-white dark:bg-background-800 shadow focus:shadow-lg focus:bg-background-50 transition-all outline-none"
+        class="input w-full rounded-lg bg-white px-4 py-3 pl-12 text-lg shadow outline-none transition-all focus:bg-background-50 focus:shadow-lg dark:bg-background-800"
       />
       <svg
-        class="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-text-400"
+        class="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-text-400"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -61,87 +63,148 @@
   </div>
 
   <!-- Teachers table -->
-  <div class="hidden md:block mt-4 w-full max-w-4xl">
-    <div class="overflow-x-auto rounded-lg shadow-lg bg-base-100">
+  <div class="mt-4 hidden w-full max-w-4xl md:block">
+    <div class="overflow-x-auto rounded-lg bg-base-100 shadow-lg">
       <div class="max-h-[60vh] overflow-y-auto">
         <table class="w-full border-separate border-spacing-0">
-          <thead class="sticky top-0 z-10 bg-background-100 dark:bg-background-900 shadow-md">
+          <thead
+            class="sticky top-0 z-10 bg-background-100 shadow-md dark:bg-background-900"
+          >
             <tr>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400">EduFS Username</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400">First Name</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400">Last Name</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400">Assigned Stops</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400 w-28">Actions</th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                EduFS Username
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                First Name
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                Last Name
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                Assigned Stops
+              </th>
+              <th
+                class="w-28 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             @for (teacher of filteredTeachers(); track teacher.edufsUsername) {
-              <tr class="bg-white dark:bg-background-800 hover:bg-primary-50 dark:hover:bg-background-700 transition-colors even:bg-base-50 even:dark:bg-background-900 shadow-sm">
-                @if (editingTeacher()?.edufsUsername === teacher.edufsUsername) {
+              <tr
+                class="even:bg-base-50 bg-white shadow-sm transition-colors hover:bg-primary-50 dark:bg-background-800 even:dark:bg-background-900 dark:hover:bg-background-700"
+              >
+                @if (
+                  editingTeacher()?.edufsUsername === teacher.edufsUsername
+                ) {
                   <td class="px-4 py-2 text-text-800">
                     <input
-                      class="input w-full rounded-lg px-3 py-2 text-base bg-background-50 shadow focus:shadow-lg focus:bg-background-50 transition-all outline-none"
+                      class="input w-full rounded-lg bg-background-50 px-3 py-2 text-base shadow outline-none transition-all focus:bg-background-50 focus:shadow-lg"
                       [(ngModel)]="editingTeacher()!.edufsUsername"
                       readonly
                     />
                   </td>
                   <td class="px-4 py-2">
                     <input
-                      class="input w-full rounded-lg px-3 py-2 text-base bg-background-50 shadow focus:shadow-lg focus:bg-background-50 transition-all outline-none"
+                      class="input w-full rounded-lg bg-background-50 px-3 py-2 text-base shadow outline-none transition-all focus:bg-background-50 focus:shadow-lg"
                       [(ngModel)]="editingTeacher()!.firstName"
                     />
                   </td>
                   <td class="px-4 py-2">
                     <input
-                      class="input w-full rounded-lg px-3 py-2 text-base bg-background-50 shadow focus:shadow-lg focus:bg-background-50 transition-all outline-none"
+                      class="input w-full rounded-lg bg-background-50 px-3 py-2 text-base shadow outline-none transition-all focus:bg-background-50 focus:shadow-lg"
                       [(ngModel)]="editingTeacher()!.lastName"
                     />
                   </td>
                   <td class="px-4 py-2">
-                    <span class="text-xs px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">{{editingTeacher()!.assignedStops.length}} stops</span>
+                    <span
+                      class="rounded-full bg-primary-100 px-2 py-1 text-xs text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                      >{{ editingTeacher()!.assignedStops.length }} stops</span
+                    >
                   </td>
                   <td class="px-4 py-2">
                     <div class="flex gap-2">
                       <button
                         (click)="saveEdit()"
-                        class="btn btn-success btn-sm px-4 py-2 text-text-800 rounded-lg shadow-lg hover:scale-105 transition-transform"
+                        class="btn btn-success btn-sm rounded-lg px-4 py-2 text-text-800 shadow-lg transition-transform hover:scale-105"
                       >
                         Save
                       </button>
                       <button
                         (click)="cancelEdit()"
-                        class="btn btn-outline btn-sm px-4 py-2 text-text-800 rounded-lg shadow"
+                        class="btn btn-outline btn-sm rounded-lg px-4 py-2 text-text-800 shadow"
                       >
                         Cancel
                       </button>
                     </div>
                   </td>
                 } @else {
-                  <td class="px-4 py-3 font-medium text-text-900 dark:text-text-100">{{ teacher.edufsUsername }}</td>
+                  <td
+                    class="px-4 py-3 font-medium text-text-900 dark:text-text-100"
+                  >
+                    {{ teacher.edufsUsername }}
+                  </td>
                   <td class="px-4 py-3">{{ teacher.firstName }}</td>
                   <td class="px-4 py-3">{{ teacher.lastName }}</td>
                   <td class="px-4 py-3">
-                    <span class="text-xs px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">{{ teacher.assignedStops.length }} stops</span>
+                    <span
+                      class="rounded-full bg-primary-100 px-2 py-1 text-xs text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                      >{{ teacher.assignedStops.length }} stops</span
+                    >
                   </td>
                   <td class="px-4 py-2">
                     <div class="flex items-center gap-1">
                       <button
                         (click)="startEdit(teacher)"
-                        class="btn btn-ghost btn-xs rounded-lg shadow hover:bg-primary-100 hover:text-primary-700 transition-colors"
+                        class="btn btn-ghost btn-xs rounded-lg shadow transition-colors hover:bg-primary-100 hover:text-primary-700"
                         title="Edit"
                       >
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        <svg
+                          class="h-3 w-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          ></path>
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          ></path>
                         </svg>
                       </button>
                       <button
                         (click)="deleteTeacher(teacher.edufsUsername)"
-                        class="btn btn-ghost btn-xs text-error rounded-lg shadow hover:bg-error hover:text-error-content transition-colors"
+                        class="btn btn-ghost btn-xs rounded-lg text-error shadow transition-colors hover:bg-error hover:text-error-content"
                         title="Delete"
                       >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m10 0H5"></path>
+                        <svg
+                          class="h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m10 0H5"
+                          ></path>
                         </svg>
                       </button>
                     </div>
@@ -152,10 +215,23 @@
 
             @if (filteredTeachers().length === 0) {
               <tr>
-                <td colspan="5" class="px-4 py-10 text-center text-sm text-text-500">
+                <td
+                  colspan="5"
+                  class="px-4 py-10 text-center text-sm text-text-500"
+                >
                   <div class="flex flex-col items-center gap-2">
-                    <svg class="w-8 h-8 text-text-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    <svg
+                      class="h-8 w-8 text-text-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      ></path>
                     </svg>
                     No teachers found
                   </div>
@@ -169,53 +245,124 @@
   </div>
 
   <!-- Mobile teacher cards -->
-  <div class="md:hidden mt-4 w-full max-w-4xl space-y-4">
+  <div class="mt-4 w-full max-w-4xl space-y-4 md:hidden">
     @for (teacher of filteredTeachers(); track teacher.edufsUsername) {
-      <div class="card bg-white dark:bg-background-800 shadow-lg rounded-xl border border-base-200">
+      <div
+        class="card rounded-xl border border-base-200 bg-white shadow-lg dark:bg-background-800"
+      >
         <div class="card-body p-4">
           @if (editingTeacher()?.edufsUsername === teacher.edufsUsername) {
             <!-- Edit Mode -->
             <div class="space-y-4">
               <div>
-                <label for="edit-username" class="text-xs font-semibold text-text-600 dark:text-text-400">Username</label>
-                <input id="edit-username" type="text" class="input input-bordered w-full mt-1 bg-base-200 dark:bg-background-700 cursor-not-allowed" [(ngModel)]="editingTeacher()!.edufsUsername" readonly />
+                <label
+                  for="edit-username"
+                  class="text-xs font-semibold text-text-600 dark:text-text-400"
+                  >Username</label
+                >
+                <input
+                  id="edit-username"
+                  type="text"
+                  class="input input-bordered mt-1 w-full cursor-not-allowed bg-base-200 dark:bg-background-700"
+                  [(ngModel)]="editingTeacher()!.edufsUsername"
+                  readonly
+                />
               </div>
               <div>
-                <label for="edit-firstName" class="text-xs font-semibold text-text-600 dark:text-text-400">First Name</label>
-                <input id="edit-firstName" type="text" class="input input-bordered w-full mt-1" [(ngModel)]="editingTeacher()!.firstName" />
+                <label
+                  for="edit-firstName"
+                  class="text-xs font-semibold text-text-600 dark:text-text-400"
+                  >First Name</label
+                >
+                <input
+                  id="edit-firstName"
+                  type="text"
+                  class="input input-bordered mt-1 w-full"
+                  [(ngModel)]="editingTeacher()!.firstName"
+                />
               </div>
               <div>
-                <label for="edit-lastName" class="text-xs font-semibold text-text-600 dark:text-text-400">Last Name</label>
-                <input id="edit-lastName" type="text" class="input input-bordered w-full mt-1" [(ngModel)]="editingTeacher()!.lastName" />
+                <label
+                  for="edit-lastName"
+                  class="text-xs font-semibold text-text-600 dark:text-text-400"
+                  >Last Name</label
+                >
+                <input
+                  id="edit-lastName"
+                  type="text"
+                  class="input input-bordered mt-1 w-full"
+                  [(ngModel)]="editingTeacher()!.lastName"
+                />
               </div>
               <div class="flex items-center gap-2 pt-2">
-                <span class="text-xs font-semibold text-text-600 dark:text-text-400">Assigned Stops:</span>
-                <span class="text-sm px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">{{editingTeacher()!.assignedStops.length}} stops</span>
+                <span
+                  class="text-xs font-semibold text-text-600 dark:text-text-400"
+                  >Assigned Stops:</span
+                >
+                <span
+                  class="rounded-full bg-primary-100 px-2 py-1 text-sm text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                  >{{ editingTeacher()!.assignedStops.length }} stops</span
+                >
               </div>
             </div>
-            <div class="card-actions justify-end mt-4">
-              <button (click)="cancelEdit()" class="btn btn-ghost">Cancel</button>
+            <div class="card-actions mt-4 justify-end">
+              <button (click)="cancelEdit()" class="btn btn-ghost">
+                Cancel
+              </button>
               <button (click)="saveEdit()" class="btn btn-success">Save</button>
             </div>
           } @else {
             <!-- View Mode -->
-            <div class="flex justify-between items-start">
+            <div class="flex items-start justify-between">
               <div>
-                <h2 class="card-title text-lg font-bold">{{ teacher.firstName }} {{ teacher.lastName }}</h2>
+                <h2 class="card-title text-lg font-bold">
+                  {{ teacher.firstName }} {{ teacher.lastName }}
+                </h2>
                 <p class="text-sm text-text-500">{{ teacher.edufsUsername }}</p>
               </div>
-              <span class="text-sm px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">{{ teacher.assignedStops.length }} stops</span>
+              <span
+                class="rounded-full bg-primary-100 px-2 py-1 text-sm text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                >{{ teacher.assignedStops.length }} stops</span
+              >
             </div>
-            <div class="card-actions justify-end mt-4">
-              <button (click)="startEdit(teacher)" class="btn btn-ghost btn-sm" title="Edit">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path>
+            <div class="card-actions mt-4 justify-end">
+              <button
+                (click)="startEdit(teacher)"
+                class="btn btn-ghost btn-sm"
+                title="Edit"
+              >
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"
+                  ></path>
                 </svg>
                 Edit
               </button>
-              <button (click)="deleteTeacher(teacher.edufsUsername)" class="btn btn-error btn-sm" title="Delete">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m10 0H5"></path>
+              <button
+                (click)="deleteTeacher(teacher.edufsUsername)"
+                class="btn btn-error btn-sm"
+                title="Delete"
+              >
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m10 0H5"
+                  ></path>
                 </svg>
                 Delete
               </button>
@@ -225,15 +372,24 @@
       </div>
     }
     @if (filteredTeachers().length === 0) {
-      <div class="text-center py-10 text-text-500">
+      <div class="py-10 text-center text-text-500">
         <div class="flex flex-col items-center gap-2">
-          <svg class="w-8 h-8 text-text-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          <svg
+            class="h-8 w-8 text-text-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            ></path>
           </svg>
           No teachers found
         </div>
       </div>
     }
   </div>
-
 </div>

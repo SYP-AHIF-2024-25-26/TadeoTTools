@@ -54,7 +54,7 @@ export type OtherStudentsOfStop = {
   studentClass: string;
   department: string;
   status: Status; // maybe?
-}
+};
 
 export enum Status {
   Pending,
@@ -65,7 +65,7 @@ export enum Status {
 export type StudentAssignmentOfStop = {
   edufsUsername: string;
   status: Status;
-}
+};
 
 export type StopWithoutOrders = {
   id: number;
@@ -84,7 +84,7 @@ export type StopAsTeacher = {
   roomNr: string;
   description: string;
   studentAssignments: StudentAssignmentOfStop[];
-}
+};
 
 export type StopGroup = {
   id: number;

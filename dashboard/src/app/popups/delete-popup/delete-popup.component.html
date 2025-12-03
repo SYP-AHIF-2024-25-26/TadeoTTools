@@ -1,11 +1,23 @@
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 text-text-950">
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 text-text-950"
+>
   <div class="w-96 rounded-lg bg-background-100 p-6 shadow-lg">
     <h2 class="mb-4 text-lg font-semibold">{{ title }}</h2>
     <hr class="mb-4 border-background-200" />
     <p class="mb-4">{{ message }}</p>
     <div class="flex justify-end space-x-4">
-      <button (click)="confirmRemove()" class="rounded bg-red-500 text-black px-4 py-2">Yes, Remove</button>
-      <button (click)="cancelPopup()" class="rounded bg-gray-300 px-4 py-2 text-black">Cancel</button>
+      <button
+        (click)="confirmRemove()"
+        class="rounded bg-red-500 px-4 py-2 text-black"
+      >
+        Yes, Remove
+      </button>
+      <button
+        (click)="cancelPopup()"
+        class="rounded bg-gray-300 px-4 py-2 text-black"
+      >
+        Cancel
+      </button>
     </div>
   </div>
 </div>
