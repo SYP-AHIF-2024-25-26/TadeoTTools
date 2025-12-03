@@ -1,12 +1,12 @@
 import { Component, computed, inject, signal, ViewContainerRef, WritableSignal } from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {Status, Stop, Student, StudentAssignment} from '../../types';
-import {CommonModule} from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Status, Stop, Student, StudentAssignment } from '../../types';
+import { CommonModule } from '@angular/common';
 import { sortStudents, downloadFile } from '../../utilfunctions';
 import { StopService } from '../../stop.service';
-import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
-import {ComponentPortal} from '@angular/cdk/portal';
-import {StopsPopupComponent} from "../../popups/stops-popup/stops-popup.component";
+import { Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { StopsPopupComponent } from "../../popups/stops-popup/stops-popup.component";
 import { StudentService } from '../../student.service';
 
 export interface StudentWithUI extends Student {
@@ -427,15 +427,12 @@ export class ListStudentsComponent {
     await this.refreshStudents();
   }
 
+  private overlay = inject(Overlay);
+  private viewContainerRef = inject(ViewContainerRef);
+  private positionBuilder = inject(OverlayPositionBuilder);
+
   private overlayRef: OverlayRef | null = null;
   popupStudent: StudentWithUI | null = null;
-
-  constructor(
-    private overlay: Overlay,
-    private viewContainerRef: ViewContainerRef,
-    private positionBuilder: OverlayPositionBuilder
-  ) {
-  }
 
   openStopsPopup(student: StudentWithUI, anchor: HTMLElement) {
     this.closeStopsPopup();
@@ -443,8 +440,8 @@ export class ListStudentsComponent {
     const positionStrategy = this.positionBuilder
       .flexibleConnectedTo(anchor)
       .withPositions([
-        {originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top'},
-        {originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top'}
+        { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+        { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }
       ]);
     this.overlayRef = this.overlay.create({
       positionStrategy,
@@ -453,7 +450,7 @@ export class ListStudentsComponent {
       scrollStrategy: this.overlay.scrollStrategies.reposition()
     });
     this.overlayRef.backdropClick().subscribe(() => this.closeStopsPopup());
-    this.overlayRef.keydownEvents().subscribe(event => {
+    this.overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
       if (event.key === 'Escape') this.closeStopsPopup();
     });
     const portal = new ComponentPortal(StopsPopupComponent, this.viewContainerRef);
@@ -464,11 +461,11 @@ export class ListStudentsComponent {
       this.closeStopsPopup();
       this.popupStudent?.selectedStops?.clear();
     });
-    compRef.instance.apply.subscribe(async (stu) => {
+    compRef.instance.apply.subscribe(async (stu: StudentWithUI) => {
       await this.applyStopSelections(stu);
       this.closeStopsPopup();
     });
-    compRef.instance.stopToggle.subscribe(({student, stop, checked}) => {
+    compRef.instance.stopToggle.subscribe(({ student, stop, checked }: { student: StudentWithUI, stop: Stop, checked: boolean }) => {
       this.onStopToggle(student, stop, checked);
     });
   }

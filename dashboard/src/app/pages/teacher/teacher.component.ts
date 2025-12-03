@@ -3,7 +3,7 @@ import Keycloak from 'keycloak-js';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { StopService } from '../../stop.service';
-import { Stop } from '../../types';
+import { Stop, Teacher } from '../../types';
 import { TeacherService } from '../../teacher.service';
 
 @Component({
@@ -18,13 +18,17 @@ export class TeacherComponent implements OnInit {
   keycloak = inject(Keycloak);
 
   username = signal<string>('');
-  teacher = computed(() => {
-    return this.teacherService.getTeacherById(this.username());
-  });
+  teacher = signal<Teacher | null>(null);
 
   async ngOnInit() {
     const userProfile = await this.keycloak.loadUserProfile();
-    this.username.set(userProfile.username || '');
-    this.stops.set(await this.stopService.getStopsOfTeacher(this.username()));
+    const username = userProfile.username || '';
+    this.username.set(username);
+    this.stops.set(await this.stopService.getStopsOfTeacher(username));
+    try {
+      this.teacher.set(await this.teacherService.getTeacherById(username));
+    } catch (e) {
+      console.error('Failed to load teacher profile', e);
+    }
   }
 }

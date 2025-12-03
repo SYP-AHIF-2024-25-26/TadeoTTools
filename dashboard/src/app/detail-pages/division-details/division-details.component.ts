@@ -14,7 +14,6 @@ import { DivisionService } from '../../division.service';
 })
 export class DivisionDetailsComponent implements OnInit {
   private divisionService = inject(DivisionService);
-  divisions = signal<Division[]>([]);
 
   @Input() id: number = -1;
   @Output() cancel = new EventEmitter<void>();
@@ -32,26 +31,27 @@ export class DivisionDetailsComponent implements OnInit {
   filePreview: string | ArrayBuffer | null = null;
 
   async ngOnInit() {
-    this.divisions.set(await this.divisionService.getDivisions());
-    let maybeDivision: Division | undefined = undefined;
+    if (this.id !== -1) {
+      const divisions = await this.divisionService.getDivisions();
+      const division = divisions.find((d) => d.id == this.id);
 
-    while (maybeDivision === undefined) {
-      maybeDivision = this.divisions().find((d) => d.id == this.id);
-      if (maybeDivision === undefined) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+      if (division) {
+        this.name.set(division.name);
+        this.color.set(division.color);
       }
     }
 
-    if (maybeDivision) {
-      this.name.set(maybeDivision.name);
-      this.color.set(maybeDivision.color);
+    const currentColor = this.color();
+    if (currentColor && !currentColor.startsWith('#')) {
+      this.color.set('#' + currentColor);
     }
-    
-    this.color.set(this.color() !== '' ? '#' + this.color().substring(1) : '');
   }
 
-  async onFileChange(event: any) {
-    const file: File = event.target.files[0];
+  async onFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
 
     this.errorMessage.set(null);
 
@@ -90,17 +90,13 @@ export class DivisionDetailsComponent implements OnInit {
       name: this.name(),
       color: this.color(),
     };
-    try {
-      if (this.id === -1) {
-        await this.divisionService.addDivision(division);
-      } else {
-        await this.divisionService.updateDivision(division);
-      }
-      if (this.selectedFile) {
-        await this.divisionService.updateDivisionImg(this.id, this.selectedFile);
-      }
-    } catch (error) {
-      // Error is already handled by the service
+    if (this.id === -1) {
+      await this.divisionService.addDivision(division);
+    } else {
+      await this.divisionService.updateDivision(division);
+    }
+    if (this.selectedFile) {
+      await this.divisionService.updateDivisionImg(this.id, this.selectedFile);
     }
     this.selectedFile = null;
     this.filePreview = null;
@@ -108,21 +104,13 @@ export class DivisionDetailsComponent implements OnInit {
   }
 
   async deleteAndGoBack() {
-    try {
-      await this.divisionService.deleteDivision(this.id);
-    } catch (error) {
-      // Error is already handled by the service
-    }
+    await this.divisionService.deleteDivision(this.id);
     this.cancel.emit();
   }
 
   async deleteImage() {
     this.selectedFile = null;
     this.filePreview = null;
-    try {
-      await this.divisionService.deleteDivisionImg(this.id);
-    } catch (error) {
-      // Error is already handled by the service
-    }
+    await this.divisionService.deleteDivisionImg(this.id);
   }
 }

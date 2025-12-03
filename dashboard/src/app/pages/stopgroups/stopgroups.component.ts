@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { RouterLink } from '@angular/router';
-import { Division, Info, Stop, StopGroup, StopsShownInStopGroup } from '../../types';
+import { Division, Info, Stop, StopGroup } from '../../types';
 import { InfoPopupComponent } from '../../popups/info-popup/info-popup.component';
 import { FilterComponent } from '../../standard-components/filter/filter.component';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
@@ -30,10 +30,8 @@ export class StopGroupsComponent implements OnInit {
   stopIdToRemove: number = -1;
   stopGroupToRemoveFrom: StopGroup | undefined = undefined;
 
-  showStopsForStopGroup = signal<StopsShownInStopGroup[]>([]);
   showAssignedStops = signal<boolean>(false);
   showRemoveStopPopup = signal<boolean>(false);
-  showRemoveGroupPopup = signal<boolean>(false);
   onlyPublicGroups = signal<boolean>(true);
 
   showGroupDetailPopUp = signal<boolean>(false);
@@ -69,15 +67,6 @@ export class StopGroupsComponent implements OnInit {
     this.stopGroups.set(await this.stopGroupService.getStopGroups());
     this.divisions.set(await this.divisionService.getDivisions());
     this.stops.set(await this.stopService.getStops());
-
-    this.showStopsForStopGroup.set(
-      this.stopGroups().map(
-        (sg): StopsShownInStopGroup => ({
-          stopGroupId: sg.id,
-          isShown: false,
-        })
-      )
-    );
     this.hasChanged.set(false);
   }
 
@@ -170,8 +159,6 @@ export class StopGroupsComponent implements OnInit {
     this.groupIdDetail = id;
     this.showGroupDetailPopUp.set(true);
   }
-
-  deleteGroup() {}
 
   async handleGroupPopupClose(): Promise<void> {
     this.showGroupDetailPopUp.set(false);
