@@ -105,3 +105,16 @@ export type Info = {
   type: 'info' | 'error';
   message: string;
 };
+
+export type FeedbackQuestion = {
+  id?: number;
+  question: string;
+  type: 'text' | 'choice' | 'rating';
+  required: boolean;
+  placeholder?: string;
+  options?: string[];
+  minRating?: number;
+  maxRating?: number;
+  ratingLabels?: string;
+  order: number;
+};

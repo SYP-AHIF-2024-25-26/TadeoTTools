@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FeedbackQuestion } from './pages/feedback-configurator/feedback-configurator.component';
+import { FeedbackQuestion } from './types';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from './app.config';
 
