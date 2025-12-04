@@ -17,48 +17,15 @@
     <!-- Nav Links (desktop) -->
     <div class="hidden space-x-4 md:flex md:items-center md:justify-start">
       @if (isAdmin()) {
-        <button
-          class="px-3 py-2"
-          [routerLink]="['/students']"
-          routerLinkActive="bg-primary underline font-medium rounded"
-        >
-          Students
-        </button>
-        <button
-          class="px-3 py-2"
-          [routerLink]="['/stopgroups']"
-          routerLinkActive="bg-primary underline font-medium rounded"
-        >
-          StopGroups
-        </button>
-        <button
-          class="px-3 py-2"
-          [routerLink]="['/stops']"
-          routerLinkActive="bg-primary underline font-medium rounded"
-        >
-          Stops
-        </button>
-        <button
-          class="px-3 py-2"
-          [routerLink]="['/divisions']"
-          routerLinkActive="bg-primary underline font-medium rounded"
-        >
-          Divisions
-        </button>
-        <button
-          class="px-3 py-2"
-          [routerLink]="['/feedback']"
-          routerLinkActive="bg-primary underline font-medium rounded"
-        >
-          Feedback
-        </button>
-        <button
-          class="px-3 py-2"
-          [routerLink]="['/user-management']"
-          routerLinkActive="bg-primary underline font-medium rounded"
-        >
-          User Management
-        </button>
+        @for (link of navLinks; track link.route) {
+          <button
+            class="px-3 py-2"
+            [routerLink]="[link.route]"
+            routerLinkActive="bg-primary underline font-medium rounded"
+          >
+            {{ link.label }}
+          </button>
+        }
       }
     </div>
 
@@ -116,48 +83,16 @@
         >
           <div class="py-1">
             @if (isAdmin()) {
-              <a
-                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
-                (click)="mobileMenuOpen.set(false)"
-                [routerLink]="['/students']"
-                routerLinkActive="bg-primary font-medium"
-                >Students</a
-              >
-              <a
-                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
-                (click)="mobileMenuOpen.set(false)"
-                [routerLink]="['/stopgroups']"
-                routerLinkActive="bg-primary font-medium"
-                >StopGroups</a
-              >
-              <a
-                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
-                (click)="mobileMenuOpen.set(false)"
-                [routerLink]="['/stops']"
-                routerLinkActive="bg-primary font-medium"
-                >Stops</a
-              >
-              <a
-                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
-                (click)="mobileMenuOpen.set(false)"
-                [routerLink]="['/divisions']"
-                routerLinkActive="bg-primary font-medium"
-                >Divisions</a
-              >
-              <a
-                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
-                (click)="mobileMenuOpen.set(false)"
-                [routerLink]="['/feedback']"
-                routerLinkActive="bg-primary font-medium"
-                >Feedback</a
-              >
-              <a
-                class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
-                (click)="mobileMenuOpen.set(false)"
-                [routerLink]="['/user-management']"
-                routerLinkActive="bg-primary font-medium"
-                >User Management</a
-              >
+              @for (link of navLinks; track link.route) {
+                <a
+                  class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
+                  (click)="mobileMenuOpen.set(false)"
+                  [routerLink]="[link.route]"
+                  routerLinkActive="bg-primary font-medium"
+                >
+                  {{ link.label }}
+                </a>
+              }
             }
           </div>
         </div>

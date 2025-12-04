@@ -23,6 +23,15 @@ export class NavbarComponent {
   isWhiteMode = signal(true);
   mobileMenuOpen = signal(false);
 
+  navLinks = [
+    { label: 'Students', route: '/students' },
+    { label: 'StopGroups', route: '/stopgroups' },
+    { label: 'Stops', route: '/stops' },
+    { label: 'Divisions', route: '/divisions' },
+    { label: 'Feedback', route: '/feedback' },
+    { label: 'User Management', route: '/user-management' },
+  ];
+
   async logout() {
     // Redirect back to the dashboard base path after logout to stay under /admin/
     await this.keycloak.logout({
