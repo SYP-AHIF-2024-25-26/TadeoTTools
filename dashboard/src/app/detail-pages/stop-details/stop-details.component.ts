@@ -1,25 +1,22 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { StopService } from '../../stop.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import {
-  Division,
-  Status,
-  Stop,
-  StopGroup,
-  Student,
-  Teacher,
-} from '../../types';
-import { downloadFile, isValid, sortStudents } from '../../utilfunctions';
+import { Division, Stop, StopGroup, Student, Teacher } from '../../types';
+import { isValid } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
-import { Location, NgClass } from '@angular/common';
+import { Location } from '@angular/common';
 import { LoginService } from '../../login.service';
-import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
 import { DivisionService } from '../../division.service';
 import { StopGroupService } from '../../stopgroup.service';
 import { TeacherService } from '../../teacher.service';
 import { StudentService } from '../../student.service';
 import { LoaderComponent } from '../../standard-components/loader/loader.component';
+import { StopGeneralInfoComponent } from './components/stop-general-info/stop-general-info.component';
+import { StopGroupsComponent } from './components/stop-groups/stop-groups.component';
+import { StopStudentsComponent } from './components/stop-students/stop-students.component';
+import { StopTeachersComponent } from './components/stop-teachers/stop-teachers.component';
+import { StopDivisionsComponent } from './components/stop-divisions/stop-divisions.component';
 
 @Component({
   selector: 'app-stop-details',
@@ -27,9 +24,12 @@ import { LoaderComponent } from '../../standard-components/loader/loader.compone
   imports: [
     FormsModule,
     RouterModule,
-    NgClass,
-    DeletePopupComponent,
     LoaderComponent,
+    StopGeneralInfoComponent,
+    StopGroupsComponent,
+    StopStudentsComponent,
+    StopTeachersComponent,
+    StopDivisionsComponent,
   ],
   templateUrl: './stop-details.component.html',
 })
@@ -65,182 +65,7 @@ export class StopDetailsComponent implements OnInit {
 
   stop = signal<Stop>(this.emptyStop);
   isAdmin = signal(false);
-  selectedClass = signal<string>('all');
-  studentFilterText = signal<string>('');
-  teacherFilterText = signal<string>('');
-
-  assignedStudentFilterText = signal<string>('');
-  availableStudentFilterText = signal<string>('');
-  assignedTeacherFilterText = signal<string>('');
-  availableTeacherFilterText = signal<string>('');
-  selectedAssignedClass = signal<string>('all');
-  selectedAvailableClass = signal<string>('all');
-
-  inactiveDivisions = computed(() =>
-    this.divisions().filter((d) => !this.stop()?.divisionIds.includes(d.id))
-  );
-  inactiveStopGroups = computed(() =>
-    this.stopGroups().filter((g) => !this.stop()?.stopGroupIds.includes(g.id))
-  );
-
   errorMessage = signal<string | null>(null);
-
-  showRemoveDivisionPopup = signal<boolean>(false);
-  divisionIdToRemove: string = '';
-
-  showRemoveStopGroupPopup = signal<boolean>(false);
-  stopGroupIdToRemove: string = '';
-
-  expandedSections = signal<{ [key: string]: boolean }>({
-    students: true,
-    teachers: true,
-    divisions: true,
-    stopGroups: true,
-  });
-
-  toggleSection(section: string) {
-    this.expandedSections.update((sections) => {
-      return { ...sections, [section]: !sections[section] };
-    });
-  }
-
-  teachersAssignedToStop = computed(() => {
-    return this.stop().teacherAssignments
-      ? this.stop()
-          .teacherAssignments.map((a) =>
-            this.teachers().find((t) => t.edufsUsername === a)
-          )
-          .filter((t): t is Teacher => t !== undefined)
-      : [];
-  });
-
-  teachersAvailableForAssignment = computed(() => {
-    const assignedTeachers = this.teachersAssignedToStop();
-    return this.teachers().filter(
-      (teacher) => !assignedTeachers.includes(teacher)
-    );
-  });
-
-  private applyTeacherFilters(teachers: any[], filterText: string) {
-    let filteredTeachers = teachers;
-
-    if (filterText.trim() !== '') {
-      const searchText = filterText.toLowerCase().trim();
-      filteredTeachers = filteredTeachers.filter(
-        (teacher) =>
-          teacher.firstName.toLowerCase().includes(searchText) ||
-          teacher.lastName.toLowerCase().includes(searchText) ||
-          teacher.edufsUsername.toLowerCase().includes(searchText)
-      );
-    }
-
-    return filteredTeachers;
-  }
-
-  filteredAssignedTeachers = computed(() => {
-    return this.applyTeacherFilters(
-      this.teachersAssignedToStop(),
-      this.assignedTeacherFilterText()
-    );
-  });
-
-  teachersNotInStop = computed(() => {
-    return this.applyTeacherFilters(
-      this.teachersAvailableForAssignment(),
-      this.availableTeacherFilterText()
-    );
-  });
-
-  availableClasses = computed(() => {
-    const classes = this.students()
-      .map((student) => student.studentClass)
-      .sort();
-    return ['all', ...new Set(classes)].filter(Boolean);
-  });
-
-  private applyStudentFilters(
-    students: any[],
-    filterText: string,
-    selectedClass: string
-  ) {
-    let filteredStudents = students;
-
-    if (selectedClass !== 'all') {
-      filteredStudents = filteredStudents.filter(
-        (student) => student.studentClass === selectedClass
-      );
-    }
-
-    if (filterText.trim() !== '') {
-      const searchText = filterText.toLowerCase().trim();
-      filteredStudents = filteredStudents.filter(
-        (student) =>
-          student.firstName.toLowerCase().includes(searchText) ||
-          student.lastName.toLowerCase().includes(searchText) ||
-          student.edufsUsername.toLowerCase().includes(searchText)
-      );
-    }
-
-    return sortStudents(filteredStudents);
-  }
-
-  filteredAssignedStudents = computed(() => {
-    const assignedStudents = this.fetchAssignedStudents();
-    return sortStudents(
-      this.applyStudentFilters(
-        assignedStudents,
-        this.assignedStudentFilterText(),
-        this.selectedAssignedClass()
-      )
-    );
-  });
-
-  studentsNotInStop = computed(() => {
-    const studentsInStop = this.fetchAssignedStudents();
-
-    const studentsNotInStop = this.students().filter(
-      (student) =>
-        !studentsInStop.some((s) => s.edufsUsername === student.edufsUsername)
-    );
-
-    const filteredStudents = studentsNotInStop.filter((student) => {
-      if (student.studentAssignments && student.studentAssignments.length > 0) {
-        return !student.studentAssignments.some(
-          (assignment) => assignment.status === Status.Accepted
-        );
-      }
-      return true;
-    });
-
-    return sortStudents(
-      this.applyStudentFilters(
-        filteredStudents,
-        this.availableStudentFilterText(),
-        this.selectedAvailableClass()
-      )
-    );
-  });
-
-  private fetchAssignedStudents() {
-    return this.stop().studentAssignments
-      ? this.stop()
-          .studentAssignments.map((a) => {
-            const student = this.students().find(
-              (s) => s.edufsUsername === a.edufsUsername
-            );
-            if (student) {
-              return {
-                ...student,
-                assignmentStatus: a.status,
-              };
-            }
-            return undefined;
-          })
-          .filter(
-            (s): s is Student & { assignmentStatus: Status } => s !== undefined
-          )
-      : [];
-  }
 
   async ngOnInit() {
     this.isLoading.set(true);
@@ -278,15 +103,6 @@ export class StopDetailsComponent implements OnInit {
       this.errorMessage.set('An error occurred while loading data.');
     } finally {
       this.isLoading.set(false);
-    }
-  }
-
-  async downloadStudentsOfStopData() {
-    try {
-      const blob = await this.stopService.getStopDataFile(this.stop().id);
-      downloadFile(blob, 'students_of_stop_data.csv');
-    } catch (error) {
-      alert('No students found for this Stop');
     }
   }
 
@@ -332,182 +148,5 @@ export class StopDetailsComponent implements OnInit {
 
   goBack() {
     this.location.back();
-  }
-
-  async onDivisionSelect($event: Event) {
-    const target = $event.target as HTMLSelectElement;
-    const divisionId = parseInt(target.value);
-    if (
-      !this.stop().divisionIds.includes(divisionId) &&
-      this.divisions().find((d) => d.id === divisionId)
-    ) {
-      this.stop.update((stop) => {
-        stop.divisionIds = [divisionId, ...stop.divisionIds];
-        return stop;
-      });
-    }
-  }
-
-  async onStopGroupSelect($event: Event) {
-    const target = $event.target as HTMLSelectElement;
-    const stopGroupId = parseInt(target.value);
-    if (
-      !this.stop().stopGroupIds.includes(stopGroupId) &&
-      this.stopGroups().find((g) => g.id === stopGroupId)
-    ) {
-      this.stop.update((stop) => {
-        stop.stopGroupIds = [stopGroupId, ...stop.stopGroupIds];
-        return stop;
-      });
-    }
-  }
-
-  selectStopGroupToRemove(stopGroupId: string) {
-    this.stopGroupIdToRemove = stopGroupId;
-    this.showRemoveStopGroupPopup.set(true);
-  }
-
-  onStopGroupRemove(stopGroupId: string) {
-    this.selectStopGroupToRemove(stopGroupId);
-  }
-
-  confirmStopGroupRemove() {
-    this.stop.update((stop) => {
-      stop.stopGroupIds = stop.stopGroupIds.filter(
-        (ids) => ids !== Number.parseInt(this.stopGroupIdToRemove)
-      );
-      return stop;
-    });
-    this.showRemoveStopGroupPopup.set(false);
-  }
-
-  onClassSelect($event: Event) {
-    const target = $event.target as HTMLSelectElement;
-    this.selectedClass.set(target.value);
-  }
-
-  selectDivisionToRemove(divisionId: string) {
-    this.divisionIdToRemove = divisionId;
-    this.showRemoveDivisionPopup.set(true);
-  }
-
-  confirmDivisionRemove() {
-    this.stop.update((stop) => {
-      stop.divisionIds = stop.divisionIds.filter(
-        (ids) => ids !== Number.parseInt(this.divisionIdToRemove)
-      );
-      return stop;
-    });
-    this.showRemoveDivisionPopup.set(false);
-  }
-
-  addTeacher(edufsUsername: string) {
-    this.stop.update((stop) => ({
-      ...stop,
-      teacherAssignments: [...(stop.teacherAssignments || []), edufsUsername],
-    }));
-  }
-
-  removeTeacher(edufsUsername: string) {
-    this.stop.update((stop) => ({
-      ...stop,
-      teacherAssignments: (stop.teacherAssignments || []).filter(
-        (a) => a !== edufsUsername
-      ),
-    }));
-  }
-
-  onDivisionRemove(divisionId: string) {
-    this.selectDivisionToRemove(divisionId);
-  }
-
-  async onStudentClick(edufsUsername: string) {
-    this.stop.update((stop) => ({
-      ...stop,
-      studentAssignments: [
-        ...(stop.studentAssignments || []),
-        { edufsUsername, status: Status.Pending },
-      ],
-    }));
-  }
-
-  removeStudent(edufsUsername: string) {
-    this.stop.update((stop) => ({
-      ...stop,
-      studentAssignments: (stop.studentAssignments || []).filter(
-        (a) => a.edufsUsername !== edufsUsername
-      ),
-    }));
-  }
-
-  resetFilters() {
-    this.assignedStudentFilterText.set('');
-    this.availableStudentFilterText.set('');
-    this.assignedTeacherFilterText.set('');
-    this.availableTeacherFilterText.set('');
-    this.selectedAssignedClass.set('all');
-    this.selectedAvailableClass.set('all');
-  }
-
-  getAssignmentStatus(student: Student): Status {
-    const assignment = this.stop().studentAssignments?.find(
-      (a) => a.edufsUsername === student.edufsUsername
-    );
-    return assignment ? assignment.status : Status.Pending;
-  }
-
-  getStatusLabel(status: Status): string {
-    switch (status) {
-      case Status.Pending:
-        return 'Pending';
-      case Status.Accepted:
-        return 'Accepted';
-      case Status.Declined:
-        return 'Declined';
-      default:
-        return 'Unknown';
-    }
-  }
-
-  getStatusClass(status: Status): string {
-    switch (status) {
-      case Status.Pending:
-        return 'bg-yellow-200 text-yellow-800';
-      case Status.Accepted:
-        return 'bg-green-200 text-green-800';
-      case Status.Declined:
-        return 'bg-red-200 text-red-800';
-      default:
-        return '';
-    }
-  }
-
-  onAssignedClassSelect($event: Event) {
-    this.selectedAssignedClass.set(($event.target as HTMLSelectElement).value);
-  }
-
-  onAvailableClassSelect($event: Event) {
-    this.selectedAvailableClass.set(($event.target as HTMLSelectElement).value);
-  }
-
-  protected readonly Status = Status;
-
-  getDivisionById(id: number): Division | undefined {
-    return this.divisions().find((d) => d.id === id);
-  }
-
-  getStopGroupById(id: number) {
-    return this.stopGroups().find((sg) => sg.id === id);
-  }
-
-  getStudentOtherAssignmentsCount(edufsUsername: string): number {
-    const assignments = this.students()
-      .find((s) => s.edufsUsername === edufsUsername)
-      ?.studentAssignments.filter((a) => a.stopId !== this.stop().id);
-    return assignments ? assignments.length : 0;
-  }
-
-  hasOtherAssignments(edufsUsername: string): boolean {
-    return this.getStudentOtherAssignmentsCount(edufsUsername) > 0;
   }
 }
