@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { LoginService } from '../login.service';
 
-export const adminGuard: CanActivateFn = async (route, state) => {
+export const adminGuard: CanActivateFn = async () => {
   const loginService = inject(LoginService);
   const router = inject(Router);
 
@@ -10,21 +10,16 @@ export const adminGuard: CanActivateFn = async (route, state) => {
     const isAdmin = await loginService.checkUserRole('is-admin', 'admin');
     if (isAdmin) {
       return true;
-    } else {
-      const isTeacher = await loginService.checkUserRole(
-        'is-teacher',
-        'teacher'
-      );
-      if (isTeacher) {
-        router.navigate(['/teacher']);
-        return false;
-      } else {
-        router.navigate(['/student']);
-        return false;
-      }
     }
-  } catch (error) {
-    console.error('Error checking admin role:', error);
+
+    const isTeacher = await loginService.checkUserRole('is-teacher', 'teacher');
+    if (isTeacher) {
+      router.navigate(['/teacher']);
+    } else {
+      router.navigate(['/student']);
+    }
+    return false;
+  } catch {
     router.navigate(['/student']);
     return false;
   }
