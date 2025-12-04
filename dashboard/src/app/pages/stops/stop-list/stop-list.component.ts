@@ -13,7 +13,8 @@ import {
   StopGroup,
   Student,
   Teacher,
-} from '../../types';
+  StudentAssignment,
+} from '../../../shared/models/types';
 import { RouterModule } from '@angular/router';
 import { FilterComponent } from '../../../shared/components/filter-bar/filter-bar.component';
 import { FormsModule } from '@angular/forms';
@@ -74,8 +75,8 @@ export class StopsComponent {
     // Guard and coerce divisionIds elements to numbers
     let stops = divisionId
       ? this.stops().filter((stop) =>
-          (stop.divisionIds ?? []).some((d) => Number(d) === divisionId)
-        )
+        (stop.divisionIds ?? []).some((d) => Number(d) === divisionId)
+      )
       : this.stops();
 
     const nameSearch = this.stopNameSearchTerm().toLowerCase();
@@ -138,16 +139,16 @@ export class StopsComponent {
 
   getStudentCount(stopId: number): string {
     const students = this.students().filter((s) =>
-      s.studentAssignments.some((a) => a.stopId === stopId)
+      s.studentAssignments.some((a: StudentAssignment) => a.stopId === stopId)
     );
     const requested = students.filter((s) =>
       s.studentAssignments.some(
-        (a) => a.stopId === stopId && a.status === Status.Pending
+        (a: StudentAssignment) => a.stopId === stopId && a.status === Status.Pending
       )
     ).length;
     const assigned = students.filter((s) =>
       s.studentAssignments.some(
-        (a) => a.stopId === stopId && a.status === Status.Accepted
+        (a: StudentAssignment) => a.stopId === stopId && a.status === Status.Accepted
       )
     ).length;
     return `${requested} / ${assigned}`;
