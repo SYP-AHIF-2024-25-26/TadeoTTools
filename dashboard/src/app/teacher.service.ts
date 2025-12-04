@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Teacher, TeacherAssignment } from './types';
+import { Teacher } from './types';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from './app.config';
 import { HttpClient } from '@angular/common/http';

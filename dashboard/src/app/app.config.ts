@@ -5,15 +5,9 @@ import {
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
-  HTTP_INTERCEPTORS,
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
   provideHttpClient,
   withFetch,
   withInterceptors,
-  withInterceptorsFromDi,
 } from '@angular/common/http';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';

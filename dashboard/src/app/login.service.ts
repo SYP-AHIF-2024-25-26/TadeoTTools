@@ -27,7 +27,6 @@ export class LoginService {
 
   performCall(action: string): Promise<string> {
     const route = `${this.baseUrl}/users/${action}`;
-
     return firstValueFrom(this.httpClient.get(route, { responseType: 'text' }));
   }
 }

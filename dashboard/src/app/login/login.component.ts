@@ -19,7 +19,6 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
   public readonly response: WritableSignal<string | null> = signal(null);
   public readonly loading: WritableSignal<boolean> = signal(false);
-  public readonly error: WritableSignal<string | null> = signal(null);
 
   private service: LoginService = inject(LoginService);
   private readonly router = inject(Router);
@@ -29,7 +28,6 @@ export class LoginComponent implements OnInit {
 
   public async ngOnInit(): Promise<void> {
     this.loading.set(true);
-    this.error.set(null);
 
     try {
       if (this.keycloak.authenticated) {
@@ -39,7 +37,6 @@ export class LoginComponent implements OnInit {
       }
     } catch (error) {
       console.error('Login initialization error:', error);
-      this.error.set('Authentication failed. Please try again.');
     } finally {
       this.loading.set(false);
     }
@@ -73,7 +70,6 @@ export class LoginComponent implements OnInit {
       await this.determineUserRoleAndNavigate();
     } catch (error) {
       console.error('Error handling authenticated user:', error);
-      this.error.set('Failed to process user authentication');
       await this.logout();
     }
   }
@@ -136,7 +132,6 @@ export class LoginComponent implements OnInit {
   }
 
   public async retry(): Promise<void> {
-    this.error.set(null);
     await this.ngOnInit();
   }
 }
