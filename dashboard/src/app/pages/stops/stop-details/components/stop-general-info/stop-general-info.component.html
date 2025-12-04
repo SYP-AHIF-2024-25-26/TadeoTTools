@@ -1,0 +1,56 @@
+<div class="mb-4">
+  <div class="mb-4 mt-2">
+    <label for="name" class="mb-1 block text-sm font-medium text-text-950"
+      >Name</label
+    >
+    @if (stop().id == -1) {
+      <input
+        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+        type="text"
+        [value]="stop().name"
+        [(ngModel)]="stop().name"
+        name="name-new"
+        id="name-new"
+      />
+    } @else {
+      <input
+        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+        type="text"
+        [value]="stop().name"
+        [(ngModel)]="stop().name"
+        name="name"
+        id="name"
+      />
+    }
+  </div>
+
+  <div class="mb-4">
+    <label
+      for="description"
+      class="mb-1 block text-sm font-medium text-text-950"
+      >Description</label
+    >
+    <textarea
+      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      [value]="stop().description"
+      [(ngModel)]="stop().description"
+      name="description"
+      id="description"
+      rows="4"
+    ></textarea>
+  </div>
+
+  <div class="mb-2">
+    <label for="roomNr" class="mb-1 block text-sm font-medium text-text-950"
+      >Room Number</label
+    >
+    <input
+      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      type="text"
+      [value]="stop().roomNr"
+      [(ngModel)]="stop().roomNr"
+      name="roomNr"
+      id="roomNr"
+    />
+  </div>
+</div>

@@ -1,0 +1,173 @@
+<div class="min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <header class="mb-8">
+      <div class="hidden items-center justify-between md:flex">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-text-950">Feedback</h1>
+        </div>
+        <div class="flex flex-row space-x-4">
+          <button
+            (click)="togglePreview()"
+            class="mr-2 flex items-center rounded-md bg-secondary-200 px-4 py-2 text-text-950 hover:bg-secondary-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+            </svg>
+            {{ isPreviewMode() ? 'Exit Preview' : 'Preview Form' }}
+          </button>
+          <button (click)="saveQuestions()" class="btn btn-primary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+              />
+            </svg>
+            Save Changes
+          </button>
+        </div>
+      </div>
+      <div class="md:hidden">
+        <div class="mb-5 flex items-center justify-center">
+          <h1 class="text-2xl font-bold text-text-950">Feedback</h1>
+        </div>
+        <div class="flex flex-row space-x-4">
+          <button
+            (click)="togglePreview()"
+            class="mr-2 flex items-center rounded-md bg-secondary-200 px-4 py-2 text-text-950 hover:bg-secondary-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+            </svg>
+            {{ isPreviewMode() ? 'Exit Preview' : 'Preview Form' }}
+          </button>
+          <button (click)="saveQuestions()" class="btn btn-primary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+              />
+            </svg>
+            Save Changes
+          </button>
+        </div>
+      </div>
+      <div
+        class="mt-6 rounded-lg bg-background-100 p-6 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+      >
+        <h2 class="mb-4 text-xl font-semibold">Feedback Form Configuration</h2>
+        <form
+          [formGroup]="configForm"
+          class="flex items-center space-x-4 text-text-900"
+        >
+          <div class="flex-1">
+            <label for="formTitle" class="mb-1 block text-sm font-medium"
+              >Form Title</label
+            >
+            <input
+              type="text"
+              id="formTitle"
+              formControlName="title"
+              class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+              placeholder="Enter form title"
+            />
+          </div>
+          <div class="flex-1">
+            <label
+              for="formSubtitle"
+              class="mb-1 block text-sm font-medium text-text-900"
+              >Form Subtitle</label
+            >
+            <input
+              type="text"
+              id="formSubtitle"
+              formControlName="subtitle"
+              class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+              placeholder="Enter form subtitle"
+            />
+          </div>
+        </form>
+      </div>
+    </header>
+
+    <!-- Preview Mode -->
+    @if (isPreviewMode()) {
+      <app-feedback-preview
+        [questions]="questions()"
+        [formTitle]="formTitle()"
+        [formSubtitle]="formSubtitle()"
+      />
+    }
+
+    <!-- Questions Management -->
+    @if (!isPreviewMode()) {
+      <app-feedback-question-list
+        [questions]="questions()"
+        (addQuestion)="addNewQuestion()"
+        (editQuestion)="editQuestion($event)"
+        (deleteQuestion)="deleteQuestion($event)"
+        (reorderQuestions)="drop($event)"
+      />
+    }
+
+    <!-- Question Editor Modal -->
+    @if (showQuestionEditor()) {
+      <app-feedback-question-editor
+        [questionForm]="questionForm"
+        [editingIndex]="editingIndex()"
+        (save)="saveQuestion()"
+        (cancel)="closeQuestionEditor()"
+      />
+    }
+  </div>
+</div>
