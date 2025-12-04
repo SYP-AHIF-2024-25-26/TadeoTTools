@@ -13,17 +13,11 @@ type TabType = 'teachers' | 'admins' | 'data';
     AdminOverviewComponent,
     DataPageComponent,
     TeacherOverviewComponent,
-    DeletePopupComponent,
   ],
   templateUrl: './user-management.component.html',
 })
 export class UserManagementComponent {
   private studentService = inject(StudentService);
 
-  showDeleteStudentsPopup = signal<boolean>(false);
   activeTab = signal<TabType>('teachers');
-
-  async deleteAllStudents() {
-    await this.studentService.deleteAllStudents();
-  }
 }

@@ -2,25 +2,25 @@ import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { StudentService } from '../../../student.service';
 import { TeacherService } from '../../../teacher.service';
 import { FeedbackService } from '../../../feedback.service';
-import { StopGroupService } from '../../../stopgroup.service';
 import { StopService } from '../../../stop.service';
 import { DivisionService } from '../../../division.service';
 import { downloadFile } from '../../../utilfunctions';
-
+import { DeletePopupComponent } from '../../../popups/delete-popup/delete-popup.component';
 @Component({
   selector: 'app-data-page',
-  imports: [],
+  imports: [DeletePopupComponent],
   templateUrl: './data-page.component.html',
   standalone: true,
 })
 export class DataPageComponent {
   selectedStudentFile: WritableSignal<File | null> = signal(null);
   selectedTeacherFile: WritableSignal<File | null> = signal(null);
+  showDeleteStudentsPopup = signal<boolean>(false);
+
   private studentService = inject(StudentService);
   private teacherService = inject(TeacherService);
   private feedbackService = inject(FeedbackService);
   private stopService = inject(StopService);
-  private stopGroupService = inject(StopGroupService);
   private divisionService = inject(DivisionService);
 
   onStudentFileSelected(event: Event): void {
@@ -107,5 +107,9 @@ export class DataPageComponent {
       console.error('Failed to download file:', error);
       alert('Failed to download division data');
     }
+  }
+
+  async deleteAllStudents() {
+    await this.studentService.deleteAllStudents();
   }
 }

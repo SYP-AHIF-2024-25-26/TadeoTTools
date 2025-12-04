@@ -22,7 +22,7 @@ import { StopGroupService } from '../../stopgroup.service';
 import { StopService } from '../../stop.service';
 import { TeacherService } from '../../teacher.service';
 import { StudentService } from '../../student.service';
-import { FilterStateService } from '../../state/filter-state.service';
+import { FilterStateService } from '../../filter-state.service';
 
 @Component({
   selector: 'app-stops',
