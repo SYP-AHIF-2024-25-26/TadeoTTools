@@ -8,15 +8,13 @@ import {
   Stop,
   StopGroup,
   Student,
-  StudentAssignment,
   Teacher,
 } from '../../types';
-import { downloadFile, isValid } from '../../utilfunctions';
+import { downloadFile, isValid, sortStudents } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location, NgClass } from '@angular/common';
 import { LoginService } from '../../login.service';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
-import { sortStudents } from '../../utilfunctions';
 import { DivisionService } from '../../division.service';
 import { StopGroupService } from '../../stopgroup.service';
 import { TeacherService } from '../../teacher.service';
@@ -42,6 +40,9 @@ export class StopDetailsComponent implements OnInit {
   private loginService = inject(LoginService);
   private teacherService = inject(TeacherService);
   private studentService = inject(StudentService);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private location: Location = inject(Location);
+  router = inject(Router);
 
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
@@ -49,12 +50,6 @@ export class StopDetailsComponent implements OnInit {
   students = signal<Student[]>([]);
 
   isLoading = signal<boolean>(true);
-
-  private service: StopService = inject(StopService);
-  private route: ActivatedRoute = inject(ActivatedRoute);
-  private location: Location = inject(Location);
-
-  router = inject(Router);
 
   emptyStop = {
     id: -1,
@@ -74,7 +69,6 @@ export class StopDetailsComponent implements OnInit {
   studentFilterText = signal<string>('');
   teacherFilterText = signal<string>('');
 
-  // Separate filter signals for each list
   assignedStudentFilterText = signal<string>('');
   availableStudentFilterText = signal<string>('');
   assignedTeacherFilterText = signal<string>('');
@@ -91,16 +85,12 @@ export class StopDetailsComponent implements OnInit {
 
   errorMessage = signal<string | null>(null);
 
-  // Popup signals and properties
   showRemoveDivisionPopup = signal<boolean>(false);
   divisionIdToRemove: string = '';
 
   showRemoveStopGroupPopup = signal<boolean>(false);
   stopGroupIdToRemove: string = '';
 
-  // No longer tracking badge position
-
-  // Section expansion states
   expandedSections = signal<{ [key: string]: boolean }>({
     students: true,
     teachers: true,
@@ -131,7 +121,6 @@ export class StopDetailsComponent implements OnInit {
     );
   });
 
-  // Filter function to apply common filtering logic for teachers
   private applyTeacherFilters(teachers: any[], filterText: string) {
     let filteredTeachers = teachers;
 
@@ -148,7 +137,6 @@ export class StopDetailsComponent implements OnInit {
     return filteredTeachers;
   }
 
-  // Filtered teachers assigned to the stop
   filteredAssignedTeachers = computed(() => {
     return this.applyTeacherFilters(
       this.teachersAssignedToStop(),
@@ -170,7 +158,6 @@ export class StopDetailsComponent implements OnInit {
     return ['all', ...new Set(classes)].filter(Boolean);
   });
 
-  // Filter function to apply common filtering logic for students
   private applyStudentFilters(
     students: any[],
     filterText: string,
@@ -197,7 +184,6 @@ export class StopDetailsComponent implements OnInit {
     return sortStudents(filteredStudents);
   }
 
-  // Filtered students assigned to the stop
   filteredAssignedStudents = computed(() => {
     const assignedStudents = this.fetchAssignedStudents();
     return sortStudents(
@@ -282,9 +268,7 @@ export class StopDetailsComponent implements OnInit {
         return;
       }
 
-      let foundStop: Stop | undefined;
-
-      foundStop = await this.stopService.getStopById(Number(id));
+      const foundStop = await this.stopService.getStopById(Number(id));
       if (foundStop === undefined) {
         this.errorMessage.set(`Could not find stop with ID ${id}`);
       } else {
@@ -292,7 +276,6 @@ export class StopDetailsComponent implements OnInit {
       }
     } catch (error) {
       this.errorMessage.set('An error occurred while loading data.');
-      console.error(error);
     } finally {
       this.isLoading.set(false);
     }
@@ -303,7 +286,6 @@ export class StopDetailsComponent implements OnInit {
       const blob = await this.stopService.getStopDataFile(this.stop().id);
       downloadFile(blob, 'students_of_stop_data.csv');
     } catch (error) {
-      console.error('Failed to download file:', error);
       alert('No students found for this Stop');
     }
   }
@@ -330,7 +312,7 @@ export class StopDetailsComponent implements OnInit {
     }
 
     if (this.stop().id === -1) {
-      const returnedStop = await this.service.addStop(this.stop());
+      const returnedStop = await this.stopService.addStop(this.stop());
       this.stop.set({ ...this.stop(), id: returnedStop.id });
     } else {
       if (this.isAdmin()) {
@@ -434,7 +416,7 @@ export class StopDetailsComponent implements OnInit {
       ),
     }));
   }
-  // Keep for backward compatibility
+
   onDivisionRemove(divisionId: string) {
     this.selectDivisionToRemove(divisionId);
   }
@@ -457,8 +439,6 @@ export class StopDetailsComponent implements OnInit {
       ),
     }));
   }
-
-  // No longer need to toggle badge position
 
   resetFilters() {
     this.assignedStudentFilterText.set('');

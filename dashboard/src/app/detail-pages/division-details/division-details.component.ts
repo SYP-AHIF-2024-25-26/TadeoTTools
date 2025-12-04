@@ -26,17 +26,16 @@ export class DivisionDetailsComponent implements OnInit {
   @Input() id: number = -1;
   @Output() cancel = new EventEmitter<void>();
 
-  cancelPopup() {
-    this.cancel.emit();
-  }
-
   baseUrl = inject(BASE_URL);
   name = signal<string>('');
   color = signal<string>('');
-
   errorMessage = signal<string | null>(null);
   selectedFile: File | null = null;
   filePreview: string | ArrayBuffer | null = null;
+
+  cancelPopup() {
+    this.cancel.emit();
+  }
 
   async ngOnInit() {
     if (this.id !== -1) {
@@ -57,31 +56,32 @@ export class DivisionDetailsComponent implements OnInit {
 
   async onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
+    if (!input.files?.length) {
+      return;
+    }
 
     const file = input.files[0];
-
     this.errorMessage.set(null);
 
-    if (file) {
-      const validFileTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/jpg',
-        'image/svg+xml',
-      ];
-      if (!validFileTypes.includes(file.type)) {
-        this.errorMessage.set(
-          'Invalid file type. Please upload a JPG, JPEG, or PNG file.'
-        );
-        this.selectedFile = null;
-        return;
-      }
-      this.selectedFile = file;
-      const reader = new FileReader();
-      reader.onload = () => (this.filePreview = reader.result);
-      reader.readAsDataURL(this.selectedFile);
+    const validFileTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/jpg',
+      'image/svg+xml',
+    ];
+
+    if (!validFileTypes.includes(file.type)) {
+      this.errorMessage.set(
+        'Invalid file type. Please upload a JPG, JPEG, or PNG file.'
+      );
+      this.selectedFile = null;
+      return;
     }
+
+    this.selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = () => (this.filePreview = reader.result);
+    reader.readAsDataURL(this.selectedFile);
   }
 
   isInputValid(): boolean {
@@ -100,19 +100,23 @@ export class DivisionDetailsComponent implements OnInit {
     if (!this.isInputValid()) {
       return;
     }
+
     const division: Division = {
       id: this.id,
       name: this.name(),
       color: this.color(),
     };
+
     if (this.id === -1) {
       await this.divisionService.addDivision(division);
     } else {
       await this.divisionService.updateDivision(division);
     }
+
     if (this.selectedFile) {
       await this.divisionService.updateDivisionImg(this.id, this.selectedFile);
     }
+
     this.selectedFile = null;
     this.filePreview = null;
     this.cancel.emit();

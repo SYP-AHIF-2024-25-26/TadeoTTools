@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import { StopGroup } from './types';
-import { StopService } from './stop.service';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from './app.config';
@@ -9,7 +8,6 @@ import { BASE_URL } from './app.config';
   providedIn: 'root',
 })
 export class StopGroupService {
-  private stopService = inject(StopService);
   private httpClient = inject(HttpClient);
   private baseUrl = inject(BASE_URL);
 

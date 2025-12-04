@@ -10,7 +10,6 @@ import {
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { isValid } from '../../utilfunctions';
-import { Location } from '@angular/common';
 import { StopGroup } from '../../types';
 import { StopGroupService } from '../../stopgroup.service';
 
@@ -21,15 +20,10 @@ import { StopGroupService } from '../../stopgroup.service';
   templateUrl: './stopgroup-details.component.html',
 })
 export class StopgroupDetailsComponent implements OnInit {
-  private location: Location = inject(Location);
   private stopGroupService = inject(StopGroupService);
 
   @Input() id: number = -1;
   @Output() cancel = new EventEmitter<void>();
-
-  cancelPopup() {
-    this.cancel.emit();
-  }
 
   name = signal<string>('');
   description = signal<string>('');
@@ -38,20 +32,22 @@ export class StopgroupDetailsComponent implements OnInit {
   errorMessage = signal<string>('');
   stopGroups = signal<StopGroup[]>([]);
 
-  async ngOnInit() {
-    this.stopGroups.set(await this.stopGroupService.getStopGroups());
+  cancelPopup() {
+    this.cancel.emit();
+  }
 
-    let stopGroup: StopGroup | undefined = undefined;
-    while (stopGroup === undefined) {
-      stopGroup = this.stopGroups().find((g) => g.id == this.id);
-      if (stopGroup === undefined) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
+  async ngOnInit() {
+    if (this.id === -1) {
+      return;
     }
-    this.name.set(stopGroup.name);
-    this.stopIds.set(stopGroup.stopIds);
-    this.description.set(stopGroup.description);
-    this.isPublic.set(stopGroup.isPublic);
+
+    const stopGroup = await this.stopGroupService.getStopGroupById(this.id);
+    if (stopGroup) {
+      this.name.set(stopGroup.name);
+      this.stopIds.set(stopGroup.stopIds);
+      this.description.set(stopGroup.description);
+      this.isPublic.set(stopGroup.isPublic);
+    }
   }
 
   isInputValid(): boolean {
@@ -94,7 +90,7 @@ export class StopgroupDetailsComponent implements OnInit {
         await this.stopGroupService.updateStopGroup(stopGroup);
       }
     } catch (error) {
-      // Error is already handled by the service
+      this.errorMessage.set('An error occurred while saving.');
     }
     this.cancel.emit();
   }
