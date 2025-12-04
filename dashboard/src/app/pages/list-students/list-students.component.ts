@@ -4,7 +4,6 @@ import {
   inject,
   signal,
   ViewContainerRef,
-  WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Status, Stop, Student, StudentAssignment } from '../../types';
@@ -19,6 +18,10 @@ import {
 import { ComponentPortal } from '@angular/cdk/portal';
 import { StopsPopupComponent } from '../../popups/stops-popup/stops-popup.component';
 import { StudentService } from '../../student.service';
+import { StudentFiltersComponent } from './components/student-filters/student-filters.component';
+import { StudentImportExportComponent } from './components/student-import-export/student-import-export.component';
+import { AddStudentDialogComponent } from './components/add-student-dialog/add-student-dialog.component';
+import { ConflictDetailsModalComponent } from './components/conflict-details-modal/conflict-details-modal.component';
 
 export interface StudentWithUI extends Student {
   showStops?: boolean;
@@ -27,15 +30,20 @@ export interface StudentWithUI extends Student {
 
 @Component({
   selector: 'app-list-students',
-  imports: [FormsModule, CommonModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    StudentFiltersComponent,
+    StudentImportExportComponent,
+    AddStudentDialogComponent,
+    ConflictDetailsModalComponent,
+  ],
   templateUrl: './list-students.component.html',
   standalone: true,
 })
 export class ListStudentsComponent {
   private stopService = inject(StopService);
   private studentService = inject(StudentService);
-
-  selectedStudentFile: WritableSignal<File | null> = signal(null);
 
   // Unified filter and search state
   classFilter = signal<string>('');
@@ -50,15 +58,6 @@ export class ListStudentsComponent {
 
   // Add-student modal state
   showAddStudent = signal<boolean>(false);
-  addStudentError = signal<string | null>(null);
-  newStudent: Student = {
-    edufsUsername: '',
-    firstName: '',
-    lastName: '',
-    studentClass: '',
-    department: '',
-    studentAssignments: [],
-  };
 
   // Collapsible data section state
   dataCollapsed = signal<boolean>(true);
@@ -86,18 +85,7 @@ export class ListStudentsComponent {
 
   async ngOnInit() {
     this.stops.set(await this.stopService.getStops());
-    const students = await this.studentService.getStudents();
-
-    // Sort assignments by stopId for each student
-    students.forEach((student) => {
-      if (student.studentAssignments) {
-        student.studentAssignments.sort((a, b) => a.stopId - b.stopId);
-      } else {
-        student.studentAssignments = [];
-      }
-    });
-
-    this.students.set(students);
+    await this.refreshStudents();
   }
 
   // Get unique stop names for filter dropdowns
@@ -212,39 +200,6 @@ export class ListStudentsComponent {
     );
   });
 
-  onStudentFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedStudentFile.set(input.files[0]);
-    }
-  }
-
-  async submitStudentsCsv(): Promise<void> {
-    if (!this.selectedStudentFile) {
-      alert('Please select a CSV file first');
-      return;
-    }
-
-    try {
-      await this.studentService.uploadStudentsCsv(
-        this.selectedStudentFile() as File
-      );
-      location.reload();
-    } catch (error) {
-      console.error('Error uploading CSV:', error);
-    }
-  }
-
-  async downloadStudentsData() {
-    try {
-      const blob = await this.studentService.getStudentsDataFile();
-      downloadFile(blob, 'students_data.csv');
-    } catch (error) {
-      console.error('Failed to download file:', error);
-      alert('Failed to download students data');
-    }
-  }
-
   // Approve all currently requested (Pending) students visible in the list
   async approveAllRequested(): Promise<void> {
     const updates: Promise<void>[] = [];
@@ -266,63 +221,11 @@ export class ListStudentsComponent {
   }
 
   openAddStudentDialog() {
-    this.newStudent = {
-      edufsUsername: '',
-      firstName: '',
-      lastName: '',
-      studentClass: '',
-      department: '',
-      studentAssignments: [],
-    };
-    this.addStudentError.set(null);
     this.showAddStudent.set(true);
   }
 
   closeAddStudentDialog() {
-    this.addStudentError.set(null);
     this.showAddStudent.set(false);
-  }
-
-  async saveNewStudent() {
-    const s = this.newStudent;
-    // minimal validation
-    if (
-      !s.edufsUsername ||
-      !s.firstName ||
-      !s.lastName ||
-      !s.studentClass ||
-      !s.department
-    ) {
-      return;
-    }
-    // ensure no stops are sent initially
-    s.studentAssignments = [];
-    try {
-      await this.studentService.createStudent(s);
-      await this.refreshStudents();
-      this.showAddStudent.set(false);
-      this.addStudentError.set(null);
-    } catch (err: any) {
-      // Try to extract a meaningful backend error message
-      let message = 'Failed to create student. Please try again.';
-      const e = err?.error ?? err;
-      if (e) {
-        if (typeof e === 'string') {
-          message = e;
-        } else if (
-          typeof e?.message === 'string' &&
-          e.message.trim().length > 0
-        ) {
-          message = e.message;
-        } else if (
-          typeof err?.message === 'string' &&
-          err.message.trim().length > 0
-        ) {
-          message = err.message;
-        }
-      }
-      this.addStudentError.set(message);
-    }
   }
 
   async deleteAssignment(student: Student, index: number) {
@@ -368,33 +271,12 @@ export class ListStudentsComponent {
     this.selectedStudent.set(null);
   }
 
-  async approveAssignment(
-    student: Student,
-    assignmentIndex: number
-  ): Promise<void> {
-    await this.changeAssignmentStatus(
-      student,
-      assignmentIndex,
-      Status.Accepted
-    );
+  async rejectSingleAssignment(student: Student) {
+    await this.changeAssignmentStatus(student, 0, Status.Declined);
   }
 
-  async rejectAssignment(
-    student: Student,
-    assignmentIndex: number
-  ): Promise<void> {
-    await this.changeAssignmentStatus(
-      student,
-      assignmentIndex,
-      Status.Declined
-    );
-  }
-
-  async undoAssignment(
-    student: Student,
-    assignmentIndex: number
-  ): Promise<void> {
-    await this.changeAssignmentStatus(student, assignmentIndex, Status.Pending);
+  async undoSingleAssignment(student: Student) {
+    await this.changeAssignmentStatus(student, 0, Status.Pending);
   }
 
   getStatusClass(status: Status): string {
@@ -434,14 +316,6 @@ export class ListStudentsComponent {
   }
 
   protected readonly Status = Status;
-
-  async rejectSingleAssignment(student: Student) {
-    await this.changeAssignmentStatus(student, 0, Status.Declined);
-  }
-
-  async undoSingleAssignment(student: Student) {
-    await this.changeAssignmentStatus(student, 0, Status.Pending);
-  }
 
   onStopToggle(student: StudentWithUI, stop: Stop, checked: boolean): void {
     if (checked) {

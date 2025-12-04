@@ -1,0 +1,83 @@
+<div>
+  <div
+    class="mb-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between"
+  >
+    <!-- Left: Import -->
+    <div class="flex-1">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend text-lg">Import Students Csv</legend>
+        <div class="flex flex-col gap-4 sm:flex-row">
+          <input
+            type="file"
+            class="file-input file-input-primary file-input-sm w-full"
+            accept=".csv"
+            (change)="onStudentFileSelected($event)"
+          />
+          <button
+            class="btn btn-primary btn-sm self-center px-4 sm:self-end"
+            (click)="submitStudentsCsv()"
+            [disabled]="!selectedStudentFile()"
+          >
+            Import
+          </button>
+        </div>
+      </fieldset>
+      <div
+        class="my-2 hidden rounded-lg bg-background-100 p-2 dark:border dark:border-accent-400 md:block"
+      >
+        <p class="font-mono text-sm text-text-600">
+          EdufsUsername;FirstName;LastName;StudentClass;Department
+        </p>
+      </div>
+    </div>
+
+    <!-- Right: Export/Download -->
+    <div class="gap-2 md:flex md:flex-col md:items-end md:justify-start">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend text-lg">Export Students</legend>
+        <div class="flex flex-col gap-2">
+          <button
+            (click)="downloadStudentsData()"
+            class="btn btn-primary btn-sm w-full md:w-auto"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              />
+            </svg>
+            Download Students with Assignments
+          </button>
+          <button
+            class="btn btn-primary btn-sm w-full md:w-auto"
+            (click)="exportFiltered.emit()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              />
+            </svg>
+            Download Students
+          </button>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+</div>
