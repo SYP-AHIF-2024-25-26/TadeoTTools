@@ -1,12 +1,17 @@
-<div class="flex min-h-screen w-full flex-col overflow-y-scroll bg-gray-50 touch-pan-y select-none">
+<div
+  class="flex min-h-screen w-full touch-pan-y select-none flex-col overflow-y-scroll bg-gray-50"
+>
   <div>
     <app-header [showWelcomeText]="false" />
   </div>
 
-  <app-breadcrumb [name]="currentStopGroup().name" [stopGroupId]="currentStopGroup().id" />
+  <app-breadcrumb
+    [name]="currentStopGroup().name"
+    [stopGroupId]="currentStopGroup().id"
+  />
 
   <button
-    class="mb-3 ml-4 flex w-fit items-center rounded-2xl bg-gray-400 px-4 py-2 text-white shadow-md hover:bg-gray-500 transition-colors"
+    class="mb-3 ml-4 flex w-fit items-center rounded-2xl bg-gray-400 px-4 py-2 text-white shadow-md transition-colors hover:bg-gray-500"
     (click)="goBack()"
   >
     <svg
@@ -21,7 +26,7 @@
       stroke-linejoin="round"
       class="mr-2"
     >
-      <path d="M19 12H5M12 19l-7-7 7-7"/>
+      <path d="M19 12H5M12 19l-7-7 7-7" />
     </svg>
     Zurück
   </button>

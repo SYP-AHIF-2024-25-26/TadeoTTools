@@ -11,7 +11,10 @@ export const routes: Routes = [
   { path: 'feedback', component: FeedbackComponent },
   { path: 'main', component: MainPageComponent },
   { path: 'tour/:stopGroupId', component: StopPageComponent },
-  { path: 'tour/:stopGroupId/stop/:stopId', component: StopDescriptionPageComponent },
+  {
+    path: 'tour/:stopGroupId/stop/:stopId',
+    component: StopDescriptionPageComponent,
+  },
   { path: 'map', component: MapComponent },
   { path: 'map/:roomNr', component: MapComponent },
   { path: 'about', component: AboutPageComponent },

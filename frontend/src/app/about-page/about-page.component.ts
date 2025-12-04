@@ -12,7 +12,6 @@ import { inject } from '@angular/core';
   standalone: true,
 })
 export class AboutPageComponent {
-
   private router = inject(Router);
 
   resetGuideApp() {

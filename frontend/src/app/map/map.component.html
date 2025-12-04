@@ -1,4 +1,6 @@
-<div class="flex h-screen w-full flex-col justify-start overflow-y-scroll bg-gray-50 touch-pan-y select-none">
+<div
+  class="flex h-screen w-full touch-pan-y select-none flex-col justify-start overflow-y-scroll bg-gray-50"
+>
   <app-header [showWelcomeText]="true" />
 
   @if (roomNr !== undefined) {
@@ -9,13 +11,22 @@
       Zur Station
     </button>
   }
-  <div class="mx-4 mt-2 flex h-max flex-grow flex-col items-center justify-center rounded-lg bg-white p-4 shadow-lg">
+  <div
+    class="mx-4 mt-2 flex h-max flex-grow flex-col items-center justify-center rounded-lg bg-white p-4 shadow-lg"
+  >
     <h2 class="self-start text-xl font-medium">
       {{ currentFloorSymbol() }}
     </h2>
     @for (image of images; track $index) {
-      <div class="relative h-full max-h-[70vh] w-full max-w-md" [class.hidden]="currentFloor() !== $index">
-        <img [src]="image" [alt]="'Stockwerk ' + ($index + 1)" class="h-full w-full object-contain" />
+      <div
+        class="relative h-full max-h-[70vh] w-full max-w-md"
+        [class.hidden]="currentFloor() !== $index"
+      >
+        <img
+          [src]="image"
+          [alt]="'Stockwerk ' + ($index + 1)"
+          class="h-full w-full object-contain"
+        />
       </div>
     }
   </div>

@@ -1,4 +1,11 @@
-import { Component, computed, HostListener, inject, Input, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  HostListener,
+  inject,
+  Input,
+  signal,
+} from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { Router } from '@angular/router';
@@ -13,7 +20,11 @@ import { Router } from '@angular/router';
 export class MapComponent {
   @Input() roomNr: string | undefined;
   private router = inject(Router);
-  images = ['assets/stockwerk-U.png', 'assets/stockwerk-E.png', 'assets/stockwerk-1.png'];
+  images = [
+    'assets/stockwerk-U.png',
+    'assets/stockwerk-E.png',
+    'assets/stockwerk-1.png',
+  ];
 
   currentFloor = signal(1);
   currentFloorSymbol = computed(() => {
@@ -32,7 +43,9 @@ export class MapComponent {
 
   ngOnInit() {
     if (this.roomNr) {
-      this.currentFloor.set(this.images.findIndex((image) => image.includes(this.roomNr!.charAt(0))));
+      this.currentFloor.set(
+        this.images.findIndex((image) => image.includes(this.roomNr!.charAt(0)))
+      );
     }
   }
 

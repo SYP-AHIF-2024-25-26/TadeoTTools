@@ -7,7 +7,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     swipe: {
       direction: Hammer.DIRECTION_HORIZONTAL,
       velocity: 0.3,
-      threshold: 10
-    }
+      threshold: 10,
+    },
   };
 }

@@ -1,4 +1,11 @@
-import { Component, Input, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { interval, Subscription } from 'rxjs';
 import { CountdownUnitComponent } from '../countdown-unit/countdown-unit.component';
 

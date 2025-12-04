@@ -1,4 +1,12 @@
-import { Component, computed, inject, type OnInit, signal, ChangeDetectionStrategy, HostListener } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  type OnInit,
+  signal,
+  ChangeDetectionStrategy,
+  HostListener,
+} from '@angular/core';
 import { FeedbackQuestion, FeedbackSubmission } from '../types';
 import { ApiFetchService } from '../api-fetch.service';
 import { HeaderComponent } from '../header/header.component';
@@ -7,36 +15,42 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-feedback',
-  imports: [
-    HeaderComponent,
-    NavbarComponent,
-  ],
+  imports: [HeaderComponent, NavbarComponent],
   templateUrl: './feedback.component.html',
   styleUrl: './feedback.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FeedbackComponent implements OnInit{
+export class FeedbackComponent implements OnInit {
   // State signals
-  currentQuestionIndex = signal<number>(0)
-  isSubmitted = signal<boolean>(false)
-  answers = signal<Record<number, string>>({})
-  showError = signal<boolean>(false)
-  showAnswerSummary = signal<boolean>(false)
-  questions = signal<FeedbackQuestion[]>([])
-  currentAnswer = signal<string>('')
+  currentQuestionIndex = signal<number>(0);
+  isSubmitted = signal<boolean>(false);
+  answers = signal<Record<number, string>>({});
+  showError = signal<boolean>(false);
+  showAnswerSummary = signal<boolean>(false);
+  questions = signal<FeedbackQuestion[]>([]);
+  currentAnswer = signal<string>('');
 
   // Computed signals
-  feedbackAlreadySubmitted = computed(() => localStorage.getItem("feedbackSubmitted") === "true")
-  currentQuestion = computed<FeedbackQuestion>(() => this.questions()[this.currentQuestionIndex()])
-  progressPercentage = computed<number>(() => Math.round((this.currentQuestionIndex() / this.questions().length) * 100))
+  feedbackAlreadySubmitted = computed(
+    () => localStorage.getItem('feedbackSubmitted') === 'true'
+  );
+  currentQuestion = computed<FeedbackQuestion>(
+    () => this.questions()[this.currentQuestionIndex()]
+  );
+  progressPercentage = computed<number>(() =>
+    Math.round((this.currentQuestionIndex() / this.questions().length) * 100)
+  );
   isAnswerValid = computed<boolean>(() => {
-    const question = this.currentQuestion()
-    const answer = this.currentAnswer()
-    return !question?.required || (answer !== null && answer !== undefined && answer.trim() !== '')
-  })
+    const question = this.currentQuestion();
+    const answer = this.currentAnswer();
+    return (
+      !question?.required ||
+      (answer !== null && answer !== undefined && answer.trim() !== '')
+    );
+  });
 
-  private apiFetchService = inject(ApiFetchService)
-  private router = inject(Router)
+  private apiFetchService = inject(ApiFetchService);
+  private router = inject(Router);
 
   @HostListener('swipeleft')
   onSwipeLeft() {
@@ -54,29 +68,30 @@ export class FeedbackComponent implements OnInit{
     // Initialize current answer from saved answers
     const answersValue = this.answers();
     if (answersValue[this.currentQuestionIndex()]) {
-      this.currentAnswer.set(answersValue[this.currentQuestionIndex()])
+      this.currentAnswer.set(answersValue[this.currentQuestionIndex()]);
     }
   }
 
   async loadQuestions(): Promise<void> {
-    const fetchedQuestions = await this.apiFetchService.getAllFeedbackQuestions();
+    const fetchedQuestions =
+      await this.apiFetchService.getAllFeedbackQuestions();
     this.questions.set(fetchedQuestions);
   }
 
   async onSubmit(): Promise<void> {
-    this.showError.set(false)
+    this.showError.set(false);
 
     // Validate answer
     if (!this.isAnswerValid()) {
-      this.showError.set(true)
-      return
+      this.showError.set(true);
+      return;
     }
 
     // Save the current answer
     const currentIndex = this.currentQuestionIndex();
-    this.answers.update(prev => ({
+    this.answers.update((prev) => ({
       ...prev,
-      [currentIndex]: this.currentAnswer()
+      [currentIndex]: this.currentAnswer(),
     }));
 
     if (currentIndex < this.questions().length - 1) {
@@ -90,12 +105,17 @@ export class FeedbackComponent implements OnInit{
       // Submit all answers
       this.isSubmitted.set(true);
       const answersValue = this.answers();
-      await this.apiFetchService.submitFeedback(this.questions().map((question, index) => ({
-        questionId: question.id,
-        answer: answersValue[index] || "",
-      } as FeedbackSubmission)));
+      await this.apiFetchService.submitFeedback(
+        this.questions().map(
+          (question, index) =>
+            ({
+              questionId: question.id,
+              answer: answersValue[index] || '',
+            }) as FeedbackSubmission
+        )
+      );
 
-      localStorage.setItem("feedbackSubmitted", "true")
+      localStorage.setItem('feedbackSubmitted', 'true');
     }
   }
 
@@ -103,9 +123,9 @@ export class FeedbackComponent implements OnInit{
     const currentIndex = this.currentQuestionIndex();
     if (currentIndex > 0) {
       // Save current answer before going back
-      this.answers.update(prev => ({
+      this.answers.update((prev) => ({
         ...prev,
-        [currentIndex]: this.currentAnswer()
+        [currentIndex]: this.currentAnswer(),
       }));
 
       // Go to previous question
@@ -143,7 +163,9 @@ export class FeedbackComponent implements OnInit{
     const currentQuestionValue = this.currentQuestion();
     if (!currentQuestionValue.ratingLabels) return rating.toString();
 
-    const labels = currentQuestionValue.ratingLabels.split(",").map((label) => label.trim());
+    const labels = currentQuestionValue.ratingLabels
+      .split(',')
+      .map((label) => label.trim());
     const min = currentQuestionValue.minRating || 1;
     const index = rating - min;
 

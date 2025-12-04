@@ -1,4 +1,10 @@
-import { Component, HostListener, inject, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { GuideCardComponent } from '../guide-card/guide-card.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { HeaderComponent } from '../header/header.component';
@@ -30,7 +36,11 @@ export class MainPageComponent {
   }
 
   async onLoad() {
-    this.groups.set((await this.apiFetchService.getStopGroups()).sort((a, b) => a.rank - b.rank));
+    this.groups.set(
+      (await this.apiFetchService.getStopGroups()).sort(
+        (a, b) => a.rank - b.rank
+      )
+    );
     this.showResetButton.set(true);
   }
 

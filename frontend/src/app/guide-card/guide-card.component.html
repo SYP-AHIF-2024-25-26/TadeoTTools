@@ -1,14 +1,25 @@
-<div class="flex w-full content-center justify-center" (click)="openStopPage.emit()">
+<div
+  class="flex w-full content-center justify-center"
+  (click)="openStopPage.emit()"
+>
   <div
     class="mx-4 flex w-full cursor-auto items-center justify-between rounded-lg shadow-lg duration-[250ms] ease-in-out"
     [ngClass]="['bg-white', isChecked() ? 'h-12 opacity-50' : 'h-20']"
   >
-    <div class="flex w-full flex-row content-center justify-between space-x-4 px-6 py-4">
+    <div
+      class="flex w-full flex-row content-center justify-between space-x-4 px-6 py-4"
+    >
       <div class="flex-1">
-        <p class="ml-2 line-clamp-2 cursor-default self-center justify-self-start text-lg font-medium text-gray-700">{{ stopGroup.name }}</p>
+        <p
+          class="ml-2 line-clamp-2 cursor-default self-center justify-self-start text-lg font-medium text-gray-700"
+        >
+          {{ stopGroup.name }}
+        </p>
       </div>
       @if (progress() !== null && stopsCount() !== null) {
-        <p class="ml-2 line-clamp-2 cursor-default self-center justify-self-start text-base font-medium text-gray-700">
+        <p
+          class="ml-2 line-clamp-2 cursor-default self-center justify-self-start text-base font-medium text-gray-700"
+        >
           {{ progress() }} / {{ stopsCount() }}
         </p>
       }

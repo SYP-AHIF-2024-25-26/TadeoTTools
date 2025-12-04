@@ -17,7 +17,9 @@ export class CheckboxComponent {
 
   ngAfterViewInit() {
     setTimeout(() => {
-      this.isChecked.set(localStorage.getItem(this.parent + this.id) === 'true');
+      this.isChecked.set(
+        localStorage.getItem(this.parent + this.id) === 'true'
+      );
     }, 0);
   }
 
@@ -25,7 +27,10 @@ export class CheckboxComponent {
     this.isChecked.update((old) => !old);
     localStorage.setItem(this.parent + this.id, String(this.isChecked()));
     if (this.parent === GUIDE_CARD_PREFIX) {
-      localStorage.setItem(MANUAL_CHECK_PREFIX + this.id, String(this.isChecked()));
+      localStorage.setItem(
+        MANUAL_CHECK_PREFIX + this.id,
+        String(this.isChecked())
+      );
     }
   }
 }

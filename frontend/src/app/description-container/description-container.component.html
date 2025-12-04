@@ -2,15 +2,28 @@
   <div class="p-6">
     <div class="flex">
       <div class="flex w-4/5 flex-col">
-        <h2 class="mb-4 mr-2 break-words text-2xl font-medium text-gray-800">{{ title }}</h2>
+        <h2 class="mb-4 mr-2 break-words text-2xl font-medium text-gray-800">
+          {{ title }}
+        </h2>
         @if (roomNr === undefined) {
-          <p class="mb-4 self-start text-lg font-normal text-gray-600" [innerHTML]="description"></p>
+          <p
+            class="mb-4 self-start text-lg font-normal text-gray-600"
+            [innerHTML]="description"
+          ></p>
         }
         @if (roomNr !== undefined) {
-          <h3 class="mb-4 break-words text-xl font-medium text-gray-800">Raum: {{ roomNr }}</h3>
-          <p class="mb-4 self-start text-lg font-normal text-gray-600" [innerHTML]="description"></p>
+          <h3 class="mb-4 break-words text-xl font-medium text-gray-800">
+            Raum: {{ roomNr }}
+          </h3>
+          <p
+            class="mb-4 self-start text-lg font-normal text-gray-600"
+            [innerHTML]="description"
+          ></p>
           @if (roomNr.length > 0 && matchRoomNr(roomNr) !== null) {
-            <button class="mb-2 h-10 w-32 rounded-2xl bg-orange-500 text-white shadow-md" (click)="router.navigate(['map', matchRoomNr(roomNr)])">
+            <button
+              class="mb-2 h-10 w-32 rounded-2xl bg-orange-500 text-white shadow-md"
+              (click)="router.navigate(['map', matchRoomNr(roomNr)])"
+            >
               Auf der Karte
             </button>
           }

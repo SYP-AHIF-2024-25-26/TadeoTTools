@@ -1,11 +1,19 @@
-<div class="flex w-full flex-col justify-start overflow-y-scroll bg-gray-50 touch-pan-y select-none">
+<div
+  class="flex w-full touch-pan-y select-none flex-col justify-start overflow-y-scroll bg-gray-50"
+>
   <div>
     <app-header />
   </div>
   <div class="mb-28 flex h-full flex-col justify-center">
     @if (showResetButton()) {
       @for (group of groups(); track group.id) {
-        <app-guide-card class="mt-6" [stopGroup]="group" [id]="group.id.toString()" (openStopPage)="openStopPage(group)"> </app-guide-card>
+        <app-guide-card
+          class="mt-6"
+          [stopGroup]="group"
+          [id]="group.id.toString()"
+          (openStopPage)="openStopPage(group)"
+        >
+        </app-guide-card>
       }
     }
   </div>

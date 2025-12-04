@@ -1,9 +1,14 @@
 <header class="rounded-md bg-gray-100 p-4 shadow-lg">
   <div class="w-full">
     <!-- Logo and Title Section -->
-    <div class="flex flex-col w-full">
+    <div class="flex w-full flex-col">
       <!-- HTL Leonding Image - Left aligned -->
-      <img src="assets/logo.png" alt="HTL Leonding" class="mb-8 h-12 self-center cursor-pointer" (click)="router.navigate(['main'])" />
+      <img
+        src="assets/logo.png"
+        alt="HTL Leonding"
+        class="mb-8 h-12 cursor-pointer self-center"
+        (click)="router.navigate(['main'])"
+      />
 
       <!-- Text below the image - Center aligned -->
       @if (showWelcomeText) {

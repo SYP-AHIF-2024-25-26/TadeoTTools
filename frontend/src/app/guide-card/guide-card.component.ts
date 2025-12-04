@@ -1,9 +1,23 @@
-import { Component, EventEmitter, inject, Input, Output, signal, ViewChild, WritableSignal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+  signal,
+  ViewChild,
+  WritableSignal,
+} from '@angular/core';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
 import { CommonModule } from '@angular/common';
 import { StopGroup } from '../types';
 import { Router } from '@angular/router';
-import { GUIDE_CARD_PREFIX, MANUAL_CHECK_PREFIX, STOP_GROUP_PROGRESS_PREFIX, STOPS_COUNT_PREFIX } from '../constants';
+import {
+  GUIDE_CARD_PREFIX,
+  MANUAL_CHECK_PREFIX,
+  STOP_GROUP_PROGRESS_PREFIX,
+  STOPS_COUNT_PREFIX,
+} from '../constants';
 
 @Component({
   selector: 'app-guide-card',
@@ -48,14 +62,18 @@ export class GuideCardComponent {
       if (this.progress() === this.stopsCount()) {
         localStorage.setItem(GUIDE_CARD_PREFIX + this.id, 'true');
         localStorage.removeItem(MANUAL_CHECK_PREFIX + this.id);
-      } else if (localStorage.getItem(MANUAL_CHECK_PREFIX + this.id) !== 'true') {
+      } else if (
+        localStorage.getItem(MANUAL_CHECK_PREFIX + this.id) !== 'true'
+      ) {
         localStorage.setItem(GUIDE_CARD_PREFIX + this.id, 'false');
       }
     }
   }
 
   private getProgress(): number | null {
-    const progress = localStorage.getItem(STOP_GROUP_PROGRESS_PREFIX + this.stopGroup.id);
+    const progress = localStorage.getItem(
+      STOP_GROUP_PROGRESS_PREFIX + this.stopGroup.id
+    );
     return progress !== null ? Number(progress) : null;
   }
 
