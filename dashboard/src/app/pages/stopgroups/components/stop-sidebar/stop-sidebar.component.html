@@ -1,0 +1,107 @@
+<div class="w-80 flex-shrink-0">
+  <div class="sticky top-24">
+    <div
+      class="overflow-hidden rounded-lg bg-background-100 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+    >
+      <!-- Sidebar Header -->
+      <div
+        class="border-b border-background-200 p-4 dark:border-background-700"
+      >
+        <div class="mb-3 flex items-center justify-between">
+          <h3 class="font-semibold text-text-900 dark:text-text-100">
+            {{ showAssignedStops() ? 'All Stops' : 'Stops' }}
+          </h3>
+          <app-filter
+            (filter)="filterChange.emit($event)"
+            [elements]="divisions()"
+            class="text-xs"
+          ></app-filter>
+        </div>
+
+        <!-- Add Toggle Switch -->
+        <div class="flex items-center gap-2">
+          <label class="label cursor-pointer justify-start gap-2">
+            <span class="label-text text-xs text-text-600"
+              >Show assigned stops</span
+            >
+            <input
+              (click)="toggleShowAssignedStops.emit()"
+              type="checkbox"
+              class="toggle toggle-primary toggle-xs"
+              [checked]="showAssignedStops()"
+            />
+          </label>
+        </div>
+      </div>
+      <!-- Stops List -->
+      <div
+        [cdkDropListConnectedTo]="connectedDropLists()"
+        cdkDropList
+        class="h-[calc(100vh-200px)] overflow-y-auto"
+        id="all-stops"
+      >
+        <div class="space-y-1 p-2">
+          @for (stop of filteredStops(); track stop.id) {
+            <div
+              class="flex cursor-grab items-center justify-between rounded-lg p-3 transition-colors hover:bg-background-100 dark:hover:bg-background-700"
+              cdkDrag
+            >
+              <div class="min-w-0 flex-1">
+                <p
+                  class="truncate text-sm font-medium text-text-900 dark:text-text-100"
+                >
+                  {{ stop.name }}
+                </p>
+              </div>
+              <button
+                class="btn btn-ghost btn-xs ml-2 flex-shrink-0"
+                [routerLink]="['/stop']"
+                [queryParams]="{ id: stop.id }"
+              >
+                <svg
+                  class="h-3 w-3 text-text-900 dark:text-text-100"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  ></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          }
+          @if (filteredStops().length === 0) {
+            <div class="py-12 text-center">
+              <svg
+                class="mx-auto mb-2 h-8 w-8 text-text-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                ></path>
+              </svg>
+              <p class="text-sm text-text-500">
+                {{ showAssignedStops() ? 'No stops' : 'No unassigned stops' }}
+              </p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

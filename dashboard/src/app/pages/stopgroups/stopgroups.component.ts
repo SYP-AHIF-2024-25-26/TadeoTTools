@@ -1,32 +1,32 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import {
-  CdkDrag,
   CdkDragDrop,
-  CdkDropList,
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { RouterLink } from '@angular/router';
 import { Division, Info, Stop, StopGroup } from '../../types';
 import { InfoPopupComponent } from '../../popups/info-popup/info-popup.component';
-import { FilterComponent } from '../../standard-components/filter/filter.component';
 import { DeletePopupComponent } from '../../popups/delete-popup/delete-popup.component';
 import { StopgroupDetailsComponent } from '../../detail-pages/stopgroup-details/stopgroup-details.component';
 import { StopGroupService } from '../../stopgroup.service';
 import { DivisionService } from '../../division.service';
 import { StopService } from '../../stop.service';
+import { StopGroupHeaderComponent } from './components/stop-group-header/stop-group-header.component';
+import { StopGroupListComponent } from './components/stop-group-list/stop-group-list.component';
+import { StopSidebarComponent } from './components/stop-sidebar/stop-sidebar.component';
+import { AddStopDialogComponent } from './components/add-stop-dialog/add-stop-dialog.component';
 
 @Component({
   selector: 'app-stopgroups',
   standalone: true,
   imports: [
-    CdkDropList,
-    CdkDrag,
-    RouterLink,
     InfoPopupComponent,
-    FilterComponent,
     DeletePopupComponent,
     StopgroupDetailsComponent,
+    StopGroupHeaderComponent,
+    StopGroupListComponent,
+    StopSidebarComponent,
+    AddStopDialogComponent,
   ],
   templateUrl: './stopgroups.component.html',
 })
@@ -75,6 +75,10 @@ export class StopGroupsComponent implements OnInit {
     return this.stops().filter((stop) => !stopsInStopGroup?.includes(stop.id));
   });
 
+  dropGroups = computed(() => {
+    return this.stopGroups().map((group) => 'group-' + group.id);
+  });
+
   async ngOnInit() {
     await this.initialiseData();
   }
@@ -112,14 +116,6 @@ export class StopGroupsComponent implements OnInit {
 
   deleteInfo(index: number) {
     this.infos.update((infos) => infos.filter((info) => info.id !== index));
-  }
-
-  getDropGroups(): string[] {
-    return this.stopGroups().map((group) => 'group-' + group.id);
-  }
-
-  getStopName(stopId: number): string {
-    return this.stops().filter((stop) => stop.id === stopId)[0]?.name || '';
   }
 
   dropStop(event: CdkDragDrop<any, any>) {
