@@ -21,11 +21,18 @@ import { DivisionService } from '../../division.service';
 import { StopGroupService } from '../../stopgroup.service';
 import { TeacherService } from '../../teacher.service';
 import { StudentService } from '../../student.service';
+import { LoaderComponent } from '../../standard-components/loader/loader.component';
 
 @Component({
   selector: 'app-stop-details',
   standalone: true,
-  imports: [FormsModule, RouterModule, NgClass, DeletePopupComponent],
+  imports: [
+    FormsModule,
+    RouterModule,
+    NgClass,
+    DeletePopupComponent,
+    LoaderComponent,
+  ],
   templateUrl: './stop-details.component.html',
 })
 export class StopDetailsComponent implements OnInit {

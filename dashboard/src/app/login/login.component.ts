@@ -9,11 +9,12 @@ import { FormsModule } from '@angular/forms';
 import { LoginService } from '../login.service';
 import Keycloak from 'keycloak-js';
 import { Router } from '@angular/router';
+import { LoaderComponent } from '../standard-components/loader/loader.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, LoaderComponent],
   templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {

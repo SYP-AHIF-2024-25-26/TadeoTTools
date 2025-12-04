@@ -8,9 +8,7 @@
   }
   @if (isLoading()) {
     <div class="flex h-32 items-center justify-center">
-      <div
-        class="loader h-12 w-12 rounded-full border-8 border-t-8 border-primary-200 ease-linear"
-      ></div>
+      <app-loader></app-loader>
     </div>
   } @else {
     <form (submit)="submitStopDetail()" class="mt-4">

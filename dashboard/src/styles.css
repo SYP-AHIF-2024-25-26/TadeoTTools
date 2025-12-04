@@ -152,3 +152,18 @@ body {
   cursor: pointer;
   z-index: 10; /* above header contents so it’s clickable */
 }
+
+.loader {
+  border-top-color: var(--primary-600);
+  -webkit-animation: spinner 1.5s linear infinite;
+  animation: spinner 1.5s linear infinite;
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

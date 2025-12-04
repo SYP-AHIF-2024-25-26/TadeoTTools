@@ -1,3 +1,11 @@
 <app-navbar></app-navbar>
 
 <router-outlet />
+
+@if (loading()) {
+  <div
+    class="fixed inset-0 z-50 flex h-screen w-full items-center justify-center bg-background-50"
+  >
+    <app-loader [text]="'Loading...'"></app-loader>
+  </div>
+}
