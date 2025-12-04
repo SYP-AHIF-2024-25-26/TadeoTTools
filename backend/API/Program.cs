@@ -22,7 +22,7 @@ Thread.Sleep(3000);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<TadeoTDbContext>(options =>
-    options.UseMySQL(connectionString!)); // ServiceLifetime Transient
+    options.UseNpgsql(connectionString!)); // ServiceLifetime Transient
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
