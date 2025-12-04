@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { isValid } from '../../utilfunctions';
+import { isValidString } from '../../utilfunctions';
 import { StopGroup } from '../../types';
 import { StopGroupService } from '../../stopgroup.service';
 
@@ -54,14 +54,14 @@ export class StopgroupDetailsComponent implements OnInit {
     if (this.name() === '') {
       this.errorMessage.set('Name is required');
       return false;
-    } else if (!isValid(this.name(), 50)) {
+    } else if (!isValidString(this.name(), 50)) {
       this.errorMessage.set('Name is invalid, must be less than 50 characters');
       return false;
     }
     if (this.description() === '') {
       this.errorMessage.set('Description is required');
       return false;
-    } else if (!isValid(this.description(), 255)) {
+    } else if (!isValidString(this.description(), 255)) {
       this.errorMessage.set(
         'Description is invalid, must be less than 255 characters'
       );

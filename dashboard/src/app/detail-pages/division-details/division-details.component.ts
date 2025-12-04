@@ -10,7 +10,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { BASE_URL } from '../../app.config';
-import { isValid } from '../../utilfunctions';
+import { isValidString } from '../../utilfunctions';
 import { Division } from '../../types';
 import { DivisionService } from '../../division.service';
 
@@ -85,11 +85,11 @@ export class DivisionDetailsComponent implements OnInit {
   }
 
   isInputValid(): boolean {
-    if (!isValid(this.name(), 50)) {
+    if (!isValidString(this.name(), 50)) {
       this.errorMessage.set('Name must be between 1 and 50 characters');
       return false;
     }
-    if (!isValid(this.color(), 7)) {
+    if (!isValidString(this.color(), 7)) {
       this.errorMessage.set('Color must be a valid hex color');
       return false;
     }

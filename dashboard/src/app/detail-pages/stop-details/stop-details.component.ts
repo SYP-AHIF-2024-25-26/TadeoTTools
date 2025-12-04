@@ -3,7 +3,7 @@ import { StopService } from '../../stop.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Division, Stop, StopGroup, Student, Teacher } from '../../types';
-import { isValid } from '../../utilfunctions';
+import { isValidString } from '../../utilfunctions';
 import { firstValueFrom } from 'rxjs';
 import { Location } from '@angular/common';
 import { LoginService } from '../../login.service';
@@ -107,15 +107,15 @@ export class StopDetailsComponent implements OnInit {
   }
 
   isInputValid() {
-    if (!isValid(this.stop().name, 50)) {
+    if (!isValidString(this.stop().name, 50)) {
       this.errorMessage.set('Name must be between 1 and 50 characters');
       return false;
     }
-    if (!isValid(this.stop().description, 255)) {
+    if (!isValidString(this.stop().description, 255)) {
       this.errorMessage.set('Description must be between 1 and 255 characters');
       return false;
     }
-    if (!isValid(this.stop().roomNr, 50)) {
+    if (!isValidString(this.stop().roomNr, 50)) {
       this.errorMessage.set('Room number must be between 1 and 50 characters');
       return false;
     }
