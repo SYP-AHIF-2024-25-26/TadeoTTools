@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from './standard-components/navbar/navbar.component';
-import { LoaderComponent } from './standard-components/loader/loader.component';
+import { NavbarComponent } from './shared/components/navbar/navbar.component';
+import { LoaderComponent } from './shared/components/loading-spinner/loading-spinner.component';
 import { BASE_URL } from './app.config';
 
 @Component({
