@@ -1,6 +1,9 @@
 import { Student } from './types';
 
-export function isValidString(input: string | null, maxLength: number): boolean {
+export function isValidString(
+  input: string | null,
+  maxLength: number
+): boolean {
   return input != null && input.length > 0 && input.length <= maxLength;
 }
 
