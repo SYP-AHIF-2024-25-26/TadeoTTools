@@ -1,4 +1,5 @@
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
@@ -110,9 +111,16 @@ public static class DivisionManagementEndpoints
         );
     }
 
-    public record AddDivisionDto(string Name, string Color);
+    public record AddDivisionDto(
+        [Required, MaxLength(100)] string Name,
+        [Required, MaxLength(7), RegularExpression(@"^#[0-9a-fA-F]{6}$", ErrorMessage = "Color must be a valid hex code")] string Color
+    );
 
-    public record UpdateDivisionDto(int Id, string Name, string Color);
+    public record UpdateDivisionDto(
+        int Id,
+        [Required, MaxLength(100)] string Name,
+        [Required, MaxLength(7), RegularExpression(@"^#[0-9a-fA-F]{6}$", ErrorMessage = "Color must be a valid hex code")] string Color
+    );
 
     public record UpdateDivisionImageDto(int Id, IFormFile Image);
 }

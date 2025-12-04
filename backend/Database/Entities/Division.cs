@@ -13,6 +13,7 @@ public class Division
     [MaxLength(100)]
     public required string Name { get; set; }
     [MaxLength(7)]
+    [RegularExpression(@"^#[0-9a-fA-F]{6}$", ErrorMessage = "Color must be a valid hex code (e.g. #FF0000)")]
     public required string Color { get; set; }
 
     public byte[]? Image { get; set; }

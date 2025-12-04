@@ -27,6 +27,8 @@ builder.Services.AddDbContext<TadeoTDbContext>(options =>
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddValidation();
 
 builder.Services.AddScoped<DivisionFunctions>();
 builder.Services.AddScoped<StopGroupFunctions>();
@@ -75,6 +77,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.Map("ping", () => Results.Ok("pong"));
+
+app.UseExceptionHandler();
 
 app.UseCors(Setup.CorsPolicyName);
 

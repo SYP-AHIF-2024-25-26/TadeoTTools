@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,11 +7,11 @@ namespace Database.Repository.Functions;
 public class StudentFunctions
 {
     public record StudentDto(
-         string EdufsUsername,
-         string FirstName,
-         string LastName,
-         string StudentClass,
-         string Department,
+         [Required, MaxLength(100)] string EdufsUsername,
+         [Required, MaxLength(150)] string FirstName,
+         [Required, MaxLength(150)] string LastName,
+         [Required, MaxLength(20)] string StudentClass,
+         [Required, MaxLength(100)] string Department,
          List<StudentAssignmentDto> StudentAssignments
     );
 
