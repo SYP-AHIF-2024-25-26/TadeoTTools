@@ -19,7 +19,7 @@
       <button
         class="btn btn-primary btn-sm self-center px-4 sm:self-end"
         (click)="submitStudentsCsv()"
-        [disabled]="!selectedStudentFile"
+        [disabled]="!selectedStudentFile()"
       >
         Import
       </button>
@@ -44,7 +44,7 @@
       <button
         class="btn btn-primary btn-sm self-center px-4 sm:self-end"
         (click)="submitTeachersCsv()"
-        [disabled]="!selectedTeacherFile"
+        [disabled]="!selectedTeacherFile()"
       >
         Import
       </button>
