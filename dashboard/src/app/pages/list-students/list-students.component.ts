@@ -45,7 +45,6 @@ export class ListStudentsComponent {
   private stopService = inject(StopService);
   private studentService = inject(StudentService);
 
-  // Unified filter and search state
   classFilter = signal<string>('');
   departmentFilter = signal<string>('');
   stopFilter = signal<string>('');
@@ -56,10 +55,8 @@ export class ListStudentsComponent {
   stops = signal<Stop[]>([]);
   students = signal<Student[]>([]);
 
-  // Add-student modal state
   showAddStudent = signal<boolean>(false);
 
-  // Collapsible data section state
   dataCollapsed = signal<boolean>(true);
 
   toggleDataCollapsed(): void {
