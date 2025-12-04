@@ -1,11 +1,4 @@
-import {
-  Component,
-  inject,
-  OnInit,
-  signal,
-  WritableSignal,
-} from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
 import { LoginService } from '../login.service';
 import Keycloak from 'keycloak-js';
 import { Router } from '@angular/router';
@@ -14,35 +7,29 @@ import { LoaderComponent } from '../standard-components/loader/loader.component'
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, LoaderComponent],
+  imports: [LoaderComponent],
   templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {
-  public readonly response: WritableSignal<string | null> = signal(null);
-  public readonly loading: WritableSignal<boolean> = signal(false);
-
   private service: LoginService = inject(LoginService);
   private readonly router = inject(Router);
   private readonly keycloak = inject(Keycloak);
 
-  protected isLoggedIn = this.keycloak.authenticated ?? false;
-
   public async ngOnInit(): Promise<void> {
-    this.loading.set(true);
-
     try {
       if (this.keycloak.authenticated) {
+        // User is already authenticated with Keycloak, check DB and roles
         await this.handleAuthenticatedUser();
       } else {
+        // User is not authenticated, start Keycloak login flow
         await this.initiateLogin();
       }
     } catch (error) {
       console.error('Login initialization error:', error);
-    } finally {
-      this.loading.set(false);
     }
   }
 
+  // Redirects to Keycloak login page
   private async initiateLogin(): Promise<void> {
     try {
       await this.keycloak.login({
@@ -54,6 +41,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  // Handles logic after successful Keycloak authentication
   private async handleAuthenticatedUser(): Promise<void> {
     const token = this.keycloak.token;
     if (!token) {
@@ -61,10 +49,11 @@ export class LoginComponent implements OnInit {
     }
 
     try {
+      // Check if user exists in our database
       const userExists = await this.service.performCall('in-database');
 
       if (userExists === 'false') {
-        this.response.set('User not in database, please contact admin');
+        console.warn('User not in database');
         await this.logout();
         return;
       }
@@ -75,52 +64,51 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  // Checks user roles and navigates to the appropriate dashboard
   private async determineUserRoleAndNavigate(): Promise<void> {
     try {
-      const isAdmin = await this.checkUserRole('is-admin');
+      // Check for Admin role
+      const isAdmin = await this.checkUserRole('is-admin', 'admin');
       if (isAdmin) {
         this.router.navigate(['/students']);
         return;
       }
 
-      const isTeacher = await this.checkUserRole('is-teacher');
+      // Check for Teacher role
+      const isTeacher = await this.checkUserRole('is-teacher', 'teacher');
       if (isTeacher) {
         this.router.navigate(['/teacher']);
         return;
       }
 
-      const isStudent = await this.checkUserRole('at-least-student');
+      // Check for Student role
+      const isStudent = await this.checkUserRole('at-least-student', 'student');
       if (isStudent) {
         this.router.navigate(['/student']);
         return;
       }
 
       console.warn('User has no valid role assigned');
-      this.response.set('No valid role assigned. Please contact admin.');
     } catch (error) {
       console.error('Error determining user role:', error);
       throw new Error('Failed to determine user permissions');
     }
   }
 
-  private async checkUserRole(roleEndpoint: string): Promise<boolean> {
+  // Helper to check a specific role endpoint
+  private async checkUserRole(
+    roleEndpoint: string,
+    expectedRole: string
+  ): Promise<boolean> {
     try {
       const roleResponse = await this.service.performCall(roleEndpoint);
-      this.response.set(roleResponse);
-
-      const roleMap: Record<string, string> = {
-        'is-admin': 'admin',
-        'is-teacher': 'teacher',
-        'at-least-student': 'student',
-      };
-
-      const expectedRole = roleMap[roleEndpoint];
       return roleResponse?.toLowerCase().includes(expectedRole) ?? false;
     } catch (error) {
       return false;
     }
   }
 
+  // Logs out from Keycloak
   private async logout(): Promise<void> {
     try {
       await this.keycloak.logout({
@@ -130,9 +118,5 @@ export class LoginComponent implements OnInit {
       console.error('Logout error:', error);
       window.location.reload();
     }
-  }
-
-  public async retry(): Promise<void> {
-    await this.ngOnInit();
   }
 }
