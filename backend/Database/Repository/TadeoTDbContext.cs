@@ -6,21 +6,26 @@ namespace Database.Repository;
 
 public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbContext(options)
 {
-    public DbSet<StopGroup> StopGroups { get; set; }
-    public DbSet<StopGroupAssignment> StopGroupAssignments { get; set; }
-    public DbSet<Stop> Stops { get; set; }
-    public DbSet<Division> Divisions { get; set; }
-    public DbSet<Admin> Admins { get; set; }
-    public DbSet<Student> Students { get; set; }
-    public DbSet<Teacher> Teachers { get; set; }
-    public DbSet<StudentAssignment> StudentAssignments { get; set; }
+    public DbSet<StopGroup> StopGroups => Set<StopGroup>();
+    public DbSet<StopGroupAssignment> StopGroupAssignments => Set<StopGroupAssignment>();
+    public DbSet<Stop> Stops => Set<Stop>();
+    public DbSet<Division> Divisions => Set<Division>();
+    public DbSet<Admin> Admins => Set<Admin>();
+    public DbSet<Student> Students => Set<Student>();
+    public DbSet<Teacher> Teachers => Set<Teacher>();
+    public DbSet<StudentAssignment> StudentAssignments => Set<StudentAssignment>();
 
-    public DbSet<TeacherAssignment> TeacherAssignments { get; set; }
-    public DbSet<FeedbackQuestion> FeedbackQuestions { get; set; }
-    public DbSet<FeedbackQuestionAnswer> FeedbackQuestionAnswers { get; set; }
+    public DbSet<TeacherAssignment> TeacherAssignments => Set<TeacherAssignment>();
+    public DbSet<FeedbackQuestion> FeedbackQuestions => Set<FeedbackQuestion>();
+    public DbSet<FeedbackTextQuestion> FeedbackTextQuestions => Set<FeedbackTextQuestion>();
+    public DbSet<FeedbackRatingQuestion> FeedbackRatingQuestions => Set<FeedbackRatingQuestion>();
+    public DbSet<FeedbackChoiceQuestion> FeedbackChoiceQuestions => Set<FeedbackChoiceQuestion>();
 
-    public DbSet<FeedbackOption> FeedbackOptions { get; set; }
-    // public DbSet<FeedbackSession> FeedbackSessions { get; set; }
+    public DbSet<FeedbackQuestionAnswer> FeedbackQuestionAnswers => Set<FeedbackQuestionAnswer>();
+    public DbSet<FeedbackDependency> FeedbackDependencies => Set<FeedbackDependency>();
+
+    public DbSet<FeedbackOption> FeedbackOptions => Set<FeedbackOption>();
+    // public DbSet<FeedbackSession> FeedbackSessions => Set<FeedbackSession>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,6 +34,18 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
             .WithOne(a => a.FeedbackQuestion)
             .HasForeignKey(a => a.FeedbackQuestionId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<FeedbackDependency>()
+            .HasOne(d => d.Question)
+            .WithMany(q => q.Dependencies)
+            .HasForeignKey(d => d.QuestionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<FeedbackDependency>()
+            .HasOne(d => d.DependsOnQuestion)
+            .WithMany()
+            .HasForeignKey(d => d.DependsOnQuestionId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         /*modelBuilder.Entity<FeedbackSession>()
             .HasMany(s => s.FeedbackQuestionAnswers)

@@ -8,8 +8,11 @@ public class Stop
 {
     [Key]
     public int Id { get; set; }
+    [MaxLength(100)]
     public required string Name { get; set; }
+    [MaxLength(500)]
     public required string Description { get; set; }
+    [MaxLength(10)]
     public required string RoomNr { get; set; }
 
     public List<Division> Divisions { get; set; } = [];

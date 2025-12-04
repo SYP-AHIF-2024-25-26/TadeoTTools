@@ -10,10 +10,11 @@ public class Division
 {
     [Key]
     public int Id { get; set; }
+    [MaxLength(100)]
     public required string Name { get; set; }
+    [MaxLength(7)]
     public required string Color { get; set; }
 
-    [Column(TypeName = "MEDIUMBLOB")]
     public byte[]? Image { get; set; }
 
     public List<Stop> Stops { get; set; } = [];
