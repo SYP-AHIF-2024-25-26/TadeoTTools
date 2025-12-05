@@ -7,10 +7,10 @@ import {
   ChangeDetectionStrategy,
   HostListener,
 } from '@angular/core';
-import { FeedbackQuestion, FeedbackSubmission } from '../types';
-import { ApiFetchService } from '../api-fetch.service';
-import { HeaderComponent } from '../header/header.component';
-import { NavbarComponent } from '../navbar/navbar.component';
+import { FeedbackQuestion, FeedbackSubmission } from '@shared/models/types';
+import { ApiFetchService } from '@core/services/api-fetch.service';
+import { HeaderComponent } from '@shared/components/header/header.component';
+import { NavbarComponent } from '@shared/components/navbar/navbar.component';
 import { Router } from '@angular/router';
 
 @Component({

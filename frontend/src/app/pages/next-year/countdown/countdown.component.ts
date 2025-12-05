@@ -7,7 +7,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
-import { CountdownUnitComponent } from '../countdown-unit/countdown-unit.component';
+import { CountdownUnitComponent } from '@pages/next-year/countdown-unit/countdown-unit.component';
 
 type TimeLeft = {
   days: number;

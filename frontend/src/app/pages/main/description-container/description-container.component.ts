@@ -1,6 +1,6 @@
 import { Component, inject, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { BASE_URL } from '../app.config';
+import { BASE_URL } from '@app/app.config';
 
 @Component({
   selector: 'app-description-container',

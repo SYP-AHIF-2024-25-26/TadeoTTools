@@ -7,8 +7,8 @@ import {
   FeedbackSubmission,
   Stop,
   StopGroup,
-} from './types';
-import { BASE_URL } from './app.config';
+} from '@shared/models/types';
+import { BASE_URL } from '@app/app.config';
 
 @Injectable({
   providedIn: 'root',

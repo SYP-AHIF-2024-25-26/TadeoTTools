@@ -1,7 +1,7 @@
 import { Component, Input, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass, NgIf } from '@angular/common';
-import { GUIDE_CARD_PREFIX, MANUAL_CHECK_PREFIX } from '../constants';
+import { GUIDE_CARD_PREFIX, MANUAL_CHECK_PREFIX } from '@shared/constants/constants';
 
 @Component({
   selector: 'app-checkbox',

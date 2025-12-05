@@ -6,8 +6,8 @@ import {
   Input,
   signal,
 } from '@angular/core';
-import { HeaderComponent } from '../header/header.component';
-import { NavbarComponent } from '../navbar/navbar.component';
+import { HeaderComponent } from '@shared/components/header/header.component';
+import { NavbarComponent } from '@shared/components/navbar/navbar.component';
 import { Router } from '@angular/router';
 
 @Component({

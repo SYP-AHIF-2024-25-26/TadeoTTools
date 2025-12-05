@@ -9,21 +9,21 @@ import {
   ViewChildren,
   WritableSignal,
 } from '@angular/core';
-import { HeaderComponent } from '../header/header.component';
-import { NavbarComponent } from '../navbar/navbar.component';
-import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
-import { ApiFetchService } from '../api-fetch.service';
-import { Division, Stop, StopGroup } from '../types';
-import { StopCardComponent } from '../stop-card/stop-card.component';
+import { HeaderComponent } from '@shared/components/header/header.component';
+import { NavbarComponent } from '@shared/components/navbar/navbar.component';
+import { BreadcrumbComponent } from '@pages/main/breadcrumb/breadcrumb.component';
+import { ApiFetchService } from '@core/services/api-fetch.service';
+import { Division, Stop, StopGroup } from '@shared/models/types';
+import { StopCardComponent } from '@pages/main/stop-card/stop-card.component';
 import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
-import { DescriptionContainerComponent } from '../description-container/description-container.component';
+import { DescriptionContainerComponent } from '@pages/main/description-container/description-container.component';
 import {
   CURRENT_STOP_GROUP_PREFIX,
   CURRENT_STOP_PREFIX,
   STOP_GROUP_PROGRESS_PREFIX,
   STOPS_COUNT_PREFIX,
-} from '../constants';
+} from '@shared/constants/constants';
 
 @Component({
   selector: 'app-stop-page',

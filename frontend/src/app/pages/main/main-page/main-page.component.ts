@@ -5,13 +5,13 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import { GuideCardComponent } from '../guide-card/guide-card.component';
-import { NavbarComponent } from '../navbar/navbar.component';
-import { HeaderComponent } from '../header/header.component';
-import { StopGroup } from '../types';
-import { ApiFetchService } from '../api-fetch.service';
+import { GuideCardComponent } from '@pages/main/guide-card/guide-card.component';
+import { NavbarComponent } from '@shared/components/navbar/navbar.component';
+import { HeaderComponent } from '@shared/components/header/header.component';
+import { StopGroup } from '@shared/models/types';
+import { ApiFetchService } from '@core/services/api-fetch.service';
 import { Router } from '@angular/router';
-import { CURRENT_STOP_GROUP_PREFIX } from '../constants';
+import { CURRENT_STOP_GROUP_PREFIX } from '@shared/constants/constants';
 
 @Component({
   selector: 'app-main-page',

@@ -8,16 +8,16 @@ import {
   ViewChild,
   WritableSignal,
 } from '@angular/core';
-import { CheckboxComponent } from '../checkbox/checkbox.component';
+import { CheckboxComponent } from '@pages/main/checkbox/checkbox.component';
 import { CommonModule } from '@angular/common';
-import { StopGroup } from '../types';
+import { StopGroup } from '@shared/models/types';
 import { Router } from '@angular/router';
 import {
   GUIDE_CARD_PREFIX,
   MANUAL_CHECK_PREFIX,
   STOP_GROUP_PROGRESS_PREFIX,
   STOPS_COUNT_PREFIX,
-} from '../constants';
+} from '@shared/constants/constants';
 
 @Component({
   selector: 'app-guide-card',
