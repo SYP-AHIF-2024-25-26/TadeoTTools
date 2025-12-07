@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { Router, RouterLinkActive } from '@angular/router';
 
 @Component({
@@ -7,9 +7,10 @@ import { Router, RouterLinkActive } from '@angular/router';
   templateUrl: './breadcrumb.component.html',
   styleUrl: './breadcrumb.component.css',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreadcrumbComponent {
   protected router = inject(Router);
-  @Input() name!: string;
-  @Input({ required: true }) stopGroupId!: number;
+  name = input<string>();
+  stopGroupId = input.required<number>();
 }

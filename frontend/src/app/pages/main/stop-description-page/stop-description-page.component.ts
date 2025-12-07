@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, Input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject, input, signal } from '@angular/core';
 import { DescriptionContainerComponent } from '@pages/main/description-container/description-container.component';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { BreadcrumbComponent } from '@pages/main/breadcrumb/breadcrumb.component';
@@ -18,6 +18,7 @@ import { CURRENT_STOP_GROUP_PREFIX, CURRENT_STOP_PREFIX } from '@shared/constant
   templateUrl: './stop-description-page.component.html',
   styleUrl: './stop-description-page.component.css',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StopDescriptionPageComponent {
   private router = inject(Router);
@@ -27,8 +28,8 @@ export class StopDescriptionPageComponent {
     this.goBack();
   }
 
-  @Input({ required: true }) stopGroupId!: string;
-  @Input({ required: true }) stopId!: string;
+  stopGroupId = input.required<string>();
+  stopId = input.required<string>();
   stop = signal({} as Stop);
   currentStopGroup = signal({} as StopGroup);
 
@@ -53,6 +54,6 @@ export class StopDescriptionPageComponent {
   }
 
   async goBack() {
-    await this.router.navigate(['/tour', this.stopGroupId]);
+    await this.router.navigate(['/tour', this.stopGroupId()]);
   }
 }

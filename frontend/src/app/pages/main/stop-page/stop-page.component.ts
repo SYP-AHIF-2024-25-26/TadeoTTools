@@ -1,9 +1,10 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   HostListener,
   inject,
-  Input,
+  input,
   Signal,
   signal,
   ViewChildren,
@@ -38,15 +39,16 @@ import {
   templateUrl: './stop-page.component.html',
   styleUrl: './stop-page.component.css',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StopPageComponent {
   protected apiFetchService = inject(ApiFetchService);
   protected router = inject(Router);
-  @Input({ required: true }) stopGroupId!: string;
+  stopGroupId = input.required<string>();
   @ViewChildren(StopCardComponent) stopCards!: StopCardComponent[];
-  parentStopGroup: WritableSignal<StopGroup> = signal({} as StopGroup);
-  stops: WritableSignal<Stop[]> = signal([]);
-  divisions: WritableSignal<Division[]> = signal([]);
+  parentStopGroup = signal<StopGroup>({} as StopGroup);
+  stops = signal<Stop[]>([]);
+  divisions = signal<Division[]>([]);
   divisionIds: Signal<number[]> = computed(() =>
     Array.from(
       new Set(
@@ -63,7 +65,7 @@ export class StopPageComponent {
   }
 
   async ngOnInit() {
-    if (this.stopGroupId === undefined) {
+    if (this.stopGroupId() === undefined) {
       await this.router.navigate(['/']);
     } else {
       await this.onLoad();
@@ -79,7 +81,7 @@ export class StopPageComponent {
       );
     }
     this.stops.set(
-      await this.apiFetchService.getStopsOfGroup(Number(this.stopGroupId)!)
+      await this.apiFetchService.getStopsOfGroup(Number(this.stopGroupId())!)
     );
     this.divisions.set(await this.apiFetchService.getDivisions());
   }

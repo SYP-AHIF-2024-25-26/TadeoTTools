@@ -1,7 +1,8 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Input,
+  input,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -15,12 +16,13 @@ import { Stop } from '@shared/models/types';
   templateUrl: './stop-card.component.html',
   styleUrl: './stop-card.component.css',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StopCardComponent {
-  @Input() stop!: Stop;
-  @Input() id!: string;
+  stop = input.required<Stop>();
+  id = input.required<string>();
   @ViewChild(CheckboxComponent) checkbox!: CheckboxComponent;
-  @Input() colors!: string[];
+  colors = input.required<string[]>();
   @Output() openStopDescriptionPage = new EventEmitter<void>();
   @Output() onChange = new EventEmitter<void>();
 

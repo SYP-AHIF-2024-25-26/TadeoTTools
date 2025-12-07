@@ -13,7 +13,7 @@
         <p
           class="ml-2 line-clamp-2 cursor-default self-center justify-self-start text-lg font-medium text-gray-700"
         >
-          {{ stopGroup.name }}
+          {{ stopGroup().name }}
         </p>
       </div>
       @if (progress() !== null && stopsCount() !== null) {
@@ -24,7 +24,7 @@
         </p>
       }
       <div (click)="$event.stopPropagation()" class="self-center">
-        <app-checkbox [parent]="'guide-card'" [id]="id"></app-checkbox>
+        <app-checkbox [parent]="'guide-card'" [id]="id()"></app-checkbox>
       </div>
     </div>
   </div>

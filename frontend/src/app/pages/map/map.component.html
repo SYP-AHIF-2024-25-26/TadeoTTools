@@ -3,7 +3,7 @@
 >
   <app-header [showWelcomeText]="true" />
 
-  @if (roomNr !== undefined) {
+  @if (roomNr() !== undefined) {
     <button
       class="my-3 ml-4 flex w-fit items-center rounded-2xl bg-orange-500 px-4 py-2 text-white shadow-md disabled:opacity-50"
       (click)="onGoBack()"

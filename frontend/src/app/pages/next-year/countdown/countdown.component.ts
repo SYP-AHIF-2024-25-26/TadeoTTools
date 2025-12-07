@@ -1,6 +1,7 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  Input,
+  input,
   OnDestroy,
   OnInit,
   signal,
@@ -22,9 +23,10 @@ type TimeLeft = {
   templateUrl: './countdown.component.html',
   styleUrl: './countdown.component.css',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CountdownComponent implements OnInit, OnDestroy {
-  @Input() targetDate!: Date;
+  targetDate = input.required<Date>();
 
   timeLeft: WritableSignal<TimeLeft> = signal({
     days: 0,
@@ -53,7 +55,7 @@ export class CountdownComponent implements OnInit, OnDestroy {
   }
 
   private calculateTimeLeft(): void {
-    const difference = this.targetDate.getTime() - new Date().getTime();
+    const difference = this.targetDate().getTime() - new Date().getTime();
 
     if (difference <= 0) {
       this.isComplete = true;

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-countdown-unit',
@@ -6,12 +6,13 @@ import { Component, Input } from '@angular/core';
   templateUrl: './countdown-unit.component.html',
   styleUrl: './countdown-unit.component.css',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CountdownUnitComponent {
-  @Input() value = 0;
-  @Input() label = '';
+  value = input(0);
+  label = input('');
 
   get displayValue(): string {
-    return this.value.toString().padStart(2, '0');
+    return this.value().toString().padStart(2, '0');
   }
 }

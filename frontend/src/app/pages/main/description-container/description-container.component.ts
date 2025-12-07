@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { BASE_URL } from '@app/app.config';
 
@@ -8,12 +8,13 @@ import { BASE_URL } from '@app/app.config';
   templateUrl: './description-container.component.html',
   styleUrl: './description-container.component.css',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DescriptionContainerComponent {
-  @Input({ required: true }) title!: string;
-  @Input({ required: true }) description!: string;
-  @Input() roomNr: string | undefined;
-  @Input() divisionIds: number[] | undefined;
+  title = input.required<string>();
+  description = input.required<string>();
+  roomNr = input<string>();
+  divisionIds = input<number[]>();
 
   protected baseUrl = inject(BASE_URL);
 

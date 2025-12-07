@@ -1,9 +1,10 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   HostListener,
   inject,
-  Input,
+  input,
   signal,
 } from '@angular/core';
 import { HeaderComponent } from '@shared/components/header/header.component';
@@ -16,9 +17,10 @@ import { Router } from '@angular/router';
   styleUrl: './map.component.css',
   imports: [HeaderComponent, NavbarComponent],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent {
-  @Input() roomNr: string | undefined;
+  roomNr = input<string>();
   private router = inject(Router);
   images = [
     'assets/stockwerk-U.png',
@@ -42,9 +44,9 @@ export class MapComponent {
   }
 
   ngOnInit() {
-    if (this.roomNr) {
+    if (this.roomNr()) {
       this.currentFloor.set(
-        this.images.findIndex((image) => image.includes(this.roomNr!.charAt(0)))
+        this.images.findIndex((image) => image.includes(this.roomNr()!.charAt(0)))
       );
     }
   }

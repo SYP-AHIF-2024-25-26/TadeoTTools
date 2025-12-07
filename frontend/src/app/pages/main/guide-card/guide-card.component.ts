@@ -1,8 +1,9 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
-  Input,
+  input,
   Output,
   signal,
   ViewChild,
@@ -25,10 +26,11 @@ import {
   templateUrl: './guide-card.component.html',
   styleUrl: './guide-card.component.css',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuideCardComponent {
-  @Input() stopGroup!: StopGroup;
-  @Input() id!: string;
+  stopGroup = input.required<StopGroup>();
+  id = input.required<string>();
   @ViewChild(CheckboxComponent) checkbox!: CheckboxComponent;
   @Output() openStopPage = new EventEmitter<void>();
   protected router = inject(Router);
@@ -50,7 +52,7 @@ export class GuideCardComponent {
   }
 
   private checkManualCheck() {
-    const manualCheck = localStorage.getItem(MANUAL_CHECK_PREFIX + this.id);
+    const manualCheck = localStorage.getItem(MANUAL_CHECK_PREFIX + this.id());
     if (manualCheck !== null) {
       this.checkbox.isChecked.set(manualCheck === 'true');
     }
@@ -60,25 +62,25 @@ export class GuideCardComponent {
   private updateLocalStorage() {
     if (this.progress() !== null && this.stopsCount() !== null) {
       if (this.progress() === this.stopsCount()) {
-        localStorage.setItem(GUIDE_CARD_PREFIX + this.id, 'true');
-        localStorage.removeItem(MANUAL_CHECK_PREFIX + this.id);
+        localStorage.setItem(GUIDE_CARD_PREFIX + this.id(), 'true');
+        localStorage.removeItem(MANUAL_CHECK_PREFIX + this.id());
       } else if (
-        localStorage.getItem(MANUAL_CHECK_PREFIX + this.id) !== 'true'
+        localStorage.getItem(MANUAL_CHECK_PREFIX + this.id()) !== 'true'
       ) {
-        localStorage.setItem(GUIDE_CARD_PREFIX + this.id, 'false');
+        localStorage.setItem(GUIDE_CARD_PREFIX + this.id(), 'false');
       }
     }
   }
 
   private getProgress(): number | null {
     const progress = localStorage.getItem(
-      STOP_GROUP_PROGRESS_PREFIX + this.stopGroup.id
+      STOP_GROUP_PROGRESS_PREFIX + this.stopGroup().id
     );
     return progress !== null ? Number(progress) : null;
   }
 
   private getStopsCount(): number | null {
-    const count = localStorage.getItem(STOPS_COUNT_PREFIX + this.stopGroup.id);
+    const count = localStorage.getItem(STOPS_COUNT_PREFIX + this.stopGroup().id);
     return count !== null ? Number(count) : null;
   }
 }

@@ -5,7 +5,7 @@
     <button
       (click)="router.navigate(['main'])"
       class="text-xl"
-      [ngClass]="mode == 'station' ? 'text-orange-500' : 'text-black'"
+      [ngClass]="mode() == 'station' ? 'text-orange-500' : 'text-black'"
     >
       <svg
         class="h-5 w-5"
@@ -24,7 +24,7 @@
     <button
       (click)="router.navigate(['map'])"
       class="text-xl font-bold"
-      [ngClass]="[mode == 'map' ? 'text-orange-500' : 'text-black']"
+      [ngClass]="[mode() == 'map' ? 'text-orange-500' : 'text-black']"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@
     <button
       (click)="router.navigate(['feedback'])"
       class="text-xl"
-      [ngClass]="[mode == 'feedback' ? 'text-orange-500' : 'text-black']"
+      [ngClass]="[mode() == 'feedback' ? 'text-orange-500' : 'text-black']"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +70,7 @@
     <button
       (click)="router.navigate(['about'])"
       class="text-xl"
-      [ngClass]="[mode == 'about' ? 'text-orange-500' : 'text-black']"
+      [ngClass]="[mode() == 'about' ? 'text-orange-500' : 'text-black']"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
