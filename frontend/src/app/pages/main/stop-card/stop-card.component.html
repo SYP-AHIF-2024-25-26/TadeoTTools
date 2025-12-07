@@ -4,7 +4,7 @@
 >
   <div
     class="mx-4 flex w-full cursor-auto items-center justify-between rounded-lg shadow-lg duration-[250ms] ease-in-out"
-    [ngClass]="[isChecked() ? 'h-12 opacity-50' : 'h-20']"
+    [ngClass]="[checked() ? 'h-12 opacity-50' : 'h-20']"
     [ngStyle]="
       colors().length > 1
         ? { background: generateGradient(colors()) }
@@ -26,8 +26,7 @@
       <div (click)="$event.stopPropagation()" class="self-center">
         <app-checkbox
           (click)="onChange.emit()"
-          [parent]="'stop-card'"
-          [id]="id()"
+          [(checked)]="checked"
         ></app-checkbox>
       </div>
     </div>

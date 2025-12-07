@@ -10,7 +10,10 @@
         <app-guide-card
           class="mt-6"
           [stopGroup]="group"
-          [id]="group.id.toString()"
+          [checked]="isGroupFinished(group)"
+          [progress]="getGroupProgress(group)"
+          [totalStops]="getGroupTotal(group)"
+          (onToggle)="onToggleGroup(group)"
           (openStopPage)="openStopPage(group)"
         >
         </app-guide-card>

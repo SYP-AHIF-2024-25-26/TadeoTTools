@@ -3,18 +3,18 @@
   <input
     type="checkbox"
     class="hidden"
-    [checked]="isChecked()"
-    (click)="toggleCheckbox()"
+    [checked]="checked()"
+    (click)="$event.stopPropagation(); toggleCheckbox()"
   />
 
   <!-- Custom checkbox design -->
   <span
     class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-gray-500 transition-shadow ease-in-out checked:shadow-orange-500"
-    [ngClass]="{ 'bg-gray-100': isChecked() }"
+    [ngClass]="{ 'bg-gray-100': checked() }"
   >
     <!-- Orange checkmark -->
     <svg
-      *ngIf="isChecked()"
+      *ngIf="checked()"
       class="h-full w-full animate-jump-in text-3xl text-orange-500 animate-duration-[600ms] animate-once animate-ease-in-out"
       fill="none"
       stroke="currentColor"

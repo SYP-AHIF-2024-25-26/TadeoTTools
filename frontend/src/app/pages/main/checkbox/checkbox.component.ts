@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass, NgIf } from '@angular/common';
-import { GUIDE_CARD_PREFIX, MANUAL_CHECK_PREFIX } from '@shared/constants/constants';
 
 @Component({
   selector: 'app-checkbox',
@@ -12,26 +11,9 @@ import { GUIDE_CARD_PREFIX, MANUAL_CHECK_PREFIX } from '@shared/constants/consta
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckboxComponent {
-  id = input.required<string>();
-  parent = input.required<string>();
-  isChecked: WritableSignal<boolean> = signal(false);
-
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.isChecked.set(
-        localStorage.getItem(this.parent() + this.id()) === 'true'
-      );
-    }, 0);
-  }
+  checked = model<boolean>(false);
 
   toggleCheckbox() {
-    this.isChecked.update((old) => !old);
-    localStorage.setItem(this.parent() + this.id(), String(this.isChecked()));
-    if (this.parent() === GUIDE_CARD_PREFIX) {
-      localStorage.setItem(
-        MANUAL_CHECK_PREFIX + this.id(),
-        String(this.isChecked())
-      );
-    }
+    this.checked.update((old) => !old);
   }
 }

@@ -39,11 +39,11 @@
       />
       @for (stop of getSortedStops(); track stop.id) {
         <app-stop-card
-          (onChange)="setProgress()"
+          (onChange)="onToggleStop(stop.id)"
           (openStopDescriptionPage)="openStopDescriptionPage(stop)"
           [stop]="stop"
           class="mt-4"
-          [id]="stop.id.toString()"
+          [checked]="isStopFinished(stop.id)"
           [colors]="getColorsOfStop(stop)"
           [ngClass]="{ 'mb-28': stops().indexOf(stop) === stops().length - 1 }"
         ></app-stop-card>

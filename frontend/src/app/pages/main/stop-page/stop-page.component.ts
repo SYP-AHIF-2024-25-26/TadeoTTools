@@ -22,8 +22,8 @@ import { DescriptionContainerComponent } from '@pages/main/description-container
 import {
   CURRENT_STOP_GROUP_PREFIX,
   CURRENT_STOP_PREFIX,
-  STOP_GROUP_PROGRESS_PREFIX,
-  STOPS_COUNT_PREFIX,
+  FINISHED_STOP_GROUPS,
+  FINISHED_STOPS,
 } from '@shared/constants/constants';
 
 @Component({
@@ -59,6 +59,9 @@ export class StopPageComponent {
     )
   );
 
+  finishedStops = signal<number[]>([]);
+  finishedStopGroups = signal<number[]>([]);
+
   @HostListener('swiperight')
   onSwipeRight() {
     this.goBack();
@@ -84,6 +87,19 @@ export class StopPageComponent {
       await this.apiFetchService.getStopsOfGroup(Number(this.stopGroupId())!)
     );
     this.divisions.set(await this.apiFetchService.getDivisions());
+
+    this.loadProgress();
+  }
+
+  loadProgress() {
+    const fs = localStorage.getItem(FINISHED_STOPS);
+    if (fs) {
+      this.finishedStops.set(JSON.parse(fs));
+    }
+    const fsg = localStorage.getItem(FINISHED_STOP_GROUPS);
+    if (fsg) {
+      this.finishedStopGroups.set(JSON.parse(fsg));
+    }
   }
 
   getColorsOfStop(stop: Stop) {
@@ -102,18 +118,42 @@ export class StopPageComponent {
     ]);
   }
 
-  setProgress() {
-    const progress = this.stopCards.filter((stopCard) =>
-      stopCard.isChecked()
-    ).length;
-    localStorage.setItem(
-      STOP_GROUP_PROGRESS_PREFIX + this.parentStopGroup().id,
-      progress.toString()
+  isStopFinished(id: number): boolean {
+    return this.finishedStops().includes(id);
+  }
+
+  onToggleStop(stopId: number) {
+    let currentFinished = this.finishedStops();
+    if (currentFinished.includes(stopId)) {
+      currentFinished = currentFinished.filter((id) => id !== stopId);
+    } else {
+      currentFinished = [...currentFinished, stopId];
+    }
+    this.finishedStops.set(currentFinished);
+    localStorage.setItem(FINISHED_STOPS, JSON.stringify(currentFinished));
+
+    this.checkGroupStatus();
+  }
+
+  checkGroupStatus() {
+    const group = this.parentStopGroup();
+    // Assuming we have to verify if all stops in THIS group are finished.
+    // Ideally we should use group.stopIds but stops() contains the stops that were fetched.
+    // Let's rely on this.stops() as the source of truth for "stops in this group".
+    const allFinished = this.stops().every((stop) =>
+      this.finishedStops().includes(stop.id)
     );
-    localStorage.setItem(
-      STOPS_COUNT_PREFIX + this.parentStopGroup().id,
-      this.stops().length.toString()
-    );
+
+    let currentGroups = this.finishedStopGroups();
+    if (allFinished) {
+      if (!currentGroups.includes(group.id)) {
+        currentGroups = [...currentGroups, group.id];
+      }
+    } else {
+      currentGroups = currentGroups.filter((id) => id !== group.id);
+    }
+    this.finishedStopGroups.set(currentGroups);
+    localStorage.setItem(FINISHED_STOP_GROUPS, JSON.stringify(currentGroups));
   }
 
   getSortedStops() {

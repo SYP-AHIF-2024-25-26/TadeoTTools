@@ -3,6 +3,7 @@ import {
   Component,
   EventEmitter,
   input,
+  model,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -20,15 +21,10 @@ import { Stop } from '@shared/models/types';
 })
 export class StopCardComponent {
   stop = input.required<Stop>();
-  id = input.required<string>();
-  @ViewChild(CheckboxComponent) checkbox!: CheckboxComponent;
   colors = input.required<string[]>();
+  checked = model<boolean>(false);
   @Output() openStopDescriptionPage = new EventEmitter<void>();
   @Output() onChange = new EventEmitter<void>();
-
-  public isChecked() {
-    return this.checkbox?.isChecked() ?? false;
-  }
 
   protected generateGradient(colors: string[]): string {
     return `linear-gradient(to right, ${colors.join(', ')})`;
