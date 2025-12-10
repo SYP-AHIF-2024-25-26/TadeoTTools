@@ -4,6 +4,7 @@ using Database.Repository;
 using Database.Repository.Functions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Endpoints.StopGroupManagement;
 
@@ -122,7 +123,7 @@ public static class StopGroupManagementEndpoints
         return Results.Ok();
     }
 
-    public record CreateGroupRequestDto(string Name, string Description, bool IsPublic);
+    public record CreateGroupRequestDto([Required, MaxLength(300)] string Name, [Required, MaxLength(3000)] string Description, [Required] bool IsPublic);
 
-    public record UpdateGroupRequestDto(int Id, string Name, string Description, bool IsPublic, int[] StopIds);
+    public record UpdateGroupRequestDto(int Id, [Required, MaxLength(300)] string Name, [Required, MaxLength(3000)] string Description, [Required] bool IsPublic, [Required] int[] StopIds);
 }

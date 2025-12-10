@@ -112,13 +112,13 @@ public static class DivisionManagementEndpoints
     }
 
     public record AddDivisionDto(
-        [Required, MaxLength(100)] string Name,
+        [Required, MaxLength(255)] string Name,
         [Required, MaxLength(7), RegularExpression(@"^#[0-9a-fA-F]{6}$", ErrorMessage = "Color must be a valid hex code")] string Color
     );
 
     public record UpdateDivisionDto(
         int Id,
-        [Required, MaxLength(100)] string Name,
+        [Required, MaxLength(255)] string Name,
         [Required, MaxLength(7), RegularExpression(@"^#[0-9a-fA-F]{6}$", ErrorMessage = "Color must be a valid hex code")] string Color
     );
 

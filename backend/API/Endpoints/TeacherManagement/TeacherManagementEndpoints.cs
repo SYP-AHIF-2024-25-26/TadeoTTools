@@ -1,6 +1,5 @@
 using System.Text;
 using System.ComponentModel.DataAnnotations;
-using API.Endpoints.StudentManagement;
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
@@ -42,7 +41,7 @@ public static class TeacherManagementEndpoints
     }
 
     public record TeacherAssignmentsDto(
-        string TeacherId,
+        [Required, MaxLength(50)] string TeacherId,
         int StopId
     );
 

@@ -7,8 +7,9 @@ public abstract class FeedbackQuestion
 {
     [Key]
     public int Id { get; set; }
-    [MaxLength(255)]
+    [Required, MaxLength(255)]
     public required string Question { get; set; }
+    [Range(0, int.MaxValue)]
     public int Order { get; set; }
     public bool Required { get; set; }
 
@@ -25,7 +26,9 @@ public class FeedbackTextQuestion : FeedbackQuestion
 
 public class FeedbackRatingQuestion : FeedbackQuestion
 {
+    [Range(1, 9)]
     public int MinRating { get; set; }
+    [Range(2, 10)]
     public int MaxRating { get; set; }
 
     [MaxLength(100)]

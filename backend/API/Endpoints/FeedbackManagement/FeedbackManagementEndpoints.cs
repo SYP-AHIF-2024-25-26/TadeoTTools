@@ -2,6 +2,7 @@ using System.Text;
 using Database.Entities;
 using Database.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Endpoints.FeedbackManagement;
 
@@ -253,21 +254,21 @@ public static class FeedbackManagementEndpoints
 
 public record UpsertFeedbackQuestionDto(
     int? Id,
-    string Question,
+    [Required, MaxLength(255)] string Question,
     FeedbackQuestionType Type,
     bool Required,
-    string? Placeholder,
+    [MaxLength(100)] string? Placeholder,
     string[]? Options,
-    int? MinRating,
-    int? MaxRating,
-    string? RatingLabels,
-    int Order,
+    [Range(1, 9)] int? MinRating,
+    [Range(2, 10)] int? MaxRating,
+    [MaxLength(100)] string? RatingLabels,
+    [Range(0, int.MaxValue)] int Order,
     FeedbackDependencyDto[]? Dependencies
 );
 
 public record GetFeedbackQuestionDto(
     int Id,
-    string Question,
+    [Required, MaxLength(255)] string Question,
     FeedbackQuestionType Type,
     bool Required,
     string? Placeholder,
@@ -275,17 +276,17 @@ public record GetFeedbackQuestionDto(
     int? MinRating,
     int? MaxRating,
     string? RatingLabels,
-    int Order,
+    [Range(0, int.MaxValue)] int Order,
     FeedbackDependencyDto[] Dependencies);
 
 public record CreateFeedbackRequestDto(
     int QuestionId,
-    string Answer
+    [Required, MaxLength(1000)] string Answer
 );
 
 public record GetFeedbackAnswerDto(string Answer);
 
 public record FeedbackDependencyDto(
     int DependsOnQuestionId,
-    string ConditionValue
+    [Required, MaxLength(255)] string ConditionValue
 );

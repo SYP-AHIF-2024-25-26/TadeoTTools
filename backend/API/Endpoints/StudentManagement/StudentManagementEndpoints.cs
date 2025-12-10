@@ -40,7 +40,7 @@ public class StudentManagementEndpoints
             LastName = studentDto.LastName,
             StudentClass = studentDto.StudentClass,
             Department = studentDto.Department,
-            StudentAssignments = new List<StudentAssignment>()
+            StudentAssignments = []
         };
 
         context.Students.Add(student);

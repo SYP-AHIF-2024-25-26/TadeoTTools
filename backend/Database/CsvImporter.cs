@@ -21,7 +21,7 @@ public class CsvImporter
         var allRecords = lines.Skip(1).Select(l => l.Split(';'))
             .Select(columns => new
             {
-                Divisions = columns[0].Contains(",") ? columns[0].Split(",") : [columns[0]],
+                Divisions = columns[0].Contains(',') ? columns[0].Split(",") : [columns[0]],
                 Level = columns[1],
                 Name = columns[2],
                 Location = columns[4],

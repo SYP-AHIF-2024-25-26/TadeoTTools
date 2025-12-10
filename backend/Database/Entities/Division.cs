@@ -10,7 +10,7 @@ public class Division
 {
     [Key]
     public int Id { get; set; }
-    [MaxLength(100)]
+    [MaxLength(255)]
     public required string Name { get; set; }
     [MaxLength(7)]
     [RegularExpression(@"^#[0-9a-fA-F]{6}$", ErrorMessage = "Color must be a valid hex code (e.g. #FF0000)")]
