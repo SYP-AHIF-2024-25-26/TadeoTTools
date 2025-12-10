@@ -132,10 +132,13 @@ export class StopPageComponent {
     this.finishedStops.set(currentFinished);
     localStorage.setItem(FINISHED_STOPS, JSON.stringify(currentFinished));
 
-    this.checkGroupStatus();
+    // Check function documentation for info about why it is not used
+    //this.checkGroupStatus();
   }
 
-  checkGroupStatus() {
+  // checkGroupStatus is used to check wether all stops are finished per stopGroup and if so the stopGroupIds get safed to localStorage
+  // This is not used at the moment, because we want the user to check the stopGroup itsself and we just display how many stops of each stopGroup are finished. 
+  /*checkGroupStatus() {
     const group = this.parentStopGroup();
     // Assuming we have to verify if all stops in THIS group are finished.
     // Ideally we should use group.stopIds but stops() contains the stops that were fetched.
@@ -154,7 +157,7 @@ export class StopPageComponent {
     }
     this.finishedStopGroups.set(currentGroups);
     localStorage.setItem(FINISHED_STOP_GROUPS, JSON.stringify(currentGroups));
-  }
+  }*/
 
   getSortedStops() {
     return this.stops().sort(
