@@ -28,6 +28,6 @@ export class GuideCardComponent {
   totalStops = input<number>(0);
   @Output() openStopPage = new EventEmitter<void>();
   @Output() onToggle = new EventEmitter<void>();
-  
+
   protected router = inject(Router);
 }

@@ -137,7 +137,7 @@ export class StopPageComponent {
   }
 
   // checkGroupStatus is used to check wether all stops are finished per stopGroup and if so the stopGroupIds get safed to localStorage
-  // This is not used at the moment, because we want the user to check the stopGroup itsself and we just display how many stops of each stopGroup are finished. 
+  // This is not used at the moment, because we want the user to check the stopGroup itsself and we just display how many stops of each stopGroup are finished.
   /*checkGroupStatus() {
     const group = this.parentStopGroup();
     // Assuming we have to verify if all stops in THIS group are finished.

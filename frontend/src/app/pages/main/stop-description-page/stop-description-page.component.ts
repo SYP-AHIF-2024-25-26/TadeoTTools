@@ -1,11 +1,21 @@
-import { ChangeDetectionStrategy, Component, HostListener, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { DescriptionContainerComponent } from '@pages/main/description-container/description-container.component';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { BreadcrumbComponent } from '@pages/main/breadcrumb/breadcrumb.component';
 import { Router } from '@angular/router';
 import { Stop, StopGroup } from '@shared/models/types';
 import { NavbarComponent } from '@shared/components/navbar/navbar.component';
-import { CURRENT_STOP_GROUP_PREFIX, CURRENT_STOP_PREFIX } from '@shared/constants/constants';
+import {
+  CURRENT_STOP_GROUP_PREFIX,
+  CURRENT_STOP_PREFIX,
+} from '@shared/constants/constants';
 
 @Component({
   selector: 'app-stop-description-page',

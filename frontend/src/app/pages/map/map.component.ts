@@ -46,7 +46,9 @@ export class MapComponent {
   ngOnInit() {
     if (this.roomNr()) {
       this.currentFloor.set(
-        this.images.findIndex((image) => image.includes(this.roomNr()!.charAt(0)))
+        this.images.findIndex((image) =>
+          image.includes(this.roomNr()!.charAt(0))
+        )
       );
     }
   }
