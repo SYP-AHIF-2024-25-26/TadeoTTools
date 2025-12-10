@@ -41,7 +41,7 @@ public static class TeacherManagementEndpoints
     }
 
     public record TeacherAssignmentsDto(
-        [Required, MaxLength(50)] string TeacherId,
+        [Required, MaxLength(100)] string TeacherId,
         int StopId
     );
 

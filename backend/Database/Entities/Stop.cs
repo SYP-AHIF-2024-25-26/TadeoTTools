@@ -12,7 +12,7 @@ public class Stop
     public required string Name { get; set; }
     [MaxLength(500)]
     public required string Description { get; set; }
-    [MaxLength(10)]
+    [MaxLength(50)]
     public required string RoomNr { get; set; }
 
     public List<Division> Divisions { get; set; } = [];

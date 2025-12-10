@@ -6,7 +6,7 @@ public class TeacherAssignment
 {
     [Key]
     public int Id { get; set; }
-    [MaxLength(50)]
+    [MaxLength(100)]
     public required string TeacherId { get; set; }
     public Teacher? Teacher { get; set; }
     public int StopId { get; set; }

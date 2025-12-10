@@ -54,6 +54,6 @@ public record StopWithEverythingDto(
 );
 
 public record StudentOfStopDto(
-    [Required, MaxLength(50)] string EdufsUsername,
+    [Required, MaxLength(100)] string EdufsUsername,
     Status Status
 );

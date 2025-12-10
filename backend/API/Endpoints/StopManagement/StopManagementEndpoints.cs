@@ -460,7 +460,7 @@ public static class StopManagementEndpoints
         int Id,
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
-        [Required, MaxLength(10)] string RoomNr,
+        [Required, MaxLength(50)] string RoomNr,
         int[] DivisionIds,
         int[] StopGroupIds,
         StudentOfStopDto[] StudentAssignments,
@@ -471,14 +471,14 @@ public static class StopManagementEndpoints
         int Id,
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
-        [Required, MaxLength(10)] string RoomNr,
+        [Required, MaxLength(50)] string RoomNr,
         StudentOfStopDto[] StudentAssignments
     );
 
     public record CreateStopRequestDto(
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
-        [Required, MaxLength(10)] string RoomNr,
+        [Required, MaxLength(50)] string RoomNr,
         int[] DivisionIds,
         int[] StopGroupIds,
         StudentOfStopDto[] StudentAssignments,
