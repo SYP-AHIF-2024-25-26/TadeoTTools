@@ -1,0 +1,21 @@
+<Project>
+  <!-- Automatically include/copy AppHost appsettings into every project (except AppHost) at build/publish output -->
+  <PropertyGroup>
+    <_RootDir>$(MSBuildThisFileDirectory)</_RootDir>
+    <_AppHostDir>$(_RootDir)AppHost/</_AppHostDir>
+  </PropertyGroup>
+
+  <!-- Add the AppHost appsettings files as Content to all projects so they are copied to output during build/publish -->
+  <ItemGroup Condition="'$(MSBuildProjectName)' != 'AppHost'">
+    <Content Include="$(_AppHostDir)appsettings.json" Condition="Exists('$(_AppHostDir)appsettings.json')">
+      <Link>appsettings.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="$(_AppHostDir)appsettings.Development.json" Condition="Exists('$(_AppHostDir)appsettings.Development.json')">
+      <Link>appsettings.Development.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
