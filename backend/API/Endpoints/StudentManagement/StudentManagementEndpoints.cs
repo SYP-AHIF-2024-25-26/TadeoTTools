@@ -2,9 +2,9 @@
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Endpoints.StudentManagement;
 
@@ -16,11 +16,11 @@ public class StudentManagementEndpoints
     }
     
     public record StudentNoAssignmentsDto(
-        string EdufsUsername,
-        string FirstName,
-        string LastName,
-        string StudentClass,
-        string Department
+        [Required, MaxLength(100)] string EdufsUsername,
+        [Required, MaxLength(150)] string FirstName,
+        [Required, MaxLength(150)] string LastName,
+        [Required, MaxLength(20)] string StudentClass,
+        [Required, MaxLength(100)] string Department
     );
 
 
@@ -40,7 +40,7 @@ public class StudentManagementEndpoints
             LastName = studentDto.LastName,
             StudentClass = studentDto.StudentClass,
             Department = studentDto.Department,
-            StudentAssignments = new List<StudentAssignment>()
+            StudentAssignments = []
         };
 
         context.Students.Add(student);
@@ -154,7 +154,7 @@ public class StudentManagementEndpoints
             var escapedLastName = Utils.EscapeCsvField(item.LastName);
             var escapedFirstName = Utils.EscapeCsvField(item.FirstName);
             var escapedAssignments =
-                Utils.EscapeCsvField(string.Join(",", item.StudentAssignments.Select(s => s.Stop.Name)));
+                Utils.EscapeCsvField(string.Join(",", item.StudentAssignments.Select(s => s?.Stop?.Name)));
             var status = item.StudentAssignments.Count switch
             {
                 0 => "",

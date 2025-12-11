@@ -21,7 +21,6 @@ public static class TeacherManagementApi
             .RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
         group.MapPost("api/teachers", TeacherManagementEndpoints.AddTeacher)
-            .AddEndpointFilter(TeacherManagementValidations.AddTeacherValidationAsync)
             .WithName(nameof(TeacherManagementEndpoints.AddTeacher))
             .WithDescription("Add a teacher")
             .Produces(StatusCodes.Status400BadRequest)
@@ -37,7 +36,6 @@ public static class TeacherManagementApi
             .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPut("api/teachers", TeacherManagementEndpoints.UpdateTeacher)
-            .AddEndpointFilter(TeacherManagementValidations.UpdateTeacherValidationAsync)
             .WithName(nameof(TeacherManagementEndpoints.UpdateTeacher))
             .WithDescription("Update a teacher")
             .Produces(StatusCodes.Status400BadRequest)

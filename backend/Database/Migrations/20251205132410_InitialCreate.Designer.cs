@@ -4,27 +4,31 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Database.Migrations
 {
     [DbContext(typeof(TadeoTDbContext))]
-    [Migration("20251114080519_Initial")]
-    partial class Initial
+    [Migration("20251205132410_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Database.Entities.Admin", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -38,18 +42,22 @@ namespace Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)");
 
                     b.Property<byte[]>("Image")
-                        .HasColumnType("MEDIUMBLOB");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
 
@@ -59,18 +67,49 @@ namespace Database.Migrations
                     b.ToTable("Divisions");
                 });
 
+            modelBuilder.Entity("Database.Entities.FeedbackDependency", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConditionValue")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("DependsOnQuestionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DependsOnQuestionId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("FeedbackDependencies");
+                });
+
             modelBuilder.Entity("Database.Entities.FeedbackOption", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("FeedbackQuestionId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
 
@@ -83,51 +122,50 @@ namespace Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    b.Property<int?>("MaxRating")
-                        .HasColumnType("int");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("MinRating")
-                        .HasColumnType("int");
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(34)
+                        .HasColumnType("character varying(34)");
 
                     b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Placeholder")
-                        .HasColumnType("longtext");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Question")
                         .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("RatingLabels")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<bool>("Required")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
                     b.ToTable("FeedbackQuestions");
+
+                    b.HasDiscriminator().HasValue("FeedbackQuestion");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Database.Entities.FeedbackQuestionAnswer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Answer")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<int>("FeedbackQuestionId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -140,19 +178,24 @@ namespace Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("RoomNr")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
 
                     b.HasKey("Id");
 
@@ -166,21 +209,25 @@ namespace Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(3000)
+                        .HasColumnType("character varying(3000)");
 
                     b.Property<bool>("IsPublic")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
 
                     b.Property<int>("Rank")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -194,16 +241,18 @@ namespace Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Order")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("StopGroupId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("StopId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -217,23 +266,28 @@ namespace Database.Migrations
             modelBuilder.Entity("Database.Entities.Student", b =>
                 {
                     b.Property<string>("EdufsUsername")
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Department")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("StudentClass")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.HasKey("EdufsUsername");
 
@@ -244,17 +298,20 @@ namespace Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("StopId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("StudentId")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -268,15 +325,18 @@ namespace Database.Migrations
             modelBuilder.Entity("Database.Entities.Teacher", b =>
                 {
                     b.Property<string>("EdufsUsername")
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.HasKey("EdufsUsername");
 
@@ -287,14 +347,17 @@ namespace Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("StopId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("TeacherId")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -308,10 +371,10 @@ namespace Database.Migrations
             modelBuilder.Entity("DivisionStop", b =>
                 {
                     b.Property<int>("DivisionsId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("StopsId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("DivisionsId", "StopsId");
 
@@ -320,9 +383,66 @@ namespace Database.Migrations
                     b.ToTable("DivisionStop");
                 });
 
+            modelBuilder.Entity("Database.Entities.FeedbackChoiceQuestion", b =>
+                {
+                    b.HasBaseType("Database.Entities.FeedbackQuestion");
+
+                    b.Property<bool>("AllowMultiple")
+                        .HasColumnType("boolean");
+
+                    b.HasDiscriminator().HasValue("FeedbackChoiceQuestion");
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackRatingQuestion", b =>
+                {
+                    b.HasBaseType("Database.Entities.FeedbackQuestion");
+
+                    b.Property<int>("MaxRating")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinRating")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RatingLabels")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasDiscriminator().HasValue("FeedbackRatingQuestion");
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackTextQuestion", b =>
+                {
+                    b.HasBaseType("Database.Entities.FeedbackQuestion");
+
+                    b.Property<string>("Placeholder")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasDiscriminator().HasValue("FeedbackTextQuestion");
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackDependency", b =>
+                {
+                    b.HasOne("Database.Entities.FeedbackQuestion", "DependsOnQuestion")
+                        .WithMany()
+                        .HasForeignKey("DependsOnQuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Database.Entities.FeedbackQuestion", "Question")
+                        .WithMany("Dependencies")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DependsOnQuestion");
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("Database.Entities.FeedbackOption", b =>
                 {
-                    b.HasOne("Database.Entities.FeedbackQuestion", "FeedbackQuestion")
+                    b.HasOne("Database.Entities.FeedbackChoiceQuestion", "FeedbackQuestion")
                         .WithMany("Options")
                         .HasForeignKey("FeedbackQuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -416,9 +536,9 @@ namespace Database.Migrations
 
             modelBuilder.Entity("Database.Entities.FeedbackQuestion", b =>
                 {
-                    b.Navigation("FeedbackQuestionAnswers");
+                    b.Navigation("Dependencies");
 
-                    b.Navigation("Options");
+                    b.Navigation("FeedbackQuestionAnswers");
                 });
 
             modelBuilder.Entity("Database.Entities.Stop", b =>
@@ -443,6 +563,11 @@ namespace Database.Migrations
             modelBuilder.Entity("Database.Entities.Teacher", b =>
                 {
                     b.Navigation("AssignedStops");
+                });
+
+            modelBuilder.Entity("Database.Entities.FeedbackChoiceQuestion", b =>
+                {
+                    b.Navigation("Options");
                 });
 #pragma warning restore 612, 618
         }

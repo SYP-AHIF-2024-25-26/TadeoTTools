@@ -18,37 +18,6 @@ public static class TeacherManagementValidations
         return await next(context);
     }
 
-    public static async ValueTask<object?> AddTeacherValidationAsync(EndpointFilterInvocationContext context,
-        EndpointFilterDelegate next)
-    {
-        var dbContext = context.GetArgument<TadeoTDbContext>(0);
-        var teacherDto = context.GetArgument<TeacherManagementEndpoints.AddTeacherDto>(1);
-
-        if (string.IsNullOrWhiteSpace(teacherDto.EdufsUsername))
-        {
-            return Results.BadRequest("EdufsUsername is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(teacherDto.FirstName))
-        {
-            return Results.BadRequest("FirstName is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(teacherDto.LastName))
-        {
-            return Results.BadRequest("LastName is required.");
-        }
-
-        // Check if teacher already exists
-        var existingTeacher = await dbContext.Teachers.FindAsync(teacherDto.EdufsUsername);
-        if (existingTeacher != null)
-        {
-            return Results.BadRequest($"Teacher with username {teacherDto.EdufsUsername} already exists.");
-        }
-
-        return await next(context);
-    }
-
     public static async ValueTask<object?> DeleteTeacherValidationAsync(EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {
@@ -64,36 +33,6 @@ public static class TeacherManagementValidations
         if (teacherExists == null)
         {
             return Results.NotFound($"Teacher with ID {teacherId} not found.");
-        }
-
-        return await next(context);
-    }
-
-    public static async ValueTask<object?> UpdateTeacherValidationAsync(EndpointFilterInvocationContext context,
-        EndpointFilterDelegate next)
-    {
-        var dbContext = context.GetArgument<TadeoTDbContext>(0);
-        var teacherDto = context.GetArgument<TeacherManagementEndpoints.AddTeacherDto>(1);
-
-        if (string.IsNullOrWhiteSpace(teacherDto.EdufsUsername))
-        {
-            return Results.BadRequest("EdufsUsername is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(teacherDto.FirstName))
-        {
-            return Results.BadRequest("FirstName is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(teacherDto.LastName))
-        {
-            return Results.BadRequest("LastName is required.");
-        }
-
-        var teacherExists = await dbContext.Teachers.FindAsync(teacherDto.EdufsUsername);
-        if (teacherExists == null)
-        {
-            return Results.NotFound($"Teacher with username {teacherDto.EdufsUsername} not found.");
         }
 
         return await next(context);
@@ -117,3 +56,4 @@ public static class TeacherManagementValidations
         return await next(context);
     }
 }
+

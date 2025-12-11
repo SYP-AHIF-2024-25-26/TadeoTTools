@@ -1,5 +1,5 @@
 using System.Text;
-using API.Endpoints.StudentManagement;
+using System.ComponentModel.DataAnnotations;
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
@@ -41,7 +41,7 @@ public static class TeacherManagementEndpoints
     }
 
     public record TeacherAssignmentsDto(
-        string TeacherId,
+        [Required, MaxLength(100)] string TeacherId,
         int StopId
     );
 
@@ -117,5 +117,9 @@ public static class TeacherManagementEndpoints
 
     public record UploadTeacherCsvFileDto(IFormFile File);
 
-    public record AddTeacherDto(string EdufsUsername, string FirstName, string LastName);
+    public record AddTeacherDto(
+        [Required, MaxLength(100)] string EdufsUsername,
+        [Required, MaxLength(150)] string FirstName,
+        [Required, MaxLength(150)] string LastName
+    );
 }

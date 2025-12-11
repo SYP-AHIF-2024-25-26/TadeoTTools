@@ -1,4 +1,5 @@
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
@@ -457,9 +458,9 @@ public static class StopManagementEndpoints
 
     public record UpdateStopRequestDto(
         int Id,
-        string Name,
-        string Description,
-        string RoomNr,
+        [Required, MaxLength(100)] string Name,
+        [Required, MaxLength(500)] string Description,
+        [Required, MaxLength(50)] string RoomNr,
         int[] DivisionIds,
         int[] StopGroupIds,
         StudentOfStopDto[] StudentAssignments,
@@ -468,16 +469,16 @@ public static class StopManagementEndpoints
 
     public record UpdateStopAsTeacherRequestDto(
         int Id,
-        string Name,
-        string Description,
-        string RoomNr,
+        [Required, MaxLength(100)] string Name,
+        [Required, MaxLength(500)] string Description,
+        [Required, MaxLength(50)] string RoomNr,
         StudentOfStopDto[] StudentAssignments
     );
 
     public record CreateStopRequestDto(
-        string Name,
-        string Description,
-        string RoomNr,
+        [Required, MaxLength(100)] string Name,
+        [Required, MaxLength(500)] string Description,
+        [Required, MaxLength(50)] string RoomNr,
         int[] DivisionIds,
         int[] StopGroupIds,
         StudentOfStopDto[] StudentAssignments,

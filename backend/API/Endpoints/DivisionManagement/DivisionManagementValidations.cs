@@ -11,16 +11,6 @@ public static class DivisionManagementValidations
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
         var division = context.GetArgument<DivisionManagementEndpoints.AddDivisionDto>(1);
 
-        if (division.Name.Length > 255)
-        {
-            return Results.BadRequest("Division name must be less than 255 characters.");
-        }
-
-        if (division.Color.Length > 7)
-        {
-            return Results.BadRequest("Color must be less than 8 characters.");
-        }
-
         if (dbContext.Divisions.Any(d => d.Name == division.Name))
         {
             return Results.BadRequest("Division name already exists.");
@@ -34,16 +24,6 @@ public static class DivisionManagementValidations
     {
         var dbContext = context.GetArgument<TadeoTDbContext>(0);
         var dto = context.GetArgument<DivisionManagementEndpoints.UpdateDivisionDto>(1);
-
-        if (dto.Name.Length > 255)
-        {
-            return Results.BadRequest("Division name must be less than 255 characters.");
-        }
-
-        if (dto.Color.Length > 7)
-        {
-            return Results.BadRequest("Color must be less than 8 characters.");
-        }
 
         var division = await dbContext.Divisions.FindAsync(dto.Id);
 

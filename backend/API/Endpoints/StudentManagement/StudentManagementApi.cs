@@ -14,7 +14,6 @@ public static class StudentManagementApi
         //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
         group.MapPost("api/students", StudentManagementEndpoints.CreateStudent)
-            .AddEndpointFilter(StudentManagementValidations.CreateStudentValidationAsync)
             .WithName(nameof(StudentManagementEndpoints.CreateStudent))
             .WithDescription("Create a new student")
             .Produces(StatusCodes.Status201Created)
@@ -28,7 +27,6 @@ public static class StudentManagementApi
             .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPut("api/students/{id}", StudentManagementEndpoints.UpdateStudent)
-            .AddEndpointFilter(StudentManagementValidations.UpdateStudentValidationAsync)
             .WithName(nameof(StudentManagementEndpoints.UpdateStudent))
             .WithDescription("Update a student")
             .Produces(StatusCodes.Status400BadRequest)
@@ -38,7 +36,7 @@ public static class StudentManagementApi
         group.MapPost("api/students/upload", StudentManagementEndpoints.UploadCsvFile)
             .AddEndpointFilter(StudentManagementValidations.UploadCsvFileValidationAsync)
             .DisableAntiforgery();
-        
+
         group.MapGet("api/students/csv", StudentManagementEndpoints.GetStudentsCsv)
             .WithName(nameof(StudentManagementEndpoints.GetStudentsCsv))
             .WithDescription("Get all students in a csv file")

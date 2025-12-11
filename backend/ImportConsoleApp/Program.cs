@@ -36,12 +36,12 @@ public class Program
             {
                 var importCsvPath = Path.Combine(parentPath, "ImportConsoleApp");
                 var csvFilePath = Path.Combine(importCsvPath, "TdoT_Stationsplanung_2025.csv");
-                await InitDb(csvFilePath, args);
+                await InitDb(csvFilePath, args!);
             }
         }
         else
         {
-            await InitDb(null, args);
+            await InitDb(null, args!);
         }
     }
 }

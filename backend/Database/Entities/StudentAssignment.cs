@@ -13,6 +13,7 @@ public class StudentAssignment
 {
     [Key]
     public int Id { get; set; }
+    [MaxLength(100)]
     public required string StudentId { get; set; }
     public Student? Student { get; set; }
     public int StopId { get; set; }

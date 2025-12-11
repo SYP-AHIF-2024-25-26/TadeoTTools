@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,17 +7,17 @@ namespace Database.Repository.Functions;
 public class StudentFunctions
 {
     public record StudentDto(
-         string EdufsUsername,
-         string FirstName,
-         string LastName,
-         string StudentClass,
-         string Department,
+         [Required, MaxLength(100)] string EdufsUsername,
+         [Required, MaxLength(150)] string FirstName,
+         [Required, MaxLength(150)] string LastName,
+         [Required, MaxLength(20)] string StudentClass,
+         [Required, MaxLength(100)] string Department,
          List<StudentAssignmentDto> StudentAssignments
     );
 
     public record StudentAssignmentDto(
         int Id,
-        string StudentId,
+        [Required, MaxLength(100)] string StudentId,
         int StopId,
         string StopName,
         Status Status
@@ -53,7 +54,7 @@ public class StudentFunctions
     public static async Task ParseStudentsCsv(string csvData, TadeoTDbContext context)
     {
         var lines = csvData.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
-        
+
         if (lines.Length > 0)
         {
             var header = lines[0].Split(';');
@@ -61,7 +62,7 @@ public class StudentFunctions
             {
                 lines = lines.Skip(1).ToArray(); // Skip header line
             }
-            
+
             var students = lines
                 .Select(line => line.Split(';'))
                 .Select(cols => new Student
@@ -73,10 +74,11 @@ public class StudentFunctions
                     Department = cols[4],
                 })
                 .Where(s => !context.Students.Any(st => st.EdufsUsername.Equals(s.EdufsUsername)));
-            
+
             await context.Students.AddRangeAsync(students);
             await context.SaveChangesAsync();
-        } else 
+        }
+        else
         {
             throw new ArgumentException("Empty CSV file");
         }

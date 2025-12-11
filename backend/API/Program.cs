@@ -22,11 +22,13 @@ Thread.Sleep(3000);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<TadeoTDbContext>(options =>
-    options.UseMySQL(connectionString!)); // ServiceLifetime Transient
+    options.UseNpgsql(connectionString!)); // ServiceLifetime Transient
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddValidation();
 
 builder.Services.AddScoped<DivisionFunctions>();
 builder.Services.AddScoped<StopGroupFunctions>();
@@ -76,6 +78,8 @@ if (app.Environment.IsDevelopment())
 
 app.Map("ping", () => Results.Ok("pong"));
 
+app.UseExceptionHandler();
+
 app.UseCors(Setup.CorsPolicyName);
 
 app.UseAuthentication();
@@ -87,16 +91,9 @@ var context = scope.ServiceProvider.GetService<TadeoTDbContext>();
 try
 {
     app.Logger.LogInformation("Ensure Migrations are applied and Database is created...");
-    await context!.Database.EnsureCreatedAsync();
-    if (!await context.Divisions.AnyAsync())
-    {
-        app.Logger.LogInformation("Importing data ...");
-        await CsvImporter.ImportCsvFileAsync("TdoT_Stationsplanung_2025.csv", context);
-    }
-    else
-    {
-        app.Logger.LogInformation("Database already contains data.");
-    }
+    await context!.Database.MigrateAsync();
+    // Stops import moved to end
+
 
     if (!await context.Students.AnyAsync())
     {
@@ -110,6 +107,16 @@ try
         app.Logger.LogInformation("Importing Teachers data ...");
         // Teachers.csv just for testing purposes right now
         await CsvImporter.ImportTeachersAsync("Teachers.csv", context);
+    }
+
+    if (!await context.Divisions.AnyAsync())
+    {
+        app.Logger.LogInformation("Importing data ...");
+        await CsvImporter.ImportCsvFileAsync("TdoT_Stationsplanung_2025.csv", context);
+    }
+    else
+    {
+        app.Logger.LogInformation("Database already contains data.");
     }
 }
 catch (Exception e)

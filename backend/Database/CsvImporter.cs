@@ -1,5 +1,6 @@
 ﻿using Database.Entities;
 using Database.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Database;
 
@@ -18,12 +19,16 @@ public class CsvImporter
     {
         var lines = await File.ReadAllLinesAsync(path);
 
+        // Fetch all teachers into memory for matching
+        var allTeachers = await context.Teachers.ToListAsync();
+
         var allRecords = lines.Skip(1).Select(l => l.Split(';'))
             .Select(columns => new
             {
-                Divisions = columns[0].Contains(",") ? columns[0].Split(",") : [columns[0]],
+                Divisions = columns[0].Contains(',') ? columns[0].Split(",") : [columns[0]],
                 Level = columns[1],
                 Name = columns[2],
+                Responsible = columns[3], // "Verantwortlich" column
                 Location = columns[4],
                 StopGroupRank = columns[5],
                 StopRanks = columns[6].Split(',').Select(c => c.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList(),
@@ -61,6 +66,41 @@ public class CsvImporter
                         .SelectMany(d => StaticDivisions.Where(sd => sd.Name == d))
                         .ToList()
                 };
+
+                // Teacher Assignment Logic
+                if (!string.IsNullOrWhiteSpace(r.Responsible))
+                {
+                    // Split multiple names if present (e.g. "Name1/Name2" or "Name1, Name2")
+                    var names = r.Responsible.Split(['/', ','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+                    foreach (var namePart in names)
+                    {
+                        Teacher? match = null;
+
+                        // Try matching by Full Name match (FirstName + LastName)
+                        match = allTeachers.FirstOrDefault(t =>
+                            (t.FirstName + " " + t.LastName).Contains(namePart, StringComparison.OrdinalIgnoreCase) ||
+                            (t.LastName + " " + t.FirstName).Contains(namePart, StringComparison.OrdinalIgnoreCase));
+
+                        // Try matching by Last Name only
+                        if (match == null)
+                        {
+                            match = allTeachers.FirstOrDefault(t =>
+                                t.LastName.Equals(namePart, StringComparison.OrdinalIgnoreCase) ||
+                                t.LastName.Contains(namePart, StringComparison.OrdinalIgnoreCase));
+                        }
+
+                        if (match != null)
+                        {
+                            stop.TeacherAssignments.Add(new TeacherAssignment
+                            {
+                                TeacherId = match.EdufsUsername,
+                                Stop = stop
+                            });
+                        }
+                    }
+                }
+
                 stop.StopGroupAssignments.ForEach(sga =>
                 {
                     sga.Stop = stop;
