@@ -1,0 +1,67 @@
+<div
+  class="mx-auto mt-4 w-full max-w-5xl rounded-lg bg-background-100 p-4 shadow-lg sm:p-6 md:mt-10"
+>
+  @if (stop().id == -1) {
+    <h4 class="text-xl text-text-950">New Stop</h4>
+  } @else {
+    <h4 class="text-xl text-text-950">Edit Stop</h4>
+  }
+  @if (isLoading()) {
+    <div class="flex h-32 items-center justify-center">
+      <app-loader></app-loader>
+    </div>
+  } @else {
+    <form (submit)="submitStopDetail()" class="mt-4">
+      <app-stop-general-info [(stop)]="stop" />
+
+      <app-stop-groups
+        [(stop)]="stop"
+        [stopGroups]="stopGroups()"
+        [isAdmin]="isAdmin()"
+      />
+
+      <app-stop-students [(stop)]="stop" [students]="students()" />
+
+      <app-stop-teachers
+        [(stop)]="stop"
+        [teachers]="teachers()"
+        [isAdmin]="isAdmin()"
+      />
+
+      <app-stop-divisions
+        [(stop)]="stop"
+        [divisions]="divisions()"
+        [isAdmin]="isAdmin()"
+      />
+
+      @if (errorMessage() != null) {
+        <p class="text-red-700">{{ errorMessage() }}</p>
+      }
+      <div class="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <button
+          type="submit"
+          class="btn btn-primary btn-sm w-full gap-2 sm:w-auto"
+        >
+          Submit
+        </button>
+
+        <button
+          (click)="goBack()"
+          type="button"
+          class="btn btn-sm w-full bg-primary-200 text-text-800 hover:bg-primary-300 sm:w-auto"
+        >
+          Cancel
+        </button>
+        @if (stop().id != -1) {
+          <button
+            (click)="deleteAndGoBack()"
+            type="button"
+            class="btn btn-sm w-full gap-2 bg-red-600 hover:bg-accent-300 sm:ml-auto sm:w-auto"
+          >
+            Delete
+          </button>
+        }
+      </div>
+    </form>
+  }
+</div>

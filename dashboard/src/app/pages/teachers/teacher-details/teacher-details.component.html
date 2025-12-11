@@ -1,0 +1,23 @@
+<div class="text-text-950">
+  <h1 class="p-10 text-center text-2xl font-semibold">Your stops:</h1>
+  @for (stop of stops(); track $index) {
+    <div
+      class="ml-5 ml-auto mr-5 rounded-lg bg-background-100 p-4 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 md:w-2/3 md:p-10"
+    >
+      <div class="flex justify-between">
+        <h1 class="font-bold">{{ stop.name }}</h1>
+        <button
+          class="btn btn-primary"
+          [routerLink]="['/stop']"
+          [queryParams]="{ id: stop.id }"
+        >
+          Details
+        </button>
+      </div>
+    </div>
+  } @empty {
+    <h1 class="p-10 text-center text-2xl font-semibold">
+      You have no assigned stops.
+    </h1>
+  }
+</div>

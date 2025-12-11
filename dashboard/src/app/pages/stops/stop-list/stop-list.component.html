@@ -1,0 +1,363 @@
+<div
+  class="m-4 flex min-h-screen flex-col items-center text-text-950 dark:text-text-100"
+>
+  <h2 class="my-6 self-center text-2xl font-bold">Stops Overview</h2>
+
+  <!-- Action Buttons and Filter Toggle -->
+  <div class="mb-6 flex flex-wrap justify-center gap-4">
+    <button [routerLink]="['/stop']" class="btn btn-primary">Add Stop</button>
+    <button (click)="clearFilters()" class="btn btn-outline hover:btn-primary">
+      Clear Filters
+    </button>
+    <button
+      (click)="showFilters.set(!showFilters())"
+      class="btn btn-outline hover:btn-primary"
+      [title]="showFilters() ? 'Hide Filters' : 'Show Filters'"
+    >
+      <svg
+        class="h-5 w-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+        ></path>
+      </svg>
+      @if (showFilters()) {
+        Hide
+      } @else {
+        Show
+      }
+    </button>
+  </div>
+
+  <!-- Expandable Filters Section -->
+  @if (showFilters()) {
+    <div class="mx-4 mb-4 flex w-full max-w-6xl flex-wrap justify-center gap-4">
+      <!-- Stop Name Search -->
+      <div class="form-control w-full sm:w-auto sm:max-w-xs">
+        <label class="label">
+          <span class="label-text">Stop Name Filter</span>
+        </label>
+        <input
+          type="text"
+          placeholder="Search stop names..."
+          class="input input-bordered w-full bg-primary-300 placeholder-black hover:bg-primary-400 dark:placeholder-white"
+          [(ngModel)]="stopNameSearchTerm"
+        />
+      </div>
+
+      <!-- Stop Group Filter -->
+      <div class="form-control w-full sm:w-auto sm:max-w-xs">
+        <label class="label">
+          <span class="label-text">Stop Group Filter</span>
+        </label>
+        <select
+          class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
+          [(ngModel)]="stopGroupFilter"
+        >
+          <option value="">All Stop Groups</option>
+          @for (groupName of uniqueStopGroups(); track groupName) {
+            <option [value]="groupName">{{ groupName }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Teacher Search -->
+      <div class="form-control w-full sm:w-auto sm:max-w-xs">
+        <label class="label">
+          <span class="label-text">Responsible Teachers Filter</span>
+        </label>
+        <input
+          type="text"
+          placeholder="Search teachers..."
+          class="input input-bordered w-full bg-primary-300 placeholder-black hover:bg-primary-400 dark:placeholder-white"
+          [(ngModel)]="teacherSearchTerm"
+        />
+      </div>
+
+      <!-- Division Filter -->
+      <div class="form-control w-full sm:w-auto sm:max-w-xs">
+        <label class="label">
+          <span class="label-text">Division Filter</span>
+        </label>
+        <app-filter
+          #divisionFilterComponent
+          [elements]="divisions()"
+          (filter)="divisionFilter.set($event)"
+        ></app-filter>
+      </div>
+    </div>
+  }
+
+  <!-- ################################## -->
+  <!-- DESKTOP: Stops Table (md and up) -->
+  <!-- ################################## -->
+  <div class="mt-6 hidden w-full max-w-7xl md:block">
+    <div
+      class="overflow-x-auto rounded-lg border border-background-200 dark:border-background-700"
+    >
+      <div class="max-h-[60vh] overflow-y-auto">
+        <table class="w-full border-collapse">
+          <thead
+            class="sticky top-0 z-10 border-b border-background-200 bg-background-100 dark:border-background-700 dark:bg-background-900"
+          >
+            <tr>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                Stop Name
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                Stop Groups
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                Room
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                Responsible Teachers
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                Department
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                Students (Requested/Assigned)
+              </th>
+              <th
+                class="w-24 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (stop of filteredStops(); track stop.id) {
+              <tr
+                class="border-b border-background-200 bg-white transition-colors hover:bg-background-50 dark:border-background-700 dark:bg-background-800 dark:hover:bg-background-700"
+              >
+                <td
+                  class="px-4 py-3 font-medium text-text-900 dark:text-text-100"
+                >
+                  {{ stop.name }}
+                </td>
+                <td class="px-4 py-3">
+                  {{ getStopGroupNames(stop.stopGroupIds) }}
+                </td>
+                <td class="px-4 py-3">
+                  {{ stop.roomNr || 'No room assigned' }}
+                </td>
+                <td
+                  class="max-w-[240px] truncate px-4 py-3"
+                  title="{{ getTeacherNames(stop.id) }}"
+                >
+                  {{ getTeacherNames(stop.id) }}
+                </td>
+                <td
+                  class="max-w-[200px] truncate px-4 py-3"
+                  title="{{ getDivisionNames(stop.divisionIds) }}"
+                >
+                  {{ getDivisionNames(stop.divisionIds) }}
+                </td>
+                <td class="px-4 py-3">
+                  <span
+                    class="rounded-full bg-primary-100 px-2 py-1 text-xs text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                    >{{ getStudentCount(stop.id) }}</span
+                  >
+                </td>
+                <td class="px-4 py-2">
+                  <div class="flex items-center gap-1">
+                    <button
+                      class="btn btn-ghost btn-xs"
+                      [routerLink]="['/stop']"
+                      [queryParams]="{ id: stop.id }"
+                      title="Details"
+                    >
+                      <svg
+                        class="h-3 w-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        ></path>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (filteredStops().length === 0) {
+              <tr>
+                <td
+                  colspan="7"
+                  class="px-4 py-10 text-center text-sm text-text-500"
+                >
+                  <div class="flex flex-col items-center gap-2">
+                    <svg
+                      class="h-8 w-8 text-text-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      ></path>
+                    </svg>
+                    No stops found
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ################################## -->
+  <!-- MOBILE: Stops Cards (sm only)    -->
+  <!-- ################################## -->
+  <div class="mt-6 w-full max-w-6xl space-y-4 md:hidden">
+    @for (stop of filteredStops(); track stop.id) {
+      <div
+        class="card border border-background-200 bg-white shadow-lg dark:border-background-700 dark:bg-background-800"
+      >
+        <div class="card-body p-4">
+          <!-- Card Header: Title and Student Count -->
+          <div class="mb-2 flex items-start justify-between">
+            <h3
+              class="card-title text-lg font-bold text-text-900 dark:text-text-100"
+            >
+              {{ stop.name }}
+            </h3>
+            <span class="flex w-1/2 items-center justify-end">
+              <span
+                class="rounded-full bg-primary-100 px-2 py-1 text-sm font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                >{{ getStudentCount(stop.id) }}</span
+              >
+            </span>
+          </div>
+
+          <!-- Card Content -->
+          <div class="space-y-2 text-sm">
+            <div class="flex">
+              <span
+                class="w-24 flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
+                >Groups:</span
+              >
+              <span class="text-text-800 dark:text-text-200">{{
+                getStopGroupNames(stop.stopGroupIds)
+              }}</span>
+            </div>
+            <div class="flex">
+              <span
+                class="w-24 flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
+                >Room:</span
+              >
+              <span class="text-text-800 dark:text-text-200">{{
+                stop.roomNr || 'No room assigned'
+              }}</span>
+            </div>
+            <div class="flex">
+              <span
+                class="w-24 flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
+                >Teachers:</span
+              >
+              <span class="truncate text-text-800 dark:text-text-200">{{
+                getTeacherNames(stop.id)
+              }}</span>
+            </div>
+            <div class="flex">
+              <span
+                class="w-24 flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
+                >Department:</span
+              >
+              <span class="truncate text-text-800 dark:text-text-200">{{
+                getDivisionNames(stop.divisionIds)
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Card Actions -->
+          <div class="card-actions mt-4 justify-end">
+            <button
+              class="btn btn-outline btn-sm"
+              [routerLink]="['/stop']"
+              [queryParams]="{ id: stop.id }"
+            >
+              Details / Edit
+              <svg
+                class="ml-1 h-3 w-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Mobile "No Stops" message -->
+    @if (filteredStops().length === 0) {
+      <div class="px-4 py-10 text-center text-sm text-text-500">
+        <div class="flex flex-col items-center gap-2">
+          <svg
+            class="h-10 w-10 text-text-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            ></path>
+          </svg>
+          <span class="mt-2 text-lg">No stops found</span>
+          <span class="text-text-400">Try adjusting your filters.</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Summary Information (Visible on all screen sizes) -->
+  <div class="mt-4 pb-8 text-sm text-text-600 dark:text-text-400">
+    Showing {{ filteredStops().length }} of {{ stops().length }} stops
+  </div>
+</div>

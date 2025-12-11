@@ -1,0 +1,97 @@
+<div
+  class="bg-background-100 dark:bg-background-50 md:sticky md:top-16 md:z-10"
+>
+  <div class="mx-auto max-w-7xl px-6 py-4">
+    <div class="flex flex-col items-center justify-between md:flex-row">
+      <!-- Left Actions -->
+      <div
+        class="flex flex-wrap items-center justify-center gap-3 md:justify-start"
+      >
+        <button (click)="addGroup.emit()" class="btn btn-primary btn-sm gap-2">
+          <svg
+            class="h-3 w-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            ></path>
+          </svg>
+          Add Group
+        </button>
+        <button [routerLink]="['/stop']" class="btn btn-primary btn-sm gap-2">
+          <svg
+            class="h-3 w-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+            ></path>
+          </svg>
+          Add Stop
+        </button>
+        <button (click)="toggleCollapse.emit()" class="btn btn-primary btn-sm">
+          Collapse All
+        </button>
+        <div class="ml-4 flex items-center gap-2">
+          <label class="label cursor-pointer gap-2">
+            <span class="label-text text-sm text-text-600">Private Groups</span>
+            <input
+              (click)="togglePublicGroups.emit()"
+              type="checkbox"
+              class="toggle toggle-primary toggle-sm"
+              id="only-public-groups"
+              [checked]="!onlyPublicGroups()"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center gap-3">
+        <button
+          (click)="save.emit()"
+          [disabled]="!hasChanged()"
+          class="btn btn-primary btn-sm gap-2 disabled:opacity-90"
+        >
+          <svg
+            class="h-3 w-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+          Save Changes
+        </button>
+        <button
+          (click)="cancel.emit()"
+          [disabled]="!hasChanged()"
+          class="btn btn-secondary btn-sm disabled:opacity-90"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

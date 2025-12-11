@@ -1,15 +1,13 @@
-import { ApplicationConfig, InjectionToken, provideExperimentalZonelessChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  InjectionToken,
+  provideExperimentalZonelessChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
-  HTTP_INTERCEPTORS,
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
   provideHttpClient,
   withFetch,
   withInterceptors,
-  withInterceptorsFromDi,
 } from '@angular/common/http';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
@@ -32,13 +30,17 @@ declare global {
     __env: any;
   }
 }
-const baseUrl = environment.production && window.__env?.backendURL ? window.__env.backendURL : environment.apiBaseUrl;
+const baseUrl =
+  environment.production && window.__env?.backendURL
+    ? window.__env.backendURL
+    : environment.apiBaseUrl;
 const escapedBaseUrl = baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special characters
 const urlPattern = new RegExp(`^(${escapedBaseUrl})(\\/.*)?$`, 'i');
 
-const authTokenCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
-  urlPattern: urlPattern,
-});
+const authTokenCondition =
+  createInterceptorCondition<IncludeBearerTokenCondition>({
+    urlPattern: urlPattern,
+  });
 
 const keycloakProvider = provideKeycloak({
   config: {
@@ -81,9 +83,12 @@ export const appConfig: ApplicationConfig = {
       provide: BASE_URL,
       useFactory: () => {
         return baseUrl;
-      }
+      },
     },
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([includeBearerTokenInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([includeBearerTokenInterceptor])
+    ),
   ],
 };
