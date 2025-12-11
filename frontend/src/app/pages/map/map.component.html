@@ -1,0 +1,80 @@
+<div
+  class="flex h-screen w-full touch-pan-y select-none flex-col justify-start overflow-y-scroll bg-gray-50"
+>
+  <app-header [showWelcomeText]="true" />
+
+  @if (roomNr() !== undefined) {
+    <button
+      class="my-3 ml-4 flex w-fit items-center rounded-2xl bg-orange-500 px-4 py-2 text-white shadow-md disabled:opacity-50"
+      (click)="onGoBack()"
+    >
+      Zur Station
+    </button>
+  }
+  <div
+    class="mx-4 mt-2 flex h-max flex-grow flex-col items-center justify-center rounded-lg bg-white p-4 shadow-lg"
+  >
+    <h2 class="self-start text-xl font-medium">
+      {{ currentFloorSymbol() }}
+    </h2>
+    @for (image of images; track $index) {
+      <div
+        class="relative h-full max-h-[70vh] w-full max-w-md"
+        [class.hidden]="currentFloor() !== $index"
+      >
+        <img
+          [src]="image"
+          [alt]="'Stockwerk ' + ($index + 1)"
+          class="h-full w-full object-contain"
+        />
+      </div>
+    }
+  </div>
+
+  <div class="left-1/2 mb-28 mt-4 flex justify-evenly gap-4">
+    <button
+      (click)="navigate(1)"
+      [disabled]="currentFloor() === images.length - 1"
+      class="flex items-center rounded-2xl bg-orange-500 px-4 py-2 text-white shadow-md disabled:opacity-50"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="h-6 w-6"
+      >
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
+    </button>
+    <button
+      (click)="navigate(-1)"
+      [disabled]="currentFloor() === 0"
+      class="flex items-center rounded-2xl bg-orange-500 px-4 py-2 text-white shadow-md disabled:opacity-50"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="h-6 w-6"
+      >
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <div class="fixed bottom-0 left-0 right-0 z-10 mx-2">
+    <app-navbar [mode]="'map'" />
+  </div>
+</div>
