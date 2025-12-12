@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,6 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.component.html',
   standalone: true,
 })
-export class AppComponent {}
+export class AppComponent {
+  url = signal(environment.apiBaseUrl);
+}

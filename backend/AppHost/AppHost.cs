@@ -14,11 +14,19 @@ var webapi = builder.AddProject<Projects.API>("api")
 var dashboard = builder.AddJavaScriptApp("dashboard", "../../dashboard")
     .WithReference(webapi)
     .WithHttpEndpoint(env: "PORT")
-    .WithExternalHttpEndpoints();
+    .WithExternalHttpEndpoints()
+    .WithBuildScript("start")
+    .WithRunScript("start");
 
 var guideapp = builder.AddJavaScriptApp("frontend", "../../frontend")
     .WithReference(webapi)
     .WithHttpEndpoint(env: "PORT")
-    .WithExternalHttpEndpoints();
+    .WithExternalHttpEndpoints()
+    .WithBuildScript("start")
+    .WithRunScript("start");
+
+webapi
+    .WithEnvironment("AllowedOrigins__0", dashboard.GetEndpoint("http"))
+    .WithEnvironment("AllowedOrigins__1", guideapp.GetEndpoint("http"));
 
 builder.Build().Run();
