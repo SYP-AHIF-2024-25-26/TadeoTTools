@@ -92,6 +92,7 @@ export type StopGroup = {
   description: string;
   isPublic: boolean;
   stopIds: number[];
+  order: number;
 };
 
 export type Division = {
@@ -117,4 +118,61 @@ export type FeedbackQuestion = {
   maxRating?: number;
   ratingLabels?: string;
   order: number;
+  dependencies?: FeedbackDependency[];
+};
+
+export type FeedbackDependency = {
+  dependsOnQuestionId: number;
+  conditionValue: string;
+};
+
+// Request DTOs
+
+export type CreateStopGroupRequest = {
+  name: string;
+  description: string;
+  isPublic: boolean;
+};
+
+export type UpdateStopGroupRequest = {
+  id: number;
+  name: string;
+  description: string;
+  isPublic: boolean;
+  stopIds: number[];
+};
+
+export type CreateStudentRequest = {
+  edufsUsername: string;
+  firstName: string;
+  lastName: string;
+  studentClass: string;
+  department: string;
+};
+
+export type CreateTeacherRequest = {
+  edufsUsername: string;
+  firstName: string;
+  lastName: string;
+};
+
+export type UpdateTeacherRequest = {
+  edufsUsername: string;
+  firstName: string;
+  lastName: string;
+};
+
+export type CreateDivisionRequest = {
+  name: string;
+  color: string;
+};
+
+export type UpdateDivisionRequest = {
+  id: number;
+  name: string;
+  color: string;
+};
+
+export type AddAdminRequest = {
+  name: string;
 };

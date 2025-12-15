@@ -1,5 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { Teacher } from '../../shared/models/types';
+import {
+  CreateTeacherRequest,
+  Teacher,
+  UpdateTeacherRequest,
+} from '../../shared/models/types';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from '../../app.config';
 import { HttpClient } from '@angular/common/http';
@@ -25,7 +29,7 @@ export class TeacherService {
     );
   }
 
-  postTeacher(teacher: Teacher) {
+  postTeacher(teacher: CreateTeacherRequest) {
     return firstValueFrom(
       this.httpClient.post<void>(`${this.baseUrl}/api/teachers`, teacher)
     );
@@ -39,7 +43,7 @@ export class TeacherService {
     );
   }
 
-  updateTeacher(teacher: Teacher) {
+  updateTeacher(teacher: UpdateTeacherRequest) {
     return firstValueFrom(
       this.httpClient.put<void>(`${this.baseUrl}/api/teachers`, teacher)
     );

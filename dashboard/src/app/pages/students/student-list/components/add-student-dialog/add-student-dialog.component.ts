@@ -40,9 +40,14 @@ export class AddStudentDialogComponent {
       return;
     }
     // ensure no stops are sent initially
-    s.studentAssignments = [];
     try {
-      await this.studentService.createStudent(s);
+      await this.studentService.createStudent({
+        edufsUsername: s.edufsUsername,
+        firstName: s.firstName,
+        lastName: s.lastName,
+        studentClass: s.studentClass,
+        department: s.department,
+      });
       this.studentAdded.emit();
       this.close.emit();
     } catch (err: any) {

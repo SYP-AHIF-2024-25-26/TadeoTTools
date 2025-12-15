@@ -17,7 +17,7 @@ public class StudentFunctions
 
     public record StudentAssignmentDto(
         int Id,
-        [Required, MaxLength(100)] string StudentId,
+        [Required, MaxLength(100)] string EdufsUsername,
         int StopId,
         string StopName,
         Status Status
@@ -35,7 +35,7 @@ public class StudentFunctions
                 student.Department,
                 student.StudentAssignments.Select(assignment => new StudentAssignmentDto(
                     assignment.Id,
-                    assignment.StudentId,
+                    assignment.EdufsUsername,
                     assignment.StopId,
                     assignment.Stop!.Name,
                     assignment.Status

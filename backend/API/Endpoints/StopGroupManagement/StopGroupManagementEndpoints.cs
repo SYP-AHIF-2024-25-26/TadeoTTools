@@ -34,7 +34,7 @@ public static class StopGroupManagementEndpoints
             group.Id,
             group.Name,
             group.Description,
-            group.Rank,
+            group.Order,
             group.IsPublic,
             stopIds
         );
@@ -45,7 +45,7 @@ public static class StopGroupManagementEndpoints
     public static async Task<IResult> GetGroupsApi(TadeoTDbContext context)
     {
         var stopgroups = (await StopGroupFunctions.GetAllStopGroupsAsync(context)).ToList();
-        stopgroups.Sort((a, b) => a.Rank.CompareTo(b.Rank));
+        stopgroups.Sort((a, b) => a.Order.CompareTo(b.Order));
         return Results.Ok(stopgroups);
     }
 
@@ -115,7 +115,7 @@ public static class StopGroupManagementEndpoints
                 return Results.NotFound($"StopGroup {groupId} not found");
             }
 
-            stopGroup.Rank = index;
+            stopGroup.Order = index;
         }
 
         await context.SaveChangesAsync();

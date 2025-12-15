@@ -170,7 +170,13 @@ export class StopGroupsComponent implements OnInit {
       this.stopGroups().map((group) => group.id)
     );
     this.stopGroups().forEach(async (group) => {
-      await this.stopGroupService.updateStopGroup(group);
+      await this.stopGroupService.updateStopGroup({
+        id: group.id,
+        name: group.name,
+        description: group.description,
+        isPublic: group.isPublic,
+        stopIds: group.stopIds,
+      });
     });
     this.hasChanged.set(false);
   }

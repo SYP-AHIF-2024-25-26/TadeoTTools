@@ -75,19 +75,23 @@ export class StopgroupDetailsComponent implements OnInit {
       return;
     }
 
-    const stopGroup: StopGroup = {
-      id: this.id,
-      name: this.name(),
-      description: this.description(),
-      isPublic: this.isPublic(),
-      stopIds: this.stopIds(),
-    };
-
     try {
       if (this.id === -1) {
-        await this.stopGroupService.addStopGroup(stopGroup);
+        const createRequest = {
+          name: this.name(),
+          description: this.description(),
+          isPublic: this.isPublic(),
+        };
+        await this.stopGroupService.addStopGroup(createRequest);
       } else {
-        await this.stopGroupService.updateStopGroup(stopGroup);
+        const updateRequest = {
+          id: this.id,
+          name: this.name(),
+          description: this.description(),
+          isPublic: this.isPublic(),
+          stopIds: this.stopIds(),
+        };
+        await this.stopGroupService.updateStopGroup(updateRequest);
       }
     } catch (error) {
       this.errorMessage.set('An error occurred while saving.');

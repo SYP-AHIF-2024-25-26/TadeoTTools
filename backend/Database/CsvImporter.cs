@@ -43,7 +43,7 @@ public class CsvImporter
             {
                 Name = r.Name,
                 Description = r.Description,
-                Rank = int.Parse(r.StopGroupRank),
+                Order = int.Parse(r.StopGroupRank),
                 IsPublic = true
             }).ToList();
 
@@ -60,7 +60,7 @@ public class CsvImporter
                         .Select(rank => int.Parse(rank))
                         .Select(rank => new StopGroupAssignment
                         {
-                            StopGroup = stopGroups.Single(sg => sg.Rank == rank),
+                            StopGroup = stopGroups.Single(sg => sg.Order == rank),
                         }).ToList(),
                     Divisions = r.Divisions
                         .SelectMany(d => StaticDivisions.Where(sd => sd.Name == d))

@@ -108,9 +108,16 @@ export class DivisionDetailsComponent implements OnInit {
     };
 
     if (this.id === -1) {
-      await this.divisionService.addDivision(division);
+      await this.divisionService.addDivision({
+        name: this.name(),
+        color: this.color(),
+      });
     } else {
-      await this.divisionService.updateDivision(division);
+      await this.divisionService.updateDivision({
+        id: this.id,
+        name: this.name(),
+        color: this.color(),
+      });
     }
 
     if (this.selectedFile) {

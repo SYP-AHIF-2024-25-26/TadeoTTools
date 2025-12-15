@@ -52,7 +52,12 @@ export class TeacherOverviewComponent {
   async saveEdit() {
     if (this.editingTeacher()) {
       try {
-        await this.teacherService.updateTeacher(this.editingTeacher()!);
+        const teacher = this.editingTeacher()!;
+        await this.teacherService.updateTeacher({
+          edufsUsername: teacher.edufsUsername,
+          firstName: teacher.firstName,
+          lastName: teacher.lastName,
+        });
         await this.loadTeachers();
         this.editingTeacher.set(null);
       } catch (error) {
@@ -81,7 +86,11 @@ export class TeacherOverviewComponent {
       this.newTeacher()?.lastName
     ) {
       try {
-        await this.teacherService.postTeacher(this.newTeacher() as Teacher);
+        await this.teacherService.postTeacher({
+          edufsUsername: this.newTeacher().edufsUsername!,
+          firstName: this.newTeacher().firstName!,
+          lastName: this.newTeacher().lastName!,
+        });
         await this.loadTeachers();
         this.newTeacher.set({});
       } catch (error) {

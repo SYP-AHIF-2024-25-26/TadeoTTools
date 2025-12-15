@@ -14,7 +14,7 @@ public class StudentManagementEndpoints
     {
         return Results.Ok(await StudentFunctions.GetAllStudentsAsync(context));
     }
-    
+
     public record StudentNoAssignmentsDto(
         [Required, MaxLength(100)] string EdufsUsername,
         [Required, MaxLength(150)] string FirstName,
@@ -71,7 +71,7 @@ public class StudentManagementEndpoints
         {
             student.StudentAssignments.Add(new StudentAssignment
             {
-                StudentId = assignmentDto.StudentId,
+                EdufsUsername = assignmentDto.EdufsUsername,
                 StopId = assignmentDto.StopId,
                 Status = assignmentDto.Status
             });
@@ -104,21 +104,21 @@ public class StudentManagementEndpoints
 
     public record UploadStudentCsvFileDto(IFormFile File);
 
-    public static async Task<IResult> DeleteStudentAssignment([FromRoute] string studentId, [FromRoute] int stopId,
+    public static async Task<IResult> DeleteStudentAssignment([FromRoute] string edufsUsername, [FromRoute] int stopId,
         TadeoTDbContext context)
     {
         var assignment = await context.StudentAssignments
-            .FirstOrDefaultAsync(sa => sa.StudentId == studentId && sa.StopId == stopId);
+            .FirstOrDefaultAsync(sa => sa.EdufsUsername == edufsUsername && sa.StopId == stopId);
 
         if (assignment == null)
         {
-            return Results.NotFound($"No assignment found for StudentId '{studentId}' and StopId '{stopId}'.");
+            return Results.NotFound($"No assignment found for EdufsUsername '{edufsUsername}' and StopId '{stopId}'.");
         }
 
         context.StudentAssignments.Remove(assignment);
         await context.SaveChangesAsync();
 
-        return Results.Ok($"Assignment for StudentId '{studentId}' and StopId '{stopId}' has been deleted.");
+        return Results.Ok($"Assignment for EdufsUsername '{edufsUsername}' and StopId '{stopId}' has been deleted.");
     }
 
     public static async Task DeleteAllStudents(TadeoTDbContext context)

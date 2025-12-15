@@ -1,5 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { StopGroup } from '../../shared/models/types';
+import {
+  CreateStopGroupRequest,
+  StopGroup,
+  UpdateStopGroupRequest,
+} from '../../shared/models/types';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from '../../app.config';
@@ -29,13 +33,13 @@ export class StopGroupService {
     );
   }
 
-  addStopGroup(stopGroup: StopGroup): Promise<StopGroup> {
+  addStopGroup(stopGroup: CreateStopGroupRequest): Promise<StopGroup> {
     return firstValueFrom(
       this.httpClient.post<StopGroup>(`${this.baseUrl}/api/groups`, stopGroup)
     );
   }
 
-  updateStopGroup(stopGroup: StopGroup): Promise<void> {
+  updateStopGroup(stopGroup: UpdateStopGroupRequest): Promise<void> {
     return firstValueFrom(
       this.httpClient.put<void>(`${this.baseUrl}/api/groups`, stopGroup)
     );

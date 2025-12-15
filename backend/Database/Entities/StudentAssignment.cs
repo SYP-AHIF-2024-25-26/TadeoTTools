@@ -14,7 +14,7 @@ public class StudentAssignment
     [Key]
     public int Id { get; set; }
     [MaxLength(100)]
-    public required string StudentId { get; set; }
+    public required string EdufsUsername { get; set; }
     public Student? Student { get; set; }
     public int StopId { get; set; }
     public Stop? Stop { get; set; }

@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { BASE_URL } from '../../app.config';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { AddAdminRequest } from '../../shared/models/types';
 
 @Injectable({
   providedIn: 'root',
@@ -11,14 +12,9 @@ export class AdminService {
   private baseUrl = inject(BASE_URL);
 
   addAdmin(name: string): Promise<void> {
+    const request: AddAdminRequest = { name };
     return firstValueFrom(
-      this.httpClient.post<void>(
-        `${this.baseUrl}/api/admins?name=${encodeURIComponent(name)}`,
-        null,
-        {
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
+      this.httpClient.post<void>(`${this.baseUrl}/api/admins`, request)
     );
   }
 
