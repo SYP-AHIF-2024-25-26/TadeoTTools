@@ -9,7 +9,7 @@
       <input
         type="text"
         placeholder="Search by (user)name"
-        class="input input-bordered h-12 w-full"
+        class="input input-bordered w-full bg-primary-300 placeholder-white hover:bg-primary-400 dark:placeholder-white"
         [(ngModel)]="searchTerm"
       />
     </div>
@@ -19,7 +19,7 @@
         <span class="label-text">Class Filter</span>
       </label>
       <select
-        class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
+        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
         [(ngModel)]="classFilter"
       >
         <option value="">All Classes</option>
@@ -34,7 +34,7 @@
         <span class="label-text">Department</span>
       </label>
       <select
-        class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
+        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
         [(ngModel)]="departmentFilter"
       >
         <option value="">All Departments</option>
@@ -49,7 +49,7 @@
         <span class="label-text">Stop Filter</span>
       </label>
       <select
-        class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
+        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
         [(ngModel)]="stopFilter"
       >
         <option value="">All Stops</option>
@@ -64,7 +64,7 @@
         <span class="label-text">Status</span>
       </label>
       <select
-        class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
+        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
         [(ngModel)]="statusFilter"
       >
         <option value="all">All</option>

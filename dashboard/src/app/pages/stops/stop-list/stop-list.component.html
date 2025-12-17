@@ -1,14 +1,16 @@
 <div
-  class="m-4 flex min-h-screen flex-col items-center text-text-950 dark:text-text-100"
+  class="m-4 flex flex-col items-center text-text-950 dark:text-text-100"
 >
-  <h2 class="my-6 self-center text-2xl font-bold">Stops Overview</h2>
+  <h2 class="my-6 self-center text-2xl font-bold ml-[20px]">Stops Overview</h2>
+  <button [routerLink]="['/stop']" class="btn btn-primary absolute right-4">Add Stop</button>
 
   <!-- Action Buttons and Filter Toggle -->
   <div class="mb-6 flex flex-wrap justify-center gap-4">
-    <button [routerLink]="['/stop']" class="btn btn-primary">Add Stop</button>
+    @if (filteredStops().length != stops().length) {
     <button (click)="clearFilters()" class="btn btn-outline hover:btn-primary">
       Clear Filters
     </button>
+    }
     <button
       (click)="showFilters.set(!showFilters())"
       class="btn btn-outline hover:btn-primary"
@@ -35,10 +37,6 @@
     </button>
   </div>
 
-  <div class="mt-4 text-sm text-text-600 dark:text-text-400">
-    Showing {{ filteredStops().length }} of {{ stops().length }} stops
-  </div>
-
   <!-- Expandable Filters Section -->
   @if (showFilters()) {
     <div class="mx-4 mb-4 flex w-full max-w-6xl flex-wrap justify-center gap-4">
@@ -50,7 +48,7 @@
         <input
           type="text"
           placeholder="Search stop names..."
-          class="input input-bordered w-full bg-primary-200 placeholder-black hover:bg-primary-400 dark:placeholder-white"
+          class="input input-bordered w-full bg-primary-300 placeholder-white hover:bg-primary-400 dark:placeholder-white"
           [(ngModel)]="stopNameSearchTerm"
         />
       </div>
@@ -61,7 +59,7 @@
           <span class="label-text">Stop Group Filter</span>
         </label>
         <select
-          class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
+          class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
           [(ngModel)]="stopGroupFilter"
         >
           <option value="">All Stop Groups</option>
@@ -79,24 +77,36 @@
         <input
           type="text"
           placeholder="Search teachers..."
-          class="input input-bordered w-full bg-primary-300 placeholder-black hover:bg-primary-400 dark:placeholder-white"
+          class="input input-bordered w-full bg-primary-300 placeholder-white hover:bg-primary-400 dark:placeholder-white"
           [(ngModel)]="teacherSearchTerm"
         />
       </div>
 
       <!-- Division Filter -->
+
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
-        <label class="label">
-          <span class="label-text">Division Filter</span>
-        </label>
-        <app-filter
-          #divisionFilterComponent
-          [elements]="divisions()"
-          (filter)="divisionFilter.set($event)"
-        ></app-filter>
+          <label class="label">
+            <span class="label-text">Division Filter</span>
+          </label>
+          <select
+            id="divisions"
+            [(ngModel)]="divisionFilter"
+            class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+            name="divisions-select"
+          >
+            <option value="0" selected>Filter by Division</option>
+
+            @for (division of divisions(); track division.id) {
+              <option value="{{ division.id }}">{{ division.name }}</option>
+            }
+          </select>
       </div>
     </div>
   }
+
+  <div class="mt-4 text-sm text-text-600 dark:text-text-400">
+    Showing {{ filteredStops().length }} of {{ stops().length }} stops
+  </div>
 
   <!-- ################################## -->
   <!-- DESKTOP: Stops Table (md and up) -->

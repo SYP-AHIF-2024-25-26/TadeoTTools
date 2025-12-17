@@ -5,6 +5,7 @@ import {
   signal,
   ViewChild,
   ChangeDetectionStrategy,
+  effect,
 } from '@angular/core';
 import {
   Division,
@@ -16,7 +17,6 @@ import {
   StudentAssignment,
 } from '../../../shared/models/types';
 import { RouterModule } from '@angular/router';
-import { FilterComponent } from '../../../shared/components/filter-bar/filter-bar.component';
 import { FormsModule } from '@angular/forms';
 import { DivisionService } from '../../../core/services/division.service';
 import { StopGroupService } from '../../../core/services/stopgroup.service';
@@ -27,14 +27,11 @@ import { FilterStateService } from '../../../core/services/filter-state.service'
 
 @Component({
   selector: 'app-stops',
-  imports: [RouterModule, FilterComponent, FormsModule],
+  imports: [RouterModule, FormsModule],
   templateUrl: './stop-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StopsComponent {
-  @ViewChild('divisionFilterComponent')
-  divisionFilterComponent!: FilterComponent;
-
   private studentService = inject(StudentService);
   private divisionService = inject(DivisionService);
   private stopGroupService = inject(StopGroupService);
@@ -164,7 +161,6 @@ export class StopsComponent {
 
   // Reset filters
   clearFilters(): void {
-    this.divisionFilterComponent.clearFilter();
     this.filterState.clear();
   }
 }
