@@ -35,6 +35,10 @@
     </button>
   </div>
 
+  <div class="mt-4 text-sm text-text-600 dark:text-text-400">
+    Showing {{ filteredStops().length }} of {{ stops().length }} stops
+  </div>
+
   <!-- Expandable Filters Section -->
   @if (showFilters()) {
     <div class="mx-4 mb-4 flex w-full max-w-6xl flex-wrap justify-center gap-4">
@@ -426,10 +430,5 @@
         </div>
       </div>
     }
-  </div>
-
-  <!-- Summary Information (Visible on all screen sizes) -->
-  <div class="mt-4 pb-8 text-sm text-text-600 dark:text-text-400">
-    Showing {{ filteredStops().length }} of {{ stops().length }} stops
   </div>
 </div>

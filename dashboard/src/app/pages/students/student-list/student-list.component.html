@@ -175,7 +175,7 @@
               }
             </div>
           </th>
-          <th>
+          <th class="flex justify-between">
             <div class="flex items-center gap-1">
               Action
               @if (statusFilter() !== 'all') {
@@ -195,6 +195,7 @@
                 </svg>
               }
             </div>
+            <div>Number of students: <strong>{{ filteredStudents().length }}</strong></div>
           </th>
         </tr>
       </thead>
