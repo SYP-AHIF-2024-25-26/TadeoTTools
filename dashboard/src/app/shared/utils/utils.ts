@@ -1,4 +1,4 @@
-import { Student } from '../models/types';
+import { Student } from '@/shared/models/types';
 
 export function isValidString(
   input: string | null,

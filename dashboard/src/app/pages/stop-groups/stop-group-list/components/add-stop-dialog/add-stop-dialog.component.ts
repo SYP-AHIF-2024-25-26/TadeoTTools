@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { Stop } from '../../../../../shared/models/types';
+import { Stop } from '@/shared/models/types';
 
 @Component({
   selector: 'app-add-stop-dialog',

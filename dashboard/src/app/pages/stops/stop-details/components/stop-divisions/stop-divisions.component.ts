@@ -1,8 +1,8 @@
 import { Component, computed, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { Stop, Division } from '../../../../../shared/models/types';
-import { DeletePopupComponent } from '../../../../../shared/modals/confirmation-modal/confirmation-modal.component';
+import { Stop, Division } from '@/shared/models/types';
+import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-stop-divisions',

@@ -1,6 +1,6 @@
 import { Component, inject, input, output } from '@angular/core';
-import { Status, Student } from '../../../../../shared/models/types';
-import { StudentService } from '../../../../../core/services/student.service';
+import { Status, Student } from '@/shared/models/types';
+import { StudentService } from '@/core/services/student.service';
 
 @Component({
   selector: 'app-conflict-details-modal',

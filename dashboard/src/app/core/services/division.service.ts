@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BASE_URL } from '../../app.config';
+import { BASE_URL } from '@/app.config';
 import { firstValueFrom } from 'rxjs';
-import { Division } from '../../shared/models/types';
+import { Division } from '@/shared/models/types';
 
 @Injectable({
   providedIn: 'root',

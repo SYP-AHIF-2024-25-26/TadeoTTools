@@ -1,7 +1,7 @@
 import { Component, computed, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { Stop, Teacher } from '../../../../../shared/models/types';
+import { Stop, Teacher } from '@/shared/models/types';
 
 @Component({
   selector: 'app-stop-teachers',

@@ -1,8 +1,8 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TeacherService } from '../../../core/services/teacher.service';
-import { Teacher } from '../../../shared/models/types';
+import { TeacherService } from '@/core/services/teacher.service';
+import { Teacher } from '@/shared/models/types';
 
 @Component({
   selector: 'app-teacher-overview',

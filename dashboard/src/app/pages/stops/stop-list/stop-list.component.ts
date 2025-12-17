@@ -14,16 +14,16 @@ import {
   Student,
   Teacher,
   StudentAssignment,
-} from '../../../shared/models/types';
+} from '@/shared/models/types';
 import { RouterModule } from '@angular/router';
-import { FilterComponent } from '../../../shared/components/filter-bar/filter-bar.component';
+import { FilterComponent } from '@/shared/components/filter-bar/filter-bar.component';
 import { FormsModule } from '@angular/forms';
-import { DivisionService } from '../../../core/services/division.service';
-import { StopGroupService } from '../../../core/services/stopgroup.service';
-import { StopService } from '../../../core/services/stop.service';
-import { TeacherService } from '../../../core/services/teacher.service';
-import { StudentService } from '../../../core/services/student.service';
-import { FilterStateService } from '../../../core/services/filter-state.service';
+import { DivisionService } from '@/core/services/division.service';
+import { StopGroupService } from '@/core/services/stopgroup.service';
+import { StopService } from '@/core/services/stop.service';
+import { TeacherService } from '@/core/services/teacher.service';
+import { StudentService } from '@/core/services/student.service';
+import { FilterStateService } from '@/core/services/filter-state.service';
 
 @Component({
   selector: 'app-stops',

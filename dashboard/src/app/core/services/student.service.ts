@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BASE_URL } from '../../app.config';
-import { Student } from '../../shared/models/types';
+import { BASE_URL } from '@/app.config';
+import { Student } from '@/shared/models/types';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({

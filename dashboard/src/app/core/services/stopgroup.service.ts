@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { StopGroup } from '../../shared/models/types';
+import { StopGroup } from '@/shared/models/types';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { BASE_URL } from '../../app.config';
+import { BASE_URL } from '@/app.config';
 
 @Injectable({
   providedIn: 'root',
