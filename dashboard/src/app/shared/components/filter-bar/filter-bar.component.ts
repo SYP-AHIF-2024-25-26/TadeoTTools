@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import { Division } from '../../models/types';
+import { Division } from '@/shared/models/types';
 import { FormsModule } from '@angular/forms';
 
 @Component({

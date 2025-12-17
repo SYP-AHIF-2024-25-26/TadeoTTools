@@ -9,10 +9,10 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { BASE_URL } from '../../../app.config';
-import { isValidString } from '../../../shared/utils/utils';
-import { Division } from '../../../shared/models/types';
-import { DivisionService } from '../../../core/services/division.service';
+import { BASE_URL } from '@/app.config';
+import { isValidString } from '@/shared/utils/utils';
+import { Division } from '@/shared/models/types';
+import { DivisionService } from '@/core/services/division.service';
 
 @Component({
   selector: 'app-division-details',

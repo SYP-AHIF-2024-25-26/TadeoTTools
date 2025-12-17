@@ -1,6 +1,6 @@
 import { Component, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Stop } from '../../../../../shared/models/types';
+import { Stop } from '@/shared/models/types';
 
 @Component({
   selector: 'app-stop-general-info',

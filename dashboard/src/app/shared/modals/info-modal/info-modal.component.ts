@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Info } from '../../models/types';
+import { Info } from '@/shared/models/types';
 import { NgClass } from '@angular/common';
 
 @Component({

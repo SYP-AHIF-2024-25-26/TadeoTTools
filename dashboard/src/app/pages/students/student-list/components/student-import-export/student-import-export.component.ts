@@ -1,6 +1,6 @@
 import { Component, inject, output, signal } from '@angular/core';
-import { StudentService } from '../../../../../core/services/student.service';
-import { downloadFile } from '../../../../../shared/utils/utils';
+import { StudentService } from '@/core/services/student.service';
+import { downloadFile } from '@/shared/utils/utils';
 
 @Component({
   selector: 'app-student-import-export',

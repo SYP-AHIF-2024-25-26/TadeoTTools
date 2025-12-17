@@ -6,8 +6,8 @@ import {
   Output,
   signal,
 } from '@angular/core';
-import { StudentWithUI } from '../../../pages/students/student-list/student-list.component';
-import { Status, Stop } from '../../models/types';
+import { StudentWithUI } from '@/pages/students/student-list/student-list.component';
+import { Status, Stop } from '@/shared/models/types';
 import { FormsModule } from '@angular/forms';
 
 @Component({

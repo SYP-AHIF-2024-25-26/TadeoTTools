@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { Stop, StopAsTeacher, StopOfStudent, StopWithoutOrders } from '../../shared/models/types';
+import { Stop, StopAsTeacher, StopOfStudent, StopWithoutOrders } from '@/shared/models/types';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { BASE_URL } from '../../app.config';
+import { BASE_URL } from '@/app.config';
 
 @Injectable({
   providedIn: 'root',

@@ -1,10 +1,10 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BASE_URL } from '../../../app.config';
-import { DeletePopupComponent } from '../../../shared/modals/confirmation-modal/confirmation-modal.component';
-import { DivisionDetailsComponent } from '../division-details/division-details.component';
-import { DivisionService } from '../../../core/services/division.service';
-import { Division } from '../../../shared/models/types';
+import { BASE_URL } from '@/app.config';
+import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
+import { DivisionDetailsComponent } from '@/pages/divisions/division-details/division-details.component';
+import { DivisionService } from '@/core/services/division.service';
+import { Division } from '@/shared/models/types';
 
 @Component({
   selector: 'app-divisions-list',

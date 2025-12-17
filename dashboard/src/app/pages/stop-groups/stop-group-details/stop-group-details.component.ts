@@ -9,9 +9,9 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { isValidString } from '../../../shared/utils/utils';
-import { StopGroup } from '../../../shared/models/types';
-import { StopGroupService } from '../../../core/services/stopgroup.service';
+import { isValidString } from '@/shared/utils/utils';
+import { StopGroup } from '@/shared/models/types';
+import { StopGroupService } from '@/core/services/stopgroup.service';
 
 @Component({
   selector: 'app-stopgroup-details',

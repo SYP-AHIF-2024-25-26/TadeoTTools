@@ -8,9 +8,9 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { Stop, Student, Status } from '../../../../../shared/models/types';
-import { sortStudents, downloadFile } from '../../../../../shared/utils/utils';
-import { StopService } from '../../../../../core/services/stop.service';
+import { Stop, Student, Status } from '@/shared/models/types';
+import { sortStudents, downloadFile } from '@/shared/utils/utils';
+import { StopService } from '@/core/services/stop.service';
 
 @Component({
   selector: 'app-stop-students',

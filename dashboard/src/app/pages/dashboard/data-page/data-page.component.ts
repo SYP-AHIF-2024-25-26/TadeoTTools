@@ -1,11 +1,11 @@
 import { Component, inject, signal, WritableSignal } from '@angular/core';
-import { StudentService } from '../../../core/services/student.service';
-import { TeacherService } from '../../../core/services/teacher.service';
-import { FeedbackService } from '../../../core/services/feedback.service';
-import { StopService } from '../../../core/services/stop.service';
-import { DivisionService } from '../../../core/services/division.service';
-import { downloadFile } from '../../../shared/utils/utils';
-import { DeletePopupComponent } from '../../../shared/modals/confirmation-modal/confirmation-modal.component';
+import { StudentService } from '@/core/services/student.service';
+import { TeacherService } from '@/core/services/teacher.service';
+import { FeedbackService } from '@/core/services/feedback.service';
+import { StopService } from '@/core/services/stop.service';
+import { DivisionService } from '@/core/services/division.service';
+import { downloadFile } from '@/shared/utils/utils';
+import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 @Component({
   selector: 'app-data-page',
   imports: [DeletePopupComponent],
