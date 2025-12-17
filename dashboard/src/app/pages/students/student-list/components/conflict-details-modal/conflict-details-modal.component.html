@@ -36,7 +36,7 @@
               <td class="flex gap-2">
                 @if (assignment.status === Status.Pending) {
                   <button
-                    class="btn btn-success btn-sm"
+                    class="btn btn-primary btn-sm"
                     (click)="approveAssignment(i)"
                   >
                     Accept
@@ -95,7 +95,7 @@
           >
             @if (assignment.status === Status.Pending) {
               <button
-                class="btn btn-success btn-sm flex-1"
+                class="btn btn-primary btn-sm flex-1"
                 (click)="approveAssignment(i)"
               >
                 Accept

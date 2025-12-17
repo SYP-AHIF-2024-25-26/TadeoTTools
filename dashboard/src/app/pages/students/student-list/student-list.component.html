@@ -245,7 +245,7 @@
                   ) {
                     <div class="flex gap-1">
                       <button
-                        class="btn btn-success btn-sm"
+                        class="btn btn-primary btn-sm"
                         (click)="approveSingleAssignment(student)"
                       >
                         Approve
@@ -352,7 +352,7 @@
             } @else if (student.studentAssignments.length === 1) {
               @if (student.studentAssignments[0].status === Status.Pending) {
                 <button
-                  class="btn btn-success btn-sm flex-grow"
+                  class="btn btn-primary btn-sm flex-grow"
                   (click)="approveSingleAssignment(student)"
                 >
                   Approve
