@@ -125,7 +125,7 @@ try
     await context!.Database.MigrateAsync();
     
     // Seed initial admin if configured
-    await SeedInitialAdminAsync(context, app.Logger, builder.Configuration);
+    //await SeedInitialAdminAsync(context, app.Logger, builder.Configuration);
 
     if (!await context.Students.AnyAsync())
     {
@@ -157,7 +157,7 @@ catch (Exception e)
 }
 
 app.Run();
-
+/*
 static async Task SeedInitialAdminAsync(
     TadeoTDbContext context, 
     ILogger logger, 
@@ -183,4 +183,4 @@ static async Task SeedInitialAdminAsync(
     await context.Admins.AddAsync(new Database.Entities.Admin { Id = adminId });
     await context.SaveChangesAsync();
     logger.LogInformation("Admin seeded successfully");
-}
+}*/
