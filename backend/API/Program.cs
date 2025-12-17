@@ -41,16 +41,46 @@ builder.Services.AddBasicAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithAuth();
 
+var dynamicOrigins = builder.Configuration
+    .GetSection("AllowedOrigins")
+    .Get<string[]>() ?? [];
+
+dynamicOrigins = dynamicOrigins
+    .Select(o => o.TrimEnd('/'))
+    .Where(o => !string.IsNullOrWhiteSpace(o))
+    .Distinct(StringComparer.OrdinalIgnoreCase)
+    .ToArray();
+
+var staticOrigins = new[]
+{
+    "https://tadeot.htl-leonding.ac.at",
+    "http://localhost:4200",
+    "http://localhost:4300",
+    "http://localhost:5005"
+};
+
+var allOrigins = staticOrigins
+    .Concat(dynamicOrigins)
+    .Distinct(StringComparer.OrdinalIgnoreCase)
+    .ToArray();
+
+Console.WriteLine($"Allowed Origins: {string.Join(", ", allOrigins)}");
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(Setup.CorsPolicyName,
         policyBuilder =>
         {
-            policyBuilder.WithOrigins("https://tadeot.htl-leonding.ac.at", "http://localhost:4200", "http://localhost:4300", "http://localhost:51566",
-                "http://localhost:5005");
+            if (builder.Environment.IsDevelopment())
+            {
+                policyBuilder.AllowAnyOrigin();
+            }
+            else
+            {
+                policyBuilder.WithOrigins(allOrigins);
+            }
             policyBuilder.AllowAnyHeader();
             policyBuilder.AllowAnyMethod();
-            policyBuilder.AllowCredentials();
         });
 });
 
@@ -60,6 +90,22 @@ var environment = builder.Environment.EnvironmentName;
 app.Logger.LogInformation("Running in" + environment);
 app.Logger.LogInformation("Connection String:" + connectionString);
 
+app.UseCors(Setup.CorsPolicyName);
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseExceptionHandler();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.Map("ping", () => Results.Ok("pong"));
+
+// Map endpoints after middleware so CORS applies to them
 app.MapStopGroupEndpoints();
 app.MapStopEndpoints();
 app.MapStudentEndpoints();
@@ -70,21 +116,6 @@ app.MapUserEndpoints();
 app.MapAdminEndpoints();
 app.MapFeedbackEndpoints();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.Map("ping", () => Results.Ok("pong"));
-
-app.UseExceptionHandler();
-
-app.UseCors(Setup.CorsPolicyName);
-
-app.UseAuthentication();
-app.UseAuthorization();
-
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetService<TadeoTDbContext>();
 
@@ -92,8 +123,9 @@ try
 {
     app.Logger.LogInformation("Ensure Migrations are applied and Database is created...");
     await context!.Database.MigrateAsync();
-    // Stops import moved to end
-
+    
+    // Seed initial admin if configured
+    await SeedInitialAdminAsync(context, app.Logger, builder.Configuration);
 
     if (!await context.Students.AnyAsync())
     {
@@ -125,3 +157,30 @@ catch (Exception e)
 }
 
 app.Run();
+
+static async Task SeedInitialAdminAsync(
+    TadeoTDbContext context, 
+    ILogger logger, 
+    IConfiguration configuration)
+{
+    var adminId = configuration.GetValue<string>("SeedData:InitialAdminId");
+    
+    if (string.IsNullOrWhiteSpace(adminId))
+    {
+        logger.LogWarning(
+            "No initial admin ID configured in appsettings. " +
+            "To seed an admin, set 'SeedData:InitialAdminId' in appsettings.Local.json");
+        return;
+    }
+
+    if (await context.Admins.AnyAsync(a => a.Id == adminId))
+    {
+        logger.LogInformation("Admin '{AdminId}' already exists in database", adminId);
+        return;
+    }
+
+    logger.LogInformation("Seeding initial admin: {AdminId}", adminId);
+    await context.Admins.AddAsync(new Database.Entities.Admin { Id = adminId });
+    await context.SaveChangesAsync();
+    logger.LogInformation("Admin seeded successfully");
+}

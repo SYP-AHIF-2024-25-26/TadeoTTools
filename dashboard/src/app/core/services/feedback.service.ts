@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FeedbackQuestion } from '../../shared/models/types';
+import { FeedbackQuestion } from '@/shared/models/types';
 import { firstValueFrom } from 'rxjs';
-import { BASE_URL } from '../../app.config';
+import { BASE_URL } from '@/app.config';
 
 @Injectable({
   providedIn: 'root',

@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { LoginService } from '../../../core/services/auth.service';
+import { LoginService } from '@/core/services/auth.service';
 import Keycloak from 'keycloak-js';
 import { Router } from '@angular/router';
-import { LoaderComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-login',

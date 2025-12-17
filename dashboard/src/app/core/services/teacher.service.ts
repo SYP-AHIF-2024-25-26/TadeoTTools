@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import {
-  CreateTeacherRequest,
   Teacher,
+  CreateTeacherRequest,
   UpdateTeacherRequest,
-} from '../../shared/models/types';
+} from '@/shared/models/types';
 import { firstValueFrom } from 'rxjs';
-import { BASE_URL } from '../../app.config';
+import { BASE_URL } from '@/app.config';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({

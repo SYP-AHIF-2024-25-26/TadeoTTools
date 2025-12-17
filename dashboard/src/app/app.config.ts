@@ -10,7 +10,7 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import { routes } from './app.routes';
-import { environment } from '../environments/environment';
+import { environment } from '@env/environment';
 
 export const BASE_URL = new InjectionToken<string>('BaseUrl');
 

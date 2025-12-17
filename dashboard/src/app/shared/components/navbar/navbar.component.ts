@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterModule, RouterLinkActive } from '@angular/router';
 import Keycloak from 'keycloak-js';
-import { AdminDropdownComponent } from '../user-menu/user-menu.component';
-import { LoginService } from '../../../core/services/auth.service';
+import { AdminDropdownComponent } from '@/shared/components/user-menu/user-menu.component';
+import { LoginService } from '@/core/services/auth.service';
 import { NgOptimizedImage } from '@angular/common';
 
 @Component({

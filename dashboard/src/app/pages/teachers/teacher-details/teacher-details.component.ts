@@ -2,9 +2,9 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import Keycloak from 'keycloak-js';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { StopService } from '../../../core/services/stop.service';
-import { Stop, Teacher } from '../../../shared/models/types';
-import { TeacherService } from '../../../core/services/teacher.service';
+import { StopService } from '@/core/services/stop.service';
+import { Stop, Teacher } from '@/shared/models/types';
+import { TeacherService } from '@/core/services/teacher.service';
 
 @Component({
   selector: 'app-teacher',

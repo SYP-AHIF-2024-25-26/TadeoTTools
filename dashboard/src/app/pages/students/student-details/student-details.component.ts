@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { StopOfStudent } from '../../../shared/models/types';
-import { StopService } from '../../../core/services/stop.service';
-import { Status } from '../../../shared/models/types';
+import { StopOfStudent } from '@/shared/models/types';
+import { StopService } from '@/core/services/stop.service';
+import { Status } from '@/shared/models/types';
 
 @Component({
   selector: 'app-student',

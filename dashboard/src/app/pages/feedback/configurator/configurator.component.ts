@@ -14,8 +14,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { FeedbackService } from '../../../core/services/feedback.service';
-import { FeedbackQuestion } from '../../../shared/models/types';
+import { FeedbackService } from '@/core/services/feedback.service';
+import { FeedbackQuestion } from '@/shared/models/types';
 import { FeedbackPreviewComponent } from './components/feedback-preview/feedback-preview.component';
 import { FeedbackQuestionListComponent } from './components/feedback-question-list/feedback-question-list.component';
 import { FeedbackQuestionEditorComponent } from './components/feedback-question-editor/feedback-question-editor.component';

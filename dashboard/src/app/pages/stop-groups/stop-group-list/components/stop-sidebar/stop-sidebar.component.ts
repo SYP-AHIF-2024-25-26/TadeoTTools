@@ -1,8 +1,8 @@
 import { Component, input, output } from '@angular/core';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { RouterLink } from '@angular/router';
-import { Division, Stop } from '../../../../../shared/models/types';
-import { FilterComponent } from '../../../../../shared/components/filter-bar/filter-bar.component';
+import { Division, Stop } from '@/shared/models/types';
+import { FilterComponent } from '@/shared/components/filter-bar/filter-bar.component';
 
 @Component({
   selector: 'app-stop-sidebar',

@@ -5,7 +5,7 @@ import {
   CdkDragHandle,
   CdkDropList,
 } from '@angular/cdk/drag-drop';
-import { FeedbackQuestion } from '../../../../../shared/models/types';
+import { FeedbackQuestion } from '@/shared/models/types';
 
 @Component({
   selector: 'app-feedback-question-list',

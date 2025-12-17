@@ -1,5 +1,5 @@
 import { Component, computed, input, signal } from '@angular/core';
-import { FeedbackQuestion } from '../../../../../shared/models/types';
+import { FeedbackQuestion } from '@/shared/models/types';
 
 @Component({
   selector: 'app-feedback-preview',

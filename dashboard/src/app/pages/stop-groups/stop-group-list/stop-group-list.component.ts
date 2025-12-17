@@ -4,13 +4,13 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { Division, Info, Stop, StopGroup } from '../../../shared/models/types';
-import { InfoPopupComponent } from '../../../shared/modals/info-modal/info-modal.component';
-import { DeletePopupComponent } from '../../../shared/modals/confirmation-modal/confirmation-modal.component';
-import { StopgroupDetailsComponent } from '../stop-group-details/stop-group-details.component';
-import { StopGroupService } from '../../../core/services/stopgroup.service';
-import { DivisionService } from '../../../core/services/division.service';
-import { StopService } from '../../../core/services/stop.service';
+import { Division, Info, Stop, StopGroup } from '@/shared/models/types';
+import { InfoPopupComponent } from '@/shared/modals/info-modal/info-modal.component';
+import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
+import { StopgroupDetailsComponent } from '@/pages/stop-groups/stop-group-details/stop-group-details.component';
+import { StopGroupService } from '@/core/services/stopgroup.service';
+import { DivisionService } from '@/core/services/division.service';
+import { StopService } from '@/core/services/stop.service';
 import { StopGroupHeaderComponent } from './components/stop-group-header/stop-group-header.component';
 import { StopGroupListComponent } from './components/stop-group-list/stop-group-list.component';
 import { StopSidebarComponent } from './components/stop-sidebar/stop-sidebar.component';

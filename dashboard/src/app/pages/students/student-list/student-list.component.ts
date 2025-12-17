@@ -6,18 +6,18 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Status, Stop, Student, StudentAssignment } from '../../../shared/models/types';
+import { Status, Stop, Student, StudentAssignment } from '@/shared/models/types';
 import { CommonModule } from '@angular/common';
-import { sortStudents, downloadFile } from '../../../shared/utils/utils';
-import { StopService } from '../../../core/services/stop.service';
+import { sortStudents, downloadFile } from '@/shared/utils/utils';
+import { StopService } from '@/core/services/stop.service';
 import {
   Overlay,
   OverlayPositionBuilder,
   OverlayRef,
 } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { StopsPopupComponent } from '../../../shared/modals/stop-selection-modal/stop-selection-modal.component';
-import { StudentService } from '../../../core/services/student.service';
+import { StopsPopupComponent } from '@/shared/modals/stop-selection-modal/stop-selection-modal.component';
+import { StudentService } from '@/core/services/student.service';
 import { StudentFiltersComponent } from './components/student-filters/student-filters.component';
 import { StudentImportExportComponent } from './components/student-import-export/student-import-export.component';
 import { AddStudentDialogComponent } from './components/add-student-dialog/add-student-dialog.component';
