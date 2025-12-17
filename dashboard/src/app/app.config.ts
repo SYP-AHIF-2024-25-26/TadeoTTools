@@ -55,7 +55,7 @@ const keycloakProvider = provideKeycloak({
     // when retrieving the token with the access code - we leave it like this for the moment until a solution is found
     flow: 'standard', // maybe implicit
     enableLogging: true,
-    checkLoginIframe: true,
+    checkLoginIframe: false,
     checkLoginIframeInterval: 10,
   },
 
