@@ -85,7 +85,7 @@
             @if (isAdmin()) {
               @for (link of navLinks; track link.route) {
                 <a
-                  class="block px-4 py-2 text-sm text-text-900 dark:text-text-100"
+                  class="block px-4 py-2 text-sm text-secondary-content"
                   (click)="mobileMenuOpen.set(false)"
                   [routerLink]="[link.route]"
                   routerLinkActive="bg-primary font-medium"

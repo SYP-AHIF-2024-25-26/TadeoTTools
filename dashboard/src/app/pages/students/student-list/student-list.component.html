@@ -6,13 +6,13 @@
     <!-- Actions -->
     <div class="flex flex-wrap justify-end gap-2">
       <button
-        class="btn btn-primary btn-md whitespace-nowrap text-text-950 dark:text-text-100"
+        class="btn btn-primary btn-md whitespace-nowrap"
         (click)="clearFilters()"
       >
         Clear Filters
       </button>
       <button
-        class="btn btn-primary btn-md whitespace-nowrap text-text-950 dark:text-text-100"
+        class="btn btn-primary btn-md whitespace-nowrap"
         (click)="approveAllRequested()"
         [disabled]="!hasRequested()"
       >
@@ -281,7 +281,7 @@
                   }
                 } @else {
                   <button
-                    class="btn btn-warning btn-sm"
+                    class="btn btn-warning text-primary-content btn-sm"
                     (click)="showConflictDetails(student)"
                   >
                     Manage Conflict

@@ -8,7 +8,7 @@
         class="border-b border-background-200 p-4 dark:border-background-700"
       >
         <div class="mb-3 flex items-center justify-between">
-          <h3 class="font-semibold text-text-900 dark:text-text-100">
+          <h3 class="font-semibold text-secondary-content">
             {{ showAssignedStops() ? 'All Stops' : 'Stops' }}
           </h3>
           <app-filter
@@ -48,7 +48,7 @@
             >
               <div class="min-w-0 flex-1">
                 <p
-                  class="truncate text-sm font-medium text-text-900 dark:text-text-100"
+                  class="truncate text-sm font-medium text-secondary-content"
                 >
                   {{ stop.name }}
                 </p>
@@ -59,7 +59,7 @@
                 [queryParams]="{ id: stop.id }"
               >
                 <svg
-                  class="h-3 w-3 text-text-900 dark:text-text-100"
+                  class="h-3 w-3 text-secondary-content"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

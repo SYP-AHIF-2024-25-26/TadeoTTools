@@ -46,7 +46,7 @@
         <input
           type="text"
           placeholder="Search stop names..."
-          class="input input-bordered w-full bg-primary-300 placeholder-black hover:bg-primary-400 dark:placeholder-white"
+          class="input input-bordered w-full bg-primary-200 placeholder-black hover:bg-primary-400 dark:placeholder-white"
           [(ngModel)]="stopNameSearchTerm"
         />
       </div>
@@ -186,7 +186,7 @@
               >
                 <div class="flex items-center gap-1">
                   Department
-                  @if (divisionFilter() != 0) {
+                  @if (divisionFilter() != null && divisionFilter() != 0) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -222,7 +222,7 @@
                 class="border-b border-background-200 bg-white transition-colors hover:bg-background-50 dark:border-background-700 dark:bg-background-800 dark:hover:bg-background-700"
               >
                 <td
-                  class="px-4 py-3 font-medium text-text-900 dark:text-text-100"
+                  class="px-4 py-3 font-medium text-secondary-content"
                 >
                   {{ stop.name }}
                 </td>
@@ -325,7 +325,7 @@
           <!-- Card Header: Title and Student Count -->
           <div class="mb-2 flex items-start justify-between">
             <h3
-              class="card-title text-lg font-bold text-text-900 dark:text-text-100"
+              class="card-title text-lg font-bold text-secondary-content"
             >
               {{ stop.name }}
             </h3>

@@ -8,12 +8,12 @@
     <div
       class="mb-6 flex items-center justify-between border-b border-background-200 pb-4 dark:border-background-700"
     >
-      <h2 class="text-2xl font-bold text-text-900 dark:text-text-100">
+      <h2 class="text-2xl font-bold text-secondary-content">
         {{ id === -1 ? 'Add New Stop Group' : 'Edit Stop Group' }}
       </h2>
       <button
         (click)="goBack()"
-        class="btn btn-circle btn-ghost btn-sm text-text-900 dark:text-text-100"
+        class="btn btn-circle btn-ghost btn-sm text-secondary-content"
       >
         ✕
       </button>
@@ -108,7 +108,7 @@
           <button
             type="button"
             (click)="goBack()"
-            class="btn btn-ghost w-full text-text-900 dark:text-text-100 sm:w-auto"
+            class="btn btn-ghost w-full text-secondary-content sm:w-auto"
           >
             Cancel
           </button>
