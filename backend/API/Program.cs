@@ -51,8 +51,6 @@ dynamicOrigins = dynamicOrigins
     .Distinct(StringComparer.OrdinalIgnoreCase)
     .ToArray();
 
-Console.WriteLine($"Allowed Origins: {string.Join(", ", dynamicOrigins)}");
-
 var staticOrigins = new[]
 {
     "https://tadeot.htl-leonding.ac.at",
@@ -66,15 +64,23 @@ var allOrigins = staticOrigins
     .Distinct(StringComparer.OrdinalIgnoreCase)
     .ToArray();
 
+Console.WriteLine($"Allowed Origins: {string.Join(", ", allOrigins)}");
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(Setup.CorsPolicyName,
         policyBuilder =>
         {
-            policyBuilder.WithOrigins(allOrigins);
+            if (builder.Environment.IsDevelopment())
+            {
+                policyBuilder.AllowAnyOrigin();
+            }
+            else
+            {
+                policyBuilder.WithOrigins(allOrigins);
+            }
             policyBuilder.AllowAnyHeader();
             policyBuilder.AllowAnyMethod();
-            policyBuilder.AllowCredentials();
         });
 });
 
@@ -84,6 +90,8 @@ var environment = builder.Environment.EnvironmentName;
 app.Logger.LogInformation("Running in" + environment);
 app.Logger.LogInformation("Connection String:" + connectionString);
 
+app.UseCors(Setup.CorsPolicyName);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -92,8 +100,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
-// Ensure CORS and auth are applied before mapping endpoints
-app.UseCors(Setup.CorsPolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -117,8 +123,9 @@ try
 {
     app.Logger.LogInformation("Ensure Migrations are applied and Database is created...");
     await context!.Database.MigrateAsync();
-    // Stops import moved to end
-
+    
+    // Seed initial admin if configured
+    await SeedInitialAdminAsync(context, app.Logger, builder.Configuration);
 
     if (!await context.Students.AnyAsync())
     {
@@ -150,3 +157,30 @@ catch (Exception e)
 }
 
 app.Run();
+
+static async Task SeedInitialAdminAsync(
+    TadeoTDbContext context, 
+    ILogger logger, 
+    IConfiguration configuration)
+{
+    var adminId = configuration.GetValue<string>("SeedData:InitialAdminId");
+    
+    if (string.IsNullOrWhiteSpace(adminId))
+    {
+        logger.LogWarning(
+            "No initial admin ID configured in appsettings. " +
+            "To seed an admin, set 'SeedData:InitialAdminId' in appsettings.Local.json");
+        return;
+    }
+
+    if (await context.Admins.AnyAsync(a => a.Id == adminId))
+    {
+        logger.LogInformation("Admin '{AdminId}' already exists in database", adminId);
+        return;
+    }
+
+    logger.LogInformation("Seeding initial admin: {AdminId}", adminId);
+    await context.Admins.AddAsync(new Database.Entities.Admin { Id = adminId });
+    await context.SaveChangesAsync();
+    logger.LogInformation("Admin seeded successfully");
+}
