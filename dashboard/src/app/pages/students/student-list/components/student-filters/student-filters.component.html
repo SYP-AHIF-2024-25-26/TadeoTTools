@@ -4,17 +4,14 @@
   >
     <div class="form-control">
       <label class="label">
-        <span class="label-text">Department</span>
+        <span class="label-text">Search</span>
       </label>
-      <select
-        class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
-        [(ngModel)]="departmentFilter"
-      >
-        <option value="">All Departments</option>
-        @for (dep of uniqueDepartments(); track dep) {
-          <option [value]="dep">{{ dep }}</option>
-        }
-      </select>
+      <input
+        type="text"
+        placeholder="Search by (user)name"
+        class="input input-bordered h-12 w-full"
+        [(ngModel)]="searchTerm"
+      />
     </div>
 
     <div class="form-control">
@@ -28,6 +25,21 @@
         <option value="">All Classes</option>
         @for (className of filteredUniqueClasses(); track className) {
           <option [value]="className">{{ className }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Department</span>
+      </label>
+      <select
+        class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
+        [(ngModel)]="departmentFilter"
+      >
+        <option value="">All Departments</option>
+        @for (dep of uniqueDepartments(); track dep) {
+          <option [value]="dep">{{ dep }}</option>
         }
       </select>
     </div>
@@ -62,18 +74,6 @@
         <option value="approved">Approved</option>
         <option value="rejected">Rejected</option>
       </select>
-    </div>
-
-    <div class="form-control">
-      <label class="label">
-        <span class="label-text">Search</span>
-      </label>
-      <input
-        type="text"
-        placeholder="Search by (user)name"
-        class="input input-bordered h-12 w-full"
-        [(ngModel)]="searchTerm"
-      />
     </div>
   </div>
 </div>
