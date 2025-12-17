@@ -10,8 +10,6 @@ import { downloadFile } from '../../../../../shared/utils/utils';
 export class StudentImportExportComponent {
   private studentService = inject(StudentService);
 
-  readonly exportFiltered = output<void>();
-
   selectedStudentFile = signal<File | null>(null);
 
   onStudentFileSelected(event: Event): void {

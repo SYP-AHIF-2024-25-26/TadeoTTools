@@ -405,16 +405,4 @@ export class ListStudentsComponent {
     }
     this.popupStudent = null;
   }
-
-  exportFusedStudentsCSV(): void {
-    const students = this.filteredStudents();
-    let csvContent = 'Class;Lastname;Firstname;Status\n';
-    students.forEach((student) => {
-      const status = this.getStudentStatusText(student);
-      csvContent += `${student.studentClass};${student.lastName};${student.firstName};${status}\n`;
-    });
-    const blob = new Blob(["\uFEFF", csvContent], { type: 'text/csv;charset=utf-8;' });
-    const timestamp = new Date().toISOString().split('T')[0];
-    downloadFile(blob, `students_export_${timestamp}.csv`);
-  }
 }
