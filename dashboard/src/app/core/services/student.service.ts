@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BASE_URL } from '@/app.config';
-import { Student } from '@/shared/models/types';
+import { Student, CreateStudentRequest } from '@/shared/models/types';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({
@@ -26,7 +26,7 @@ export class StudentService {
     );
   }
 
-  createStudent(student: Student): Promise<void> {
+  createStudent(student: CreateStudentRequest): Promise<void> {
     return firstValueFrom(
       this.httpClient.post<void>(`${this.baseUrl}/api/students`, student)
     );

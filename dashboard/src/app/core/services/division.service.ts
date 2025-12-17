@@ -2,7 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BASE_URL } from '@/app.config';
 import { firstValueFrom } from 'rxjs';
-import { Division } from '@/shared/models/types';
+import {
+  Division,
+  CreateDivisionRequest,
+  UpdateDivisionRequest,
+} from '@/shared/models/types';
 
 @Injectable({
   providedIn: 'root',
@@ -17,12 +21,9 @@ export class DivisionService {
     );
   }
 
-  addDivision(division: { name: string; color: string }): Promise<Division> {
+  addDivision(division: CreateDivisionRequest): Promise<Division> {
     return firstValueFrom(
-      this.httpClient.post<Division>(`${this.baseUrl}/api/divisions`, {
-        name: division.name,
-        color: division.color,
-      })
+      this.httpClient.post<Division>(`${this.baseUrl}/api/divisions`, division)
     );
   }
 
@@ -36,7 +37,7 @@ export class DivisionService {
     );
   }
 
-  updateDivision(division: Division): Promise<void> {
+  updateDivision(division: UpdateDivisionRequest): Promise<void> {
     return firstValueFrom(
       this.httpClient.put<void>(`${this.baseUrl}/api/divisions`, division)
     );

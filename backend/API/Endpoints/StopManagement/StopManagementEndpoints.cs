@@ -38,7 +38,7 @@ public static class StopManagementEndpoints
             stop.Divisions.Select(d => d.Id).ToArray(),
             stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
             stop.StopGroupAssignments.Select(a => a.Order).ToArray(),
-            stop.StudentAssignments.Select(sa => new StudentOfStopDto(sa.StudentId, sa.Status)).ToArray(),
+            stop.StudentAssignments.Select(sa => new StudentOfStopDto(sa.EdufsUsername, sa.Status)).ToArray(),
             stop.TeacherAssignments.Select(ta => ta.TeacherId).ToArray()
         );
 
@@ -199,7 +199,7 @@ public static class StopManagementEndpoints
             RoomNr = createStopDto.RoomNr,
             StudentAssignments = createStopDto.StudentAssignments.Select(s => new StudentAssignment()
             {
-                StudentId = s.EdufsUsername,
+                EdufsUsername = s.EdufsUsername,
                 Student = students.GetValueOrDefault(s.EdufsUsername),
                 Status = s.Status
             }).ToList(),
@@ -269,7 +269,7 @@ public static class StopManagementEndpoints
 
         var newStudentAssignments = updateStopDto.StudentAssignments.Select(s => new StudentAssignment()
         {
-            StudentId = s.EdufsUsername,
+            EdufsUsername = s.EdufsUsername,
             Student = students.GetValueOrDefault(s.EdufsUsername),
             StopId = updateStopDto.Id,
             Stop = stop,
@@ -337,7 +337,7 @@ public static class StopManagementEndpoints
 
         var newStudentAssignments = updateStopDto.StudentAssignments.Select(s => new StudentAssignment()
         {
-            StudentId = s.EdufsUsername,
+            EdufsUsername = s.EdufsUsername,
             Student = students.GetValueOrDefault(s.EdufsUsername),
             StopId = updateStopDto.Id,
             Stop = stop,
