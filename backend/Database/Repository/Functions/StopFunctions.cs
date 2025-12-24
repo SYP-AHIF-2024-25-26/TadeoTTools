@@ -50,7 +50,7 @@ public record StopWithEverythingDto(
     int[] StopGroupIds,
     int[] Orders,
     StudentOfStopDto[] StudentAssignments,
-    string[] TeacherAssignments
+    string[] StopManagerAssignments
 );
 
 public record StudentOfStopDto(

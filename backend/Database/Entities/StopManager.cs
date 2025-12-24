@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Database.Entities;
 
-public class Teacher
+public class StopManager
 {
     [Key]
     [MaxLength(100)]
@@ -11,5 +11,5 @@ public class Teacher
     public string FirstName { get; set; } = string.Empty;
     [MaxLength(150)]
     public string LastName { get; set; } = string.Empty;
-    public List<TeacherAssignment> AssignedStops { get; set; } = [];
+    public List<StopManagerAssignment> AssignedStops { get; set; } = [];
 }

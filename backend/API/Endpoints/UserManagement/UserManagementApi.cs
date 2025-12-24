@@ -16,9 +16,7 @@ public static class UserManagementApi
             Results.Ok("You are at least a student")
         ).RequireAuthorization(nameof(LeoUserRole.Student));
 
-        group.MapGet("/is-teacher", () =>
-            Results.Ok("You are a teacher")
-        ).RequireAuthorization(nameof(LeoUserRole.Teacher));
+
 
         group.MapGet("/everyone-allowed", () =>
             Results.Ok("Everyone is allowed to see this")

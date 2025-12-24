@@ -49,9 +49,9 @@ public class UserManagementEndpoints
                 var student = await context.Students.FindAsync(username);
                 if (student != null)
                     return Results.Ok("Student");
-                var teacher = await context.Teachers.FindAsync(username);
-                if (teacher != null)
-                    return Results.Ok("Teacher");
+                var stopManager = await context.StopManagers.FindAsync(username);
+                if (stopManager != null)
+                    return Results.Ok("StopManager");
                 var admin = await context.Admins.FindAsync(username);
                 if (admin != null)
                     return Results.Ok("Admin");

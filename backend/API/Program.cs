@@ -10,7 +10,7 @@ using Database.Repository;
 using Database.Repository.Functions;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
-using API.Endpoints.TeacherManagement;
+using API.Endpoints.StopManagerManagement;
 using API.Endpoints.AdminManagement;
 using API.Endpoints.FeedbackManagement;
 
@@ -110,7 +110,7 @@ app.MapStopGroupEndpoints();
 app.MapStopEndpoints();
 app.MapStudentEndpoints();
 app.MapDivisionEndpoints();
-app.MapTeacherEndpoints();
+app.MapStopManagerEndpoints();
 app.MapSettingsEndpoints();
 app.MapUserEndpoints();
 app.MapAdminEndpoints();
@@ -134,11 +134,11 @@ try
         await CsvImporter.ImportStudentsAsync("Students.csv", context);
     }
 
-    if (!await context.Teachers.AnyAsync())
+    if (!await context.StopManagers.AnyAsync())
     {
-        app.Logger.LogInformation("Importing Teachers data ...");
+        app.Logger.LogInformation("Importing StopManager data ...");
         // Teachers.csv just for testing purposes right now
-        await CsvImporter.ImportTeachersAsync("Teachers.csv", context);
+        await CsvImporter.ImportStopManagersAsync("Teachers.csv", context);
     }
 
     if (!await context.Divisions.AnyAsync())
