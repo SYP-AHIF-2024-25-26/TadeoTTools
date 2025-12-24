@@ -1,15 +1,28 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import Keycloak from 'keycloak-js';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { StopService } from '@/core/services/stop.service';
 import { Stop, StopManager } from '@/shared/models/types';
 import { StopManagerService } from '@/core/services/stop-manager.service';
+import { ListStudentsComponent } from '@/pages/students/student-list/student-list.component';
 
 @Component({
   selector: 'app-stop-manager-details',
-  imports: [FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    RouterLink,
+    ListStudentsComponent,
+  ],
   templateUrl: './stop-manager-details.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StopManagerDetailsComponent implements OnInit {
   private stopService = inject(StopService);
