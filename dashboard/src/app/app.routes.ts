@@ -7,13 +7,13 @@ import { StopgroupDetailsComponent } from './pages/stop-groups/stop-group-detail
 import { StopDetailsComponent } from './pages/stops/stop-details/stop-details.component';
 import { StopsComponent } from './pages/stops/stop-list/stop-list.component';
 import { StudentComponent } from './pages/students/student-details/student-details.component';
-import { TeacherComponent } from './pages/teachers/teacher-details/teacher-details.component';
+import { StopManagerDetailsComponent } from './pages/stop-managers/stop-manager-details/stop-manager-details.component';
 import { ListStudentsComponent } from './pages/students/student-list/student-list.component';
 import { FeedbackConfiguratorComponent } from './pages/feedback/configurator/configurator.component';
 import { UserManagementComponent } from './pages/dashboard/user-management.component';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
-import { adminOrTeacherGuard } from './core/guards/admin-or-teacher.guard';
+import { adminOrStopManagerGuard } from './core/guards/admin-or-stop-manager.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -51,14 +51,14 @@ export const routes: Routes = [
     path: 'stop',
     component: StopDetailsComponent,
     canMatch: [authGuard],
-    canActivate: [adminOrTeacherGuard],
+    canActivate: [adminOrStopManagerGuard],
   },
   { path: 'student', component: StudentComponent, canMatch: [authGuard] },
   {
-    path: 'teacher',
-    component: TeacherComponent,
+    path: 'stop-manager',
+    component: StopManagerDetailsComponent,
     canMatch: [authGuard],
-    canActivate: [adminOrTeacherGuard],
+    canActivate: [adminOrStopManagerGuard],
   },
   {
     path: 'user-management',

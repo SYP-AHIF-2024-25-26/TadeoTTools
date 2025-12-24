@@ -33,18 +33,18 @@
     </div>
     <div class="mb-4 flex flex-col gap-4 sm:flex-row">
       <fieldset class="fieldset flex-grow">
-        <legend class="fieldset-legend text-lg">Import Teacher Csv</legend>
+        <legend class="fieldset-legend text-lg">Import Stop Manager Csv</legend>
         <input
           type="file"
           class="file-input file-input-primary file-input-sm w-full"
           accept=".csv"
-          (change)="onTeacherFileSelected($event)"
+          (change)="onStopManagerFileSelected($event)"
         />
       </fieldset>
       <button
         class="btn btn-primary btn-sm self-center px-4 sm:self-end"
-        (click)="submitTeachersCsv()"
-        [disabled]="!selectedTeacherFile()"
+        (click)="submitStopManagersCsv()"
+        [disabled]="!selectedStopManagerFile()"
       >
         Import
       </button>

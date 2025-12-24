@@ -19,7 +19,7 @@ export class AdminDropdownComponent {
   isOpen = signal(false);
   private readonly router = inject(Router);
   private readonly keycloak = inject(Keycloak);
-  items = ['Student View', 'Teacher View', 'Logout'];
+  items = ['Student View', 'Stop Manager View', 'Logout'];
 
   @ViewChild('dropdown', { static: false }) dropdownRef!: ElementRef;
 
@@ -30,8 +30,8 @@ export class AdminDropdownComponent {
   async selectItem(item: string): Promise<void> {
     if (item === 'Student View') {
       await this.router.navigate(['student']);
-    } else if (item === 'Teacher View') {
-      await this.router.navigate(['teacher']);
+    } else if (item === 'Stop Manager View') {
+      await this.router.navigate(['stop-manager']);
     } else {
       if (!this.keycloak.authenticated) {
         return;

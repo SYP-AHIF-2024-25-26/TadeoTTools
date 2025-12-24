@@ -1,15 +1,18 @@
-<div
-  class="m-4 flex flex-col items-center text-text-950 dark:text-text-100"
->
-  <h2 class="my-6 self-center text-2xl font-bold ml-[20px]">Stops Overview</h2>
-  <button [routerLink]="['/stop']" class="btn btn-primary absolute right-4">Add Stop</button>
+<div class="m-4 flex flex-col items-center text-text-950 dark:text-text-100">
+  <h2 class="my-6 ml-[20px] self-center text-2xl font-bold">Stops Overview</h2>
+  <button [routerLink]="['/stop']" class="btn btn-primary absolute right-4">
+    Add Stop
+  </button>
 
   <!-- Action Buttons and Filter Toggle -->
   <div class="mb-6 flex flex-wrap justify-center gap-4">
     @if (filteredStops().length != stops().length) {
-    <button (click)="clearFilters()" class="btn btn-outline hover:btn-primary">
-      Clear Filters
-    </button>
+      <button
+        (click)="clearFilters()"
+        class="btn btn-outline hover:btn-primary"
+      >
+        Clear Filters
+      </button>
     }
     <button
       (click)="showFilters.set(!showFilters())"
@@ -69,37 +72,37 @@
         </select>
       </div>
 
-      <!-- Teacher Search -->
+      <!-- Stop Manager Search -->
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
         <label class="label">
-          <span class="label-text">Responsible Teachers Filter</span>
+          <span class="label-text">Responsible Stop Managers Filter</span>
         </label>
         <input
           type="text"
-          placeholder="Search teachers..."
+          placeholder="Search stop managers..."
           class="input input-bordered w-full bg-primary-300 placeholder-white hover:bg-primary-400 dark:placeholder-white"
-          [(ngModel)]="teacherSearchTerm"
+          [(ngModel)]="stopManagerSearchTerm"
         />
       </div>
 
       <!-- Division Filter -->
 
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
-          <label class="label">
-            <span class="label-text">Division Filter</span>
-          </label>
-          <select
-            id="divisions"
-            [(ngModel)]="divisionFilter"
-            class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
-            name="divisions-select"
-          >
-            <option value="0" selected>Filter by Division</option>
+        <label class="label">
+          <span class="label-text">Division Filter</span>
+        </label>
+        <select
+          id="divisions"
+          [(ngModel)]="divisionFilter"
+          class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+          name="divisions-select"
+        >
+          <option value="0" selected>Filter by Division</option>
 
-            @for (division of divisions(); track division.id) {
-              <option value="{{ division.id }}">{{ division.name }}</option>
-            }
-          </select>
+          @for (division of divisions(); track division.id) {
+            <option value="{{ division.id }}">{{ division.name }}</option>
+          }
+        </select>
       </div>
     </div>
   }
@@ -176,8 +179,8 @@
                 class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
               >
                 <div class="flex items-center gap-1">
-                  Responsible Teachers
-                  @if (teacherSearchTerm()) {
+                  Responsible Stop Managers
+                  @if (stopManagerSearchTerm()) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -235,9 +238,7 @@
               <tr
                 class="border-b border-background-200 bg-white transition-colors hover:bg-background-50 dark:border-background-700 dark:bg-background-800 dark:hover:bg-background-700"
               >
-                <td
-                  class="px-4 py-3 font-medium text-secondary-content"
-                >
+                <td class="px-4 py-3 font-medium text-secondary-content">
                   {{ stop.name }}
                 </td>
                 <td class="px-4 py-3">
@@ -248,9 +249,9 @@
                 </td>
                 <td
                   class="max-w-[240px] truncate px-4 py-3"
-                  title="{{ getTeacherNames(stop.id) }}"
+                  title="{{ getStopManagerNames(stop.id) }}"
                 >
-                  {{ getTeacherNames(stop.id) }}
+                  {{ getStopManagerNames(stop.id) }}
                 </td>
                 <td
                   class="max-w-[200px] truncate px-4 py-3"
@@ -338,9 +339,7 @@
         <div class="card-body p-4">
           <!-- Card Header: Title and Student Count -->
           <div class="mb-2 flex items-start justify-between">
-            <h3
-              class="card-title text-lg font-bold text-secondary-content"
-            >
+            <h3 class="card-title text-lg font-bold text-secondary-content">
               {{ stop.name }}
             </h3>
             <span class="flex w-1/2 items-center justify-end">
@@ -374,10 +373,10 @@
             <div class="flex">
               <span
                 class="w-24 flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
-                >Teachers:</span
+                >Stop Managers:</span
               >
               <span class="truncate text-text-800 dark:text-text-200">{{
-                getTeacherNames(stop.id)
+                getStopManagerNames(stop.id)
               }}</span>
             </div>
             <div class="flex">

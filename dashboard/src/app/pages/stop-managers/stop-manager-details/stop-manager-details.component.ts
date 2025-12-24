@@ -3,32 +3,34 @@ import Keycloak from 'keycloak-js';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { StopService } from '@/core/services/stop.service';
-import { Stop, Teacher } from '@/shared/models/types';
-import { TeacherService } from '@/core/services/teacher.service';
+import { Stop, StopManager } from '@/shared/models/types';
+import { StopManagerService } from '@/core/services/stop-manager.service';
 
 @Component({
-  selector: 'app-teacher',
+  selector: 'app-stop-manager-details',
   imports: [FormsModule, ReactiveFormsModule, RouterLink],
-  templateUrl: './teacher-details.component.html',
+  templateUrl: './stop-manager-details.component.html',
 })
-export class TeacherComponent implements OnInit {
+export class StopManagerDetailsComponent implements OnInit {
   private stopService = inject(StopService);
-  private teacherService = inject(TeacherService);
+  private stopManagerService = inject(StopManagerService);
   stops = signal<Stop[]>([]);
   keycloak = inject(Keycloak);
 
   username = signal<string>('');
-  teacher = signal<Teacher | null>(null);
+  stopManager = signal<StopManager | null>(null);
 
   async ngOnInit() {
     const userProfile = await this.keycloak.loadUserProfile();
     const username = userProfile.username || '';
     this.username.set(username);
-    this.stops.set(await this.stopService.getStopsOfTeacher(username));
+    this.stops.set(await this.stopService.getStopsForStopManager(username));
     try {
-      this.teacher.set(await this.teacherService.getTeacherById(username));
+      this.stopManager.set(
+        await this.stopManagerService.getStopManagerById(username)
+      );
     } catch (e) {
-      console.error('Failed to load teacher profile', e);
+      console.error('Failed to load stop manager profile', e);
     }
   }
 }

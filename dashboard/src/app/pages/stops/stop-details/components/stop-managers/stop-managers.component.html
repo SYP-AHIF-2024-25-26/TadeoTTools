@@ -4,35 +4,35 @@
       class="mb-2 flex cursor-pointer items-center justify-between rounded-lg bg-primary-200 p-2 pl-5"
       (click)="toggle()"
     >
-      <h1 class="text-lg font-medium text-text-950">Teachers</h1>
+      <h1 class="text-lg font-medium text-text-950">Stop Managers</h1>
       <span class="text-text-900">{{ isExpanded() ? '▼' : '►' }}</span>
     </div>
     <div [ngClass]="{ hidden: !isExpanded() }">
       <div class="mt-4 flex flex-col gap-4 md:flex-row">
-        <!-- Selected Teachers (Left Side) -->
+        <!-- Selected Stop Managers (Left Side) -->
         <div class="w-full md:w-1/2">
           <div class="mb-2 text-sm font-medium text-text-950">
-            Assigned Teachers
+            Assigned Stop Managers
           </div>
-          <!-- Assigned Teachers Filter -->
+          <!-- Assigned Stop Managers Filter -->
           <div class="mb-4">
             <div
               class="mb-2 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div class="flex w-full items-center sm:w-auto">
                 <label
-                  for="assignedTeacherFilter"
+                  for="assignedStopManagerFilter"
                   class="mr-2 flex-shrink-0 text-sm font-medium text-text-950"
                   >Search:</label
                 >
                 <input
-                  id="assignedTeacherFilter"
+                  id="assignedStopManagerFilter"
                   type="text"
-                  [ngModel]="assignedTeacherFilterText()"
-                  (ngModelChange)="assignedTeacherFilterText.set($event)"
+                  [ngModel]="assignedStopManagerFilterText()"
+                  (ngModelChange)="assignedStopManagerFilterText.set($event)"
                   placeholder="Name or username"
                   class="w-full rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300 sm:w-auto"
-                  name="assignedTeacherFilter"
+                  name="assignedStopManagerFilter"
                 />
               </div>
             </div>
@@ -42,57 +42,57 @@
           >
             <ul class="divide-y divide-primary-100">
               @for (
-                teacher of filteredAssignedTeachers();
-                track teacher.edufsUsername
+                stopManager of filteredAssignedStopManagers();
+                track stopManager.edufsUsername
               ) {
                 <li
                   class="flex items-center justify-between px-4 py-2 text-sm text-text-950 hover:bg-primary-100"
                 >
                   <div>
-                    {{ teacher.lastName + ' ' + teacher.firstName }}
+                    {{ stopManager.lastName + ' ' + stopManager.firstName }}
                   </div>
                   <div class="flex items-center">
                     <span
                       class="cursor-pointer text-lg font-bold text-accent-600"
-                      (click)="removeTeacher(teacher.edufsUsername)"
+                      (click)="removeStopManager(stopManager.edufsUsername)"
                       >−</span
                     >
                   </div>
                 </li>
               }
-              @if (filteredAssignedTeachers().length === 0) {
+              @if (filteredAssignedStopManagers().length === 0) {
                 <li class="px-4 py-2 text-sm text-text-900">
-                  No teachers assigned
+                  No stop managers assigned
                 </li>
               }
             </ul>
           </div>
         </div>
 
-        <!-- Available Teachers (Right Side) -->
+        <!-- Available Stop Managers (Right Side) -->
         <div class="w-full md:w-1/2">
           <div class="mb-2 text-sm font-medium text-text-950">
-            Available Teachers
+            Available Stop Managers
           </div>
-          <!-- Available Teachers Filter -->
+          <!-- Available Stop Managers Filter -->
           <div class="mb-4">
             <div
               class="mb-2 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div class="flex w-full items-center sm:w-auto">
                 <label
-                  for="availableTeacherFilter"
+                  for="availableStopManagerFilter"
                   class="mr-2 flex-shrink-0 text-sm font-medium text-text-950"
                   >Search:</label
                 >
                 <input
-                  id="availableTeacherFilter"
+                  id="availableStopManagerFilter"
                   type="text"
-                  [ngModel]="availableTeacherFilterText()"
-                  (ngModelChange)="availableTeacherFilterText.set($event)"
+                  [ngModel]="availableStopManagerFilterText()"
+                  (ngModelChange)="availableStopManagerFilterText.set($event)"
                   placeholder="Name or username"
                   class="w-full rounded-lg border border-primary-200 bg-background-50 p-1.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300 sm:w-auto"
-                  name="availableTeacherFilter"
+                  name="availableStopManagerFilter"
                 />
               </div>
             </div>
@@ -102,27 +102,27 @@
           >
             <ul class="divide-y divide-primary-100">
               @for (
-                teacher of teachersNotInStop();
-                track teacher.edufsUsername
+                stopManager of stopManagersNotInStop();
+                track stopManager.edufsUsername
               ) {
                 <li
                   class="flex items-center justify-between px-4 py-2 text-sm text-text-950 hover:bg-primary-100"
                 >
                   <div>
-                    {{ teacher.lastName + ' ' + teacher.firstName }}
+                    {{ stopManager.lastName + ' ' + stopManager.firstName }}
                   </div>
                   <div class="flex items-center">
                     <span
                       class="cursor-pointer text-lg font-bold text-primary-600"
-                      (click)="addTeacher(teacher.edufsUsername)"
+                      (click)="addStopManager(stopManager.edufsUsername)"
                       >+</span
                     >
                   </div>
                 </li>
               }
-              @if (teachersNotInStop().length === 0) {
+              @if (stopManagersNotInStop().length === 0) {
                 <li class="px-4 py-2 text-sm text-text-900">
-                  No more teachers available
+                  No more stop managers available
                 </li>
               }
             </ul>
