@@ -56,6 +56,36 @@
         EdufsUsername;FirstName;LastName
       </p>
     </div>
+    <div class="mb-4 flex flex-col gap-4 sm:flex-row">
+      <fieldset class="fieldset flex-grow">
+        <legend class="fieldset-legend text-lg">
+          Import Student Assignments Csv
+        </legend>
+        <input
+          type="file"
+          class="file-input file-input-primary file-input-sm w-full"
+          accept=".csv"
+          (change)="onStudentAssignmentFileSelected($event)"
+        />
+      </fieldset>
+      <button
+        class="btn btn-primary btn-sm self-center px-4 sm:self-end"
+        (click)="submitStudentAssignmentsCsv()"
+        [disabled]="!selectedStudentAssignmentFile()"
+      >
+        Import
+      </button>
+    </div>
+    <div
+      class="my-2 hidden rounded-lg bg-background-100 p-2 dark:border dark:border-accent-400 md:block"
+    >
+      <p class="font-mono text-sm text-text-600">
+        Stop;Klasse;Nachname;Vorname;Abteilung
+      </p>
+      <p class="mt-1 text-xs text-text-500">
+        Note: All imported assignments will be set to "Pending" status
+      </p>
+    </div>
   </div>
   <div class="my-4 flex w-full flex-col gap-y-4 md:w-auto">
     <h1 class="mb-4 text-center text-3xl">Exports</h1>

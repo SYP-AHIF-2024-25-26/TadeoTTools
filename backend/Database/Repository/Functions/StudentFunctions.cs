@@ -26,7 +26,8 @@ public class StudentFunctions
     public static async Task<List<StudentDto>> GetAllStudentsAsync(TadeoTDbContext context)
     {
         return await context.Students
-            .Include(student => student.StudentAssignments)
+            .Include(s => s.StudentAssignments)
+            .ThenInclude(sa => sa.Stop)
             .Select(student => new StudentDto(
                 student.EdufsUsername,
                 student.FirstName,
@@ -37,7 +38,7 @@ public class StudentFunctions
                     assignment.Id,
                     assignment.EdufsUsername,
                     assignment.StopId,
-                    assignment.Stop!.Name,
+                    assignment.Stop != null ? assignment.Stop.Name : "Unknown Stop",
                     assignment.Status
                 )).ToList()
             )).ToListAsync();
@@ -47,6 +48,7 @@ public class StudentFunctions
     {
         return await context.Students
             .Include(s => s.StudentAssignments)
+            .ThenInclude(sa => sa.Stop)
             .FirstOrDefaultAsync(s => s.EdufsUsername == edufsUsername);
     }
 
@@ -82,5 +84,101 @@ public class StudentFunctions
         {
             throw new ArgumentException("Empty CSV file");
         }
+    }
+
+    public static async Task ParseStudentAssignmentsCsv(string csvData, TadeoTDbContext context)
+    {
+        var lines = csvData.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+
+        if (lines.Length == 0)
+        {
+            throw new ArgumentException("Empty CSV file");
+        }
+
+        var header = lines[0].Split(';');
+        var dataLines = lines;
+        
+        // Skip header if present (Stop;Klasse;Nachname;Vorname;Abteilung)
+        if (header is ["Stop", "Klasse", "Nachname", "Vorname", "Abteilung"])
+        {
+            dataLines = lines.Skip(1).ToArray();
+        }
+
+        if (dataLines.Length == 0)
+        {
+            throw new ArgumentException("CSV file contains only headers");
+        }
+
+        var errors = new List<string>();
+        var assignmentsToAdd = new List<StudentAssignment>();
+
+        foreach (var line in dataLines)
+        {
+            var cols = line.Split(';');
+            
+            if (cols.Length < 5)
+            {
+                errors.Add($"Invalid line format: {line}");
+                continue;
+            }
+
+            var stopName = cols[0].Trim();
+            var studentClass = cols[1].Trim();
+            var lastName = cols[2].Trim();
+            var firstName = cols[3].Trim();
+            var department = cols[4].Trim();
+
+            // Find the stop by name
+            var stop = await context.Stops.FirstOrDefaultAsync(s => s.Name == stopName);
+            if (stop == null)
+            {
+                errors.Add($"Stop not found: {stopName}");
+                continue;
+            }
+
+            // Find the student by matching all fields
+            var student = await context.Students.FirstOrDefaultAsync(s =>
+                s.StudentClass == studentClass &&
+                s.LastName == lastName &&
+                s.FirstName == firstName &&
+                s.Department == department);
+
+            if (student == null)
+            {
+                errors.Add($"Student not found: {firstName} {lastName}, Class: {studentClass}, Department: {department}");
+                continue;
+            }
+
+            // Check if assignment already exists
+            var existingAssignment = await context.StudentAssignments
+                .FirstOrDefaultAsync(sa => sa.EdufsUsername == student.EdufsUsername && sa.StopId == stop.Id);
+
+            if (existingAssignment != null)
+            {
+                // Skip duplicate assignments
+                continue;
+            }
+
+            // Create new assignment with Pending status
+            assignmentsToAdd.Add(new StudentAssignment
+            {
+                EdufsUsername = student.EdufsUsername,
+                StopId = stop.Id,
+                Status = Status.PENDING
+            });
+        }
+
+        if (errors.Count > 0)
+        {
+            throw new ArgumentException($"Errors occurred during import:\n{string.Join("\n", errors)}");
+        }
+
+        if (assignmentsToAdd.Count == 0)
+        {
+            throw new ArgumentException("No valid assignments found to import (all may be duplicates)");
+        }
+
+        await context.StudentAssignments.AddRangeAsync(assignmentsToAdd);
+        await context.SaveChangesAsync();
     }
 }
