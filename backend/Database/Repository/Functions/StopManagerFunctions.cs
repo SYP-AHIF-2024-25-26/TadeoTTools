@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Database.Repository.Functions;
 
-public class TeacherFunctions
+public class StopManagerFunctions
 {
-    public static async Task<List<TeacherWithStopsDto>> GetAllTeachersAsync(TadeoTDbContext context)
+    public static async Task<List<StopManagerWithStopsDto>> GetAllStopManagersAsync(TadeoTDbContext context)
     {
-        return await context.Teachers.Include(t => t.AssignedStops).Select(t =>
-            new TeacherWithStopsDto(
+        return await context.StopManagers.Include(t => t.AssignedStops).Select(t =>
+            new StopManagerWithStopsDto(
                 t.EdufsUsername,
                 t.FirstName,
                 t.LastName,
@@ -17,15 +17,15 @@ public class TeacherFunctions
         ).ToListAsync();
     }
 
-    public static async Task<Teacher?> GetTeacherByUsernameAsync(TadeoTDbContext context, string edufsUsername)
+    public static async Task<StopManager?> GetStopManagerByUsernameAsync(TadeoTDbContext context, string edufsUsername)
     {
-        return await context.Teachers
+        return await context.StopManagers
             .Include(t => t.AssignedStops)
             .Where(t => t.EdufsUsername == edufsUsername)
             .FirstOrDefaultAsync();
     }
 
-    public static async Task ParseTeacherCsv(string csvData, TadeoTDbContext context)
+    public static async Task ParseStopManagerCsv(string csvData, TadeoTDbContext context)
     {
         var lines = csvData.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
 
@@ -37,17 +37,17 @@ public class TeacherFunctions
                 throw new ArgumentException("Invalid CSV format");
             }
 
-            var teachers = lines
+            var stopManagers = lines
                 .Skip(1)
                 .Select(line => line.Split(';'))
-                .Select(cols => new Teacher
+                .Select(cols => new StopManager
                 {
                     EdufsUsername = cols[0],
                     FirstName = cols[1],
                     LastName = cols[2],
                 });
 
-            await context.Teachers.AddRangeAsync(teachers);
+            await context.StopManagers.AddRangeAsync(stopManagers);
             await context.SaveChangesAsync();
         }
         else
@@ -56,5 +56,5 @@ public class TeacherFunctions
         }
     }
 
-    public record TeacherWithStopsDto(string EdufsUsername, string FirstName, string LastName, int[] AssignedStops);
+    public record StopManagerWithStopsDto(string EdufsUsername, string FirstName, string LastName, int[] AssignedStops);
 }

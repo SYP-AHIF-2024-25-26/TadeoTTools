@@ -74,10 +74,13 @@ export class LoginComponent implements OnInit {
         return;
       }
 
-      // Check for Teacher role
-      const isTeacher = await this.checkUserRole('is-teacher', 'teacher');
-      if (isTeacher) {
-        this.router.navigate(['/teacher']);
+      // Check for Stop Manager role
+      const isStopManager = await this.checkUserRole(
+        'in-database',
+        'stopmanager'
+      );
+      if (isStopManager) {
+        this.router.navigate(['/stop-manager']);
         return;
       }
 

@@ -44,7 +44,7 @@ export class StopStudentsComponent {
   });
 
   private applyStudentFilters(
-    students: any[],
+    students: Student[],
     filterText: string,
     selectedClass: string
   ) {

@@ -1,9 +1,7 @@
 <div class="">
   <div class="mx-auto max-w-7xl px-6 py-4">
     <div class="flex items-center justify-center">
-      <h1 class="text-2xl font-bold text-secondary-content">
-        User Management
-      </h1>
+      <h1 class="text-2xl font-bold text-secondary-content">User Management</h1>
     </div>
   </div>
 </div>
@@ -15,10 +13,10 @@
     <div class="flex justify-center gap-2">
       <button
         class="rounded-t-lg px-6 py-3 text-sm text-secondary-content transition-all duration-200"
-        [class.font-bold]="activeTab() === 'teachers'"
-        (click)="activeTab.set('teachers')"
+        [class.font-bold]="activeTab() === 'stop-managers'"
+        (click)="activeTab.set('stop-managers')"
       >
-        Teacher Overview
+        Stop Manager Overview
       </button>
 
       <button
@@ -41,8 +39,8 @@
 
   <!-- Tab Content -->
   <div>
-    @if (activeTab() === 'teachers') {
-      <app-teacher-overview />
+    @if (activeTab() === 'stop-managers') {
+      <app-stop-manager-overview />
     } @else if (activeTab() === 'admins') {
       <app-admin-overview />
     } @else if (activeTab() === 'data') {

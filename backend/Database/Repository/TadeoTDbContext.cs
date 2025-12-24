@@ -12,10 +12,10 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<Division> Divisions => Set<Division>();
     public DbSet<Admin> Admins => Set<Admin>();
     public DbSet<Student> Students => Set<Student>();
-    public DbSet<Teacher> Teachers => Set<Teacher>();
+    public DbSet<StopManager> StopManagers => Set<StopManager>();
     public DbSet<StudentAssignment> StudentAssignments => Set<StudentAssignment>();
 
-    public DbSet<TeacherAssignment> TeacherAssignments => Set<TeacherAssignment>();
+    public DbSet<StopManagerAssignment> StopManagerAssignments => Set<StopManagerAssignment>();
     public DbSet<FeedbackQuestion> FeedbackQuestions => Set<FeedbackQuestion>();
     public DbSet<FeedbackTextQuestion> FeedbackTextQuestions => Set<FeedbackTextQuestion>();
     public DbSet<FeedbackRatingQuestion> FeedbackRatingQuestions => Set<FeedbackRatingQuestion>();

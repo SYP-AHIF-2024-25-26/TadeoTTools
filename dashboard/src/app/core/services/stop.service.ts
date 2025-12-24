@@ -1,5 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { Stop, StopAsTeacher, StopOfStudent, StopWithoutOrders } from '@/shared/models/types';
+import {
+  Stop,
+  StopAsStopManager,
+  StopOfStudent,
+  StopWithoutOrders,
+} from '@/shared/models/types';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from '@/app.config';
@@ -23,10 +28,10 @@ export class StopService {
     );
   }
 
-  getStopsOfTeacher(teacherId: string): Promise<Stop[]> {
+  getStopsForStopManager(stopManagerId: string): Promise<Stop[]> {
     return firstValueFrom(
       this.httpClient.get<Stop[]>(
-        `${this.baseUrl}/api/stops/teacher/${teacherId}`
+        `${this.baseUrl}/api/stops/stop-manager/${stopManagerId}`
       )
     );
   }
@@ -43,9 +48,9 @@ export class StopService {
     );
   }
 
-  updateStopAsTeacher(stop: StopAsTeacher): Promise<void> {
+  updateStopAsStopManager(stop: StopAsStopManager): Promise<void> {
     return firstValueFrom(
-      this.httpClient.put<void>(`${this.baseUrl}/teacher/stops`, stop)
+      this.httpClient.put<void>(`${this.baseUrl}/stop-manager/stops`, stop)
     );
   }
 

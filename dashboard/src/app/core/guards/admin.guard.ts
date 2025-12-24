@@ -12,9 +12,12 @@ export const adminGuard: CanActivateFn = async () => {
       return true;
     }
 
-    const isTeacher = await loginService.checkUserRole('is-teacher', 'teacher');
-    if (isTeacher) {
-      router.navigate(['/teacher']);
+    const isStopManager = await loginService.checkUserRole(
+      'in-database',
+      'stopmanager'
+    );
+    if (isStopManager) {
+      router.navigate(['/stop-manager']);
     } else {
       router.navigate(['/student']);
     }

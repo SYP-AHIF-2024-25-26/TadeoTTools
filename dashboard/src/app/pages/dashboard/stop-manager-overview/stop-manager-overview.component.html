@@ -1,37 +1,37 @@
 <div class="container mx-auto px-4 py-8">
   <div class="mb-8 flex flex-col items-center gap-6">
     <h1 class="text-3xl font-bold text-secondary-content">
-      Teacher Overview
+      Stop Manager Overview
     </h1>
 
-    <!-- Add new teacher form -->
+    <!-- Add new stop manager form -->
     <div
       class="w-full max-w-4xl rounded-xl bg-background-50 p-6 shadow-lg dark:bg-background-800"
     >
       <h2 class="mb-4 text-lg font-semibold text-secondary-content">
-        Add New Teacher
+        Add New Stop Manager
       </h2>
       <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
         <input
           class="input input-bordered w-full bg-white dark:bg-background-900"
           type="text"
-          [(ngModel)]="newTeacher().edufsUsername"
+          [(ngModel)]="newStopManager().edufsUsername"
           placeholder="EduFS Username"
         />
         <input
           class="input input-bordered w-full bg-white dark:bg-background-900"
           type="text"
-          [(ngModel)]="newTeacher().firstName"
+          [(ngModel)]="newStopManager().firstName"
           placeholder="First Name"
         />
         <input
           class="input input-bordered w-full bg-white dark:bg-background-900"
           type="text"
-          [(ngModel)]="newTeacher().lastName"
+          [(ngModel)]="newStopManager().lastName"
           placeholder="Last Name"
         />
-        <button (click)="addTeacher()" class="btn btn-primary w-full">
-          Add Teacher
+        <button (click)="addStopManager()" class="btn btn-primary w-full">
+          Add Stop Manager
         </button>
       </div>
     </div>
@@ -43,7 +43,7 @@
           type="text"
           [value]="searchQuery()"
           (input)="searchQuery.set($any($event.target).value)"
-          placeholder="Search teachers..."
+          placeholder="Search stop managers..."
           class="input input-bordered w-full bg-white pl-12 dark:bg-background-800"
         />
         <svg
@@ -64,7 +64,7 @@
     </div>
   </div>
 
-  <!-- Teachers table (Desktop) -->
+  <!-- Stop Managers table (Desktop) -->
   <div class="hidden md:block">
     <div class="mx-auto max-w-6xl overflow-hidden rounded-lg shadow-lg">
       <div class="max-h-[60vh] overflow-y-auto bg-white dark:bg-background-800">
@@ -83,37 +83,41 @@
           <tbody
             class="divide-y divide-background-200 dark:divide-background-700"
           >
-            @for (teacher of filteredTeachers(); track teacher.edufsUsername) {
+            @for (
+              stopManager of filteredStopManagers();
+              track stopManager.edufsUsername
+            ) {
               <tr
                 class="transition-colors hover:bg-background-50 dark:hover:bg-background-700"
               >
                 @if (
-                  editingTeacher()?.edufsUsername === teacher.edufsUsername
+                  editingStopManager()?.edufsUsername ===
+                  stopManager.edufsUsername
                 ) {
                   <td class="px-6 py-4">
                     <input
                       class="input input-sm input-bordered w-full"
-                      [(ngModel)]="editingTeacher()!.edufsUsername"
+                      [(ngModel)]="editingStopManager()!.edufsUsername"
                       readonly
                     />
                   </td>
                   <td class="px-6 py-4">
                     <input
                       class="input input-sm input-bordered w-full"
-                      [(ngModel)]="editingTeacher()!.firstName"
+                      [(ngModel)]="editingStopManager()!.firstName"
                     />
                   </td>
                   <td class="px-6 py-4">
                     <input
                       class="input input-sm input-bordered w-full"
-                      [(ngModel)]="editingTeacher()!.lastName"
+                      [(ngModel)]="editingStopManager()!.lastName"
                     />
                   </td>
                   <td class="px-6 py-4">
                     <span
                       class="inline-flex items-center rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-200"
                     >
-                      {{ editingTeacher()!.assignedStops.length }} stops
+                      {{ editingStopManager()!.assignedStops.length }} stops
                     </span>
                   </td>
                   <td class="px-6 py-4">
@@ -133,28 +137,26 @@
                     </div>
                   </td>
                 } @else {
-                  <td
-                    class="px-6 py-4 font-medium text-secondary-content"
-                  >
-                    {{ teacher.edufsUsername }}
+                  <td class="px-6 py-4 font-medium text-secondary-content">
+                    {{ stopManager.edufsUsername }}
                   </td>
                   <td class="px-6 py-4 text-text-700 dark:text-text-300">
-                    {{ teacher.firstName }}
+                    {{ stopManager.firstName }}
                   </td>
                   <td class="px-6 py-4 text-text-700 dark:text-text-300">
-                    {{ teacher.lastName }}
+                    {{ stopManager.lastName }}
                   </td>
                   <td class="px-6 py-4">
                     <span
                       class="inline-flex items-center rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-200"
                     >
-                      {{ teacher.assignedStops.length }} stops
+                      {{ stopManager.assignedStops.length }} stops
                     </span>
                   </td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-2">
                       <button
-                        (click)="startEdit(teacher)"
+                        (click)="startEdit(stopManager)"
                         class="text-primary btn btn-ghost btn-xs hover:bg-primary-100"
                         title="Edit"
                       >
@@ -173,7 +175,7 @@
                         </svg>
                       </button>
                       <button
-                        (click)="deleteTeacher(teacher.edufsUsername)"
+                        (click)="deleteStopManager(stopManager.edufsUsername)"
                         class="btn btn-ghost btn-xs text-error hover:bg-error/10"
                         title="Delete"
                       >
@@ -196,7 +198,7 @@
                 }
               </tr>
             }
-            @if (filteredTeachers().length === 0) {
+            @if (filteredStopManagers().length === 0) {
               <tr>
                 <td colspan="5" class="px-6 py-12 text-center text-text-500">
                   <div class="flex flex-col items-center gap-3">
@@ -213,7 +215,7 @@
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                       ></path>
                     </svg>
-                    <p class="text-lg font-medium">No teachers found</p>
+                    <p class="text-lg font-medium">No stop managers found</p>
                   </div>
                 </td>
               </tr>
@@ -224,14 +226,19 @@
     </div>
   </div>
 
-  <!-- Mobile teacher cards -->
+  <!-- Mobile stop manager cards -->
   <div class="mt-6 grid gap-4 md:hidden">
-    @for (teacher of filteredTeachers(); track teacher.edufsUsername) {
+    @for (
+      stopManager of filteredStopManagers();
+      track stopManager.edufsUsername
+    ) {
       <div
         class="card border border-background-200 bg-white shadow-md dark:border-background-700 dark:bg-background-800"
       >
         <div class="card-body p-5">
-          @if (editingTeacher()?.edufsUsername === teacher.edufsUsername) {
+          @if (
+            editingStopManager()?.edufsUsername === stopManager.edufsUsername
+          ) {
             <!-- Edit Mode -->
             <div class="space-y-4">
               <div class="form-control">
@@ -241,7 +248,7 @@
                 <input
                   type="text"
                   class="input input-bordered w-full bg-base-200"
-                  [(ngModel)]="editingTeacher()!.edufsUsername"
+                  [(ngModel)]="editingStopManager()!.edufsUsername"
                   readonly
                 />
               </div>
@@ -252,7 +259,7 @@
                 <input
                   type="text"
                   class="input input-bordered w-full"
-                  [(ngModel)]="editingTeacher()!.firstName"
+                  [(ngModel)]="editingStopManager()!.firstName"
                 />
               </div>
               <div class="form-control">
@@ -262,7 +269,7 @@
                 <input
                   type="text"
                   class="input input-bordered w-full"
-                  [(ngModel)]="editingTeacher()!.lastName"
+                  [(ngModel)]="editingStopManager()!.lastName"
                 />
               </div>
               <div class="flex items-center justify-between pt-2">
@@ -273,7 +280,7 @@
                 <span
                   class="rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-200"
                 >
-                  {{ editingTeacher()!.assignedStops.length }}
+                  {{ editingStopManager()!.assignedStops.length }}
                 </span>
               </div>
               <div class="card-actions mt-4 justify-end gap-2">
@@ -290,19 +297,21 @@
             <div class="flex items-start justify-between">
               <div>
                 <h3 class="text-lg font-bold text-secondary-content">
-                  {{ teacher.firstName }} {{ teacher.lastName }}
+                  {{ stopManager.firstName }} {{ stopManager.lastName }}
                 </h3>
-                <p class="text-sm text-text-500">{{ teacher.edufsUsername }}</p>
+                <p class="text-sm text-text-500">
+                  {{ stopManager.edufsUsername }}
+                </p>
               </div>
               <span
                 class="rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-200"
               >
-                {{ teacher.assignedStops.length }} stops
+                {{ stopManager.assignedStops.length }} stops
               </span>
             </div>
             <div class="card-actions mt-4 justify-end gap-2">
               <button
-                (click)="startEdit(teacher)"
+                (click)="startEdit(stopManager)"
                 class="text-primary btn btn-ghost btn-sm"
               >
                 <svg
@@ -321,7 +330,7 @@
                 Edit
               </button>
               <button
-                (click)="deleteTeacher(teacher.edufsUsername)"
+                (click)="deleteStopManager(stopManager.edufsUsername)"
                 class="btn btn-ghost btn-sm text-error"
               >
                 <svg
@@ -344,7 +353,7 @@
         </div>
       </div>
     }
-    @if (filteredTeachers().length === 0) {
+    @if (filteredStopManagers().length === 0) {
       <div
         class="rounded-xl bg-background-50 p-8 text-center dark:bg-background-800"
       >
@@ -362,7 +371,7 @@
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             ></path>
           </svg>
-          <p class="text-text-500">No teachers found</p>
+          <p class="text-text-500">No stop managers found</p>
         </div>
       </div>
     }

@@ -19,8 +19,8 @@ public class CsvImporter
     {
         var lines = await File.ReadAllLinesAsync(path);
 
-        // Fetch all teachers into memory for matching
-        var allTeachers = await context.Teachers.ToListAsync();
+        // Fetch all stop managers into memory for matching
+        var allStopManagers = await context.StopManagers.ToListAsync();
 
         var allRecords = lines.Skip(1).Select(l => l.Split(';'))
             .Select(columns => new
@@ -67,7 +67,7 @@ public class CsvImporter
                         .ToList()
                 };
 
-                // Teacher Assignment Logic
+                // StopManager Assignment Logic
                 if (!string.IsNullOrWhiteSpace(r.Responsible))
                 {
                     // Split multiple names if present (e.g. "Name1/Name2" or "Name1, Name2")
@@ -75,26 +75,26 @@ public class CsvImporter
 
                     foreach (var namePart in names)
                     {
-                        Teacher? match = null;
+                        StopManager? match = null;
 
                         // Try matching by Full Name match (FirstName + LastName)
-                        match = allTeachers.FirstOrDefault(t =>
+                        match = allStopManagers.FirstOrDefault(t =>
                             (t.FirstName + " " + t.LastName).Contains(namePart, StringComparison.OrdinalIgnoreCase) ||
                             (t.LastName + " " + t.FirstName).Contains(namePart, StringComparison.OrdinalIgnoreCase));
 
                         // Try matching by Last Name only
                         if (match == null)
                         {
-                            match = allTeachers.FirstOrDefault(t =>
+                            match = allStopManagers.FirstOrDefault(t =>
                                 t.LastName.Equals(namePart, StringComparison.OrdinalIgnoreCase) ||
                                 t.LastName.Contains(namePart, StringComparison.OrdinalIgnoreCase));
                         }
 
                         if (match != null)
                         {
-                            stop.TeacherAssignments.Add(new TeacherAssignment
+                            stop.StopManagerAssignments.Add(new StopManagerAssignment
                             {
-                                TeacherId = match.EdufsUsername,
+                                StopManagerId = match.EdufsUsername,
                                 Stop = stop
                             });
                         }
@@ -140,21 +140,21 @@ public class CsvImporter
         await context.SaveChangesAsync();
     }
 
-    public static async Task ImportTeachersAsync(string path, TadeoTDbContext context)
+    public static async Task ImportStopManagersAsync(string path, TadeoTDbContext context)
     {
         var lines = await File.ReadAllLinesAsync(path);
 
-        var teachers = lines
+        var stopManagers = lines
             .Skip(1)
             .Select(line => line.Split(';'))
-            .Select(cols => new Teacher
+            .Select(cols => new StopManager
             {
                 EdufsUsername = cols[0],
                 FirstName = cols[1],
                 LastName = cols[2],
             });
 
-        await context.Teachers.AddRangeAsync(teachers);
+        await context.StopManagers.AddRangeAsync(stopManagers);
         await context.SaveChangesAsync();
     }
 }

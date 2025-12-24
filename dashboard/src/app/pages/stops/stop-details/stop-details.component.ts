@@ -2,20 +2,26 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { StopService } from '@/core/services/stop.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Division, Stop, StopGroup, Student, Teacher } from '@/shared/models/types';
+import {
+  Division,
+  Stop,
+  StopGroup,
+  Student,
+  StopManager,
+} from '@/shared/models/types';
 import { isValidString } from '@/shared/utils/utils';
 import { firstValueFrom } from 'rxjs';
 import { Location } from '@angular/common';
 import { LoginService } from '@/core/services/auth.service';
 import { DivisionService } from '@/core/services/division.service';
 import { StopGroupService } from '@/core/services/stopgroup.service';
-import { TeacherService } from '@/core/services/teacher.service';
+import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StudentService } from '@/core/services/student.service';
 import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spinner.component';
 import { StopGeneralInfoComponent } from './components/stop-general-info/stop-general-info.component';
 import { StopGroupsComponent } from './components/stop-groups/stop-groups.component';
 import { StopStudentsComponent } from './components/stop-students/stop-students.component';
-import { StopTeachersComponent } from './components/stop-teachers/stop-teachers.component';
+import { StopManagersComponent } from './components/stop-managers/stop-managers.component';
 import { StopDivisionsComponent } from './components/stop-divisions/stop-divisions.component';
 
 @Component({
@@ -28,7 +34,7 @@ import { StopDivisionsComponent } from './components/stop-divisions/stop-divisio
     StopGeneralInfoComponent,
     StopGroupsComponent,
     StopStudentsComponent,
-    StopTeachersComponent,
+    StopManagersComponent,
     StopDivisionsComponent,
   ],
   templateUrl: './stop-details.component.html',
@@ -38,7 +44,7 @@ export class StopDetailsComponent implements OnInit {
   private stopGroupService = inject(StopGroupService);
   private stopService = inject(StopService);
   private loginService = inject(LoginService);
-  private teacherService = inject(TeacherService);
+  private stopManagerService = inject(StopManagerService);
   private studentService = inject(StudentService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
@@ -46,7 +52,7 @@ export class StopDetailsComponent implements OnInit {
 
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
-  teachers = signal<Teacher[]>([]);
+  stopManagers = signal<StopManager[]>([]);
   students = signal<Student[]>([]);
 
   isLoading = signal<boolean>(true);
@@ -60,7 +66,7 @@ export class StopDetailsComponent implements OnInit {
     stopGroupIds: [],
     orders: [],
     studentAssignments: [],
-    teacherAssignments: [],
+    stopManagerAssignments: [],
   };
 
   stop = signal<Stop>(this.emptyStop);
@@ -71,7 +77,7 @@ export class StopDetailsComponent implements OnInit {
     this.isLoading.set(true);
     try {
       const response = await this.loginService.checkUserRole(
-        'is-admin',
+        'in-database',
         'admin'
       );
       this.isAdmin.set(response);
@@ -82,8 +88,8 @@ export class StopDetailsComponent implements OnInit {
       this.stopGroups.set(await this.stopGroupService.getStopGroups());
       this.divisions.set(await this.divisionService.getDivisions());
       this.students.set(await this.studentService.getStudents());
-      this.teachers.set(
-        (await this.teacherService.getTeachers()).sort((a, b) =>
+      this.stopManagers.set(
+        (await this.stopManagerService.getStopManagers()).sort((a, b) =>
           a.lastName.localeCompare(b.lastName)
         )
       );
@@ -134,7 +140,7 @@ export class StopDetailsComponent implements OnInit {
       if (this.isAdmin()) {
         await this.stopService.updateStop(this.stop());
       } else {
-        await this.stopService.updateStopAsTeacher(this.stop());
+        await this.stopService.updateStopAsStopManager(this.stop());
       }
     }
 

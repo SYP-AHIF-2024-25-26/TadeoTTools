@@ -18,7 +18,7 @@ public static class DivisionManagementApi
             .WithName(nameof(DivisionManagementEndpoints.CreateDivision))
             .Produces(StatusCodes.Status400BadRequest)
             .Produces<Division>()
-            .RequireAuthorization(Setup.TeacherOrAdminPolicyName)
+            .RequireAuthorization(Setup.StopManagerOrAdminPolicyName)
             .DisableAntiforgery();
 
         group.MapDelete("api/divisions/{divisionId}", DivisionManagementEndpoints.DeleteDivisionById)

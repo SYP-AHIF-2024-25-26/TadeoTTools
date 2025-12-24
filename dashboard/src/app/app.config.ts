@@ -27,7 +27,7 @@ import {
 
 declare global {
   interface Window {
-    __env: any;
+    __env: { backendURL?: string };
   }
 }
 const baseUrl =

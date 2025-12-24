@@ -3,10 +3,16 @@ import {
   computed,
   inject,
   signal,
+  input,
   ViewContainerRef,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Status, Stop, Student, StudentAssignment } from '@/shared/models/types';
+import {
+  Status,
+  Stop,
+  Student,
+  StudentAssignment,
+} from '@/shared/models/types';
 import { CommonModule } from '@angular/common';
 import { sortStudents, downloadFile } from '@/shared/utils/utils';
 import { StopService } from '@/core/services/stop.service';
@@ -60,6 +66,7 @@ export class ListStudentsComponent {
 
   showAddStudent = signal<boolean>(false);
   dataCollapsed = signal<boolean>(true);
+  readOnly = input<boolean>(false);
 
   private overlayRef: OverlayRef | null = null;
   popupStudent: StudentWithUI | null = null;

@@ -13,7 +13,7 @@ import {
   Stop,
   StopGroup,
   Student,
-  Teacher,
+  StopManager,
   StudentAssignment,
 } from '@/shared/models/types';
 import { RouterModule } from '@angular/router';
@@ -21,7 +21,7 @@ import { FormsModule } from '@angular/forms';
 import { DivisionService } from '@/core/services/division.service';
 import { StopGroupService } from '@/core/services/stopgroup.service';
 import { StopService } from '@/core/services/stop.service';
-import { TeacherService } from '@/core/services/teacher.service';
+import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StudentService } from '@/core/services/student.service';
 import { FilterStateService } from '@/core/services/filter-state.service';
 
@@ -36,19 +36,19 @@ export class StopsComponent {
   private divisionService = inject(DivisionService);
   private stopGroupService = inject(StopGroupService);
   private stopService = inject(StopService);
-  private teacherService = inject(TeacherService);
+  private stopManagerService = inject(StopManagerService);
 
   // use shared filter state service so filters persist across navigation
   private filterState = inject(FilterStateService);
   readonly divisionFilter = this.filterState.divisionFilter;
   readonly stopNameSearchTerm = this.filterState.stopNameSearchTerm;
   readonly stopGroupFilter = this.filterState.stopGroupFilter;
-  readonly teacherSearchTerm = this.filterState.teacherSearchTerm;
+  readonly stopManagerSearchTerm = this.filterState.stopManagerSearchTerm;
 
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
   stops = signal<Stop[]>([]);
-  teachers = signal<Teacher[]>([]);
+  stopManagers = signal<StopManager[]>([]);
   students = signal<Student[]>([]);
   showFilters = signal<boolean>(false);
 
@@ -56,7 +56,7 @@ export class StopsComponent {
     this.stops.set(await this.stopService.getStops());
     this.stopGroups.set(await this.stopGroupService.getStopGroups());
     this.divisions.set(await this.divisionService.getDivisions());
-    this.teachers.set(await this.teacherService.getTeachers());
+    this.stopManagers.set(await this.stopManagerService.getStopManagers());
     this.students.set(await this.studentService.getStudents());
   }
 
@@ -72,8 +72,8 @@ export class StopsComponent {
     // Guard and coerce divisionIds elements to numbers
     let stops = divisionId
       ? this.stops().filter((stop) =>
-        (stop.divisionIds ?? []).some((d) => Number(d) === divisionId)
-      )
+          (stop.divisionIds ?? []).some((d) => Number(d) === divisionId)
+        )
       : this.stops();
 
     const nameSearch = this.stopNameSearchTerm().toLowerCase();
@@ -95,19 +95,19 @@ export class StopsComponent {
       }
     }
 
-    const teacherSearch = this.teacherSearchTerm().toLowerCase();
-    if (teacherSearch) {
+    const stopManagerSearch = this.stopManagerSearchTerm().toLowerCase();
+    if (stopManagerSearch) {
       stops = stops.filter((stop) => {
-        const teachers = this.teachers().filter((t) =>
+        const stopManagers = this.stopManagers().filter((t) =>
           t.assignedStops.includes(stop.id)
         );
-        return teachers.some(
-          (teacher) =>
-            teacher.firstName.toLowerCase().includes(teacherSearch) ||
-            teacher.lastName.toLowerCase().includes(teacherSearch) ||
-            `${teacher.firstName} ${teacher.lastName}`
+        return stopManagers.some(
+          (stopManager) =>
+            stopManager.firstName.toLowerCase().includes(stopManagerSearch) ||
+            stopManager.lastName.toLowerCase().includes(stopManagerSearch) ||
+            `${stopManager.firstName} ${stopManager.lastName}`
               .toLowerCase()
-              .includes(teacherSearch)
+              .includes(stopManagerSearch)
         );
       });
     }
@@ -126,12 +126,12 @@ export class StopsComponent {
     return names || 'No groups assigned';
   }
 
-  getTeacherNames(stopId: number): string {
-    const teachers = this.teachers().filter((t) =>
+  getStopManagerNames(stopId: number): string {
+    const stopManagers = this.stopManagers().filter((t) =>
       t.assignedStops.includes(stopId)
     );
-    if (teachers.length === 0) return 'No teachers assigned';
-    return teachers.map((t) => `${t.firstName} ${t.lastName}`).join(', ');
+    if (stopManagers.length === 0) return 'No stop managers assigned';
+    return stopManagers.map((t) => `${t.firstName} ${t.lastName}`).join(', ');
   }
 
   getStudentCount(stopId: number): string {
@@ -140,12 +140,14 @@ export class StopsComponent {
     );
     const requested = students.filter((s) =>
       s.studentAssignments.some(
-        (a: StudentAssignment) => a.stopId === stopId && a.status === Status.Pending
+        (a: StudentAssignment) =>
+          a.stopId === stopId && a.status === Status.Pending
       )
     ).length;
     const assigned = students.filter((s) =>
       s.studentAssignments.some(
-        (a: StudentAssignment) => a.stopId === stopId && a.status === Status.Accepted
+        (a: StudentAssignment) =>
+          a.stopId === stopId && a.status === Status.Accepted
       )
     ).length;
     return `${requested} / ${assigned}`;

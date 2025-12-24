@@ -25,18 +25,18 @@ export type Stop = {
   stopGroupIds: number[];
   orders: number[];
   studentAssignments: StudentAssignmentOfStop[];
-  teacherAssignments: string[];
+  stopManagerAssignments: string[];
 };
 
-export type Teacher = {
+export type StopManager = {
   edufsUsername: string;
   firstName: string;
   lastName: string;
   assignedStops: number[];
 };
 
-export type TeacherAssignment = {
-  teacherId: string;
+export type StopManagerAssignment = {
+  stopManagerId: string;
   stopId: number;
 };
 
@@ -75,10 +75,10 @@ export type StopWithoutOrders = {
   divisionIds: number[];
   stopGroupIds: number[];
   studentAssignments: StudentAssignmentOfStop[];
-  teacherAssignments: string[];
+  stopManagerAssignments: string[];
 };
 
-export type StopAsTeacher = {
+export type StopAsStopManager = {
   id: number;
   name: string;
   roomNr: string;
@@ -150,13 +150,13 @@ export type CreateStudentRequest = {
   department: string;
 };
 
-export type CreateTeacherRequest = {
+export type CreateStopManagerRequest = {
   edufsUsername: string;
   firstName: string;
   lastName: string;
 };
 
-export type UpdateTeacherRequest = {
+export type UpdateStopManagerRequest = {
   edufsUsername: string;
   firstName: string;
   lastName: string;

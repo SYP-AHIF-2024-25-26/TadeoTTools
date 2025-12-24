@@ -1,6 +1,6 @@
 import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { StudentService } from '@/core/services/student.service';
-import { TeacherService } from '@/core/services/teacher.service';
+import { StopManagerService } from '@/core/services/stop-manager.service';
 import { FeedbackService } from '@/core/services/feedback.service';
 import { StopService } from '@/core/services/stop.service';
 import { DivisionService } from '@/core/services/division.service';
@@ -14,11 +14,11 @@ import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirm
 })
 export class DataPageComponent {
   selectedStudentFile: WritableSignal<File | null> = signal(null);
-  selectedTeacherFile: WritableSignal<File | null> = signal(null);
+  selectedStopManagerFile: WritableSignal<File | null> = signal(null);
   showDeleteStudentsPopup = signal<boolean>(false);
 
   private studentService = inject(StudentService);
-  private teacherService = inject(TeacherService);
+  private stopManagerService = inject(StopManagerService);
   private feedbackService = inject(FeedbackService);
   private stopService = inject(StopService);
   private divisionService = inject(DivisionService);
@@ -46,22 +46,22 @@ export class DataPageComponent {
     }
   }
 
-  onTeacherFileSelected(event: Event): void {
+  onStopManagerFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.selectedTeacherFile.set(input.files[0]);
+      this.selectedStopManagerFile.set(input.files[0]);
     }
   }
 
-  async submitTeachersCsv(): Promise<void> {
-    if (!this.selectedTeacherFile) {
+  async submitStopManagersCsv(): Promise<void> {
+    if (!this.selectedStopManagerFile) {
       alert('Please select a CSV file first');
       return;
     }
 
     try {
-      await this.teacherService.uploadTeachersCsv(
-        this.selectedTeacherFile() as File
+      await this.stopManagerService.uploadStopManagersCsv(
+        this.selectedStopManagerFile() as File
       );
       location.reload();
     } catch (error) {
