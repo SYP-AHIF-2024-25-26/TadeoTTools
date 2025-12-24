@@ -43,5 +43,13 @@ public static class StudentManagementApi
             .Produces(StatusCodes.Status206PartialContent)
             .Produces(StatusCodes.Status416RangeNotSatisfiable)
             .RequireAuthorization(Setup.AdminPolicyName);
+
+        group.MapPost("api/students/assignments/upload", StudentManagementEndpoints.UploadStudentAssignmentsCsv)
+            .WithName(nameof(StudentManagementEndpoints.UploadStudentAssignmentsCsv))
+            .WithDescription("Upload student assignments from CSV file")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .DisableAntiforgery()
+            .RequireAuthorization(Setup.AdminPolicyName);
     }
 }

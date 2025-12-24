@@ -57,4 +57,16 @@ export class StudentService {
       })
     );
   }
+
+  uploadStudentAssignmentsCsv(file: File): Promise<void> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return firstValueFrom(
+      this.httpClient.post<void>(
+        `${this.baseUrl}/api/students/assignments/upload`,
+        formData
+      )
+    );
+  }
 }

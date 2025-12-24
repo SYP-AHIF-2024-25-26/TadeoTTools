@@ -198,4 +198,24 @@ public class StudentManagementEndpoints
             fileDownloadName: "students-export.csv"
         );
     }
+
+    public static async Task<IResult> UploadStudentAssignmentsCsv([FromForm] UploadStudentCsvFileDto file, TadeoTDbContext context)
+    {
+        if (file.File.Length <= 0) return Results.BadRequest("File upload failed");
+        try
+        {
+            using (var stream = new MemoryStream())
+            {
+                await file.File.CopyToAsync(stream);
+                var csvData = Encoding.UTF8.GetString(stream.ToArray());
+                await StudentFunctions.ParseStudentAssignmentsCsv(csvData, context);
+            }
+
+            return Results.Ok("Student assignments imported successfully");
+        }
+        catch (Exception e)
+        {
+            return Results.BadRequest($"File upload failed: {e.Message}");
+        }
+    }
 }

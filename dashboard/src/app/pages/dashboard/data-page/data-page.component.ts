@@ -112,4 +112,33 @@ export class DataPageComponent {
   async deleteAllStudents() {
     await this.studentService.deleteAllStudents();
   }
+
+  selectedStudentAssignmentFile: WritableSignal<File | null> = signal(null);
+
+  onStudentAssignmentFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedStudentAssignmentFile.set(input.files[0]);
+    }
+  }
+
+  async submitStudentAssignmentsCsv(): Promise<void> {
+    if (!this.selectedStudentAssignmentFile()) {
+      alert('Please select a CSV file first');
+      return;
+    }
+
+    try {
+      await this.studentService.uploadStudentAssignmentsCsv(
+        this.selectedStudentAssignmentFile() as File
+      );
+      alert('Student assignments imported successfully!');
+      location.reload();
+    } catch (error) {
+      console.error('Error uploading CSV:', error);
+      alert(
+        'Failed to import student assignments. Please check the file format.'
+      );
+    }
+  }
 }
