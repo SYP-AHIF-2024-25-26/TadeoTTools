@@ -49,12 +49,12 @@ public class UserManagementEndpoints
                 var student = await context.Students.FindAsync(username);
                 if (student != null)
                     return Results.Ok("Student");
-                var stopManager = await context.StopManagers.FindAsync(username);
-                if (stopManager != null)
-                    return Results.Ok("StopManager");
                 var admin = await context.Admins.FindAsync(username);
                 if (admin != null)
                     return Results.Ok("Admin");
+                var stopManager = await context.StopManagers.FindAsync(username);
+                if (stopManager != null)
+                    return Results.Ok("StopManager");
                 return Results.NotFound("User not found");
             },
             _ => Task.FromResult(Results.BadRequest("User information not found"))
