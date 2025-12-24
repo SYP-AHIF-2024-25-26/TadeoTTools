@@ -39,7 +39,10 @@ export class StopManagersComponent {
     );
   });
 
-  private applyStopManagerFilters(stopManagers: any[], filterText: string) {
+  private applyStopManagerFilters(
+    stopManagers: StopManager[],
+    filterText: string
+  ) {
     let filteredStopManagers = stopManagers;
 
     if (filterText.trim() !== '') {
