@@ -134,11 +134,29 @@ export class DataPageComponent {
       );
       alert('Student assignments imported successfully!');
       location.reload();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading CSV:', error);
-      alert(
-        'Failed to import student assignments. Please check the file format.'
-      );
+
+      // Extract error message from backend response
+      let errorMessage =
+        'Failed to import student assignments. Please check the file format.';
+
+      if (error?.error) {
+        // If error.error is a string, use it directly
+        if (typeof error.error === 'string') {
+          errorMessage = error.error;
+        }
+        // If error.error has a message property
+        else if (error.error?.message) {
+          errorMessage = error.error.message;
+        }
+      }
+      // If error has a message property directly
+      else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      alert(errorMessage);
     }
   }
 }

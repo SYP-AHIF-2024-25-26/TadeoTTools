@@ -26,7 +26,8 @@ public class StudentFunctions
     public static async Task<List<StudentDto>> GetAllStudentsAsync(TadeoTDbContext context)
     {
         return await context.Students
-            .Include(student => student.StudentAssignments)
+            .Include(s => s.StudentAssignments)
+            .ThenInclude(sa => sa.Stop)
             .Select(student => new StudentDto(
                 student.EdufsUsername,
                 student.FirstName,
@@ -37,7 +38,7 @@ public class StudentFunctions
                     assignment.Id,
                     assignment.EdufsUsername,
                     assignment.StopId,
-                    assignment.Stop!.Name,
+                    assignment.Stop != null ? assignment.Stop.Name : "Unknown Stop",
                     assignment.Status
                 )).ToList()
             )).ToListAsync();
@@ -47,6 +48,7 @@ public class StudentFunctions
     {
         return await context.Students
             .Include(s => s.StudentAssignments)
+            .ThenInclude(sa => sa.Stop)
             .FirstOrDefaultAsync(s => s.EdufsUsername == edufsUsername);
     }
 
@@ -162,7 +164,7 @@ public class StudentFunctions
             {
                 EdufsUsername = student.EdufsUsername,
                 StopId = stop.Id,
-                Status = Status.Pending
+                Status = Status.PENDING
             });
         }
 
