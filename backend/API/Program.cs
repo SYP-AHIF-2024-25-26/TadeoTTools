@@ -123,7 +123,7 @@ try
 {
     app.Logger.LogInformation("Ensure Migrations are applied and Database is created...");
     await context!.Database.MigrateAsync();
-    
+
     // Seed initial admin if configured
     //await SeedInitialAdminAsync(context, app.Logger, builder.Configuration);
 
@@ -184,3 +184,4 @@ static async Task SeedInitialAdminAsync(
     await context.SaveChangesAsync();
     logger.LogInformation("Admin seeded successfully");
 }*/
+public partial class Program { }
