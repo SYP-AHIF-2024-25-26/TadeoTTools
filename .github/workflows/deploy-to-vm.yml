@@ -39,7 +39,7 @@ jobs:
           port: ${{ secrets.VM_PORT || 22 }}
           script: |
             # Navigate to deployment directory
-            cd ~/tadeot-2511
+            cd ~/tadeot-201126
             
             # Login to GitHub Container Registry
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin

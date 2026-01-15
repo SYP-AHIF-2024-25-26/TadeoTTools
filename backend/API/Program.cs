@@ -127,29 +127,33 @@ try
     // Seed initial admin if configured
     //await SeedInitialAdminAsync(context, app.Logger, builder.Configuration);
 
-    if (!await context.Students.AnyAsync())
+    if (app.Environment.IsDevelopment()) 
     {
-        app.Logger.LogInformation("Importing Students data ...");
-        // Students.csv just for testing purposes right now
-        await CsvImporter.ImportStudentsAsync("Students.csv", context);
-    }
+        if (!await context.Students.AnyAsync())
+        {
+            app.Logger.LogInformation("Importing Students data ...");
+            // Students.csv just for testing purposes right now
+            await CsvImporter.ImportStudentsAsync("Students.csv", context);
+        }
 
-    if (!await context.StopManagers.AnyAsync())
-    {
-        app.Logger.LogInformation("Importing StopManager data ...");
-        // Teachers.csv just for testing purposes right now
-        await CsvImporter.ImportStopManagersAsync("Teachers.csv", context);
-    }
+        if (!await context.StopManagers.AnyAsync())
+        {
+            app.Logger.LogInformation("Importing StopManager data ...");
+            // Teachers.csv just for testing purposes right now
+            await CsvImporter.ImportStopManagersAsync("Teachers.csv", context);
+        }
 
-    if (!await context.Divisions.AnyAsync())
-    {
-        app.Logger.LogInformation("Importing data ...");
-        await CsvImporter.ImportCsvFileAsync("TdoT_Stationsplanung_2025.csv", context);
+        if (!await context.Divisions.AnyAsync())
+        {
+            app.Logger.LogInformation("Importing data ...");
+            await CsvImporter.ImportCsvFileAsync("TdoT_Stationsplanung_2025.csv", context);
+        }
+        else
+        {
+            app.Logger.LogInformation("Database already contains data.");
+        }
     }
-    else
-    {
-        app.Logger.LogInformation("Database already contains data.");
-    }
+    
 }
 catch (Exception e)
 {
