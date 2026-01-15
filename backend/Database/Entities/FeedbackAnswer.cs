@@ -11,8 +11,6 @@ public class FeedbackQuestionAnswer
 
     public int FeedbackQuestionId { get; set; }
     public FeedbackQuestion? FeedbackQuestion { get; set; }
-    /*  
-      public int FeedbackSessionId { get; set; }
-      public FeedbackSession? FeedbackSession { get; set; }
-      */
+    public int FeedbackSessionId { get; set; }
+    public FeedbackSession? FeedbackSession { get; set; }
 }

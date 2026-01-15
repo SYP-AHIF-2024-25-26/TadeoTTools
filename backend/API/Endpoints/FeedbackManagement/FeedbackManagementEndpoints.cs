@@ -50,6 +50,11 @@ public static class FeedbackManagementEndpoints
             return Results.BadRequest("No feedback provided");
         }
 
+        var session = new FeedbackSession
+        {
+            Timestamp = DateTime.UtcNow
+        };
+
         foreach (var feedbackRequestDto in feedbackRequestDtos)
         {
             if (await context.FeedbackQuestions
@@ -58,13 +63,17 @@ public static class FeedbackManagementEndpoints
                 return Results.BadRequest($"Question with id {feedbackRequestDto.QuestionId} was not found");
             }
 
-            await context.FeedbackQuestionAnswers.AddAsync(new FeedbackQuestionAnswer
+            var answer = new FeedbackQuestionAnswer
             {
                 Answer = feedbackRequestDto.Answer,
-                FeedbackQuestionId = feedbackRequestDto.QuestionId
-            });
+                FeedbackQuestionId = feedbackRequestDto.QuestionId,
+                FeedbackSession = session
+            };
+
+            session.FeedbackQuestionAnswers.Add(answer);
         }
 
+        await context.FeedbackSessions.AddAsync(session);
         await context.SaveChangesAsync();
 
         return Results.Ok();

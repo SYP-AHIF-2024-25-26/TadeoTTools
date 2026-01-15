@@ -67,14 +67,19 @@
           <p class="text-sm text-text-950">
             {{ question.required ? 'Required' : 'Optional' }} ·
             {{
-              question.type === 'text'
+              question.type === 'Text'
                 ? 'Text input'
-                : question.type === 'choice'
-                  ? 'Multiple choice'
-                  : question.type === 'rating'
-                    ? 'Rating'
-                    : 'Text input'
+                : question.type === 'SingleChoice'
+                  ? 'Single choice'
+                  : question.type === 'MultipleChoice'
+                    ? 'Multiple choice'
+                    : question.type === 'Rating'
+                      ? 'Rating'
+                      : 'Unknown'
             }}
+            @if (question.dependencies && question.dependencies.length > 0) {
+              · <span class="text-primary-500">Follow-up</span>
+            }
           </p>
         </div>
 

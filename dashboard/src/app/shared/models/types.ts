@@ -110,7 +110,7 @@ export type Info = {
 export type FeedbackQuestion = {
   id?: number;
   question: string;
-  type: 'text' | 'choice' | 'rating';
+  type: 'Text' | 'Rating' | 'SingleChoice' | 'MultipleChoice';
   required: boolean;
   placeholder?: string;
   options?: string[];
