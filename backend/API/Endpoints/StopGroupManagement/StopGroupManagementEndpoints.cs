@@ -4,6 +4,7 @@ using Database.Repository;
 using Database.Repository.Functions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Endpoints.StopGroupManagement;
 
@@ -33,7 +34,7 @@ public static class StopGroupManagementEndpoints
             group.Id,
             group.Name,
             group.Description,
-            group.Rank,
+            group.Order,
             group.IsPublic,
             stopIds
         );
@@ -44,7 +45,7 @@ public static class StopGroupManagementEndpoints
     public static async Task<IResult> GetGroupsApi(TadeoTDbContext context)
     {
         var stopgroups = (await StopGroupFunctions.GetAllStopGroupsAsync(context)).ToList();
-        stopgroups.Sort((a, b) => a.Rank.CompareTo(b.Rank));
+        stopgroups.Sort((a, b) => a.Order.CompareTo(b.Order));
         return Results.Ok(stopgroups);
     }
 
@@ -114,7 +115,7 @@ public static class StopGroupManagementEndpoints
                 return Results.NotFound($"StopGroup {groupId} not found");
             }
 
-            stopGroup.Rank = index;
+            stopGroup.Order = index;
         }
 
         await context.SaveChangesAsync();
@@ -122,7 +123,7 @@ public static class StopGroupManagementEndpoints
         return Results.Ok();
     }
 
-    public record CreateGroupRequestDto(string Name, string Description, bool IsPublic);
+    public record CreateGroupRequestDto([Required, MaxLength(300)] string Name, [Required, MaxLength(3000)] string Description, [Required] bool IsPublic);
 
-    public record UpdateGroupRequestDto(int Id, string Name, string Description, bool IsPublic, int[] StopIds);
+    public record UpdateGroupRequestDto(int Id, [Required, MaxLength(300)] string Name, [Required, MaxLength(3000)] string Description, [Required] bool IsPublic, [Required] int[] StopIds);
 }

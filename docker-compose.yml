@@ -30,30 +30,29 @@ services:
       - "5001:5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=mysql;Database=tadeot;User=user;Password=test;
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=tadeot;Username=root;Password=test;
       - ASPNETCORE_URLS=http://+:5000
     networks:
       - tadeotnet
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
 
-  mysql:
-    image: mysql:latest
-    container_name: tadeot-mysql
+  postgres:
+    image: postgres:latest
+    container_name: tadeot-postgres
     ports:
-      - "3306:3306"
+      - "4100:5432"
     environment:
-      - MYSQL_ROOT_PASSWORD=test
-      - MYSQL_DATABASE=tadeot
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=test
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=tadeot
     volumes:
-      - tadeot-data:/var/lib/mysql
+      - tadeot-data:/var/lib/postgresql/data
     networks:
       - tadeotnet
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "pg_isready -U root -d tadeot"]
       interval: 10s
       timeout: 5s
       retries: 5

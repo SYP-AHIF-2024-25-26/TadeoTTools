@@ -1,4 +1,5 @@
-﻿using Database.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Database.Repository.Functions;
@@ -49,10 +50,10 @@ public record StopWithEverythingDto(
     int[] StopGroupIds,
     int[] Orders,
     StudentOfStopDto[] StudentAssignments,
-    string[] TeacherAssignments
+    string[] StopManagerAssignments
 );
 
 public record StudentOfStopDto(
-    string EdufsUsername,
+    [Required, MaxLength(100)] string EdufsUsername,
     Status Status
 );

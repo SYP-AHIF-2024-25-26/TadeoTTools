@@ -2,9 +2,9 @@
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Endpoints.StudentManagement;
 
@@ -14,13 +14,13 @@ public class StudentManagementEndpoints
     {
         return Results.Ok(await StudentFunctions.GetAllStudentsAsync(context));
     }
-    
+
     public record StudentNoAssignmentsDto(
-        string EdufsUsername,
-        string FirstName,
-        string LastName,
-        string StudentClass,
-        string Department
+        [Required, MaxLength(100)] string EdufsUsername,
+        [Required, MaxLength(150)] string FirstName,
+        [Required, MaxLength(150)] string LastName,
+        [Required, MaxLength(20)] string StudentClass,
+        [Required, MaxLength(100)] string Department
     );
 
 
@@ -40,7 +40,7 @@ public class StudentManagementEndpoints
             LastName = studentDto.LastName,
             StudentClass = studentDto.StudentClass,
             Department = studentDto.Department,
-            StudentAssignments = new List<StudentAssignment>()
+            StudentAssignments = []
         };
 
         context.Students.Add(student);
@@ -71,7 +71,7 @@ public class StudentManagementEndpoints
         {
             student.StudentAssignments.Add(new StudentAssignment
             {
-                StudentId = assignmentDto.StudentId,
+                EdufsUsername = assignmentDto.EdufsUsername,
                 StopId = assignmentDto.StopId,
                 Status = assignmentDto.Status
             });
@@ -104,21 +104,21 @@ public class StudentManagementEndpoints
 
     public record UploadStudentCsvFileDto(IFormFile File);
 
-    public static async Task<IResult> DeleteStudentAssignment([FromRoute] string studentId, [FromRoute] int stopId,
+    public static async Task<IResult> DeleteStudentAssignment([FromRoute] string edufsUsername, [FromRoute] int stopId,
         TadeoTDbContext context)
     {
         var assignment = await context.StudentAssignments
-            .FirstOrDefaultAsync(sa => sa.StudentId == studentId && sa.StopId == stopId);
+            .FirstOrDefaultAsync(sa => sa.EdufsUsername == edufsUsername && sa.StopId == stopId);
 
         if (assignment == null)
         {
-            return Results.NotFound($"No assignment found for StudentId '{studentId}' and StopId '{stopId}'.");
+            return Results.NotFound($"No assignment found for EdufsUsername '{edufsUsername}' and StopId '{stopId}'.");
         }
 
         context.StudentAssignments.Remove(assignment);
         await context.SaveChangesAsync();
 
-        return Results.Ok($"Assignment for StudentId '{studentId}' and StopId '{stopId}' has been deleted.");
+        return Results.Ok($"Assignment for EdufsUsername '{edufsUsername}' and StopId '{stopId}' has been deleted.");
     }
 
     public static async Task DeleteAllStudents(TadeoTDbContext context)
@@ -133,37 +133,61 @@ public class StudentManagementEndpoints
         var students = await context.Students
             .Include(s => s.StudentAssignments)
             .ThenInclude(studentAssignment => studentAssignment.Stop)
-            .OrderBy(s => s.Department)
-            .ThenBy(s => s.StudentClass)
-            .ThenBy(s => s.EdufsUsername)
-            .ThenBy(s => s.LastName)
-            .ThenBy(s => s.FirstName)
             .ToListAsync();
+
+        var flattenedStudents = students.SelectMany(s =>
+        {
+            if (s.StudentAssignments.Count == 0)
+            {
+                return new[]
+                {
+                    new
+                    {
+                        s.Department,
+                        s.StudentClass,
+                        s.EdufsUsername,
+                        s.LastName,
+                        s.FirstName,
+                        StopName = string.Empty,
+                        Status = string.Empty
+                    }
+                };
+            }
+
+            return s.StudentAssignments.Select(sa => new
+            {
+                s.Department,
+                s.StudentClass,
+                s.EdufsUsername,
+                s.LastName,
+                s.FirstName,
+                StopName = sa.Stop?.Name ?? string.Empty,
+                Status = sa.Status.ToString()
+            });
+        })
+        .OrderBy(x => string.IsNullOrEmpty(x.StopName))
+        .ThenBy(x => x.StopName)
+        .ThenBy(x => x.StudentClass)
+        .ThenBy(x => x.LastName)
+        .ThenBy(x => x.FirstName)
+        .ToList();
 
         var csvBuilder = new StringBuilder();
 
-        // Add headers (ordered as: Department;Klasse;EdufsUsername;Nachname;Vorname)
-        csvBuilder.AppendLine("Abteilung;Klasse;EdufsUsername;Nachname;Vorname;Stop(s);Status");
+        // Add headers (ordered as: Stop;Klasse;Nachname;Vorname;Abteilung;Status)
+        csvBuilder.AppendLine("Stop;Klasse;Nachname;Vorname;Abteilung;Status");
 
-        // Add data rows (ordered as above)
-        foreach (var item in students)
+        foreach (var item in flattenedStudents)
         {
-            var escapedDepartment = Utils.EscapeCsvField(item.Department);
+            var escapedStopName = Utils.EscapeCsvField(item.StopName);
             var escapedClass = Utils.EscapeCsvField(item.StudentClass);
-            var escapedEdufsUsername = Utils.EscapeCsvField(item.EdufsUsername);
             var escapedLastName = Utils.EscapeCsvField(item.LastName);
             var escapedFirstName = Utils.EscapeCsvField(item.FirstName);
-            var escapedAssignments =
-                Utils.EscapeCsvField(string.Join(",", item.StudentAssignments.Select(s => s.Stop.Name)));
-            var status = item.StudentAssignments.Count switch
-            {
-                0 => "",
-                > 1 => "CONFLICT",
-                _ => item.StudentAssignments[0].Status.ToString()
-            };
-            var escapedStatus = Utils.EscapeCsvField(status);
+            var escapedDepartment = Utils.EscapeCsvField(item.Department);
+            var escapedStatus = Utils.EscapeCsvField(item.Status);
+
             csvBuilder.AppendLine(
-                $"{escapedDepartment};{escapedClass};{escapedEdufsUsername};{escapedLastName};{escapedFirstName};{escapedAssignments};{escapedStatus}");
+                $"{escapedStopName};{escapedClass};{escapedLastName};{escapedFirstName};{escapedDepartment};{escapedStatus}");
         }
 
         var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
@@ -173,5 +197,25 @@ public class StudentManagementEndpoints
             contentType: "text/csv",
             fileDownloadName: "students-export.csv"
         );
+    }
+
+    public static async Task<IResult> UploadStudentAssignmentsCsv([FromForm] UploadStudentCsvFileDto file, TadeoTDbContext context)
+    {
+        if (file.File.Length <= 0) return Results.BadRequest("File upload failed");
+        try
+        {
+            using (var stream = new MemoryStream())
+            {
+                await file.File.CopyToAsync(stream);
+                var csvData = Encoding.UTF8.GetString(stream.ToArray());
+                await StudentFunctions.ParseStudentAssignmentsCsv(csvData, context);
+            }
+
+            return Results.Ok("Student assignments imported successfully");
+        }
+        catch (Exception e)
+        {
+            return Results.BadRequest($"File upload failed: {e.Message}");
+        }
     }
 }

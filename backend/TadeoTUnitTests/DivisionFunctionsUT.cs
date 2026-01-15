@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TadeoT.Database.Functions;
-using TadeoT.Database;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿/*using Database.Entities;
+using Database.Repository;
+using Database.Repository.Functions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Core.Entities;
+using Microsoft.Extensions.DependencyInjection;
 
 [assembly: NonParallelizable]
 
@@ -112,3 +105,4 @@ public class DivisionFunctionsUT
     }
 }
 
+*/

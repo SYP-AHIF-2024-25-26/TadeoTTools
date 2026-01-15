@@ -16,7 +16,7 @@ public static class StopGroupManagementApi
             .WithName(nameof(StopGroupManagementEndpoints.GetGroupsApi))
             .WithDescription("Get all stop groups")
             .Produces<List<StopGroup>>()
-            .RequireAuthorization(Setup.TeacherOrAdminPolicyName); // fix later to admin only
+            .RequireAuthorization(Setup.StopManagerOrAdminPolicyName); // fix later to admin only
 
         group.MapGet("api/groups/{groupId:int}", StopGroupManagementEndpoints.GetGroupById)
             .WithName(nameof(StopGroupManagementEndpoints.GetGroupById))
@@ -28,8 +28,7 @@ public static class StopGroupManagementApi
         group.MapPost("api/groups", StopGroupManagementEndpoints.CreateGroup)
             .WithName(nameof(StopGroupManagementEndpoints.CreateGroup))
             .WithDescription("Create a new stop group")
-            .Produces<StopGroup>()
-            .RequireAuthorization(Setup.AdminPolicyName);
+            .Produces<StopGroup>();
 
         group.MapPut("api/groups", StopGroupManagementEndpoints.UpdateGroup)
             .WithName(nameof(StopGroupManagementEndpoints.UpdateGroup))

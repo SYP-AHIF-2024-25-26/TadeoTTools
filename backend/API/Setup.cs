@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace API;
 
@@ -10,7 +10,7 @@ internal static class Setup
 {
     public const string CorsPolicyName = "AllowOrigins";
     public const string AdminPolicyName = "IsAdmin";
-    public const string TeacherOrAdminPolicyName = "IsTeacherOrAdmin";
+    public const string StopManagerOrAdminPolicyName = "IsStopManagerOrAdmin";
 
     public static void AddLeoAuthentication(this IServiceCollection services)
     {
@@ -54,19 +54,9 @@ internal static class Setup
                 In = ParameterLocation.Header,
                 Description = "JWT Authorization header using the Bearer scheme"
             });
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            c.AddSecurityRequirement((document) => new OpenApiSecurityRequirement()
             {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    []
-                }
+                [new OpenApiSecuritySchemeReference("Bearer", document)] = []
             });
         });
     }
@@ -76,13 +66,12 @@ internal static class Setup
         services.AddAuthorizationBuilder()
             .AddPolicy(nameof(LeoUserRole.Student), policy => policy.Requirements
                 .Add(new LeoAuthRequirement(LeoUserRole.Student, true)))
-            .AddPolicy(nameof(LeoUserRole.Teacher), policy => policy.Requirements
-                .Add(new LeoAuthRequirement(LeoUserRole.Teacher, true)))
+
             .AddPolicy(AdminPolicyName, policy => policy.Requirements
                 .Add(new AdminRequirement()))
-            .AddPolicy(TeacherOrAdminPolicyName, policy => policy.Requirements
-                .Add(new TeacherOrAdminRequirement()));
-        services.AddScoped<IAuthorizationHandler, TeacherOrAdminHandler>();
+            .AddPolicy(StopManagerOrAdminPolicyName, policy => policy.Requirements
+                .Add(new StopManagerOrAdminRequirement()));
+        services.AddScoped<IAuthorizationHandler, StopManagerOrAdminHandler>();
         services.AddScoped<IAuthorizationHandler, AdminAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, LeoAuthorizationHandler>();
     }

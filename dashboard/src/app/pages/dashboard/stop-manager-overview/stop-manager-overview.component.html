@@ -1,0 +1,379 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-8 flex flex-col items-center gap-6">
+    <h1 class="text-3xl font-bold text-secondary-content">
+      Stop Manager Overview
+    </h1>
+
+    <!-- Add new stop manager form -->
+    <div
+      class="w-full max-w-4xl rounded-xl bg-background-50 p-6 shadow-lg dark:bg-background-800"
+    >
+      <h2 class="mb-4 text-lg font-semibold text-secondary-content">
+        Add New Stop Manager
+      </h2>
+      <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+        <input
+          class="input input-bordered w-full bg-white dark:bg-background-900"
+          type="text"
+          [(ngModel)]="newStopManager().edufsUsername"
+          placeholder="EduFS Username"
+        />
+        <input
+          class="input input-bordered w-full bg-white dark:bg-background-900"
+          type="text"
+          [(ngModel)]="newStopManager().firstName"
+          placeholder="First Name"
+        />
+        <input
+          class="input input-bordered w-full bg-white dark:bg-background-900"
+          type="text"
+          [(ngModel)]="newStopManager().lastName"
+          placeholder="Last Name"
+        />
+        <button (click)="addStopManager()" class="btn btn-primary w-full">
+          Add Stop Manager
+        </button>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="w-full max-w-4xl">
+      <div class="relative">
+        <input
+          type="text"
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+          placeholder="Search stop managers..."
+          class="input input-bordered w-full bg-white pl-12 dark:bg-background-800"
+        />
+        <svg
+          class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-400"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stop Managers table (Desktop) -->
+  <div class="hidden md:block">
+    <div class="mx-auto max-w-6xl overflow-hidden rounded-lg shadow-lg">
+      <div class="max-h-[60vh] overflow-y-auto bg-white dark:bg-background-800">
+        <table class="w-full text-left">
+          <thead
+            class="sticky top-0 z-10 bg-background-100 text-xs uppercase text-text-600 dark:bg-background-900 dark:text-text-400"
+          >
+            <tr>
+              <th class="px-6 py-3 font-semibold">EduFS Username</th>
+              <th class="px-6 py-3 font-semibold">First Name</th>
+              <th class="px-6 py-3 font-semibold">Last Name</th>
+              <th class="px-6 py-3 font-semibold">Assigned Stops</th>
+              <th class="px-6 py-3 font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody
+            class="divide-y divide-background-200 dark:divide-background-700"
+          >
+            @for (
+              stopManager of filteredStopManagers();
+              track stopManager.edufsUsername
+            ) {
+              <tr
+                class="transition-colors hover:bg-background-50 dark:hover:bg-background-700"
+              >
+                @if (
+                  editingStopManager()?.edufsUsername ===
+                  stopManager.edufsUsername
+                ) {
+                  <td class="px-6 py-4">
+                    <input
+                      class="input input-sm input-bordered w-full"
+                      [(ngModel)]="editingStopManager()!.edufsUsername"
+                      readonly
+                    />
+                  </td>
+                  <td class="px-6 py-4">
+                    <input
+                      class="input input-sm input-bordered w-full"
+                      [(ngModel)]="editingStopManager()!.firstName"
+                    />
+                  </td>
+                  <td class="px-6 py-4">
+                    <input
+                      class="input input-sm input-bordered w-full"
+                      [(ngModel)]="editingStopManager()!.lastName"
+                    />
+                  </td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="inline-flex items-center rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-200"
+                    >
+                      {{ editingStopManager()!.assignedStops.length }} stops
+                    </span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex gap-2">
+                      <button
+                        (click)="saveEdit()"
+                        class="btn btn-primary btn-xs"
+                      >
+                        Save
+                      </button>
+                      <button
+                        (click)="cancelEdit()"
+                        class="btn btn-ghost btn-xs"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </td>
+                } @else {
+                  <td class="px-6 py-4 font-medium text-secondary-content">
+                    {{ stopManager.edufsUsername }}
+                  </td>
+                  <td class="px-6 py-4 text-text-700 dark:text-text-300">
+                    {{ stopManager.firstName }}
+                  </td>
+                  <td class="px-6 py-4 text-text-700 dark:text-text-300">
+                    {{ stopManager.lastName }}
+                  </td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="inline-flex items-center rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-200"
+                    >
+                      {{ stopManager.assignedStops.length }} stops
+                    </span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <button
+                        (click)="startEdit(stopManager)"
+                        class="text-primary btn btn-ghost btn-xs hover:bg-primary-100"
+                        title="Edit"
+                      >
+                        <svg
+                          class="h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"
+                          ></path>
+                        </svg>
+                      </button>
+                      <button
+                        (click)="deleteStopManager(stopManager.edufsUsername)"
+                        class="btn btn-ghost btn-xs text-error hover:bg-error/10"
+                        title="Delete"
+                      >
+                        <svg
+                          class="h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m10 0H5"
+                          ></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                }
+              </tr>
+            }
+            @if (filteredStopManagers().length === 0) {
+              <tr>
+                <td colspan="5" class="px-6 py-12 text-center text-text-500">
+                  <div class="flex flex-col items-center gap-3">
+                    <svg
+                      class="h-10 w-10 text-text-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      ></path>
+                    </svg>
+                    <p class="text-lg font-medium">No stop managers found</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile stop manager cards -->
+  <div class="mt-6 grid gap-4 md:hidden">
+    @for (
+      stopManager of filteredStopManagers();
+      track stopManager.edufsUsername
+    ) {
+      <div
+        class="card border border-background-200 bg-white shadow-md dark:border-background-700 dark:bg-background-800"
+      >
+        <div class="card-body p-5">
+          @if (
+            editingStopManager()?.edufsUsername === stopManager.edufsUsername
+          ) {
+            <!-- Edit Mode -->
+            <div class="space-y-4">
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text font-medium">Username</span>
+                </label>
+                <input
+                  type="text"
+                  class="input input-bordered w-full bg-base-200"
+                  [(ngModel)]="editingStopManager()!.edufsUsername"
+                  readonly
+                />
+              </div>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text font-medium">First Name</span>
+                </label>
+                <input
+                  type="text"
+                  class="input input-bordered w-full"
+                  [(ngModel)]="editingStopManager()!.firstName"
+                />
+              </div>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text font-medium">Last Name</span>
+                </label>
+                <input
+                  type="text"
+                  class="input input-bordered w-full"
+                  [(ngModel)]="editingStopManager()!.lastName"
+                />
+              </div>
+              <div class="flex items-center justify-between pt-2">
+                <span
+                  class="text-sm font-medium text-text-600 dark:text-text-400"
+                  >Assigned Stops:</span
+                >
+                <span
+                  class="rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-200"
+                >
+                  {{ editingStopManager()!.assignedStops.length }}
+                </span>
+              </div>
+              <div class="card-actions mt-4 justify-end gap-2">
+                <button (click)="cancelEdit()" class="btn btn-ghost btn-sm">
+                  Cancel
+                </button>
+                <button (click)="saveEdit()" class="btn btn-primary btn-sm">
+                  Save
+                </button>
+              </div>
+            </div>
+          } @else {
+            <!-- View Mode -->
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-lg font-bold text-secondary-content">
+                  {{ stopManager.firstName }} {{ stopManager.lastName }}
+                </h3>
+                <p class="text-sm text-text-500">
+                  {{ stopManager.edufsUsername }}
+                </p>
+              </div>
+              <span
+                class="rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-200"
+              >
+                {{ stopManager.assignedStops.length }} stops
+              </span>
+            </div>
+            <div class="card-actions mt-4 justify-end gap-2">
+              <button
+                (click)="startEdit(stopManager)"
+                class="text-primary btn btn-ghost btn-sm"
+              >
+                <svg
+                  class="mr-1 h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"
+                  ></path>
+                </svg>
+                Edit
+              </button>
+              <button
+                (click)="deleteStopManager(stopManager.edufsUsername)"
+                class="btn btn-ghost btn-sm text-error"
+              >
+                <svg
+                  class="mr-1 h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m10 0H5"
+                  ></path>
+                </svg>
+                Delete
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    }
+    @if (filteredStopManagers().length === 0) {
+      <div
+        class="rounded-xl bg-background-50 p-8 text-center dark:bg-background-800"
+      >
+        <div class="flex flex-col items-center gap-3">
+          <svg
+            class="h-10 w-10 text-text-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            ></path>
+          </svg>
+          <p class="text-text-500">No stop managers found</p>
+        </div>
+      </div>
+    }
+  </div>
+</div>

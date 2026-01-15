@@ -7,5 +7,6 @@ namespace Database.Entities;
 public class Admin
 {
     [Key]
+    [MaxLength(50)]
     public required string Id { get; set; }
 }

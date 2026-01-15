@@ -1,0 +1,79 @@
+<div
+  class="flex touch-pan-y select-none flex-col justify-start overflow-x-hidden bg-gray-50"
+>
+  <app-header [showWelcomeText]="false" />
+
+  <div
+    class="mb-32 flex flex-1 flex-col overflow-x-hidden overflow-y-scroll bg-gray-50"
+  >
+    <div class="mx-4 mt-4 rounded-lg border bg-white">
+      <div class="p-4">
+        <img src="./assets/team.png" alt="HTL Leonding" class="mb-4 h-auto" />
+        <div class="flex">
+          <div class="flex w-4/5 flex-col">
+            <div class="text-xl font-medium">
+              Melanie Dohr, Luca Haas, Andreas Huber
+            </div>
+            <div class="mt-4 text-base font-normal">5AHIF 2025/26</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mx-4 mt-4 rounded-lg border bg-white">
+      <div class="p-4">
+        <h2 class="mb-4 px-4 pt-4 text-2xl font-bold">Tadeot GuideApp</h2>
+        <p class="mb-4 text-wrap px-4 text-xl font-normal text-gray-600">
+          Unser <b>digitaler Leitfaden</b> für den Tag der offenen Tür der HTL
+          Leonding wird im Rahmen eines SYP-Projekts im 4. Jahrgang Informatik
+          seit Oktober 2024 entwickelt und im Jänner 2025 wurde er das erste Mal
+          eingesetzt und erprobt.
+        </p>
+        <p class="text-wrap px-4 text-xl font-normal text-gray-600">
+          <strong>Leitfaden-Seite (Home):</strong> Starte deinen Aufenthalt und
+          behalte den Überblick über den Tag der offenen Tür, indem du bereits
+          besuchte Stationen abhakst. <br /><br />
+          <strong>Stationsseite:</strong> Hier findest du, was dich in einer
+          Station erwartet. Du kannst dort auch zur Kartenübersicht wechseln und
+          nachsehen, wo die Station genau ist. <br /><br />
+          <strong>Karten-Seite:</strong> Erreichbar über die Navigationsleiste,
+          zeigt die Kartenseite die Stockwerke der Schule mit den Räumen, in
+          denen sich Stationen befinden. <br />
+          <br />
+          <strong>Feedback-Seite:</strong> Hilf uns die App zu verbessern, indem
+          du uns deine Meinung mitteilst. Dein Feedback ist anonym und wird
+          ausschließlich zur Weiterentwicklung des Tag der offenen Tür
+          verwendet.
+        </p>
+      </div>
+    </div>
+    <div class="mx-4 mt-4 rounded-lg border bg-white">
+      <div class="p-4">
+        <h2 class="mb-4 px-4 pt-4 text-2xl font-bold">Impressum</h2>
+        <p class="mb-4 text-wrap px-4 text-xl font-normal text-gray-600">
+          <a
+            href="https://www.htl-leonding.at/impressum"
+            target="_blank"
+            rel="noopener noreferrer"
+            >HTL Leonding</a
+          ><br />
+          Diese App wird an der HTL Leonding entwickelt und bereitgestellt.
+          <br />
+          Die Benutzung erfolgt vollständig anonym - es werden keinerlei
+          personenbezogene Daten erhoben oder gespeichert.
+        </p>
+      </div>
+    </div>
+
+    <button
+      class="mx-4 mt-8 h-10 rounded-2xl bg-orange-500 text-base font-medium text-white"
+      (click)="resetGuideApp()"
+    >
+      Leitfaden zurücksetzen
+    </button>
+  </div>
+
+  <div class="fixed bottom-0 left-0 right-0 mx-2">
+    <app-navbar [mode]="'about'" />
+  </div>
+</div>

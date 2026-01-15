@@ -14,7 +14,6 @@ public static class StudentManagementApi
         //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
         group.MapPost("api/students", StudentManagementEndpoints.CreateStudent)
-            .AddEndpointFilter(StudentManagementValidations.CreateStudentValidationAsync)
             .WithName(nameof(StudentManagementEndpoints.CreateStudent))
             .WithDescription("Create a new student")
             .Produces(StatusCodes.Status201Created)
@@ -28,7 +27,6 @@ public static class StudentManagementApi
             .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPut("api/students/{id}", StudentManagementEndpoints.UpdateStudent)
-            .AddEndpointFilter(StudentManagementValidations.UpdateStudentValidationAsync)
             .WithName(nameof(StudentManagementEndpoints.UpdateStudent))
             .WithDescription("Update a student")
             .Produces(StatusCodes.Status400BadRequest)
@@ -38,12 +36,20 @@ public static class StudentManagementApi
         group.MapPost("api/students/upload", StudentManagementEndpoints.UploadCsvFile)
             .AddEndpointFilter(StudentManagementValidations.UploadCsvFileValidationAsync)
             .DisableAntiforgery();
-        
+
         group.MapGet("api/students/csv", StudentManagementEndpoints.GetStudentsCsv)
             .WithName(nameof(StudentManagementEndpoints.GetStudentsCsv))
             .WithDescription("Get all students in a csv file")
             .Produces(StatusCodes.Status206PartialContent)
             .Produces(StatusCodes.Status416RangeNotSatisfiable)
+            .RequireAuthorization(Setup.AdminPolicyName);
+
+        group.MapPost("api/students/assignments/upload", StudentManagementEndpoints.UploadStudentAssignmentsCsv)
+            .WithName(nameof(StudentManagementEndpoints.UploadStudentAssignmentsCsv))
+            .WithDescription("Upload student assignments from CSV file")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .DisableAntiforgery()
             .RequireAuthorization(Setup.AdminPolicyName);
     }
 }

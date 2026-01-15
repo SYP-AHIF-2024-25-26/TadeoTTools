@@ -1,0 +1,102 @@
+<div class="sticky top-0 z-50 bg-background-400 shadow">
+  <nav
+    class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-text-900"
+  >
+    <!-- Logo -->
+    <a [routerLink]="['/']" class="flex items-center">
+      <img
+        ngSrc="assets/Leonding_Logo.svg"
+        priority
+        alt="Leonding Logo"
+        class="h-8"
+        height="29"
+        width="128"
+      />
+    </a>
+
+    <!-- Nav Links (desktop) -->
+    <div class="hidden space-x-4 md:flex md:items-center md:justify-start">
+      @if (isAdmin()) {
+        @for (link of navLinks; track link.route) {
+          <button
+            class="px-3 py-2"
+            [routerLink]="[link.route]"
+            routerLinkActive="bg-primary underline font-medium rounded"
+          >
+            {{ link.label }}
+          </button>
+        }
+      }
+    </div>
+
+    <div class="flex items-center space-x-4">
+      <label class="inline-flex cursor-pointer items-center">
+        <input
+          type="checkbox"
+          class="peer sr-only"
+          (click)="changeDarkMode()"
+        />
+        <div
+          class="peer relative ml-8 h-6 w-11 rounded-full bg-background-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-background-50 after:transition-all after:content-[''] peer-checked:bg-background-600 peer-checked:after:translate-x-full peer-checked:after:border-white md:p-0"
+        ></div>
+        <span class="ms-2 hidden md:block">Theme</span>
+      </label>
+
+      <!-- Admin/User Logic -->
+      @if (!isAdmin()) {
+        <button (click)="logout()">Logout</button>
+      } @else {
+        <app-admin-dropdown></app-admin-dropdown>
+      }
+    </div>
+
+    <!-- Hamburger and Mobile Dropdown Wrapper -->
+    <div class="relative md:hidden">
+      <!-- Hamburger (mobile only) -->
+      <button
+        class="inline-flex items-center justify-center rounded p-2 text-text-900 hover:bg-background-300 focus:outline-none"
+        (click)="mobileMenuOpen.set(!mobileMenuOpen())"
+      >
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            [attr.d]="
+              mobileMenuOpen()
+                ? 'M6 18L18 6M6 6l12 12'
+                : 'M4 6h16M4 12h16M4 18h16'
+            "
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </button>
+
+      <!-- Mobile Menu Dropdown -->
+      @if (mobileMenuOpen()) {
+        <div
+          class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-background-100 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-background-800"
+        >
+          <div class="py-1">
+            @if (isAdmin()) {
+              @for (link of navLinks; track link.route) {
+                <a
+                  class="block px-4 py-2 text-sm text-secondary-content"
+                  (click)="mobileMenuOpen.set(false)"
+                  [routerLink]="[link.route]"
+                  routerLinkActive="bg-primary font-medium"
+                >
+                  {{ link.label }}
+                </a>
+              }
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </nav>
+</div>

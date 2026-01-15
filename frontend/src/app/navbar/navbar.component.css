@@ -1,5 +1,0 @@
-/* Safe area inset support for iOS devices with notches */
-nav {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-

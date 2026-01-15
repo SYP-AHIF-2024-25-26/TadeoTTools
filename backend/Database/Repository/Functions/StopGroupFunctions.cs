@@ -11,7 +11,7 @@ public class StopGroupFunctions
                 g.Id,
                 g.Name,
                 g.Description,
-                g.Rank,
+                g.Order,
                 g.IsPublic,
                 context.StopGroupAssignments
                     .Where(a => a.StopGroupId == g.Id)
@@ -30,7 +30,7 @@ public class StopGroupFunctions
                 g.Id,
                 g.Name,
                 g.Description,
-                g.Rank,
+                g.Order,
                 context.StopGroupAssignments
                     .Where(a => a.StopGroupId == g.Id)
                     .OrderBy(a => a.Order)
@@ -43,7 +43,7 @@ public class StopGroupFunctions
         return await context.StopGroups.SingleOrDefaultAsync(sg => sg.Id == id) != null;
     }
 
-    public record StopGroupWithStops(int Id, string Name, string Description, int Rank, bool IsPublic, int[] StopIds);
+    public record StopGroupWithStops(int Id, string Name, string Description, int Order, bool IsPublic, int[] StopIds);
 
-    public record StopGroupWithStopsPublic(int Id, string Name, string Description, int Rank, int[] StopIds);
+    public record StopGroupWithStopsPublic(int Id, string Name, string Description, int Order, int[] StopIds);
 }

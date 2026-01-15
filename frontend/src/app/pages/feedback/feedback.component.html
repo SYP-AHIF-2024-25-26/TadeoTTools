@@ -1,0 +1,317 @@
+<!-- Header -->
+<div class="flex h-screen touch-pan-y select-none flex-col overflow-y-scroll">
+  <app-header [showWelcomeText]="false" />
+  <!-- Main Content -->
+  <div
+    class="flex flex-1 flex-col items-center overflow-auto bg-gray-50 p-4 pb-24"
+  >
+    @if (questions().length == 0) {
+      <div class="flex h-full items-center justify-center">
+        <p class="text-gray-500">Keine Fragen verfügbar.</p>
+      </div>
+    } @else if (!feedbackAlreadySubmitted() && !isSubmitted()) {
+      <!-- Feedback Form -->
+      <div
+        class="mb-6 mt-4 flex max-h-[65vh] w-full max-w-md flex-col overflow-hidden rounded-lg border-0 bg-white shadow-lg"
+      >
+        <!-- Progress Header - Fixed -->
+        <div class="flex-shrink-0 p-4 pb-2">
+          <div class="mb-2 flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-500"
+              >Frage {{ currentVisibleIndex() + 1 }} von
+              {{ visibleQuestions().length }}</span
+            >
+            <span class="text-sm font-medium text-orange-500"
+              >{{ progressPercentage() }}%</span
+            >
+          </div>
+          <div class="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+            <div
+              class="h-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-300"
+              [style.width.%]="progressPercentage()"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Question Title - Fixed -->
+        <div class="flex-shrink-0 px-4 pb-2 pt-3">
+          <h3 class="text-lg font-bold text-gray-800">
+            {{ currentQuestion().question }}
+          </h3>
+        </div>
+
+        <!-- Answer Section - Scrollable -->
+        <div class="min-h-0 flex-1 overflow-y-auto px-4 pb-4 pt-3">
+          <!-- Text Input Question -->
+          @if (currentQuestion().type === 'Text') {
+            <input
+              type="text"
+              [value]="currentAnswer()"
+              (input)="updateTextAnswer($any($event.target).value)"
+              [placeholder]="
+                currentQuestion().placeholder || 'Enter your answer'
+              "
+              class="w-full rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-orange-500"
+              autofocus
+            />
+          }
+
+          <!-- Single Choice Question -->
+          @if (currentQuestion().type === 'SingleChoice') {
+            <div class="space-y-3">
+              @for (option of currentQuestion().options; track option) {
+                <div class="flex items-center">
+                  <div
+                    (click)="selectOption(option)"
+                    class="flex w-full cursor-pointer items-center rounded-lg border p-3 transition-colors"
+                    [class.bg-orange-50]="isOptionSelected(option)"
+                    [class.border-orange-300]="isOptionSelected(option)"
+                    [class.border-gray-200]="!isOptionSelected(option)"
+                  >
+                    <div
+                      class="mr-3 flex h-5 w-5 items-center justify-center rounded-full border-2"
+                      [class.border-orange-500]="isOptionSelected(option)"
+                      [class.border-gray-300]="!isOptionSelected(option)"
+                    >
+                      @if (isOptionSelected(option)) {
+                        <div class="h-3 w-3 rounded-full bg-orange-500"></div>
+                      }
+                    </div>
+                    <span>{{ option }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Multiple Choice Question -->
+          @if (currentQuestion().type === 'MultipleChoice') {
+            <div class="space-y-3">
+              @for (option of currentQuestion().options; track option) {
+                <div class="flex items-center">
+                  <div
+                    (click)="selectOption(option)"
+                    class="flex w-full cursor-pointer items-center rounded-lg border p-3 transition-colors"
+                    [class.bg-orange-50]="isOptionSelected(option)"
+                    [class.border-orange-300]="isOptionSelected(option)"
+                    [class.border-gray-200]="!isOptionSelected(option)"
+                  >
+                    <!-- Checkbox style for multiple choice -->
+                    <div
+                      class="mr-3 flex h-5 w-5 items-center justify-center rounded border-2"
+                      [class.border-orange-500]="isOptionSelected(option)"
+                      [class.bg-orange-500]="isOptionSelected(option)"
+                      [class.border-gray-300]="!isOptionSelected(option)"
+                    >
+                      @if (isOptionSelected(option)) {
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-3 w-3 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="3"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      }
+                    </div>
+                    <span>{{ option }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Rating Question -->
+          @if (currentQuestion().type === 'Rating') {
+            <div class="mb-4">
+              <div class="flex items-center justify-between">
+                @for (
+                  rating of getRatingRange();
+                  track rating;
+                  let i = $index
+                ) {
+                  <div
+                    (click)="selectRating(rating)"
+                    class="group flex cursor-pointer flex-col items-center"
+                  >
+                    <div
+                      class="mb-1 flex h-10 w-10 items-center justify-center rounded-full transition-colors"
+                      [class.bg-orange-500]="
+                        currentAnswer() === rating.toString()
+                      "
+                      [class.text-white]="currentAnswer() === rating.toString()"
+                      [class.bg-gray-100]="
+                        currentAnswer() !== rating.toString()
+                      "
+                      [class.hover:bg-orange-100]="
+                        currentAnswer() !== rating.toString()
+                      "
+                    >
+                      {{ rating }}
+                    </div>
+                    <span
+                      class="text-center text-xs transition-colors"
+                      [class.text-orange-500]="
+                        currentAnswer() === rating.toString()
+                      "
+                      [class.text-gray-500]="
+                        currentAnswer() !== rating.toString()
+                      "
+                      [class.group-hover:text-orange-400]="
+                        currentAnswer() !== rating.toString()
+                      "
+                    >
+                      {{ getRatingLabel(rating) }}
+                    </span>
+                  </div>
+
+                  <!-- Divider between ratings -->
+                  @if (i < getRatingRange().length - 1) {
+                    <div class="h-px flex-1 self-center bg-gray-200"></div>
+                  }
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Error message for required questions -->
+          @if (showError()) {
+            <div class="mt-2 text-sm text-red-500">
+              {{
+                currentQuestion().required
+                  ? 'Diese Frage muss beantwortet werden'
+                  : ''
+              }}
+            </div>
+          }
+        </div>
+
+        <!-- Form Footer - Fixed at bottom -->
+        <div
+          class="flex flex-shrink-0 justify-between border-t border-gray-100 px-4 py-3"
+        >
+          <button
+            type="button"
+            (click)="goToPrevious()"
+            [disabled]="currentVisibleIndex() === 0"
+            class="flex items-center rounded-md px-4 py-2 text-gray-500 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-2 h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            Zurück
+          </button>
+
+          <button
+            type="button"
+            (click)="onSubmit()"
+            class="flex items-center rounded-md bg-gradient-to-r from-orange-400 to-orange-500 px-4 py-2 text-white hover:from-orange-500 hover:to-orange-600"
+          >
+            @if (currentVisibleIndex() === visibleQuestions().length - 1) {
+              Absenden
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="ml-2 h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                />
+              </svg>
+            } @else {
+              Weiter
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="ml-2 h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            }
+          </button>
+        </div>
+      </div>
+    } @else {
+      <!-- Thank You Template -->
+      <div
+        class="w-full max-w-md overflow-hidden rounded-lg border-0 bg-white p-8 text-center shadow-lg"
+      >
+        <div
+          class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100"
+        >
+          <svg
+            class="h-8 w-8 text-green-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+        </div>
+        <h3 class="mb-2 text-2xl font-bold text-gray-800">Vielen Dank!</h3>
+        <p class="mb-6 text-gray-600">
+          Dein Feedback wurde erfolgreich an uns weitergeleitet
+        </p>
+
+        <!-- Show answers summary if needed -->
+        @if (showAnswerSummary()) {
+          <div class="mt-8 text-left">
+            <h4 class="mb-3 text-lg font-bold text-gray-700">
+              Ihre Antworten:
+            </h4>
+            @for (
+              question of visibleQuestions();
+              track question;
+              let i = $index
+            ) {
+              <div class="mb-4">
+                <p class="font-medium text-gray-700">{{ question.question }}</p>
+                <p class="text-gray-600">
+                  {{ answers()[i] || 'No answer provided' }}
+                </p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+    <div class="fixed bottom-0 left-0 right-0 mx-2">
+      <app-navbar [mode]="'feedback'" />
+    </div>
+  </div>
+</div>

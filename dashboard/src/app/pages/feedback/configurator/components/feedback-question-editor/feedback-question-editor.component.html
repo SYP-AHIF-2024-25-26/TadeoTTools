@@ -1,0 +1,375 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 text-text-950"
+>
+  <div
+    class="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-lg bg-background-100 shadow-xl"
+  >
+    <!-- Fixed Header -->
+    <div
+      class="flex items-center justify-between border-b border-background-200 p-6 pb-4"
+    >
+      <h3 class="text-xl font-semibold text-text-950">
+        {{ editingIndex() === -1 ? 'Add New Question' : 'Edit Question' }}
+      </h3>
+      <button (click)="cancel.emit()" class="text-text-900 hover:text-text-950">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="flex-1 overflow-y-auto p-6">
+      <form
+        [formGroup]="questionForm()"
+        (ngSubmit)="save.emit()"
+        id="questionEditorForm"
+      >
+        <div class="mb-4">
+          <label
+            for="question"
+            class="mb-1 block text-sm font-medium text-text-950"
+            >Question Text</label
+          >
+          <input
+            type="text"
+            id="question"
+            formControlName="question"
+            class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+            placeholder="Enter your question"
+          />
+          @if (
+            questionForm().get('question')?.invalid &&
+            questionForm().get('question')?.touched
+          ) {
+            <div class="mt-1 text-sm text-red-500">
+              Question text is required
+            </div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label
+            for="type"
+            class="mb-1 block bg-background-100 text-sm font-medium text-text-950"
+            >Question Type</label
+          >
+          <select
+            id="type"
+            formControlName="type"
+            class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+          >
+            <option value="Text">Text Input</option>
+            <option value="SingleChoice">Single Choice</option>
+            <option value="MultipleChoice">Multiple Choice</option>
+            <option value="Rating">Rating</option>
+          </select>
+        </div>
+
+        <!-- Options for Choice Types -->
+        @if (isChoiceType()) {
+          <div class="mb-4">
+            <label class="mb-1 block text-sm font-medium text-text-900"
+              >Answer Options</label
+            >
+            <div formArrayName="options" class="space-y-2">
+              @for (
+                control of optionsArray.controls;
+                track control;
+                let i = $index
+              ) {
+                <div class="flex items-center">
+                  <input
+                    [formControlName]="i"
+                    type="text"
+                    class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                    [class.border-red-500]="hasDuplicateOption(i)"
+                    [class.bg-red-50]="hasDuplicateOption(i)"
+                    placeholder="Option {{ i + 1 }}"
+                  />
+                  @if (optionsArray.controls.length > 1) {
+                    <button
+                      type="button"
+                      (click)="removeOption(i); $event.stopPropagation()"
+                      class="ml-2 flex-shrink-0 text-gray-400 hover:text-red-500"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  }
+                </div>
+                @if (hasDuplicateOption(i)) {
+                  <div class="mt-1 text-xs text-red-500">
+                    This option name already exists. Please use a unique name.
+                  </div>
+                }
+              }
+            </div>
+            <button
+              type="button"
+              (click)="addOption()"
+              class="mt-2 flex items-center rounded-md bg-background-300 px-3 py-1 text-sm text-text-900 hover:bg-background-400"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mr-1 h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add Option
+            </button>
+          </div>
+        }
+
+        <!-- Settings for Rating -->
+        @if (questionForm().get('type')?.value === 'Rating') {
+          <div class="mb-4">
+            <label class="mb-1 block text-sm font-medium text-text-950"
+              >Rating Scale</label
+            >
+            <div class="flex items-center space-x-4">
+              <div class="flex-1">
+                <label for="minRating" class="mb-1 block text-xs text-text-900"
+                  >Minimum</label
+                >
+                <input
+                  type="number"
+                  id="minRating"
+                  formControlName="minRating"
+                  min="0"
+                  max="10"
+                  class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                />
+              </div>
+              <div class="flex-1">
+                <label for="maxRating" class="mb-1 block text-xs text-text-900"
+                  >Maximum</label
+                >
+                <input
+                  type="number"
+                  id="maxRating"
+                  formControlName="maxRating"
+                  min="1"
+                  max="10"
+                  class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                />
+              </div>
+            </div>
+            <div class="mt-2">
+              <label for="ratingLabels" class="mb-1 block text-xs text-text-900"
+                >Labels (comma separated, e.g. "Poor, Average,
+                Excellent")</label
+              >
+              <input
+                type="text"
+                id="ratingLabels"
+                formControlName="ratingLabels"
+                class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                placeholder="Poor, Average, Excellent"
+              />
+            </div>
+          </div>
+        }
+
+        <!-- Placeholder for Text type -->
+        @if (questionForm().get('type')?.value === 'Text') {
+          <div class="mb-4">
+            <label for="placeholder" class="mb-1 block text-sm font-medium"
+              >Answer Placeholder</label
+            >
+            <input
+              type="text"
+              id="placeholder"
+              formControlName="placeholder"
+              class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+              placeholder="e.g., Enter your answer"
+            />
+          </div>
+        }
+
+        <div class="mb-4">
+          <label class="flex items-center">
+            <input
+              type="checkbox"
+              formControlName="required"
+              class="h-4 w-4 rounded border-gray-300"
+            />
+            <span class="ml-2 text-sm text-text-950">Required question</span>
+          </label>
+        </div>
+
+        <!-- Dependencies Section -->
+        <div class="mb-4 border-t border-background-200 pt-4">
+          <div class="mb-2 flex items-center justify-between">
+            <label class="block text-sm font-medium text-text-950"
+              >Follow-up Conditions</label
+            >
+            @if (availableParentQuestions().length > 0) {
+              <button
+                type="button"
+                (click)="addDependency()"
+                class="flex items-center rounded-md bg-background-300 px-2 py-1 text-xs text-text-900 hover:bg-background-400"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="mr-1 h-3 w-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Add Condition
+              </button>
+            }
+          </div>
+
+          @if (availableParentQuestions().length === 0) {
+            <p class="text-xs text-text-900">
+              No choice questions available. Add a Single/Multiple Choice
+              question first to create follow-up conditions.
+            </p>
+          } @else if (dependenciesArray.length === 0) {
+            <p class="text-xs text-text-900">
+              This question will always be shown. Add a condition to make it a
+              follow-up question.
+            </p>
+          } @else {
+            <div formArrayName="dependencies" class="space-y-3">
+              @for (
+                dep of dependenciesArray.controls;
+                track dep;
+                let i = $index
+              ) {
+                <div
+                  [formGroupName]="i"
+                  class="flex items-start gap-2 rounded-md bg-background-200 p-3"
+                >
+                  <div class="flex-1">
+                    <label class="mb-1 block text-xs text-text-900"
+                      >Show when question:</label
+                    >
+                    <select
+                      formControlName="dependsOnQuestionId"
+                      class="w-full rounded-md border border-background-300 bg-background-50 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
+                    >
+                      <option [value]="0">-- Select Question --</option>
+                      @for (q of availableParentQuestions(); track q.id) {
+                        <option [value]="q.id">{{ q.question }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="flex-1">
+                    <label class="mb-1 block text-xs text-text-900"
+                      >Has answer:</label
+                    >
+                    @if (
+                      getParentQuestionOptions(
+                        dep.get('dependsOnQuestionId')?.value
+                      ).length > 0
+                    ) {
+                      <select
+                        formControlName="conditionValue"
+                        class="w-full rounded-md border border-background-300 bg-background-50 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
+                      >
+                        <option value="">-- Select Answer --</option>
+                        @for (
+                          opt of getParentQuestionOptions(
+                            dep.get('dependsOnQuestionId')?.value
+                          );
+                          track opt
+                        ) {
+                          <option [value]="opt">{{ opt }}</option>
+                        }
+                      </select>
+                    } @else {
+                      <input
+                        formControlName="conditionValue"
+                        type="text"
+                        placeholder="Enter condition value"
+                        class="w-full rounded-md border border-background-300 bg-background-50 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
+                      />
+                    }
+                  </div>
+                  <button
+                    type="button"
+                    (click)="removeDependency(i)"
+                    class="mt-5 flex-shrink-0 text-gray-400 hover:text-red-500"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="flex justify-end space-x-3 border-t border-gray-200 pt-4">
+          <button
+            type="button"
+            (click)="cancel.emit()"
+            class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="questionForm().invalid"
+            class="btn btn-primary"
+          >
+            Save Question
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

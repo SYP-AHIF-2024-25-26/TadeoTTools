@@ -1,0 +1,18 @@
+@if (info != null) {
+  <div
+    id="content"
+    class="mt-2 flex items-center justify-between rounded-lg px-4 py-2 text-text-950 shadow-md"
+    [ngClass]="{
+      'bg-secondary-200': info.type === 'info',
+      'bg-accent-200': info.type === 'error',
+    }"
+  >
+    {{ info.message }}
+    <button
+      class="ml-6 flex h-6 w-6 items-center justify-center rounded-full font-medium text-text-950 hover:bg-primary-300"
+      (click)="closePopup()"
+    >
+      ✕
+    </button>
+  </div>
+}

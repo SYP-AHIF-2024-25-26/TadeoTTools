@@ -1,0 +1,27 @@
+<div
+  class="flex w-full touch-pan-y select-none flex-col justify-start overflow-y-scroll bg-gray-50"
+>
+  <div>
+    <app-header />
+  </div>
+  <div class="mb-28 flex h-full flex-col justify-center">
+    @if (showResetButton()) {
+      @for (group of groups(); track group.id) {
+        <app-guide-card
+          class="mt-6"
+          [stopGroup]="group"
+          [checked]="isGroupFinished(group)"
+          [progress]="getGroupProgress(group)"
+          [totalStops]="getGroupTotal(group)"
+          (onToggle)="onToggleGroup(group)"
+          (openStopPage)="openStopPage(group)"
+        >
+        </app-guide-card>
+      }
+    }
+  </div>
+
+  <div class="fixed bottom-0 left-0 right-0 mx-2">
+    <app-navbar [mode]="'station'" />
+  </div>
+</div>

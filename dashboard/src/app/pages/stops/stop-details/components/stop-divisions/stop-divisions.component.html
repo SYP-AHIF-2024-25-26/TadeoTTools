@@ -1,0 +1,91 @@
+<div class="mb-4">
+  <div
+    class="mb-2 flex cursor-pointer items-center justify-between rounded-lg bg-primary-200 p-2 pl-5"
+    (click)="toggle()"
+  >
+    <h1 class="text-lg font-medium text-text-950">Divisions</h1>
+    <span class="text-text-900">{{ isExpanded() ? '▼' : '►' }}</span>
+  </div>
+  <div [ngClass]="{ hidden: !isExpanded() }">
+    <div>
+      @if (isAdmin()) {
+        <div class="mb-6 mt-4">
+          <form>
+            <label
+              for="divisions"
+              class="block text-sm font-medium text-text-950"
+              >Add Division</label
+            >
+            <select
+              id="divisions"
+              (change)="onDivisionSelect($event)"
+              class="block w-full rounded-lg border border-primary-200 bg-background-50 p-2.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
+            >
+              <option value="0" selected>Select Division</option>
+              @for (division of inactiveDivisions(); track division.id) {
+                <option value="{{ division.id }}">
+                  {{ division.name }}
+                </option>
+              }
+            </select>
+          </form>
+        </div>
+        <div class="mb-2 text-sm font-medium text-text-950">
+          Selected Divisions
+        </div>
+        <div
+          class="w-full overflow-y-auto rounded-lg border border-primary-200 bg-background-50"
+        >
+          <ul class="divide-y divide-primary-100">
+            @for (id of stop().divisionIds; track $index) {
+              <li
+                class="cursor-pointer px-4 py-2 text-sm text-text-950 hover:bg-primary-100"
+                (click)="onDivisionRemove(id.toString())"
+              >
+                {{ getDivisionById(id)!.name }}
+                <span
+                  class="ml-2 inline-block h-4 w-4 rounded-full"
+                  [style.background-color]="getDivisionById(id)!.color"
+                ></span>
+              </li>
+            }
+            @if (stop().divisionIds.length === 0) {
+              <li class="px-4 py-2 text-sm text-text-900">
+                No divisions assigned
+              </li>
+            }
+          </ul>
+        </div>
+      } @else {
+        <div class="mt-4">
+          @if (stop().divisionIds.length > 0) {
+            <div class="ml-1 flex flex-wrap gap-2">
+              @for (id of stop().divisionIds; track $index) {
+                <span
+                  class="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-800 shadow-sm"
+                >
+                  {{ getDivisionById(id)!.name }}
+                  <span
+                    class="ml-2 inline-block h-4 w-4 rounded-full"
+                    [style.background-color]="getDivisionById(id)!.color"
+                  ></span>
+                </span>
+              }
+            </div>
+          } @else {
+            <p class="ml-4 text-sm text-text-900">No divisions assigned</p>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (showRemoveDivisionPopup()) {
+    <app-delete-popup
+      [title]="'Remove Division'"
+      [message]="'Are you sure you want to remove this division from the stop?'"
+      (cancel)="showRemoveDivisionPopup.set(false)"
+      (removeConfirmed)="confirmDivisionRemove()"
+    />
+  }
+</div>

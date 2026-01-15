@@ -1,0 +1,128 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+>
+  <div
+    class="max-h-[80vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-white p-6 shadow-lg dark:bg-background-800"
+  >
+    <div class="mb-4 flex items-center justify-between">
+      <h3 class="text-xl font-bold">
+        Request Details for {{ student().firstName }}
+        {{ student().lastName }}
+      </h3>
+      <button class="btn btn-circle btn-sm" (click)="close.emit()">✕</button>
+    </div>
+
+    <div class="hidden overflow-x-auto md:block">
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr>
+            <th>Stop Name</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (
+            assignment of student().studentAssignments;
+            track $index;
+            let i = $index
+          ) {
+            <tr>
+              <td>{{ assignment.stopName }}</td>
+              <td class="{{ getStatusClass(assignment.status) }}">
+                {{ getStatusText(assignment.status) }}
+              </td>
+              <td class="flex gap-2">
+                @if (assignment.status === Status.Pending) {
+                  <button
+                    class="btn btn-primary btn-sm"
+                    (click)="approveAssignment(i)"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    class="btn btn-error btn-sm"
+                    (click)="rejectAssignment(i)"
+                  >
+                    Reject
+                  </button>
+                } @else {
+                  <button
+                    class="btn btn-primary btn-sm"
+                    (click)="undoAssignment(i)"
+                  >
+                    Undo
+                  </button>
+                }
+              </td>
+              <td>
+                <button
+                  class="btn btn-error btn-sm"
+                  (click)="deleteAssignment(i)"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="space-y-4 md:hidden">
+      @for (
+        assignment of student().studentAssignments;
+        track $index;
+        let i = $index
+      ) {
+        <div
+          class="rounded-lg bg-background-100 p-4 shadow dark:bg-background-900"
+        >
+          <div class="flex items-start justify-between">
+            <p class="font-bold">{{ assignment.stopName }}</p>
+            <span
+              class="text-sm font-semibold px-2 py-1 rounded {{
+                getStatusClass(assignment.status)
+              }}"
+            >
+              {{ getStatusText(assignment.status) }}
+            </span>
+          </div>
+          <div
+            class="mt-4 flex flex-wrap gap-2 border-t border-background-200 pt-4 dark:border-background-700"
+          >
+            @if (assignment.status === Status.Pending) {
+              <button
+                class="btn btn-primary btn-sm flex-1"
+                (click)="approveAssignment(i)"
+              >
+                Accept
+              </button>
+              <button
+                class="btn btn-error btn-sm flex-1"
+                (click)="rejectAssignment(i)"
+              >
+                Reject
+              </button>
+            } @else {
+              <button
+                class="btn btn-primary btn-sm flex-1"
+                (click)="undoAssignment(i)"
+              >
+                Undo
+              </button>
+            }
+            <button
+              class="btn btn-outline btn-error btn-sm"
+              (click)="deleteAssignment(i)"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<app-header [showWelcomeText]="false" />
+<div class="flex min-h-screen w-full flex-col justify-start bg-gray-50 p-4">
+  <div class="mx-auto mt-4 max-w-3xl space-y-8 text-center">
+    <h1
+      class="animate-gradient bg-gradient-to-r from-informatic-blue via-electronics-red to-medicin-technology-yellow bg-clip-text text-4xl font-bold tracking-tighter text-transparent sm:text-5xl md:text-6xl lg:text-7xl"
+    >
+      Wir freuen uns auf deinen Besuch!
+    </h1>
+
+    <p class="mx-auto max-w-[600px] text-xl font-medium text-black">
+      Der nächste Tag der offenen Tür findet am Freitag dem
+      <strong
+        >{{ targetDate.getDate() }}.{{ targetDate.getMonth() + 1 }}.{{
+          targetDate.getFullYear()
+        }}</strong
+      >
+      statt!
+    </p>
+  </div>
+  <div class="mt-16 self-center">
+    <app-countdown [targetDate]="targetDate" />
+  </div>
+</div>

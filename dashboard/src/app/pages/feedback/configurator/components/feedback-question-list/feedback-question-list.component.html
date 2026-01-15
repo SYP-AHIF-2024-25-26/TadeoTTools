@@ -1,0 +1,172 @@
+<div
+  class="mb-6 rounded-lg bg-background-100 p-6 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+>
+  <div class="mb-4 flex items-center justify-between">
+    <h2 class="text-lg font-semibold">Questions</h2>
+    <button
+      (click)="addQuestion.emit()"
+      class="btn btn-primary flex items-center"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="mr-1 h-4 w-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 4v16m8-8H4"
+        />
+      </svg>
+      Add Question
+    </button>
+  </div>
+
+  <div class="mb-4 text-sm text-text-900">
+    Drag and drop to reorder questions. Click on a question to edit it.
+  </div>
+
+  <!-- Questions List -->
+  <div cdkDropList (cdkDropListDropped)="onDrop($event)" class="space-y-3">
+    @for (question of questions(); track question; let i = $index) {
+      <div
+        cdkDrag
+        class="flex cursor-move items-center rounded-lg bg-background-300 p-4 transition-colors hover:border hover:border-primary-300"
+      >
+        <!-- Drag Handle -->
+        <div cdkDragHandle class="mr-3 cursor-grab text-text-950">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </div>
+
+        <!-- Question Number -->
+        <div
+          class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 font-medium text-text-950"
+        >
+          {{ i + 1 }}
+        </div>
+
+        <!-- Question Content -->
+        <div class="flex-1" (click)="editQuestion.emit(i)">
+          <p class="font-medium text-text-950">{{ question.question }}</p>
+          <p class="text-sm text-text-950">
+            {{ question.required ? 'Required' : 'Optional' }} ·
+            {{
+              question.type === 'Text'
+                ? 'Text input'
+                : question.type === 'SingleChoice'
+                  ? 'Single choice'
+                  : question.type === 'MultipleChoice'
+                    ? 'Multiple choice'
+                    : question.type === 'Rating'
+                      ? 'Rating'
+                      : 'Unknown'
+            }}
+            @if (question.dependencies && question.dependencies.length > 0) {
+              · <span class="text-primary-500">Follow-up</span>
+            }
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex space-x-2">
+          <button
+            (click)="editQuestion.emit(i)"
+            class="p-1 text-text-950"
+            title="Edit question"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+          </button>
+          <button
+            (click)="deleteQuestion.emit(i)"
+            class="p-1 text-text-950 hover:text-red-500"
+            title="Delete question"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (questions().length === 0) {
+      <div
+        class="rounded-lg border border-dashed border-background-300 p-8 text-center"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="mx-auto mb-3 h-12 w-12 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <p class="mb-4 text-text-950">No questions added yet</p>
+        <button (click)="addQuestion.emit()" class="btn btn-primary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="mr-1 h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Add Your First Question
+        </button>
+      </div>
+    }
+  </div>
+</div>

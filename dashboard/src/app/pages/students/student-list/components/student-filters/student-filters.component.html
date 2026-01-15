@@ -1,0 +1,79 @@
+<div class="flex flex-col gap-4 md:flex-row md:items-end">
+  <div
+    class="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+  >
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Search</span>
+      </label>
+      <input
+        type="text"
+        placeholder="Search by (user)name"
+        class="input input-bordered w-full bg-primary-300 placeholder-white hover:bg-primary-400 dark:placeholder-white"
+        [(ngModel)]="searchTerm"
+      />
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Class Filter</span>
+      </label>
+      <select
+        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+        [(ngModel)]="classFilter"
+      >
+        <option value="">All Classes</option>
+        @for (className of filteredUniqueClasses(); track className) {
+          <option [value]="className">{{ className }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Department</span>
+      </label>
+      <select
+        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+        [(ngModel)]="departmentFilter"
+      >
+        <option value="">All Departments</option>
+        @for (dep of uniqueDepartments(); track dep) {
+          <option [value]="dep">{{ dep }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Stop Filter</span>
+      </label>
+      <select
+        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+        [(ngModel)]="stopFilter"
+      >
+        <option value="">All Stops</option>
+        @for (stopName of uniqueStops(); track stopName) {
+          <option [value]="stopName">{{ stopName }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Status</span>
+      </label>
+      <select
+        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+        [(ngModel)]="statusFilter"
+      >
+        <option value="all">All</option>
+        <option value="unassigned">Unassigned</option>
+        <option value="conflict">Conflicts</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+  </div>
+</div>

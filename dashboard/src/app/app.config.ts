@@ -1,18 +1,16 @@
-import { ApplicationConfig, InjectionToken, provideExperimentalZonelessChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  InjectionToken,
+  provideExperimentalZonelessChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
-  HTTP_INTERCEPTORS,
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
   provideHttpClient,
   withFetch,
   withInterceptors,
-  withInterceptorsFromDi,
 } from '@angular/common/http';
 import { routes } from './app.routes';
-import { environment } from '../environments/environment';
+import { environment } from '@env/environment';
 
 export const BASE_URL = new InjectionToken<string>('BaseUrl');
 
@@ -29,16 +27,20 @@ import {
 
 declare global {
   interface Window {
-    __env: any;
+    __env: { backendURL?: string };
   }
 }
-const baseUrl = environment.production && window.__env?.backendURL ? window.__env.backendURL : environment.apiBaseUrl;
+const baseUrl =
+  environment.production && window.__env?.backendURL
+    ? window.__env.backendURL
+    : environment.apiBaseUrl;
 const escapedBaseUrl = baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special characters
 const urlPattern = new RegExp(`^(${escapedBaseUrl})(\\/.*)?$`, 'i');
 
-const authTokenCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
-  urlPattern: urlPattern,
-});
+const authTokenCondition =
+  createInterceptorCondition<IncludeBearerTokenCondition>({
+    urlPattern: urlPattern,
+  });
 
 const keycloakProvider = provideKeycloak({
   config: {
@@ -53,7 +55,7 @@ const keycloakProvider = provideKeycloak({
     // when retrieving the token with the access code - we leave it like this for the moment until a solution is found
     flow: 'standard', // maybe implicit
     enableLogging: true,
-    checkLoginIframe: true,
+    checkLoginIframe: false,
     checkLoginIframeInterval: 10,
   },
 
@@ -81,9 +83,12 @@ export const appConfig: ApplicationConfig = {
       provide: BASE_URL,
       useFactory: () => {
         return baseUrl;
-      }
+      },
     },
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([includeBearerTokenInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([includeBearerTokenInterceptor])
+    ),
   ],
 };

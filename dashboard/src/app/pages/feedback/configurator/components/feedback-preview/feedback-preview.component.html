@@ -1,0 +1,257 @@
+<div class="mb-8">
+  <div
+    class="rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+  >
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-text-950">Form Preview</h2>
+      <span class="text-sm text-text-950"
+        >This is how users will see your form</span
+      >
+    </div>
+
+    <!-- Embedded Form Preview -->
+    <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+      <header class="mx-auto mb-8 flex w-full max-w-md flex-col items-center">
+        <h2
+          class="bg-gradient-to-r from-red-700 to-orange-500 bg-clip-text text-center text-3xl font-bold text-transparent"
+        >
+          {{ formTitle() }}<br />
+          {{ formSubtitle() }}
+        </h2>
+      </header>
+
+      <div
+        class="mx-auto w-full max-w-md overflow-hidden rounded-lg border border-gray-100 shadow-md"
+      >
+        <!-- Progress Header -->
+        <div class="bg-white p-4 pb-2">
+          <div class="mb-2 flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-500"
+              >Question {{ previewQuestionIndex() + 1 }} of
+              {{ visibleQuestions().length }}</span
+            >
+            <span class="text-sm font-medium text-orange-500"
+              >{{ previewProgressPercentage() }}%</span
+            >
+          </div>
+          <div class="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+            <div
+              class="h-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-300"
+              [style.width.%]="previewProgressPercentage()"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Question Content -->
+        <div class="bg-white p-4 pt-2">
+          <h3 class="mb-4 text-xl font-bold text-gray-500">
+            {{ currentPreviewQuestion()?.question || 'No questions added yet' }}
+          </h3>
+
+          <!-- Text Input Question -->
+          @if (currentPreviewQuestion()?.type === 'Text') {
+            <input
+              type="text"
+              [value]="currentPreviewAnswer()"
+              (input)="updatePreviewAnswer($any($event.target).value)"
+              [placeholder]="
+                currentPreviewQuestion()?.placeholder || 'Enter your answer'
+              "
+              class="w-full rounded-lg border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-400"
+            />
+          }
+
+          <!-- Single Choice Question -->
+          @if (currentPreviewQuestion()?.type === 'SingleChoice') {
+            <div class="space-y-3">
+              @for (option of currentPreviewQuestion()?.options; track option) {
+                <div class="flex items-center">
+                  <div
+                    (click)="selectPreviewOption(option)"
+                    class="flex w-full cursor-pointer items-center rounded-lg border p-3 transition-colors"
+                    [class.bg-orange-50]="isOptionSelected(option)"
+                    [class.border-orange-300]="isOptionSelected(option)"
+                    [class.border-gray-200]="!isOptionSelected(option)"
+                  >
+                    <div
+                      class="mr-3 flex h-5 w-5 items-center justify-center rounded-full border-2"
+                      [class.border-orange-500]="isOptionSelected(option)"
+                      [class.border-gray-300]="!isOptionSelected(option)"
+                    >
+                      @if (isOptionSelected(option)) {
+                        <div class="h-3 w-3 rounded-full bg-orange-500"></div>
+                      }
+                    </div>
+                    <span>{{ option }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Multiple Choice Question -->
+          @if (currentPreviewQuestion()?.type === 'MultipleChoice') {
+            <div class="space-y-3">
+              @for (option of currentPreviewQuestion()?.options; track option) {
+                <div class="flex items-center">
+                  <div
+                    (click)="selectPreviewOption(option)"
+                    class="flex w-full cursor-pointer items-center rounded-lg border p-3 transition-colors"
+                    [class.bg-orange-50]="isOptionSelected(option)"
+                    [class.border-orange-300]="isOptionSelected(option)"
+                    [class.border-gray-200]="!isOptionSelected(option)"
+                  >
+                    <!-- Checkbox style for multiple choice -->
+                    <div
+                      class="mr-3 flex h-5 w-5 items-center justify-center rounded border-2"
+                      [class.border-orange-500]="isOptionSelected(option)"
+                      [class.bg-orange-500]="isOptionSelected(option)"
+                      [class.border-gray-300]="!isOptionSelected(option)"
+                    >
+                      @if (isOptionSelected(option)) {
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-3 w-3 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="3"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      }
+                    </div>
+                    <span>{{ option }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Rating Question -->
+          @if (currentPreviewQuestion()?.type === 'Rating') {
+            <div class="mb-4">
+              <div class="flex items-center justify-between">
+                @for (
+                  rating of getPreviewRatingRange();
+                  track rating;
+                  let i = $index
+                ) {
+                  <div
+                    (click)="selectPreviewRating(rating)"
+                    class="group flex cursor-pointer flex-col items-center"
+                  >
+                    <div
+                      class="mb-1 flex h-10 w-10 items-center justify-center rounded-full transition-colors"
+                      [class.bg-orange-500]="
+                        currentPreviewAnswer() === rating.toString()
+                      "
+                      [class.text-white]="
+                        currentPreviewAnswer() === rating.toString()
+                      "
+                      [class.bg-gray-100]="
+                        currentPreviewAnswer() !== rating.toString()
+                      "
+                      [class.hover:bg-orange-100]="
+                        currentPreviewAnswer() !== rating.toString()
+                      "
+                    >
+                      {{ rating }}
+                    </div>
+                    <span
+                      class="text-center text-xs transition-colors"
+                      [class.text-orange-500]="
+                        currentPreviewAnswer() === rating.toString()
+                      "
+                      [class.text-gray-500]="
+                        currentPreviewAnswer() !== rating.toString()
+                      "
+                      [class.group-hover:text-orange-400]="
+                        currentPreviewAnswer() !== rating.toString()
+                      "
+                    >
+                      {{ getPreviewRatingLabel(rating) }}
+                    </span>
+                  </div>
+
+                  <!-- Divider between ratings -->
+                  @if (i < getPreviewRatingRange().length - 1) {
+                    <div class="h-px flex-1 self-center bg-gray-200"></div>
+                  }
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Form Footer -->
+        <div class="flex justify-between bg-white px-4 py-3">
+          <button
+            (click)="previousPreviewQuestion()"
+            [disabled]="previewQuestionIndex() === 0"
+            class="flex items-center rounded-md px-4 py-2 text-gray-500 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 inline h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            Previous
+          </button>
+
+          <button
+            (click)="nextPreviewQuestion()"
+            class="rounded-md bg-gradient-to-r from-orange-400 to-orange-500 px-4 py-2 text-white"
+          >
+            @if (previewQuestionIndex() === visibleQuestions().length - 1) {
+              Submit
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="ml-1 inline h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                />
+              </svg>
+            } @else {
+              Next
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="ml-1 inline h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
