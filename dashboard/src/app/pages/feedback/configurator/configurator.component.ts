@@ -15,10 +15,33 @@ import {
 } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FeedbackService } from '@/core/services/feedback.service';
-import { FeedbackQuestion } from '@/shared/models/types';
+import { FeedbackQuestion, FeedbackDependency } from '@/shared/models/types';
 import { FeedbackPreviewComponent } from './components/feedback-preview/feedback-preview.component';
 import { FeedbackQuestionListComponent } from './components/feedback-question-list/feedback-question-list.component';
 import { FeedbackQuestionEditorComponent } from './components/feedback-question-editor/feedback-question-editor.component';
+
+export type QuestionType =
+  | 'Text'
+  | 'Rating'
+  | 'SingleChoice'
+  | 'MultipleChoice';
+
+export interface QuestionFormGroup {
+  question: FormControl<string>;
+  type: FormControl<QuestionType>;
+  required: FormControl<boolean>;
+  placeholder: FormControl<string>;
+  options: FormArray<FormControl<string>>;
+  minRating: FormControl<number>;
+  maxRating: FormControl<number>;
+  ratingLabels: FormControl<string>;
+  dependencies: FormArray<FormGroup<DependencyFormGroup>>;
+}
+
+export interface DependencyFormGroup {
+  dependsOnQuestionId: FormControl<number>;
+  conditionValue: FormControl<string>;
+}
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -58,29 +81,27 @@ export class FeedbackConfiguratorComponent implements OnInit {
     return this.questionForm.get('options') as FormArray<FormControl<string>>;
   }
 
+  get dependenciesArray(): FormArray<FormGroup<DependencyFormGroup>> {
+    return this.questionForm.get('dependencies') as FormArray<
+      FormGroup<DependencyFormGroup>
+    >;
+  }
+
   async ngOnInit(): Promise<void> {
     await this.loadQuestions();
   }
 
-  createQuestionForm(): FormGroup<{
-    question: FormControl<string>;
-    type: FormControl<'text' | 'choice' | 'rating'>;
-    required: FormControl<boolean>;
-    placeholder: FormControl<string>;
-    options: FormArray<FormControl<string>>;
-    minRating: FormControl<number>;
-    maxRating: FormControl<number>;
-    ratingLabels: FormControl<string>;
-  }> {
+  createQuestionForm(): FormGroup<QuestionFormGroup> {
     return this.fb.group({
       question: ['', Validators.required],
-      type: this.fb.control<'text' | 'choice' | 'rating'>('text'),
+      type: this.fb.control<QuestionType>('Text'),
       required: [true],
       placeholder: ['Enter your answer'],
       options: this.fb.array<FormControl<string>>([]),
-      minRating: [0],
+      minRating: [1],
       maxRating: [5],
       ratingLabels: ['Poor, Average, Excellent'],
+      dependencies: this.fb.array<FormGroup<DependencyFormGroup>>([]),
     });
   }
 
@@ -100,19 +121,23 @@ export class FeedbackConfiguratorComponent implements OnInit {
     const question = this.questions()[index];
     this.editingIndex.set(index);
     this.optionsArray.clear();
+    this.dependenciesArray.clear();
 
     this.questionForm.patchValue({
       question: question.question,
       type: question.type,
       required: question.required,
       placeholder: question.placeholder || 'Enter your answer',
-      minRating: question.minRating ?? 0,
+      minRating: question.minRating ?? 1,
       maxRating: question.maxRating ?? 5,
       ratingLabels: question.ratingLabels || 'Poor, Average, Excellent',
     });
 
-    // Add options for choice type
-    if (question.type === 'choice') {
+    // Add options for choice types
+    if (
+      question.type === 'SingleChoice' ||
+      question.type === 'MultipleChoice'
+    ) {
       const options = question.options?.length
         ? question.options
         : ['Option 1', 'Option 2'];
@@ -121,7 +146,23 @@ export class FeedbackConfiguratorComponent implements OnInit {
       );
     }
 
+    // Add dependencies
+    if (question.dependencies?.length) {
+      question.dependencies.forEach((dep) => {
+        this.dependenciesArray.push(this.createDependencyFormGroup(dep));
+      });
+    }
+
     this.showQuestionEditor.set(true);
+  }
+
+  createDependencyFormGroup(
+    dep?: FeedbackDependency
+  ): FormGroup<DependencyFormGroup> {
+    return this.fb.group({
+      dependsOnQuestionId: [dep?.dependsOnQuestionId ?? 0],
+      conditionValue: [dep?.conditionValue ?? ''],
+    });
   }
 
   saveQuestion(): void {
@@ -151,12 +192,27 @@ export class FeedbackConfiguratorComponent implements OnInit {
     }
 
     // Add type-specific properties
-    if (formValue.type === 'choice') {
+    if (
+      formValue.type === 'SingleChoice' ||
+      formValue.type === 'MultipleChoice'
+    ) {
       question.options = formValue.options.filter((opt) => opt.trim() !== '');
-    } else if (formValue.type === 'rating') {
+    } else if (formValue.type === 'Rating') {
       question.minRating = formValue.minRating;
       question.maxRating = formValue.maxRating;
       question.ratingLabels = formValue.ratingLabels;
+    }
+
+    // Add dependencies
+    if (formValue.dependencies.length > 0) {
+      question.dependencies = formValue.dependencies
+        .filter(
+          (d) => d.dependsOnQuestionId > 0 && d.conditionValue.trim() !== ''
+        )
+        .map((d) => ({
+          dependsOnQuestionId: d.dependsOnQuestionId,
+          conditionValue: d.conditionValue,
+        }));
     }
 
     this.questions.update((questions) => {
@@ -206,5 +262,12 @@ export class FeedbackConfiguratorComponent implements OnInit {
 
     await this.feedbackService.saveFeedbackQuestions(this.questions());
     alert('Changes saved successfully!');
+  }
+
+  // Helper to get choice questions for dependency selection
+  getChoiceQuestions(): FeedbackQuestion[] {
+    return this.questions().filter(
+      (q) => q.type === 'SingleChoice' || q.type === 'MultipleChoice'
+    );
   }
 }

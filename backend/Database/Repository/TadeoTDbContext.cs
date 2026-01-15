@@ -25,7 +25,7 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<FeedbackDependency> FeedbackDependencies => Set<FeedbackDependency>();
 
     public DbSet<FeedbackOption> FeedbackOptions => Set<FeedbackOption>();
-    // public DbSet<FeedbackSession> FeedbackSessions => Set<FeedbackSession>();
+    public DbSet<FeedbackSession> FeedbackSessions => Set<FeedbackSession>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,12 +47,11 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
             .HasForeignKey(d => d.DependsOnQuestionId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        /*modelBuilder.Entity<FeedbackSession>()
+        modelBuilder.Entity<FeedbackSession>()
             .HasMany(s => s.FeedbackQuestionAnswers)
             .WithOne(a => a.FeedbackSession)
             .HasForeignKey(a => a.FeedbackSessionId)
             .OnDelete(DeleteBehavior.Cascade);
-            */
     }
 
     public override int SaveChanges()

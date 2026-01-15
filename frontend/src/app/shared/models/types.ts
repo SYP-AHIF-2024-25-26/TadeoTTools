@@ -25,7 +25,7 @@ export type Division = {
 export type FeedbackQuestion = {
   id?: number;
   question: string;
-  type: 'text' | 'choice' | 'rating';
+  type: 'Text' | 'Rating' | 'SingleChoice' | 'MultipleChoice';
   required: boolean;
   placeholder?: string;
   options?: string[];
@@ -33,6 +33,12 @@ export type FeedbackQuestion = {
   maxRating?: number;
   ratingLabels?: string;
   order: number;
+  dependencies?: FeedbackDependency[];
+};
+
+export type FeedbackDependency = {
+  dependsOnQuestionId: number;
+  conditionValue: string;
 };
 
 export type FeedbackSubmission = {

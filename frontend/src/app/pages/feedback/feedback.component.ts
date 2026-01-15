@@ -22,7 +22,7 @@ import { Router } from '@angular/router';
 })
 export class FeedbackComponent implements OnInit {
   // State signals
-  currentQuestionIndex = signal<number>(0);
+  currentVisibleIndex = signal<number>(0);
   isSubmitted = signal<boolean>(false);
   answers = signal<Record<number, string>>({});
   showError = signal<boolean>(false);
@@ -30,16 +30,54 @@ export class FeedbackComponent implements OnInit {
   questions = signal<FeedbackQuestion[]>([]);
   currentAnswer = signal<string>('');
 
-  // Computed signals
+  // Computed: which questions are visible based on dependencies
+  visibleQuestions = computed<FeedbackQuestion[]>(() => {
+    const allQuestions = this.questions();
+    const answersMap = this.answers();
+
+    return allQuestions.filter((q) => {
+      if (!q.dependencies || q.dependencies.length === 0) {
+        return true;
+      }
+
+      return q.dependencies.every((dep) => {
+        const parentQuestion = allQuestions.find(
+          (pq) => pq.id === dep.dependsOnQuestionId
+        );
+        if (!parentQuestion) return false;
+
+        const parentIndex = allQuestions.indexOf(parentQuestion);
+        const parentAnswer = answersMap[parentIndex] || '';
+
+        if (parentQuestion.type === 'MultipleChoice') {
+          const selectedOptions = parentAnswer
+            .split(',')
+            .map((s) => s.trim())
+            .filter((s) => s);
+          return selectedOptions.includes(dep.conditionValue);
+        }
+
+        return parentAnswer === dep.conditionValue;
+      });
+    });
+  });
+
   feedbackAlreadySubmitted = computed(
     () => localStorage.getItem('feedbackSubmitted') === 'true'
   );
-  currentQuestion = computed<FeedbackQuestion>(
-    () => this.questions()[this.currentQuestionIndex()]
-  );
+
+  currentQuestion = computed<FeedbackQuestion>(() => {
+    const visible = this.visibleQuestions();
+    const index = this.currentVisibleIndex();
+    return visible[index];
+  });
+
   progressPercentage = computed<number>(() =>
-    Math.round((this.currentQuestionIndex() / this.questions().length) * 100)
+    Math.round(
+      (this.currentVisibleIndex() / this.visibleQuestions().length) * 100
+    )
   );
+
   isAnswerValid = computed<boolean>(() => {
     const question = this.currentQuestion();
     const answer = this.currentAnswer();
@@ -64,12 +102,7 @@ export class FeedbackComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.loadQuestions();
-
-    // Initialize current answer from saved answers
-    const answersValue = this.answers();
-    if (answersValue[this.currentQuestionIndex()]) {
-      this.currentAnswer.set(answersValue[this.currentQuestionIndex()]);
-    }
+    this.loadCurrentAnswer();
   }
 
   async loadQuestions(): Promise<void> {
@@ -78,70 +111,118 @@ export class FeedbackComponent implements OnInit {
     this.questions.set(fetchedQuestions);
   }
 
+  private loadCurrentAnswer(): void {
+    const question = this.currentQuestion();
+    if (!question) return;
+
+    const allQuestions = this.questions();
+    const actualIndex = allQuestions.indexOf(question);
+    const answersValue = this.answers();
+
+    if (answersValue[actualIndex]) {
+      this.currentAnswer.set(answersValue[actualIndex]);
+    } else {
+      this.currentAnswer.set('');
+    }
+  }
+
+  private saveCurrentAnswer(): void {
+    const question = this.currentQuestion();
+    if (!question) return;
+
+    const allQuestions = this.questions();
+    const actualIndex = allQuestions.indexOf(question);
+
+    this.answers.update((prev) => ({
+      ...prev,
+      [actualIndex]: this.currentAnswer(),
+    }));
+  }
+
   async onSubmit(): Promise<void> {
     this.showError.set(false);
 
-    // Validate answer
     if (!this.isAnswerValid()) {
       this.showError.set(true);
       return;
     }
 
-    // Save the current answer
-    const currentIndex = this.currentQuestionIndex();
-    this.answers.update((prev) => ({
-      ...prev,
-      [currentIndex]: this.currentAnswer(),
-    }));
+    this.saveCurrentAnswer();
 
-    if (currentIndex < this.questions().length - 1) {
-      // Move to next question
-      this.currentQuestionIndex.set(currentIndex + 1);
+    const visible = this.visibleQuestions();
+    const currentIndex = this.currentVisibleIndex();
 
-      // Load saved answer for next question or clear
-      const answersValue = this.answers();
-      this.currentAnswer.set(answersValue[this.currentQuestionIndex()] || '');
+    if (currentIndex < visible.length - 1) {
+      this.currentVisibleIndex.set(currentIndex + 1);
+      this.loadCurrentAnswer();
     } else {
-      // Submit all answers
       this.isSubmitted.set(true);
       const answersValue = this.answers();
-      await this.apiFetchService.submitFeedback(
-        this.questions().map(
-          (question, index) =>
-            ({
-              questionId: question.id,
-              answer: answersValue[index] || '',
-            }) as FeedbackSubmission
-        )
-      );
+      const allQuestions = this.questions();
 
+      // Only submit answers for visible questions
+      const submissions = visible
+        .map((question) => {
+          const actualIndex = allQuestions.indexOf(question);
+          return {
+            questionId: question.id,
+            answer: answersValue[actualIndex] || '',
+          } as FeedbackSubmission;
+        })
+        .filter((s) => s.questionId !== undefined);
+
+      await this.apiFetchService.submitFeedback(submissions);
       localStorage.setItem('feedbackSubmitted', 'true');
     }
   }
 
   goToPrevious(): void {
-    const currentIndex = this.currentQuestionIndex();
+    const currentIndex = this.currentVisibleIndex();
     if (currentIndex > 0) {
-      // Save current answer before going back
-      this.answers.update((prev) => ({
-        ...prev,
-        [currentIndex]: this.currentAnswer(),
-      }));
-
-      // Go to previous question
-      this.currentQuestionIndex.set(currentIndex - 1);
-
-      // Load saved answer for previous question
-      const answersValue = this.answers();
-      this.currentAnswer.set(answersValue[this.currentQuestionIndex()] || '');
-
+      this.saveCurrentAnswer();
+      this.currentVisibleIndex.set(currentIndex - 1);
+      this.loadCurrentAnswer();
       this.showError.set(false);
     }
   }
 
-  // Helper methods for different question types
   selectOption(option: string): void {
-    this.currentAnswer.set(option);
+    const question = this.currentQuestion();
+    if (!question) return;
+
+    if (question.type === 'MultipleChoice') {
+      const currentAnswer = this.currentAnswer();
+      const selectedOptions = currentAnswer
+        .split(',')
+        .map((s) => s.trim())
+        .filter((s) => s);
+
+      if (selectedOptions.includes(option)) {
+        const newOptions = selectedOptions.filter((o) => o !== option);
+        this.currentAnswer.set(newOptions.join(', '));
+      } else {
+        selectedOptions.push(option);
+        this.currentAnswer.set(selectedOptions.join(', '));
+      }
+    } else {
+      this.currentAnswer.set(option);
+    }
+  }
+
+  isOptionSelected(option: string): boolean {
+    const question = this.currentQuestion();
+    if (!question) return false;
+
+    if (question.type === 'MultipleChoice') {
+      const currentAnswer = this.currentAnswer();
+      const selectedOptions = currentAnswer
+        .split(',')
+        .map((s) => s.trim())
+        .filter((s) => s);
+      return selectedOptions.includes(option);
+    }
+
+    return this.currentAnswer() === option;
   }
 
   selectRating(rating: number): void {

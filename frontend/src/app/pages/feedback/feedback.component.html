@@ -18,8 +18,8 @@
         <div class="flex-shrink-0 p-4 pb-2">
           <div class="mb-2 flex items-center justify-between">
             <span class="text-sm font-medium text-gray-500"
-              >Frage {{ currentQuestionIndex() + 1 }} von
-              {{ questions().length }}</span
+              >Frage {{ currentVisibleIndex() + 1 }} von
+              {{ visibleQuestions().length }}</span
             >
             <span class="text-sm font-medium text-orange-500"
               >{{ progressPercentage() }}%</span
@@ -43,7 +43,7 @@
         <!-- Answer Section - Scrollable -->
         <div class="min-h-0 flex-1 overflow-y-auto px-4 pb-4 pt-3">
           <!-- Text Input Question -->
-          @if (currentQuestion().type === 'text') {
+          @if (currentQuestion().type === 'Text') {
             <input
               type="text"
               [value]="currentAnswer()"
@@ -56,24 +56,24 @@
             />
           }
 
-          <!-- Multiple Choice Question -->
-          @if (currentQuestion().type === 'choice') {
+          <!-- Single Choice Question -->
+          @if (currentQuestion().type === 'SingleChoice') {
             <div class="space-y-3">
               @for (option of currentQuestion().options; track option) {
                 <div class="flex items-center">
                   <div
                     (click)="selectOption(option)"
                     class="flex w-full cursor-pointer items-center rounded-lg border p-3 transition-colors"
-                    [class.bg-orange-50]="currentAnswer() === option"
-                    [class.border-orange-300]="currentAnswer() === option"
-                    [class.border-gray-200]="currentAnswer() !== option"
+                    [class.bg-orange-50]="isOptionSelected(option)"
+                    [class.border-orange-300]="isOptionSelected(option)"
+                    [class.border-gray-200]="!isOptionSelected(option)"
                   >
                     <div
                       class="mr-3 flex h-5 w-5 items-center justify-center rounded-full border-2"
-                      [class.border-orange-500]="currentAnswer() === option"
-                      [class.border-gray-300]="currentAnswer() !== option"
+                      [class.border-orange-500]="isOptionSelected(option)"
+                      [class.border-gray-300]="!isOptionSelected(option)"
                     >
-                      @if (currentAnswer() === option) {
+                      @if (isOptionSelected(option)) {
                         <div class="h-3 w-3 rounded-full bg-orange-500"></div>
                       }
                     </div>
@@ -84,8 +84,51 @@
             </div>
           }
 
+          <!-- Multiple Choice Question -->
+          @if (currentQuestion().type === 'MultipleChoice') {
+            <div class="space-y-3">
+              @for (option of currentQuestion().options; track option) {
+                <div class="flex items-center">
+                  <div
+                    (click)="selectOption(option)"
+                    class="flex w-full cursor-pointer items-center rounded-lg border p-3 transition-colors"
+                    [class.bg-orange-50]="isOptionSelected(option)"
+                    [class.border-orange-300]="isOptionSelected(option)"
+                    [class.border-gray-200]="!isOptionSelected(option)"
+                  >
+                    <!-- Checkbox style for multiple choice -->
+                    <div
+                      class="mr-3 flex h-5 w-5 items-center justify-center rounded border-2"
+                      [class.border-orange-500]="isOptionSelected(option)"
+                      [class.bg-orange-500]="isOptionSelected(option)"
+                      [class.border-gray-300]="!isOptionSelected(option)"
+                    >
+                      @if (isOptionSelected(option)) {
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-3 w-3 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="3"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      }
+                    </div>
+                    <span>{{ option }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
           <!-- Rating Question -->
-          @if (currentQuestion().type === 'rating') {
+          @if (currentQuestion().type === 'Rating') {
             <div class="mb-4">
               <div class="flex items-center justify-between">
                 @for (
@@ -156,7 +199,7 @@
           <button
             type="button"
             (click)="goToPrevious()"
-            [disabled]="currentQuestionIndex() === 0"
+            [disabled]="currentVisibleIndex() === 0"
             class="flex items-center rounded-md px-4 py-2 text-gray-500 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <svg
@@ -181,7 +224,7 @@
             (click)="onSubmit()"
             class="flex items-center rounded-md bg-gradient-to-r from-orange-400 to-orange-500 px-4 py-2 text-white hover:from-orange-500 hover:to-orange-600"
           >
-            @if (currentQuestionIndex() === questions().length - 1) {
+            @if (currentVisibleIndex() === visibleQuestions().length - 1) {
               Absenden
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -251,7 +294,11 @@
             <h4 class="mb-3 text-lg font-bold text-gray-700">
               Ihre Antworten:
             </h4>
-            @for (question of questions(); track question; let i = $index) {
+            @for (
+              question of visibleQuestions();
+              track question;
+              let i = $index
+            ) {
               <div class="mb-4">
                 <p class="font-medium text-gray-700">{{ question.question }}</p>
                 <p class="text-gray-600">
