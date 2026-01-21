@@ -21,7 +21,7 @@ public class StopManagerFunctions
     {
         return await context.StopManagers
             .Include(t => t.AssignedStops)
-            .Where(t => t.EdufsUsername == edufsUsername)
+            .Where(t => EF.Functions.ILike(t.EdufsUsername, edufsUsername))
             .FirstOrDefaultAsync();
     }
 

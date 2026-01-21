@@ -3,7 +3,7 @@ import {
   InjectionToken,
   provideExperimentalZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withDebugTracing, withInMemoryScrolling } from '@angular/router';
 import {
   provideHttpClient,
   withFetch,
@@ -85,7 +85,14 @@ export const appConfig: ApplicationConfig = {
         return baseUrl;
       },
     },
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withInMemoryScrolling({
+          scrollPositionRestoration: 'disabled', 
+          anchorScrolling: 'enabled',
+      }),
+      withDebugTracing()
+    ),
     provideHttpClient(
       withFetch(),
       withInterceptors([includeBearerTokenInterceptor])

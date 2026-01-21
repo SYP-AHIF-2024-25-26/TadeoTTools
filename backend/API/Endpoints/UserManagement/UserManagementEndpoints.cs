@@ -1,6 +1,7 @@
 ﻿using Database.Entities;
 using Database.Repository;
 using LeoAuth;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Endpoints.UserManagement;
 
@@ -46,13 +47,16 @@ public class UserManagementEndpoints
                 var username = user.Username.Match(u => u, _ => string.Empty);
                 if (string.IsNullOrEmpty(username))
                     return Results.BadRequest("Username not found");
-                var student = await context.Students.FindAsync(username);
+                var student = await context.Students
+                    .FirstOrDefaultAsync(u => EF.Functions.ILike(username, u.EdufsUsername));
                 if (student != null)
                     return Results.Ok("Student");
-                var admin = await context.Admins.FindAsync(username);
+                var admin = await context.Admins
+                    .FirstOrDefaultAsync(u => EF.Functions.ILike(username, u.Id));
                 if (admin != null)
                     return Results.Ok("Admin");
-                var stopManager = await context.StopManagers.FindAsync(username);
+                var stopManager = await context.StopManagers
+                    .FirstOrDefaultAsync(u => EF.Functions.ILike(username, u.EdufsUsername));
                 if (stopManager != null)
                     return Results.Ok("StopManager");
                 return Results.NotFound("User not found");

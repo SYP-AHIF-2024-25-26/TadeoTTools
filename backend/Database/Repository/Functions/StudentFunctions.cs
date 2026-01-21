@@ -49,7 +49,7 @@ public class StudentFunctions
         return await context.Students
             .Include(s => s.StudentAssignments)
             .ThenInclude(sa => sa.Stop)
-            .FirstOrDefaultAsync(s => s.EdufsUsername == edufsUsername);
+            .FirstOrDefaultAsync(s => EF.Functions.ILike(s.EdufsUsername, edufsUsername));
     }
 
 
@@ -75,7 +75,7 @@ public class StudentFunctions
                     StudentClass = cols[3],
                     Department = cols[4],
                 })
-                .Where(s => !context.Students.Any(st => st.EdufsUsername.Equals(s.EdufsUsername)));
+                .Where(s => !context.Students.Any(st => EF.Functions.ILike(st.EdufsUsername, s.EdufsUsername)));
 
             await context.Students.AddRangeAsync(students);
             await context.SaveChangesAsync();
@@ -97,7 +97,7 @@ public class StudentFunctions
 
         var header = lines[0].Split(';');
         var dataLines = lines;
-        
+
         // Skip header if present (Stop;Klasse;Nachname;Vorname;Abteilung)
         if (header is ["Stop", "Klasse", "Nachname", "Vorname", "Abteilung"])
         {
@@ -115,7 +115,7 @@ public class StudentFunctions
         foreach (var line in dataLines)
         {
             var cols = line.Split(';');
-            
+
             if (cols.Length < 5)
             {
                 errors.Add($"Invalid line format: {line}");
@@ -129,7 +129,7 @@ public class StudentFunctions
             var department = cols[4].Trim();
 
             // Find the stop by name
-            var stop = await context.Stops.FirstOrDefaultAsync(s => s.Name == stopName);
+            var stop = await context.Stops.FirstOrDefaultAsync(s => EF.Functions.ILike(s.Name, stopName));
             if (stop == null)
             {
                 errors.Add($"Stop not found: {stopName}");
@@ -138,10 +138,10 @@ public class StudentFunctions
 
             // Find the student by matching all fields
             var student = await context.Students.FirstOrDefaultAsync(s =>
-                s.StudentClass == studentClass &&
-                s.LastName == lastName &&
-                s.FirstName == firstName &&
-                s.Department == department);
+                EF.Functions.ILike(s.StudentClass, studentClass) &&
+                EF.Functions.ILike(s.LastName, lastName) &&
+                EF.Functions.ILike(s.FirstName, firstName) &&
+                EF.Functions.ILike(s.Department, department));
 
             if (student == null)
             {
@@ -151,7 +151,7 @@ public class StudentFunctions
 
             // Check if assignment already exists
             var existingAssignment = await context.StudentAssignments
-                .FirstOrDefaultAsync(sa => sa.EdufsUsername == student.EdufsUsername && sa.StopId == stop.Id);
+                .FirstOrDefaultAsync(sa => EF.Functions.ILike(sa.EdufsUsername, student.EdufsUsername) && sa.StopId == stop.Id);
 
             if (existingAssignment != null)
             {

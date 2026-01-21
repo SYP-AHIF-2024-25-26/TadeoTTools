@@ -24,6 +24,7 @@ import { StopService } from '@/core/services/stop.service';
 import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StudentService } from '@/core/services/student.service';
 import { FilterStateService } from '@/core/services/filter-state.service';
+import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 
 @Component({
   selector: 'app-stops',
@@ -37,6 +38,7 @@ export class StopsComponent {
   private stopGroupService = inject(StopGroupService);
   private stopService = inject(StopService);
   private stopManagerService = inject(StopManagerService);
+  private scrollService = inject(ScrollPersistenceService);
 
   // use shared filter state service so filters persist across navigation
   private filterState = inject(FilterStateService);
@@ -58,6 +60,7 @@ export class StopsComponent {
     this.divisions.set(await this.divisionService.getDivisions());
     this.stopManagers.set(await this.stopManagerService.getStopManagers());
     this.students.set(await this.studentService.getStudents());
+    this.scrollService.restoreScroll();
   }
 
   // Computed properties for filters and data

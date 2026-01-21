@@ -12,6 +12,7 @@ import { RouterModule } from '@angular/router';
 import { isValidString } from '@/shared/utils/utils';
 import { StopGroup } from '@/shared/models/types';
 import { StopGroupService } from '@/core/services/stopgroup.service';
+import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 
 @Component({
   selector: 'app-stopgroup-details',
@@ -21,6 +22,7 @@ import { StopGroupService } from '@/core/services/stopgroup.service';
 })
 export class StopgroupDetailsComponent implements OnInit {
   private stopGroupService = inject(StopGroupService);
+  private scrollService = inject(ScrollPersistenceService);
 
   @Input() id: number = -1;
   @Output() cancel = new EventEmitter<void>();
@@ -48,6 +50,7 @@ export class StopgroupDetailsComponent implements OnInit {
       this.description.set(stopGroup.description);
       this.isPublic.set(stopGroup.isPublic);
     }
+    this.scrollService.restoreScroll();
   }
 
   isInputValid(): boolean {

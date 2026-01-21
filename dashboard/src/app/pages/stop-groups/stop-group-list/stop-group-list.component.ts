@@ -1,4 +1,5 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, AfterViewInit } from '@angular/core';
+import {ViewportScroller} from '@angular/common';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -15,6 +16,7 @@ import { StopGroupHeaderComponent } from './components/stop-group-header/stop-gr
 import { StopGroupListComponent } from './components/stop-group-list/stop-group-list.component';
 import { StopSidebarComponent } from './components/stop-sidebar/stop-sidebar.component';
 import { AddStopDialogComponent } from './components/add-stop-dialog/add-stop-dialog.component';
+import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 
 @Component({
   selector: 'app-stopgroups',
@@ -34,6 +36,7 @@ export class StopGroupsComponent implements OnInit {
   private stopGroupService = inject(StopGroupService);
   private divisionService = inject(DivisionService);
   private stopService = inject(StopService);
+  private scrollService = inject(ScrollPersistenceService);
 
   hasChanged = signal<boolean>(false);
   infos = signal<Info[]>([]);
@@ -81,6 +84,7 @@ export class StopGroupsComponent implements OnInit {
 
   async ngOnInit() {
     await this.initialiseData();
+    this.scrollService.restoreScroll();
   }
 
   async initialiseData() {

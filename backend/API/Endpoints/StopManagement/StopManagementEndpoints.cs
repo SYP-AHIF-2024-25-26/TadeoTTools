@@ -58,7 +58,7 @@ public static class StopManagementEndpoints
                     return Results.BadRequest("Username not found");
 
                 var intermediateData = await context.StudentAssignments
-                    .Where(sa => sa.Student != null && sa.Student.EdufsUsername == username)
+                    .Where(sa => sa.Student != null && EF.Functions.ILike(sa.Student.EdufsUsername, username))
                     .Select(sa => new
                     {
                         sa.Stop!.Name,
@@ -67,7 +67,7 @@ public static class StopManagementEndpoints
                         sa.Stop.RoomNr,
                         OtherStudents = sa.Stop.StudentAssignments
                             .Where(otherSa =>
-                                otherSa.Student != null && otherSa.Student.EdufsUsername != username &&
+                                otherSa.Student != null && !EF.Functions.ILike(otherSa.Student.EdufsUsername, username) &&
                                 otherSa.Status != Status.DECLINED)
                             .Select(otherSa => new OtherStudentOfStopDto(
                                 otherSa.Student!.LastName,
@@ -117,7 +117,7 @@ public static class StopManagementEndpoints
         var stops = await context.Stops
             .Include(stop => stop.Divisions)
             .Include(stop => stop.StopGroupAssignments)
-            .Where(stop => stop.StopManagerAssignments.Any(t => t.StopManagerId == stopManagerId))
+            .Where(stop => stop.StopManagerAssignments.Any(t => EF.Functions.ILike(t.StopManagerId, stopManagerId)))
             .ToListAsync();
 
         return Results.Ok(stops.Select(stop => new StopOfStopManager(
@@ -171,13 +171,15 @@ public static class StopManagementEndpoints
         var divisionIds = createStopDto.DivisionIds.ToList();
         var stopGroupIds = createStopDto.StopGroupIds.ToList();
 
-        var students = await context.Students
-            .Where(s => studentIds.Contains(s.EdufsUsername))
-            .ToDictionaryAsync(s => s.EdufsUsername);
+        var students = (await context.Students
+            .Where(s => studentIds.Any(id => EF.Functions.ILike(s.EdufsUsername, id)))
+            .ToListAsync())
+            .ToDictionary(s => s.EdufsUsername, StringComparer.OrdinalIgnoreCase);
 
-        var stopManagers = await context.StopManagers
-            .Where(t => stopManagerIds.Contains(t.EdufsUsername))
-            .ToDictionaryAsync(t => t.EdufsUsername);
+        var stopManagers = (await context.StopManagers
+            .Where(t => stopManagerIds.Any(id => EF.Functions.ILike(t.EdufsUsername, id)))
+            .ToListAsync())
+            .ToDictionary(t => t.EdufsUsername, StringComparer.OrdinalIgnoreCase);
 
         var divisions = await context.Divisions
             .Where(d => divisionIds.Contains(d.Id))
@@ -239,13 +241,15 @@ public static class StopManagementEndpoints
         var divisionIds = updateStopDto.DivisionIds.ToList();
         var stopGroupIds = updateStopDto.StopGroupIds.ToList();
 
-        var students = await context.Students
-            .Where(s => studentIds.Contains(s.EdufsUsername))
-            .ToDictionaryAsync(s => s.EdufsUsername);
+        var students = (await context.Students
+            .Where(s => studentIds.Any(id => EF.Functions.ILike(s.EdufsUsername, id)))
+            .ToListAsync())
+            .ToDictionary(s => s.EdufsUsername, StringComparer.OrdinalIgnoreCase);
 
-        var stopManagers = await context.StopManagers
-            .Where(t => stopManagerIds.Contains(t.EdufsUsername))
-            .ToDictionaryAsync(t => t.EdufsUsername);
+        var stopManagers = (await context.StopManagers
+            .Where(t => stopManagerIds.Any(id => EF.Functions.ILike(t.EdufsUsername, id)))
+            .ToListAsync())
+            .ToDictionary(t => t.EdufsUsername, StringComparer.OrdinalIgnoreCase);
 
         var divisions = await context.Divisions
             .Where(d => divisionIds.Contains(d.Id))
@@ -322,9 +326,10 @@ public static class StopManagementEndpoints
     {
         var studentIds = updateStopDto.StudentAssignments.Select(s => s.EdufsUsername).ToList();
 
-        var students = await context.Students
-            .Where(s => studentIds.Contains(s.EdufsUsername))
-            .ToDictionaryAsync(s => s.EdufsUsername);
+        var students = (await context.Students
+            .Where(s => studentIds.Any(id => EF.Functions.ILike(s.EdufsUsername, id)))
+            .ToListAsync())
+            .ToDictionary(s => s.EdufsUsername, StringComparer.OrdinalIgnoreCase);
 
         var stop = await context.Stops
             .Include(s => s.StudentAssignments)

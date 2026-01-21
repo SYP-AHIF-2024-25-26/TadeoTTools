@@ -12,6 +12,7 @@ import { StopService } from '@/core/services/stop.service';
 import { Stop, StopManager } from '@/shared/models/types';
 import { StopManagerService } from '@/core/services/stop-manager.service';
 import { ListStudentsComponent } from '@/pages/students/student-list/student-list.component';
+import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 
 @Component({
   selector: 'app-stop-manager-details',
@@ -27,6 +28,7 @@ import { ListStudentsComponent } from '@/pages/students/student-list/student-lis
 export class StopManagerDetailsComponent implements OnInit {
   private stopService = inject(StopService);
   private stopManagerService = inject(StopManagerService);
+  private scrollService = inject(ScrollPersistenceService);
   stops = signal<Stop[]>([]);
   keycloak = inject(Keycloak);
 
@@ -45,5 +47,6 @@ export class StopManagerDetailsComponent implements OnInit {
     } catch (e) {
       console.error('Failed to load stop manager profile', e);
     }
+    this.scrollService.restoreScroll();
   }
 }

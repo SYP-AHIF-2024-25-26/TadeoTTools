@@ -23,6 +23,7 @@ import { StopGroupsComponent } from './components/stop-groups/stop-groups.compon
 import { StopStudentsComponent } from './components/stop-students/stop-students.component';
 import { StopManagersComponent } from './components/stop-managers/stop-managers.component';
 import { StopDivisionsComponent } from './components/stop-divisions/stop-divisions.component';
+import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 
 @Component({
   selector: 'app-stop-details',
@@ -49,6 +50,7 @@ export class StopDetailsComponent implements OnInit {
   private route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
   router = inject(Router);
+  private scrollService = inject(ScrollPersistenceService);
 
   divisions = signal<Division[]>([]);
   stopGroups = signal<StopGroup[]>([]);
@@ -110,6 +112,7 @@ export class StopDetailsComponent implements OnInit {
     } finally {
       this.isLoading.set(false);
     }
+    this.scrollService.restoreScroll();
   }
 
   isInputValid() {

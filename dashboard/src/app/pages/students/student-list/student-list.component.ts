@@ -5,6 +5,7 @@ import {
   signal,
   input,
   ViewContainerRef,
+  OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -28,6 +29,7 @@ import { StudentFiltersComponent } from './components/student-filters/student-fi
 import { StudentImportExportComponent } from './components/student-import-export/student-import-export.component';
 import { AddStudentDialogComponent } from './components/add-student-dialog/add-student-dialog.component';
 import { ConflictDetailsModalComponent } from './components/conflict-details-modal/conflict-details-modal.component';
+import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 
 export interface StudentWithUI extends Student {
   showStops?: boolean;
@@ -47,12 +49,13 @@ export interface StudentWithUI extends Student {
   templateUrl: './student-list.component.html',
   standalone: true,
 })
-export class ListStudentsComponent {
+export class ListStudentsComponent implements OnInit {
   private stopService = inject(StopService);
   private studentService = inject(StudentService);
   private overlay = inject(Overlay);
   private viewContainerRef = inject(ViewContainerRef);
   private positionBuilder = inject(OverlayPositionBuilder);
+  private scrollService = inject(ScrollPersistenceService);
 
   classFilter = signal<string>('');
   departmentFilter = signal<string>('');
@@ -75,6 +78,9 @@ export class ListStudentsComponent {
   async ngOnInit() {
     this.stops.set(await this.stopService.getStops());
     await this.refreshStudents();
+    this.scrollService.restoreScroll();
+    console.log("Initialising Student List");
+    
   }
 
   toggleDataCollapsed(): void {
