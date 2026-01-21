@@ -239,7 +239,6 @@ public static class StopManagementEndpoints
         var studentIds = updateStopDto.StudentAssignments.Select(s => s.EdufsUsername).ToList();
         var stopManagerIds = updateStopDto.StopManagerAssignments.ToList();
         var divisionIds = updateStopDto.DivisionIds.ToList();
-        var stopGroupIds = updateStopDto.StopGroupIds.ToList();
 
         var students = (await context.Students
             .Where(s => studentIds.Any(id => EF.Functions.ILike(s.EdufsUsername, id)))
@@ -254,10 +253,6 @@ public static class StopManagementEndpoints
         var divisions = await context.Divisions
             .Where(d => divisionIds.Contains(d.Id))
             .ToListAsync();
-
-        var stopGroups = await context.StopGroups
-            .Where(sg => stopGroupIds.Contains(sg.Id))
-            .ToDictionaryAsync(sg => sg.Id);
 
         var stop = await context.Stops
             .Include(s => s.Divisions)
@@ -287,21 +282,6 @@ public static class StopManagementEndpoints
             StopId = updateStopDto.Id,
             Stop = stop
         }).ToList();
-
-        if (updateOrder == null || updateOrder == true)
-        {
-            var newStopGroupAssignments = updateStopDto.StopGroupIds.Select((id, index) => new StopGroupAssignment()
-            {
-                StopGroupId = id,
-                StopGroup = stopGroups.GetValueOrDefault(id),
-                StopId = stop.Id,
-                Stop = stop,
-                Order = index
-            }).ToList();
-
-            stop.StopGroupAssignments.Clear();
-            stop.StopGroupAssignments.AddRange(newStopGroupAssignments);
-        }
 
         stop.Divisions.Clear();
         stop.Divisions.AddRange(divisions);
@@ -467,7 +447,6 @@ public static class StopManagementEndpoints
         [Required, MaxLength(500)] string Description,
         [Required, MaxLength(50)] string RoomNr,
         int[] DivisionIds,
-        int[] StopGroupIds,
         StudentOfStopDto[] StudentAssignments,
         string[] StopManagerAssignments
     );
