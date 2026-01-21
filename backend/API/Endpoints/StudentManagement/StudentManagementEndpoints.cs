@@ -27,7 +27,7 @@ public class StudentManagementEndpoints
     public static async Task<IResult> CreateStudent(TadeoTDbContext context, StudentNoAssignmentsDto studentDto)
     {
         // Check if student already exists
-        var existing = await context.Students.FirstOrDefaultAsync(s => s.EdufsUsername == studentDto.EdufsUsername);
+        var existing = await context.Students.FirstOrDefaultAsync(s => EF.Functions.ILike(s.EdufsUsername, studentDto.EdufsUsername));
         if (existing != null)
         {
             return Results.Conflict("A student with the same EdufsUsername already exists.");
@@ -53,7 +53,7 @@ public class StudentManagementEndpoints
     {
         var student = await context.Students
             .Include(s => s.StudentAssignments)
-            .FirstOrDefaultAsync(s => s.EdufsUsername == studentDto.EdufsUsername);
+            .FirstOrDefaultAsync(s => EF.Functions.ILike(s.EdufsUsername, studentDto.EdufsUsername));
 
         if (student == null)
         {
@@ -108,7 +108,7 @@ public class StudentManagementEndpoints
         TadeoTDbContext context)
     {
         var assignment = await context.StudentAssignments
-            .FirstOrDefaultAsync(sa => sa.EdufsUsername == edufsUsername && sa.StopId == stopId);
+            .FirstOrDefaultAsync(sa => EF.Functions.ILike(sa.EdufsUsername, edufsUsername) && sa.StopId == stopId);
 
         if (assignment == null)
         {

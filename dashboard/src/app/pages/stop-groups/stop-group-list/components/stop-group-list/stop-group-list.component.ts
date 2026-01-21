@@ -17,9 +17,7 @@ export class StopGroupListComponent {
 
   dropGroup = output<CdkDragDrop<any, any>>();
   dropStop = output<CdkDragDrop<any, any>>();
-  showGroupPopup = output<number>();
   removeStop = output<{ stopId: number; group: StopGroup }>();
-  openAddStopPopup = output<StopGroup>();
 
   getStopName(stopId: number): string {
     return this.stops().filter((stop) => stop.id === stopId)[0]?.name || '';

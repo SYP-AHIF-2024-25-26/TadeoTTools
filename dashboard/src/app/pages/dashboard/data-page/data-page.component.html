@@ -187,6 +187,19 @@
     Delete all Students
   </button>
 </div>
+<div class="mt-8 flex justify-center">
+  <div class="form-control">
+    <label class="label cursor-pointer gap-4">
+      <span class="label-text text-lg font-bold">Show Countdown</span>
+      <input
+        type="checkbox"
+        class="toggle toggle-primary"
+        [(ngModel)]="showCountdown"
+        (click)="setShowCountdown()"
+      />
+    </label>
+  </div>
+</div>
 
 @if (showDeleteStudentsPopup()) {
   <app-delete-popup

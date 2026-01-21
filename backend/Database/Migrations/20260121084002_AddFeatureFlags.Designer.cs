@@ -3,6 +3,7 @@ using System;
 using Database.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Migrations
 {
     [DbContext(typeof(TadeoTDbContext))]
-    partial class TadeoTDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260121084002_AddFeatureFlags")]
+    partial class AddFeatureFlags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,34 +93,6 @@ namespace Database.Migrations
                         .IsUnique();
 
                     b.ToTable("FeatureFlags");
-                });
-
-            modelBuilder.Entity("Database.Entities.FeedbackDependency", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ConditionValue")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<int>("DependsOnQuestionId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DependsOnQuestionId");
-
-                    b.HasIndex("QuestionId");
-
-                    b.ToTable("FeedbackDependencies");
                 });
 
             modelBuilder.Entity("Database.Entities.FeedbackDependency", b =>
@@ -430,18 +405,6 @@ namespace Database.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("EdufsUsername")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StopId")
-                        .HasColumnType("integer");
                     b.Property<int>("StopId")
                         .HasColumnType("integer");
 

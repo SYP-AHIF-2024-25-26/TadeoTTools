@@ -1,42 +1,22 @@
 <app-stop-group-header
   [hasChanged]="hasChanged()"
   [onlyPublicGroups]="onlyPublicGroups()"
-  (addGroup)="showGroupPopUp(-1)"
-  (toggleCollapse)="toggleShowStops()"
+  (addGroup)="navigateToNewGroup()"
   (togglePublicGroups)="onlyPublicGroups.set(!onlyPublicGroups())"
   (save)="saveChanges()"
   (cancel)="initialiseData()"
 />
 
 <div class="container mx-auto px-4 py-8">
-  <div class="flex flex-col gap-6 md:flex-row">
-    <!-- Stop Groups Column -->
-    <div class="w-full md:max-w-4xl md:flex-1">
-      <app-stop-group-list
-        [stopGroups]="stopGroups()"
-        [onlyPublicGroups]="onlyPublicGroups()"
-        [stops]="stops()"
-        [connectedDropLists]="dropGroups()"
-        (dropGroup)="dropGroup($event)"
-        (dropStop)="dropStop($event)"
-        (showGroupPopup)="showGroupPopUp($event)"
-        (removeStop)="selectStopToRemove($event.stopId, $event.group)"
-        (openAddStopPopup)="openAddStopPopup($event)"
-      />
-    </div>
-
-    <!-- Sidebar (Desktop only) -->
-    <div class="hidden w-80 flex-shrink-0 md:block">
-      <app-stop-sidebar
-        [filteredStops]="filteredStops()"
-        [divisions]="divisions()"
-        [showAssignedStops]="showAssignedStops()"
-        [connectedDropLists]="dropGroups()"
-        (filterChange)="divisionFilter.set($event)"
-        (toggleShowAssignedStops)="showAssignedStops.set(!showAssignedStops())"
-      />
-    </div>
-  </div>
+  <app-stop-group-list
+    [stopGroups]="stopGroups()"
+    [onlyPublicGroups]="onlyPublicGroups()"
+    [stops]="stops()"
+    [connectedDropLists]="dropGroups()"
+    (dropGroup)="dropGroup($event)"
+    (dropStop)="dropStop($event)"
+    (removeStop)="selectStopToRemove($event.stopId, $event.group)"
+  />
 </div>
 
 <!-- Info Notifications -->
@@ -56,13 +36,6 @@
     [message]="'Are you sure you want to remove this stop from the stop group?'"
     (cancel)="showRemoveStopPopup.set(false)"
     (removeConfirmed)="removeStop()"
-  />
-}
-
-@if (showGroupDetailPopUp()) {
-  <app-stopgroup-details
-    [id]="groupIdDetail"
-    (cancel)="handleGroupPopupClose()"
   />
 }
 

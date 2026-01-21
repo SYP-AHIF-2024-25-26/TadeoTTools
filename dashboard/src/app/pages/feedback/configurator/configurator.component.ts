@@ -19,6 +19,7 @@ import { FeedbackQuestion, FeedbackDependency } from '@/shared/models/types';
 import { FeedbackPreviewComponent } from './components/feedback-preview/feedback-preview.component';
 import { FeedbackQuestionListComponent } from './components/feedback-question-list/feedback-question-list.component';
 import { FeedbackQuestionEditorComponent } from './components/feedback-question-editor/feedback-question-editor.component';
+import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 
 export type QuestionType =
   | 'Text'
@@ -58,6 +59,7 @@ export interface DependencyFormGroup {
 export class FeedbackConfiguratorComponent implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly feedbackService = inject(FeedbackService);
+  private scrollService = inject(ScrollPersistenceService);
 
   // State signals
   readonly questions = signal<FeedbackQuestion[]>([]);
@@ -89,6 +91,7 @@ export class FeedbackConfiguratorComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.loadQuestions();
+    this.scrollService.restoreScroll();
   }
 
   createQuestionForm(): FormGroup<QuestionFormGroup> {

@@ -64,13 +64,14 @@ internal static class Setup
     public static void AddBasicAuthorization(this IServiceCollection services)
     {
         services.AddAuthorizationBuilder()
-            .AddPolicy(nameof(LeoUserRole.Student), policy => policy.Requirements
-                .Add(new LeoAuthRequirement(LeoUserRole.Student, true)))
-
             .AddPolicy(AdminPolicyName, policy => policy.Requirements
                 .Add(new AdminRequirement()))
             .AddPolicy(StopManagerOrAdminPolicyName, policy => policy.Requirements
-                .Add(new StopManagerOrAdminRequirement()));
+                .Add(new StopManagerOrAdminRequirement()))
+            .AddPolicy(nameof(LeoUserRole.Student), policy => policy.Requirements
+                .Add(new LeoAuthRequirement(LeoUserRole.Student, true)));
+
+            
         services.AddScoped<IAuthorizationHandler, StopManagerOrAdminHandler>();
         services.AddScoped<IAuthorizationHandler, AdminAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, LeoAuthorizationHandler>();

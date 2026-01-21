@@ -1,13 +1,8 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
-} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, transferArrayItem, } from '@angular/cdk/drag-drop';
 import { Division, Info, Stop, StopGroup } from '@/shared/models/types';
 import { InfoPopupComponent } from '@/shared/modals/info-modal/info-modal.component';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
-import { StopgroupDetailsComponent } from '@/pages/stop-groups/stop-group-details/stop-group-details.component';
 import { StopGroupService } from '@/core/services/stopgroup.service';
 import { DivisionService } from '@/core/services/division.service';
 import { StopService } from '@/core/services/stop.service';
@@ -15,6 +10,8 @@ import { StopGroupHeaderComponent } from './components/stop-group-header/stop-gr
 import { StopGroupListComponent } from './components/stop-group-list/stop-group-list.component';
 import { StopSidebarComponent } from './components/stop-sidebar/stop-sidebar.component';
 import { AddStopDialogComponent } from './components/add-stop-dialog/add-stop-dialog.component';
+import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-stopgroups',
@@ -22,10 +19,8 @@ import { AddStopDialogComponent } from './components/add-stop-dialog/add-stop-di
   imports: [
     InfoPopupComponent,
     DeletePopupComponent,
-    StopgroupDetailsComponent,
     StopGroupHeaderComponent,
     StopGroupListComponent,
-    StopSidebarComponent,
     AddStopDialogComponent,
   ],
   templateUrl: './stop-group-list.component.html',
@@ -34,6 +29,8 @@ export class StopGroupsComponent implements OnInit {
   private stopGroupService = inject(StopGroupService);
   private divisionService = inject(DivisionService);
   private stopService = inject(StopService);
+  private scrollService = inject(ScrollPersistenceService);
+  private router = inject(Router);
 
   hasChanged = signal<boolean>(false);
   infos = signal<Info[]>([]);
@@ -48,7 +45,6 @@ export class StopGroupsComponent implements OnInit {
   showRemoveStopPopup = signal<boolean>(false);
   onlyPublicGroups = signal<boolean>(true);
 
-  showGroupDetailPopUp = signal<boolean>(false);
   showAddStopDropDownPopup = signal<boolean>(false);
   groupIdDetail: number = -1;
 
@@ -81,6 +77,7 @@ export class StopGroupsComponent implements OnInit {
 
   async ngOnInit() {
     await this.initialiseData();
+    this.scrollService.restoreScroll();
   }
 
   async initialiseData() {
@@ -99,6 +96,10 @@ export class StopGroupsComponent implements OnInit {
         checkbox.checked = false;
       });
     });
+  }
+
+  navigateToNewGroup() {
+    this.router.navigate(['/stopgroup']);
   }
 
   addInfo(type: string, message: string): void {
@@ -196,19 +197,5 @@ export class StopGroupsComponent implements OnInit {
       this.showRemoveStopPopup.set(false);
       this.hasChanged.set(true);
     }
-  }
-  showGroupPopUp(id: number): void {
-    this.groupIdDetail = id;
-    this.showGroupDetailPopUp.set(true);
-  }
-
-  async handleGroupPopupClose(): Promise<void> {
-    this.showGroupDetailPopUp.set(false);
-    this.stopGroups.set(await this.stopGroupService.getStopGroups());
-  }
-
-  openAddStopPopup(group: StopGroup) {
-    this.groupIdDetail = group.id;
-    this.showAddStopDropDownPopup.set(true);
   }
 }

@@ -5,9 +5,11 @@ import { MapComponent } from '@app/pages/map/map.component';
 import { StopPageComponent } from '@app/pages/main/stop-page/stop-page.component';
 import { AboutPageComponent } from '@app/pages/about/about-page.component';
 import { FeedbackComponent } from '@app/pages/feedback/feedback.component';
+import { NextYearPageComponent } from '@pages/next-year/next-year-page/next-year-page.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent },
+  { path: 'countdown', component: NextYearPageComponent },
   { path: 'feedback', component: FeedbackComponent },
   { path: 'main', component: MainPageComponent },
   { path: 'tour/:stopGroupId', component: StopPageComponent },

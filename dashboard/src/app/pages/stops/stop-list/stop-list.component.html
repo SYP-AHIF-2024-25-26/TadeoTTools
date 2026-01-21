@@ -224,7 +224,7 @@
               <th
                 class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
               >
-                Students (Requested/Assigned)
+                Students
               </th>
               <th
                 class="w-24 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
@@ -260,10 +260,18 @@
                   {{ getDivisionNames(stop.divisionIds) }}
                 </td>
                 <td class="px-4 py-3">
-                  <span
-                    class="rounded-full bg-primary-100 px-2 py-1 text-xs text-primary-700 dark:bg-primary-900 dark:text-primary-300"
-                    >{{ getStudentCount(stop.id) }}</span
-                  >
+                  <div class="flex flex-col gap-1">
+                    <span
+                      class="w-fit rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
+                    >
+                      Req: {{ getStudentCounts(stop.id).requested }}
+                    </span>
+                    <span
+                      class="w-fit rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                    >
+                      Ass: {{ getStudentCounts(stop.id).assigned }}
+                    </span>
+                  </div>
                 </td>
                 <td class="px-4 py-2">
                   <div class="flex items-center gap-1">
@@ -342,11 +350,17 @@
             <h3 class="card-title text-lg font-bold text-secondary-content">
               {{ stop.name }}
             </h3>
-            <span class="flex w-1/2 items-center justify-end">
+            <span class="flex w-1/2 flex-col items-end gap-1">
               <span
-                class="rounded-full bg-primary-100 px-2 py-1 text-sm font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-300"
-                >{{ getStudentCount(stop.id) }}</span
+                class="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
               >
+                Req: {{ getStudentCounts(stop.id).requested }}
+              </span>
+              <span
+                class="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300"
+              >
+                Ass: {{ getStudentCounts(stop.id).assigned }}
+              </span>
             </span>
           </div>
 
