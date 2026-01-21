@@ -5,7 +5,7 @@
 namespace Database.Migrations
 {
     /// <inheritdoc />
-    public partial class AddFeatureFlags : Migration
+    public partial class DeleteWrongFeatureFlagTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

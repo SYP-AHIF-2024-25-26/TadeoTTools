@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Migrations
 {
     [DbContext(typeof(TadeoTDbContext))]
-    [Migration("20260121083013_AddFeatureFlags")]
+    [Migration("20260121084002_AddFeatureFlags")]
     partial class AddFeatureFlags
     {
         /// <inheritdoc />
@@ -66,6 +66,33 @@ namespace Database.Migrations
                         .IsUnique();
 
                     b.ToTable("Divisions");
+                });
+
+            modelBuilder.Entity("Database.Entities.FeatureFlag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FeatureKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeatureKey")
+                        .IsUnique();
+
+                    b.ToTable("FeatureFlags");
                 });
 
             modelBuilder.Entity("Database.Entities.FeedbackDependency", b =>

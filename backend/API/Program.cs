@@ -13,6 +13,7 @@ using System.Text.Json.Serialization;
 using API.Endpoints.StopManagerManagement;
 using API.Endpoints.AdminManagement;
 using API.Endpoints.FeedbackManagement;
+using API.Endpoints.FeatureFlagManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -115,6 +116,7 @@ app.MapSettingsEndpoints();
 app.MapUserEndpoints();
 app.MapAdminEndpoints();
 app.MapFeedbackEndpoints();
+app.MapFeatureFlagEndpoints();
 
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetService<TadeoTDbContext>();
@@ -127,7 +129,7 @@ try
     // Seed initial admin if configured
     //await SeedInitialAdminAsync(context, app.Logger, builder.Configuration);
 
-    if (app.Environment.IsDevelopment()) 
+    if (app.Environment.IsDevelopment())
     {
         if (!await context.Students.AnyAsync())
         {

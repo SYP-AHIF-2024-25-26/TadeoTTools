@@ -17,6 +17,13 @@ export class ApiFetchService {
   private http = inject(HttpClient);
   private baseURL = inject(BASE_URL);
 
+  public async getShowCountdown(): Promise<boolean> {
+    return firstValueFrom(
+      this.http.get<boolean>(this.baseURL + '/v1/featureflags/showCountdown')
+    );
+  }
+
+
   public async getDivisions(): Promise<Division[]> {
     return firstValueFrom(
       this.http.get<Division[]>(this.baseURL + '/v1/divisions')
