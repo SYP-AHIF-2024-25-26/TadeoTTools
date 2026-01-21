@@ -137,7 +137,7 @@ export class StopsComponent {
     return stopManagers.map((t) => `${t.firstName} ${t.lastName}`).join(', ');
   }
 
-  getStudentCount(stopId: number): string {
+  getStudentCounts(stopId: number): { requested: number; assigned: number } {
     const students = this.students().filter((s) =>
       s.studentAssignments.some((a: StudentAssignment) => a.stopId === stopId)
     );
@@ -153,7 +153,7 @@ export class StopsComponent {
           a.stopId === stopId && a.status === Status.Accepted
       )
     ).length;
-    return `${requested} / ${assigned}`;
+    return { requested, assigned };
   }
 
   getDivisionNames(divisionIds: number[]): string {
