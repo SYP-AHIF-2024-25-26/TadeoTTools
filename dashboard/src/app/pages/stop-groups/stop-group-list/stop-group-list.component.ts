@@ -21,7 +21,6 @@ import { Router } from '@angular/router';
     DeletePopupComponent,
     StopGroupHeaderComponent,
     StopGroupListComponent,
-    StopSidebarComponent,
     AddStopDialogComponent,
   ],
   templateUrl: './stop-group-list.component.html',

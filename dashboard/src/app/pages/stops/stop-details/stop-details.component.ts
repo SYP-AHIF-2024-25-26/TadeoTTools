@@ -33,7 +33,6 @@ import { ScrollPersistenceService } from '@/core/services/scroll-persistence.ser
     RouterModule,
     LoaderComponent,
     StopGeneralInfoComponent,
-    StopGroupsComponent,
     StopStudentsComponent,
     StopManagersComponent,
     StopDivisionsComponent,
