@@ -120,6 +120,34 @@ namespace Database.Migrations
                     b.ToTable("FeedbackDependencies");
                 });
 
+            modelBuilder.Entity("Database.Entities.FeedbackDependency", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConditionValue")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("DependsOnQuestionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DependsOnQuestionId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("FeedbackDependencies");
+                });
+
             modelBuilder.Entity("Database.Entities.FeedbackOption", b =>
                 {
                     b.Property<int>("Id")
@@ -401,7 +429,20 @@ namespace Database.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+                        .HasColumnType("integer");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EdufsUsername")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StopId")
+                        .HasColumnType("integer");
                     b.Property<int>("StopId")
                         .HasColumnType("integer");
 

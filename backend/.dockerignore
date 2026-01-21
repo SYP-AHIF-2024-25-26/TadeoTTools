@@ -1,0 +1,20 @@
+# Ignore bin and obj folders
+**/bin/
+**/obj/
+
+
+# Ignore other projects not needed for API
+AppHost/
+TadeoTIntegrationTests/
+TadeoTUnitTests/
+ImportConsoleApp/
+
+# Ignore IDE and config files
+**/.idea/
+**/.vs/
+**/.vscode/
+**/.DS_Store
+*.sln
+*.user
+.config/
+docker-compose.yml

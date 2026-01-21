@@ -27,6 +27,11 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<FeedbackOption> FeedbackOptions => Set<FeedbackOption>();
     public DbSet<FeedbackSession> FeedbackSessions => Set<FeedbackSession>();
     public DbSet<FeatureFlag> FeatureFlags => Set<FeatureFlag>();
+    public DbSet<FeedbackQuestionAnswer> FeedbackQuestionAnswers => Set<FeedbackQuestionAnswer>();
+    public DbSet<FeedbackDependency> FeedbackDependencies => Set<FeedbackDependency>();
+
+    public DbSet<FeedbackOption> FeedbackOptions => Set<FeedbackOption>();
+    public DbSet<FeedbackSession> FeedbackSessions => Set<FeedbackSession>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

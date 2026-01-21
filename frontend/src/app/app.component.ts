@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
     try {
       const showCountdown = await this.apiService.getShowCountdown();
       console.log("showing");
-      
+
       if (showCountdown) {
         // Enforce ONLY countdown page by replacing routes
         const countdownRoutes: Routes = [
