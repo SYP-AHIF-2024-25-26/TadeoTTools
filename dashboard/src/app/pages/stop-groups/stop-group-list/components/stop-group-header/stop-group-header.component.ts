@@ -13,7 +13,6 @@ export class StopGroupHeaderComponent {
   onlyPublicGroups = input.required<boolean>();
 
   addGroup = output<void>();
-  toggleCollapse = output<void>();
   togglePublicGroups = output<void>();
   save = output<void>();
   cancel = output<void>();

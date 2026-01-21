@@ -1,0 +1,63 @@
+<div class="mt-6">
+  <h3 class="mb-4 text-lg font-medium text-text-950 dark:text-text-100">Stops</h3>
+
+  <div class="mb-4 flex gap-2">
+    <select
+      [(ngModel)]="selectedStopId"
+      class="block w-full rounded-lg border border-primary-200 bg-background-50 p-2.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300 dark:border-background-700 dark:bg-background-800 dark:text-text-100"
+    >
+      <option [value]="-1" disabled selected>Select a stop to add</option>
+      @for (stop of availableStops(); track stop.id) {
+        <option [value]="stop.id">{{ stop.name }}</option>
+      }
+    </select>
+    <button
+      type="button"
+      (click)="addStop()"
+      [disabled]="selectedStopId === -1"
+      class="btn btn-primary whitespace-nowrap p-2.5 disabled:opacity-50"
+    >
+      Add
+    </button>
+  </div>
+
+  <div
+    cdkDropList
+    (cdkDropListDropped)="drop($event)"
+    class="flex flex-col gap-2 rounded-lg border border-primary-200 bg-background-50 p-4 dark:border-background-700 dark:bg-background-800"
+  >
+    @for (stop of includedStops(); track stop.id) {
+      <div
+        cdkDrag
+        class="flex cursor-move items-center justify-between rounded-md border border-primary-100 bg-white p-3 shadow-sm hover:bg-primary-50 dark:border-background-600 dark:bg-background-700 dark:hover:bg-background-600"
+      >
+        <span class="text-text-900 dark:text-text-100">{{ stop.name }}</span>
+        <button
+          type="button"
+          (click)="removeStop(stop.id)"
+          class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="h-5 w-5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    }
+    @if (includedStops().length === 0) {
+      <div class="py-4 text-center text-sm text-text-500 dark:text-text-400">
+        No stops added yet. Select a stop above to add it.
+      </div>
+    }
+  </div>
+</div>

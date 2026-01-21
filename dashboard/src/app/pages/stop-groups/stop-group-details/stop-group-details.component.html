@@ -1,122 +1,52 @@
 <div
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+  class="mx-auto mt-4 w-full max-w-5xl rounded-lg bg-background-100 p-4 shadow-lg sm:p-6 md:mt-10"
 >
-  <div
-    class="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-background-100"
-  >
-    <!-- Form Header -->
-    <div
-      class="mb-6 flex items-center justify-between border-b border-background-200 pb-4 dark:border-background-700"
-    >
-      <h2 class="text-2xl font-bold text-secondary-content">
-        {{ id === -1 ? 'Add New Stop Group' : 'Edit Stop Group' }}
-      </h2>
-      <button
-        (click)="goBack()"
-        class="btn btn-circle btn-ghost btn-sm text-secondary-content"
-      >
-        ✕
-      </button>
+  @if (stopGroup().id == -1) {
+    <h4 class="text-xl text-text-950">New Stop Group</h4>
+  } @else {
+    <h4 class="text-xl text-text-950">Edit Stop Group</h4>
+  }
+  @if (isLoading()) {
+    <div class="flex h-32 items-center justify-center">
+      <app-loader></app-loader>
     </div>
+  } @else {
+    <form (submit)="submitStopGroupDetail()" class="mt-4">
+      <app-stop-group-general-info [(stopGroup)]="stopGroup" />
 
-    <!-- Error Message -->
-    @if (errorMessage()) {
-      <div role="alert" class="alert alert-error mb-4">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6 shrink-0 stroke-current"
-          fill="none"
-          viewBox="0 0 24 24"
+      <app-stop-group-stop-selector
+        [(stopGroup)]="stopGroup"
+        [allStops]="stops()"
+      />
+
+      @if (errorMessage() != null) {
+        <p class="text-red-700">{{ errorMessage() }}</p>
+      }
+      <div class="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <button
+          type="submit"
+          class="btn btn-primary btn-sm w-full gap-2 sm:w-auto"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <span>{{ errorMessage() }}</span>
-      </div>
-    }
+          Submit
+        </button>
 
-    <!-- Form -->
-    <form (ngSubmit)="submitStopGroupDetails()" class="space-y-4">
-      <!-- Stop Group Name -->
-      <div class="form-control">
-        <label class="label" for="name">
-          <span class="label-text text-text-700 dark:text-text-300">Name</span>
-        </label>
-        <input
-          type="text"
-          id="name"
-          placeholder="e.g. Main Building"
-          class="input input-bordered w-full bg-background-50 text-text-900 dark:bg-background-700 dark:text-text-100"
-          [(ngModel)]="name"
-          name="name"
-        />
-      </div>
-
-      <!-- Description -->
-      <div class="form-control">
-        <label class="label" for="description">
-          <span class="label-text text-text-700 dark:text-text-300"
-            >Description</span
-          >
-        </label>
-        <textarea
-          id="description"
-          placeholder="A short description of the stop group"
-          class="textarea textarea-bordered w-full bg-background-50 text-text-900 dark:bg-background-700 dark:text-text-100"
-          [(ngModel)]="description"
-          name="description"
-          rows="3"
-        ></textarea>
-      </div>
-
-      <!-- Is Public Checkbox -->
-      <div class="form-control">
-        <label class="label cursor-pointer justify-start gap-4">
-          <input
-            type="checkbox"
-            class="checkbox-primary checkbox"
-            id="isPublic"
-            [(ngModel)]="isPublic"
-            name="isPublic"
-          />
-          <span class="label-text text-text-700 dark:text-text-300"
-            >Is public?</span
-          >
-        </label>
-      </div>
-
-      <!-- Action Buttons -->
-      <div
-        class="flex flex-col-reverse gap-4 pt-6 sm:flex-row sm:justify-between"
-      >
-        <div>
-          @if (id !== -1) {
-            <button
-              type="button"
-              (click)="deleteAndGoBack()"
-              class="btn btn-error w-full sm:w-auto"
-            >
-              Delete Group
-            </button>
-          }
-        </div>
-        <div class="flex flex-col-reverse gap-4 sm:flex-row">
+        <button
+          (click)="goBack()"
+          type="button"
+          class="btn btn-sm w-full bg-primary-200 text-text-800 hover:bg-primary-300 sm:w-auto"
+        >
+          Cancel
+        </button>
+        @if (stopGroup().id != -1) {
           <button
+            (click)="deleteAndGoBack()"
             type="button"
-            (click)="goBack()"
-            class="btn btn-ghost w-full text-secondary-content sm:w-auto"
+            class="btn btn-sm w-full gap-2 bg-red-600 hover:bg-accent-300 sm:ml-auto sm:w-auto"
           >
-            Cancel
+            Delete
           </button>
-          <button type="submit" class="btn btn-primary w-full sm:w-auto">
-            {{ id === -1 ? 'Add Group' : 'Save Changes' }}
-          </button>
-        </div>
+        }
       </div>
     </form>
-  </div>
+  }
 </div>
