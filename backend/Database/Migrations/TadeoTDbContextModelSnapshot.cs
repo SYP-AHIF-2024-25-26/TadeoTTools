@@ -429,7 +429,6 @@ namespace Database.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
-                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 

@@ -92,7 +92,6 @@ public class StopManagementTests(IntegrationTestWebAppFactory factory) : BaseInt
             "3.03",
             [],
             [],
-            [],
             []
         );
 
