@@ -125,10 +125,11 @@ export class StopgroupDetailsComponent implements OnInit {
       return;
     }
     if (this.stopGroup().id === -1) {
-      const returnedStop = await this.stopGroupService.addStopGroup(
+      const returnedStopGroup = await this.stopGroupService.addStopGroup(
         this.stopGroup()
       );
-      this.stopGroup.set({ ...this.stopGroup(), id: returnedStop.id });
+      this.stopGroup.set({ ...this.stopGroup(), id: returnedStopGroup.id });
+      await this.stopGroupService.updateStopGroup(this.stopGroup());
     } else {
       await this.stopGroupService.updateStopGroup(this.stopGroup());
     }
