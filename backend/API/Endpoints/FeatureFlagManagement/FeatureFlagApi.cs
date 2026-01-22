@@ -23,7 +23,7 @@ public static class FeatureFlagApi
             return Results.Ok(feature.IsEnabled);
         });
 
-        group.MapPut("/{name}", async (string name, [FromBody] bool isEnabled, TadeoTDbContext context) =>
+        group.MapPut("/{name}", async (string name, [FromBody] UpdateFeatureFlagDto dto, TadeoTDbContext context) =>
         {
             var feature = await context.FeatureFlags
                 .FirstOrDefaultAsync(f => EF.Functions.ILike(f.FeatureKey, name));
@@ -33,10 +33,12 @@ public static class FeatureFlagApi
                 return Results.NotFound();
             }
 
-            feature.IsEnabled = isEnabled;
+            feature.IsEnabled = dto.isEnabled;
             await context.SaveChangesAsync();
 
             return Results.Ok(feature.IsEnabled);
         });
     }
+    
+    record UpdateFeatureFlagDto(bool isEnabled);
 }

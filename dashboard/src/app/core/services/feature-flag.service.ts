@@ -20,7 +20,7 @@ export class FeatureFlagService {
     return firstValueFrom(
       this.http.put<boolean>(
         `${this.baseURL}/featureflags/showCountdown`,
-        isEnabled
+        {"isEnabled": isEnabled}
       )
     );
   }
