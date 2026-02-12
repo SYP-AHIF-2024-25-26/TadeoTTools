@@ -12,4 +12,11 @@ cat <<EOF > /usr/share/nginx/html/assets/env.js
 })(this);
 EOF
 
+# If BASE_HREF is set, replace the value in index.html
+if [ -n "$BASE_HREF" ]; then
+  echo "Updating base href to $BASE_HREF"
+  sed -i 's|<base href="[^"]*">|<base href="'"$BASE_HREF"'">|g' /usr/share/nginx/html/index.html
+fi
+
+# Start Nginx
 exec "$@"
