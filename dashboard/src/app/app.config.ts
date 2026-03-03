@@ -3,7 +3,11 @@ import {
   InjectionToken,
   provideExperimentalZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter, withDebugTracing, withInMemoryScrolling } from '@angular/router';
+import {
+  provideRouter,
+  withDebugTracing,
+  withInMemoryScrolling,
+} from '@angular/router';
 import {
   provideHttpClient,
   withFetch,
@@ -27,7 +31,7 @@ import {
 
 declare global {
   interface Window {
-    __env: { backendURL?: string };
+    __env: { backendURL?: string; keycloakRedirectUri?: string };
   }
 }
 const baseUrl =
@@ -88,8 +92,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withInMemoryScrolling({
-          scrollPositionRestoration: 'disabled',
-          anchorScrolling: 'enabled',
+        scrollPositionRestoration: 'disabled',
+        anchorScrolling: 'enabled',
       })
     ),
     provideHttpClient(

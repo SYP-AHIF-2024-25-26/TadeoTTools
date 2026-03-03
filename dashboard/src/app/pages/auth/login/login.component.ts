@@ -32,9 +32,11 @@ export class LoginComponent implements OnInit {
   // Redirects to Keycloak login page
   private async initiateLogin(): Promise<void> {
     try {
-      await this.keycloak.login({
-        redirectUri: window.location.origin + window.location.pathname,
-      });
+      const redirectUri =
+        window.__env?.keycloakRedirectUri ||
+        window.location.origin + window.location.pathname;
+
+      await this.keycloak.login({ redirectUri });
     } catch (error) {
       console.error('Keycloak login error:', error);
       throw new Error('Failed to initiate login');

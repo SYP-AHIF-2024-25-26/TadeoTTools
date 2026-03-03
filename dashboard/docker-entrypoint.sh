@@ -3,12 +3,14 @@
 mkdir -p /usr/share/nginx/html/assets
 
 echo "BACKEND_URL: ${BACKEND_URL}"
+echo "KEYCLOAK_REDIRECT_URI: ${KEYCLOAK_REDIRECT_URI}"
 
 # Write env.js file
 cat <<EOF > /usr/share/nginx/html/assets/env.js
 (function (window) {
   window.__env = window.__env || {};
   window.__env.backendURL = "${BACKEND_URL}";
+  window.__env.keycloakRedirectUri = "${KEYCLOAK_REDIRECT_URI}";
 })(this);
 EOF
 
