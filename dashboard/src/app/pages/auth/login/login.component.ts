@@ -117,7 +117,8 @@ export class LoginComponent implements OnInit {
   private async logout(): Promise<void> {
     try {
       await this.keycloak.logout({
-        redirectUri: window.location.origin,
+        redirectUri:
+          window.__env?.keycloakRedirectUri || window.location.origin,
       });
     } catch (error) {
       console.error('Logout error:', error);
