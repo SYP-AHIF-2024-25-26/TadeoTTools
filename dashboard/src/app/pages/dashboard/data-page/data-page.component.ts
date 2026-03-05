@@ -6,9 +6,11 @@ import { StopService } from '@/core/services/stop.service';
 import { DivisionService } from '@/core/services/division.service';
 import { downloadFile } from '@/shared/utils/utils';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
+import { FeatureFlagService } from '@/core/services/feature-flag.service';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-data-page',
-  imports: [DeletePopupComponent],
+  imports: [DeletePopupComponent, FormsModule],
   templateUrl: './data-page.component.html',
   standalone: true,
 })
@@ -16,12 +18,36 @@ export class DataPageComponent {
   selectedStudentFile: WritableSignal<File | null> = signal(null);
   selectedStopManagerFile: WritableSignal<File | null> = signal(null);
   showDeleteStudentsPopup = signal<boolean>(false);
+  showCountdown = signal<boolean>(false);
 
   private studentService = inject(StudentService);
   private stopManagerService = inject(StopManagerService);
   private feedbackService = inject(FeedbackService);
   private stopService = inject(StopService);
   private divisionService = inject(DivisionService);
+  private featureFlagService = inject(FeatureFlagService);
+
+  async ngOnInit() {
+    try {
+      const isEnabled = await this.featureFlagService.getShowCountdown();
+      console.log("setting showCountdown to: " + isEnabled);
+      
+      this.showCountdown.set(isEnabled);
+    } catch (e) {
+      console.error('Failed to load feature flag', e);
+    }
+  }
+
+  async setShowCountdown() {
+    try {
+      this.showCountdown.update((v) => !v);
+      await this.featureFlagService.updateShowCountdown(this.showCountdown());
+    } catch (e) {
+      console.error('Failed to update feature flag', e);
+      // Revert on failure
+      this.showCountdown.update((v) => !v);
+    }
+  }
 
   onStudentFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;

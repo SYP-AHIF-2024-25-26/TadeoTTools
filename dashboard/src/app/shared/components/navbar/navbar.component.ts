@@ -33,9 +33,8 @@ export class NavbarComponent {
   ];
 
   async logout() {
-    // Redirect back to the dashboard base path after logout to stay under /admin/
     await this.keycloak.logout({
-      redirectUri: window.location.origin + '/admin/',
+      redirectUri: window.__env?.keycloakRedirectUri || window.location.origin,
     });
   }
 

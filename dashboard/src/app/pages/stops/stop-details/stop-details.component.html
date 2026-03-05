@@ -14,11 +14,11 @@
     <form (submit)="submitStopDetail()" class="mt-4">
       <app-stop-general-info [(stop)]="stop" />
 
-      <app-stop-groups
+      <!--<app-stop-groups
         [(stop)]="stop"
         [stopGroups]="stopGroups()"
         [isAdmin]="isAdmin()"
-      />
+      />-->
 
       <app-stop-students [(stop)]="stop" [students]="students()" />
 

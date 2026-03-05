@@ -10,5 +10,5 @@ import { CountdownComponent } from '@pages/next-year/countdown/countdown.compone
   standalone: true,
 })
 export class NextYearPageComponent {
-  protected targetDate: Date = new Date(2025, 10, 21, 0, 0, 0, 0);
+  protected targetDate: Date = new Date(2026, 10, 21, 0, 0, 0, 0);
 }

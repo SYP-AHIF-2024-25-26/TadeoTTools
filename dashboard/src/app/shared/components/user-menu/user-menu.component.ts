@@ -37,7 +37,8 @@ export class AdminDropdownComponent {
         return;
       }
       await this.keycloak.logout({
-        redirectUri: window.location.origin + '/admin/',
+        redirectUri:
+          window.__env?.keycloakRedirectUri || window.location.origin,
       });
     }
     this.isOpen.set(false);

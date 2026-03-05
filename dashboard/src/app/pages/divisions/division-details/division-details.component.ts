@@ -13,6 +13,7 @@ import { BASE_URL } from '@/app.config';
 import { isValidString } from '@/shared/utils/utils';
 import { Division } from '@/shared/models/types';
 import { DivisionService } from '@/core/services/division.service';
+import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 
 @Component({
   selector: 'app-division-details',
@@ -22,6 +23,7 @@ import { DivisionService } from '@/core/services/division.service';
 })
 export class DivisionDetailsComponent implements OnInit {
   private divisionService = inject(DivisionService);
+  private scrollService = inject(ScrollPersistenceService);
 
   @Input() id: number = -1;
   @Output() cancel = new EventEmitter<void>();
@@ -52,6 +54,7 @@ export class DivisionDetailsComponent implements OnInit {
     if (currentColor && !currentColor.startsWith('#')) {
       this.color.set('#' + currentColor);
     }
+    this.scrollService.restoreScroll();
   }
 
   async onFileChange(event: Event) {

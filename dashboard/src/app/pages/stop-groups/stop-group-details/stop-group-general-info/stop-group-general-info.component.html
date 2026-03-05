@@ -1,0 +1,56 @@
+<div class="mb-4">
+  <div class="mb-4 mt-2">
+    <label for="name" class="mb-1 block text-sm font-medium text-text-950"
+      >Name</label
+    >
+    @if (stopGroup().id == -1) {
+      <input
+        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+        type="text"
+        [value]="stopGroup().name"
+        (input)="updateName($any($event.target).value)"
+        name="name-new"
+        id="name-new"
+      />
+    } @else {
+      <input
+        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+        type="text"
+        [value]="stopGroup().name"
+        (input)="updateName($any($event.target).value)"
+        name="name"
+        id="name"
+      />
+    }
+  </div>
+
+  <div class="mb-4">
+    <label
+      for="description"
+      class="mb-1 block text-sm font-medium text-text-950"
+      >Description</label
+    >
+    <textarea
+      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      [value]="stopGroup().description"
+      (input)="updateDescription($any($event.target).value)"
+      name="description"
+      id="description"
+      rows="4"
+    ></textarea>
+  </div>
+
+  <div class="mb-2 flex items-center gap-2">
+    <label for="isPublic" class="block text-sm font-medium text-text-950"
+      >Is Public</label
+    >
+    <input
+      class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+      type="checkbox"
+      [checked]="stopGroup().isPublic"
+      (change)="updateIsPublic($any($event.target).checked)"
+      name="isPublic"
+      id="isPublic"
+    />
+  </div>
+</div>

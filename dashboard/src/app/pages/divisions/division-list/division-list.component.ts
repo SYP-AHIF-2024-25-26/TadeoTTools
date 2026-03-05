@@ -5,6 +5,7 @@ import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirm
 import { DivisionDetailsComponent } from '@/pages/divisions/division-details/division-details.component';
 import { DivisionService } from '@/core/services/division.service';
 import { Division } from '@/shared/models/types';
+import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 
 @Component({
   selector: 'app-divisions-list',
@@ -14,6 +15,7 @@ import { Division } from '@/shared/models/types';
 })
 export class DivisionsListComponent {
   private divisionService = inject(DivisionService);
+  private scrollService = inject(ScrollPersistenceService);
 
   divisions = signal<Division[]>([]);
   baseUrl = inject(BASE_URL);
@@ -24,6 +26,7 @@ export class DivisionsListComponent {
 
   async ngOnInit() {
     this.divisions.set(await this.divisionService.getDivisions());
+    this.scrollService.restoreScroll();
   }
 
   async deleteDivision() {

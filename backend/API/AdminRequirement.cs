@@ -18,15 +18,15 @@ public class AdminAuthorizationHandler(TadeoTDbContext dbContext) : Authorizatio
             return;
         }
 
-        var isAdmin = await dbContext.Admins.AnyAsync(a => a.Id.ToLower() == userId.ToLower());
+        var isAdmin = await dbContext.Admins.FirstOrDefaultAsync(a => EF.Functions.ILike(a.Id, userId));
 
-        if (isAdmin)
+        if (isAdmin == null)
         {
-            context.Succeed(requirement);
+            context.Fail(new AuthorizationFailureReason(this, "User does not have required role"));
         }
         else
         {
-            context.Fail(new AuthorizationFailureReason(this, "User does not have required role"));
+            context.Succeed(requirement);
         }
     }
 }
