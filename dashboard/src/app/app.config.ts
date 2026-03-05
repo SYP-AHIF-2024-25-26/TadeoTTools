@@ -3,7 +3,11 @@ import {
   InjectionToken,
   provideExperimentalZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter, withDebugTracing, withInMemoryScrolling } from '@angular/router';
+import {
+  provideRouter,
+  withDebugTracing,
+  withInMemoryScrolling,
+} from '@angular/router';
 import {
   provideHttpClient,
   withFetch,
@@ -27,7 +31,7 @@ import {
 
 declare global {
   interface Window {
-    __env: { backendURL?: string };
+    __env: { backendURL?: string; keycloakRedirectUri?: string };
   }
 }
 const baseUrl =
@@ -50,6 +54,7 @@ const keycloakProvider = provideKeycloak({
   },
   initOptions: {
     onLoad: 'login-required', // Action to take on load (check-sso)
+    redirectUri: window.__env?.keycloakRedirectUri || window.location.href,
     //enableLogging: true, // Enables logging
     // IMPORTANT: implicit flow is no longer recommended, but using standard flow leads to a 401 at the keycloak server
     // when retrieving the token with the access code - we leave it like this for the moment until a solution is found
@@ -88,8 +93,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withInMemoryScrolling({
-          scrollPositionRestoration: 'disabled',
-          anchorScrolling: 'enabled',
+        scrollPositionRestoration: 'disabled',
+        anchorScrolling: 'enabled',
       })
     ),
     provideHttpClient(

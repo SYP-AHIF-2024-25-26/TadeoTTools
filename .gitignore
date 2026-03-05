@@ -8,3 +8,6 @@ dashboard/package-lock.json
 backup.sql
 postgres_data.sql
 migrate_dump.py
+deployment/.env.vm1.example
+deployment/.env.vm2.example
+deployment/docker-compose.template.yml
