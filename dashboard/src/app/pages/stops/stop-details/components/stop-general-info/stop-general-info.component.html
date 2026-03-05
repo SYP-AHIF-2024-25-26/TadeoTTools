@@ -53,4 +53,20 @@
       id="roomNr"
     />
   </div>
+
+  <div class="mb-2">
+    <label
+      for="infrastructure"
+      class="mb-1 block text-sm font-medium text-text-950"
+      >Infrastruktur</label
+    >
+    <textarea
+      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      [value]="stop().infrastructure"
+      [(ngModel)]="stop().infrastructure"
+      name="infrastructure"
+      id="infrastructure"
+      rows="4"
+    ></textarea>
+  </div>
 </div>

@@ -19,6 +19,7 @@ public class StopFunctions
             stop.Name,
             stop.RoomNr,
             stop.Description,
+            stop.Infrastructure,
             stop.Divisions.Select(d => d.Id).ToArray(),
             stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
             stop.StopGroupAssignments.Select(a => a.Order).ToArray()
@@ -36,6 +37,7 @@ public record StopWithAssignmentsAndDivisionsDto(
     string Name,
     string RoomNr,
     string Description,
+    string Infrastructure,
     int[] DivisionIds,
     int[] StopGroupIds,
     int[] Orders
@@ -46,6 +48,7 @@ public record StopWithEverythingDto(
     string Name,
     string RoomNr,
     string Description,
+    string Infrastructure,
     int[] DivisionIds,
     int[] StopGroupIds,
     int[] Orders,

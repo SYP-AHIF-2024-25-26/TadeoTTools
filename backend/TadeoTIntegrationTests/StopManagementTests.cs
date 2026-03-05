@@ -33,6 +33,7 @@ public class StopManagementTests(IntegrationTestWebAppFactory factory) : BaseInt
             "Test Stop",
             "Description",
             "1.01",
+            "",
             [],
             [],
             [],
@@ -90,6 +91,7 @@ public class StopManagementTests(IntegrationTestWebAppFactory factory) : BaseInt
             "New Name",
             "New Desc",
             "3.03",
+            "",
             [],
             [],
             []

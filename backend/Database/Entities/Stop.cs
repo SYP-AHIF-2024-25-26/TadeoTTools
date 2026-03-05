@@ -14,6 +14,7 @@ public class Stop
     public required string Description { get; set; }
     [MaxLength(50)]
     public required string RoomNr { get; set; }
+    public string Infrastructure { get; set; } = "";
 
     public List<Division> Divisions { get; set; } = [];
     public List<StopGroupAssignment> StopGroupAssignments { get; set; } = [];
