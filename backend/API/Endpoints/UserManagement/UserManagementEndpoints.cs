@@ -47,10 +47,6 @@ public class UserManagementEndpoints
                 var username = user.Username.Match(u => u, _ => string.Empty);
                 if (string.IsNullOrEmpty(username))
                     return Results.BadRequest("Username not found");
-                var student = await context.Students
-                    .FirstOrDefaultAsync(u => EF.Functions.ILike(username, u.EdufsUsername));
-                if (student != null)
-                    return Results.Ok("Student");
                 var admin = await context.Admins
                     .FirstOrDefaultAsync(u => EF.Functions.ILike(username, u.Id));
                 if (admin != null)
@@ -59,6 +55,10 @@ public class UserManagementEndpoints
                     .FirstOrDefaultAsync(u => EF.Functions.ILike(username, u.EdufsUsername));
                 if (stopManager != null)
                     return Results.Ok("StopManager");
+                var student = await context.Students
+                    .FirstOrDefaultAsync(u => EF.Functions.ILike(username, u.EdufsUsername));
+                if (student != null)
+                    return Results.Ok("Student");
                 return Results.NotFound("User not found");
             },
             _ => Task.FromResult(Results.BadRequest("User information not found"))
