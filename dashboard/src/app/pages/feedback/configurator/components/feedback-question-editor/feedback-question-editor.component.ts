@@ -94,9 +94,11 @@ export class FeedbackQuestionEditorComponent {
     this.dependenciesArray.removeAt(index);
   }
 
-  getParentQuestionOptions(questionId: number | undefined): string[] {
+  getParentQuestionOptions(questionId: number | string | undefined): string[] {
     if (!questionId) return [];
-    const question = this.allQuestions().find((q) => q.id === questionId);
+    const numericId = Number(questionId);
+    if (isNaN(numericId)) return [];
+    const question = this.allQuestions().find((q) => q.id === numericId);
     return question?.options || [];
   }
 
