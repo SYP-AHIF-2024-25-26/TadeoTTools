@@ -114,28 +114,39 @@ public static class FeedbackManagementEndpoints
 
     public static async Task<IResult> GetFeedbackAnswersCsv(TadeoTDbContext context)
     {
-        var feedbackAnswers = await context.FeedbackQuestionAnswers
-            .Include(f => f.FeedbackQuestion)
-            .Select(f => new
-            {
-                f.FeedbackQuestion!.Question,
-                f.Answer
-            })
+        var questions = await context.FeedbackQuestions
+            .OrderBy(q => q.Order)
+            .Select(q => new { q.Id, q.Question })
             .ToListAsync();
 
-        // Create CSV content
+        var sessions = await context.FeedbackSessions
+            .Include(s => s.FeedbackQuestionAnswers)
+            .OrderBy(s => s.Timestamp)
+            .ToListAsync();
+
         var csvBuilder = new StringBuilder();
 
-        // Add headers
-        csvBuilder.AppendLine("Question;Answer");
-
-        // Add data rows
-        foreach (var item in feedbackAnswers)
+        // Header: SessionId;Timestamp;Question1;Question2;...
+        csvBuilder.Append("SessionId;Timestamp");
+        foreach (var q in questions)
         {
-            var escapedQuestion = Utils.EscapeCsvField(item.Question);
-            var escapedAnswer = Utils.EscapeCsvField(item.Answer);
+            csvBuilder.Append($";{Utils.EscapeCsvField(q.Question)}");
+        }
+        csvBuilder.AppendLine();
 
-            csvBuilder.AppendLine($"{escapedQuestion};{escapedAnswer}");
+        // One row per session
+        foreach (var session in sessions)
+        {
+            var answersByQuestionId = session.FeedbackQuestionAnswers
+                .ToDictionary(a => a.FeedbackQuestionId, a => a.Answer);
+
+            csvBuilder.Append($"{session.Id};{Utils.EscapeCsvField(session.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"))}");
+            foreach (var q in questions)
+            {
+                var answer = answersByQuestionId.GetValueOrDefault(q.Id, "");
+                csvBuilder.Append($";{Utils.EscapeCsvField(answer)}");
+            }
+            csvBuilder.AppendLine();
         }
 
         var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
