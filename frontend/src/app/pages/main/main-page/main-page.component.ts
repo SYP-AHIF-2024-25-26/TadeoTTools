@@ -46,7 +46,7 @@ export class MainPageComponent {
 
   async onLoad() {
     const groups = (await this.apiFetchService.getStopGroups()).sort(
-      (a, b) => a.rank - b.rank
+      (a, b) => a.order - b.order
     );
     this.groups.set(groups);
     this.showResetButton.set(true);
