@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import {
   Division,
+  FeatureFlag,
   FeedbackQuestion,
   FeedbackSubmission,
   Stop,
@@ -17,12 +18,11 @@ export class ApiFetchService {
   private http = inject(HttpClient);
   private baseURL = inject(BASE_URL);
 
-  public async getShowCountdown(): Promise<boolean> {
+  public async getShowCountdown(): Promise<FeatureFlag> {
     return firstValueFrom(
-      this.http.get<boolean>(this.baseURL + '/v1/featureflags/showCountdown')
+      this.http.get<FeatureFlag>(this.baseURL + '/v1/featureflags/showCountdown')
     );
   }
-
 
   public async getDivisions(): Promise<Division[]> {
     return firstValueFrom(
