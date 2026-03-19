@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
       const showCountdown = await this.apiService.getShowCountdown();
       console.log("showing");
 
-      if (showCountdown) {
+      if (showCountdown.isEnabled) {
         // Enforce ONLY countdown page by replacing routes
         const countdownRoutes: Routes = [
           { path: '', component: NextYearPageComponent },

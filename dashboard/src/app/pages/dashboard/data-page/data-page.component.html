@@ -187,7 +187,7 @@
     Delete all Students
   </button>
 </div>
-<div class="mt-8 flex justify-center">
+<div class="mt-8 flex flex-col items-center gap-4">
   <div class="form-control">
     <label class="label cursor-pointer gap-4">
       <span class="label-text text-lg font-bold">Show Countdown</span>
@@ -198,6 +198,19 @@
         (click)="setShowCountdown()"
       />
     </label>
+  </div>
+  <div class="flex flex-col items-center gap-2 sm:flex-row">
+    <input
+      type="datetime-local"
+      class="input input-bordered input-sm label-text text-lg [color-scheme:light] dark:[color-scheme:dark]"
+      [(ngModel)]="countdownValue"
+    />
+    <button
+      class="btn btn-primary btn-sm"
+      (click)="updateShowdownValue()"
+    >
+      Set Value
+    </button>
   </div>
 </div>
 

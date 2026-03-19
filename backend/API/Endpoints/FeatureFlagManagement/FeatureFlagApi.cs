@@ -17,14 +17,23 @@ public static class FeatureFlagApi
 
             if (feature == null)
             {
-                return Results.Ok(false);
+                return Results.NotFound();
             }
 
-            return Results.Ok(feature.IsEnabled);
+            return Results.Ok(new GetFeatureFlagDto(
+                feature.FeatureKey,
+                feature.IsEnabled,
+                feature.Value
+            ));
         });
 
         group.MapPut("/{name}", async (string name, [FromBody] UpdateFeatureFlagDto dto, TadeoTDbContext context) =>
         {
+            if (!dto.IsEnabled.HasValue && dto.Value == null)
+            {
+                return Results.BadRequest("Must provide either IsEnabled or Value to update.");
+            }
+
             var feature = await context.FeatureFlags
                 .FirstOrDefaultAsync(f => EF.Functions.ILike(f.FeatureKey, name));
 
@@ -33,12 +42,22 @@ public static class FeatureFlagApi
                 return Results.NotFound();
             }
 
-            feature.IsEnabled = dto.isEnabled;
+            if (dto.IsEnabled.HasValue)
+            {
+                feature.IsEnabled = dto.IsEnabled.Value;
+            }
+            if (dto.Value != null)
+            {
+                feature.Value = dto.Value;
+            }
+
             await context.SaveChangesAsync();
 
-            return Results.Ok(feature.IsEnabled);
+            return Results.NoContent();
         });
     }
     
-    record UpdateFeatureFlagDto(bool isEnabled);
+    record GetFeatureFlagDto(string Name, bool IsEnabled, string? Value);
+    
+    record UpdateFeatureFlagDto(bool? IsEnabled, string? Value);
 }

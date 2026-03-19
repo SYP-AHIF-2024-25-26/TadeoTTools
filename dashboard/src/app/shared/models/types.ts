@@ -107,6 +107,11 @@ export type Info = {
   message: string;
 };
 
+export type FeatureFlag = {
+  isEnabled: boolean;
+  value: string;
+}
+
 export type FeedbackQuestion = {
   id?: number;
   question: string;
