@@ -19,6 +19,7 @@ export class DataPageComponent {
   selectedStopManagerFile: WritableSignal<File | null> = signal(null);
   showDeleteStudentsPopup = signal<boolean>(false);
   showCountdown = signal<boolean>(false);
+  countdownValue = signal<string>('');
 
   private studentService = inject(StudentService);
   private stopManagerService = inject(StopManagerService);
@@ -29,10 +30,10 @@ export class DataPageComponent {
 
   async ngOnInit() {
     try {
-      const isEnabled = await this.featureFlagService.getShowCountdown();
-      console.log("setting showCountdown to: " + isEnabled);
+      const showCountdown = await this.featureFlagService.getShowCountdown();
       
-      this.showCountdown.set(isEnabled);
+      this.showCountdown.set(showCountdown.isEnabled);
+      this.countdownValue.set(showCountdown.value);
     } catch (e) {
       console.error('Failed to load feature flag', e);
     }
@@ -41,11 +42,19 @@ export class DataPageComponent {
   async setShowCountdown() {
     try {
       this.showCountdown.update((v) => !v);
-      await this.featureFlagService.updateShowCountdown(this.showCountdown());
+      await this.featureFlagService.updateShowCountdown(this.showCountdown(), this.countdownValue());
     } catch (e) {
       console.error('Failed to update feature flag', e);
       // Revert on failure
       this.showCountdown.update((v) => !v);
+    }
+  }
+
+  async updateShowdownValue() {
+    try {
+      await this.featureFlagService.updateShowCountdown(this.showCountdown(), this.countdownValue());
+    } catch (e) {
+      console.error('Failed to update countdown value', e);
     }
   }
 

@@ -12,7 +12,7 @@ export type StopGroup = {
   id: number;
   name: string;
   description: string;
-  rank: number;
+  order: number;
   stopIds: number[];
 };
 
@@ -45,3 +45,8 @@ export type FeedbackSubmission = {
   questionId: number;
   answer: string;
 };
+
+export type FeatureFlag = {
+  isEnabled: boolean;
+  value: string;
+}

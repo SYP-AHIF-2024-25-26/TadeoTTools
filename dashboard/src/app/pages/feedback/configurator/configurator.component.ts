@@ -213,7 +213,7 @@ export class FeedbackConfiguratorComponent implements OnInit {
           (d) => d.dependsOnQuestionId > 0 && d.conditionValue.trim() !== ''
         )
         .map((d) => ({
-          dependsOnQuestionId: d.dependsOnQuestionId,
+          dependsOnQuestionId: Number(d.dependsOnQuestionId),
           conditionValue: d.conditionValue,
         }));
     }
