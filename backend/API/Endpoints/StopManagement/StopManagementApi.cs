@@ -83,7 +83,7 @@ public static class StopManagementApi
             .WithDescription("Get a stop by its id")
             .Produces<StopWithAssignmentsAndDivisionsDto>()
             .Produces(StatusCodes.Status404NotFound)
-            .RequireAuthorization(Setup.StopManagerOrAdminPolicyName); // fix later to admin only
+            .RequireAuthorization(Setup.StopManagerOrAdminPolicyName);
 
         group.MapGet("api/stops/by-division", StopManagementEndpoints.GetStopsByDivisionId)
             .WithName(nameof(StopManagementEndpoints.GetStopsByDivisionId))

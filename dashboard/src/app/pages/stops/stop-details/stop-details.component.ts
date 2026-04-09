@@ -63,6 +63,7 @@ export class StopDetailsComponent implements OnInit {
     name: '',
     description: '',
     roomNr: '',
+    infrastructure: '',
     divisionIds: [],
     stopGroupIds: [],
     orders: [],

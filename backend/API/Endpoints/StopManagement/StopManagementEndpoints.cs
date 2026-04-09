@@ -35,6 +35,7 @@ public static class StopManagementEndpoints
             stop.Name,
             stop.RoomNr,
             stop.Description,
+            stop.Infrastructure,
             stop.Divisions.Select(d => d.Id).ToArray(),
             stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
             stop.StopGroupAssignments.Select(a => a.Order).ToArray(),
@@ -105,6 +106,7 @@ public static class StopManagementEndpoints
                 s.Name,
                 s.Description,
                 s.RoomNr,
+                s.Infrastructure,
                 s.Divisions.Select(d => d.Id).ToArray(),
                 s.StopGroupAssignments.Select(a => a.StopGroupId).ToArray()
             ))
@@ -123,8 +125,9 @@ public static class StopManagementEndpoints
         return Results.Ok(stops.Select(stop => new StopOfStopManager(
             stop.Id,
             stop.Name,
+            stop.Description,
             stop.RoomNr,
-            stop.Description
+            stop.Infrastructure
         )).ToList());
     }
 
@@ -132,7 +135,8 @@ public static class StopManagementEndpoints
         int Id,
         string Name,
         string Description,
-        string RoomNr
+        string RoomNr,
+        string Infrastructure
     );
 
     public static async Task<IResult> GetPublicStops(TadeoTDbContext context)
@@ -199,6 +203,7 @@ public static class StopManagementEndpoints
             Name = createStopDto.Name,
             Description = createStopDto.Description,
             RoomNr = createStopDto.RoomNr,
+            Infrastructure = createStopDto.Infrastructure ?? "",
             StudentAssignments = createStopDto.StudentAssignments.Select(s => new StudentAssignment()
             {
                 EdufsUsername = s.EdufsUsername,
@@ -229,7 +234,7 @@ public static class StopManagementEndpoints
         stop.StopGroupAssignments = groupAssignments;
 
         await context.SaveChangesAsync();
-        return Results.Ok(new StopResponseDto(stop.Id, stop.Name, stop.Description, stop.RoomNr,
+        return Results.Ok(new StopResponseDto(stop.Id, stop.Name, stop.Description, stop.RoomNr, stop.Infrastructure,
             createStopDto.DivisionIds, createStopDto.StopGroupIds));
     }
 
@@ -295,6 +300,7 @@ public static class StopManagementEndpoints
         stop.Name = updateStopDto.Name;
         stop.Description = updateStopDto.Description;
         stop.RoomNr = updateStopDto.RoomNr;
+        stop.Infrastructure = updateStopDto.Infrastructure ?? "";
 
         await context.SaveChangesAsync();
         return Results.Ok();
@@ -335,6 +341,7 @@ public static class StopManagementEndpoints
         stop.Name = updateStopDto.Name;
         stop.Description = updateStopDto.Description;
         stop.RoomNr = updateStopDto.RoomNr;
+        stop.Infrastructure = updateStopDto.Infrastructure ?? "";
 
         await context.SaveChangesAsync();
         return Results.Ok();
@@ -368,13 +375,14 @@ public static class StopManagementEndpoints
 
         var csvBuilder = new StringBuilder();
         csvBuilder.AppendLine(
-            "Name;Description;RoomNr;StopManager;StudentsRequested;StudentsAssigned;StopGroups;Divisions");
+            "Name;Description;RoomNr;Infrastructure;StopManager;StudentsRequested;StudentsAssigned;StopGroups;Divisions");
 
         foreach (var item in stops)
         {
             var escapedName = Utils.EscapeCsvField(item.Name);
             var escapedDescription = Utils.EscapeCsvField(item.Description);
             var escapedRoomNr = Utils.EscapeCsvField(item.RoomNr);
+            var escapedInfrastructure = Utils.EscapeCsvField(item.Infrastructure);
             var escapedStopManager = Utils.EscapeCsvField(string.Join(",",
                 item.StopManagerAssignments.Select(t => t.StopManager?.FirstName + " " + t.StopManager?.LastName)));
             var escapedStudentsRequested =
@@ -385,7 +393,7 @@ public static class StopManagementEndpoints
             var escapedStopGroupNames =
                 Utils.EscapeCsvField(string.Join(",", item.StopGroupAssignments.Select(a => a.StopGroup?.Name)));
             csvBuilder.AppendLine(
-                $"{escapedName};{escapedDescription};{escapedRoomNr};{escapedStopManager};{escapedStudentsRequested};{escapedStudentsAssigned};{escapedStopGroupNames};{escapedDivisions}");
+                $"{escapedName};{escapedDescription};{escapedRoomNr};{escapedInfrastructure};{escapedStopManager};{escapedStudentsRequested};{escapedStudentsAssigned};{escapedStopGroupNames};{escapedDivisions}");
         }
 
         var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
@@ -446,6 +454,7 @@ public static class StopManagementEndpoints
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
         [Required, MaxLength(50)] string RoomNr,
+        [Required, MaxLength(500)] string Infrastructure,
         int[] DivisionIds,
         StudentOfStopDto[] StudentAssignments,
         string[] StopManagerAssignments
@@ -456,6 +465,7 @@ public static class StopManagementEndpoints
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
         [Required, MaxLength(50)] string RoomNr,
+        [Required, MaxLength(500)] string Infrastructure,
         StudentOfStopDto[] StudentAssignments
     );
 
@@ -463,6 +473,7 @@ public static class StopManagementEndpoints
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
         [Required, MaxLength(50)] string RoomNr,
+        [Required, MaxLength(500)] string Infrastructure,
         int[] DivisionIds,
         int[] StopGroupIds,
         StudentOfStopDto[] StudentAssignments,
@@ -474,6 +485,7 @@ public static class StopManagementEndpoints
         string Name,
         string Description,
         string RoomNr,
+        string Infrastructure,
         int[] DivisionIds,
         int[] StopGroupIds
     );

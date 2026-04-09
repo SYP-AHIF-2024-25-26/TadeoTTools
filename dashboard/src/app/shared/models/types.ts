@@ -21,6 +21,7 @@ export type Stop = {
   name: string;
   roomNr: string;
   description: string;
+  infrastructure: string;
   divisionIds: number[];
   stopGroupIds: number[];
   orders: number[];
@@ -72,6 +73,7 @@ export type StopWithoutOrders = {
   name: string;
   description: string;
   roomNr: string;
+  infrastructure: string;
   divisionIds: number[];
   stopGroupIds: number[];
   studentAssignments: StudentAssignmentOfStop[];
@@ -83,6 +85,7 @@ export type StopAsStopManager = {
   name: string;
   roomNr: string;
   description: string;
+  infrastructure: string;
   studentAssignments: StudentAssignmentOfStop[];
 };
 
