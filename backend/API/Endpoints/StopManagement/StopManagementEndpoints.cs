@@ -203,7 +203,7 @@ public static class StopManagementEndpoints
             Name = createStopDto.Name,
             Description = createStopDto.Description,
             RoomNr = createStopDto.RoomNr,
-            Infrastructure = createStopDto.Infrastructure,
+            Infrastructure = createStopDto.Infrastructure ?? "",
             StudentAssignments = createStopDto.StudentAssignments.Select(s => new StudentAssignment()
             {
                 EdufsUsername = s.EdufsUsername,
@@ -300,7 +300,7 @@ public static class StopManagementEndpoints
         stop.Name = updateStopDto.Name;
         stop.Description = updateStopDto.Description;
         stop.RoomNr = updateStopDto.RoomNr;
-        stop.Infrastructure = updateStopDto.Infrastructure;
+        stop.Infrastructure = updateStopDto.Infrastructure ?? "";
 
         await context.SaveChangesAsync();
         return Results.Ok();
@@ -341,7 +341,7 @@ public static class StopManagementEndpoints
         stop.Name = updateStopDto.Name;
         stop.Description = updateStopDto.Description;
         stop.RoomNr = updateStopDto.RoomNr;
-        stop.Infrastructure = updateStopDto.Infrastructure;
+        stop.Infrastructure = updateStopDto.Infrastructure ?? "";
 
         await context.SaveChangesAsync();
         return Results.Ok();
@@ -454,7 +454,7 @@ public static class StopManagementEndpoints
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
         [Required, MaxLength(50)] string RoomNr,
-        string Infrastructure,
+        [Required, MaxLength(500)] string Infrastructure,
         int[] DivisionIds,
         StudentOfStopDto[] StudentAssignments,
         string[] StopManagerAssignments
@@ -465,7 +465,7 @@ public static class StopManagementEndpoints
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
         [Required, MaxLength(50)] string RoomNr,
-        string Infrastructure,
+        [Required, MaxLength(500)] string Infrastructure,
         StudentOfStopDto[] StudentAssignments
     );
 
@@ -473,7 +473,7 @@ public static class StopManagementEndpoints
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
         [Required, MaxLength(50)] string RoomNr,
-        string Infrastructure,
+        [Required, MaxLength(500)] string Infrastructure,
         int[] DivisionIds,
         int[] StopGroupIds,
         StudentOfStopDto[] StudentAssignments,
