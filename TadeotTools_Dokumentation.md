@@ -163,3 +163,14 @@ Das in Entity-Framework Core hinterlegte PostgreSQL Datenmodell umfasst folgende
 
 ### System-Konfiguration
 - **FeatureFlags**: Beschreibt globale Key-Value Pairs im System wie den Boolean "ShowCountdown", welche von Frontends oder Dashboards abgefragt und mittels Admin-Status rekonfiguriert werden können.
+
+---
+
+## 6. How-To-Run
+
+### Lokale Entwicklung (Aspire)
+Für die lokale Entwicklung und Orchestrierung des Backends wird .NET Aspire verwendet. Wechsle dazu in das `AppHost` Verzeichnis und starte die Applikation:
+```bash
+cd backend/AppHost
+dotnet run
+```
