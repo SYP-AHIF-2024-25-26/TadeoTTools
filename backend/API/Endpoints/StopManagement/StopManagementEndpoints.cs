@@ -125,8 +125,8 @@ public static class StopManagementEndpoints
         return Results.Ok(stops.Select(stop => new StopOfStopManager(
             stop.Id,
             stop.Name,
-            stop.RoomNr,
             stop.Description,
+            stop.RoomNr,
             stop.Infrastructure
         )).ToList());
     }
