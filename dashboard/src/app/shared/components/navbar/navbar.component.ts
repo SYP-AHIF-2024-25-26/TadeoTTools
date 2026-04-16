@@ -29,7 +29,7 @@ export class NavbarComponent {
     { label: 'Stops', route: '/stops' },
     { label: 'Divisions', route: '/divisions' },
     { label: 'Feedback', route: '/feedback' },
-    { label: 'User Management', route: '/user-management' },
+    { label: 'Data Management', route: '/data-management' },
   ];
 
   async logout() {

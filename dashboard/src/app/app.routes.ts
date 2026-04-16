@@ -10,7 +10,7 @@ import { StudentComponent } from './pages/students/student-details/student-detai
 import { StopManagerDetailsComponent } from './pages/stop-managers/stop-manager-details/stop-manager-details.component';
 import { ListStudentsComponent } from './pages/students/student-list/student-list.component';
 import { FeedbackConfiguratorComponent } from './pages/feedback/configurator/configurator.component';
-import { UserManagementComponent } from './pages/dashboard/user-management.component';
+import { DataManagementComponent } from './pages/dashboard/data-management.component';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { adminOrStopManagerGuard } from './core/guards/admin-or-stop-manager.guard';
@@ -61,8 +61,8 @@ export const routes: Routes = [
     canActivate: [adminOrStopManagerGuard],
   },
   {
-    path: 'user-management',
-    component: UserManagementComponent,
+    path: 'data-management',
+    component: DataManagementComponent,
     canMatch: [authGuard],
     canActivate: [adminGuard],
   },

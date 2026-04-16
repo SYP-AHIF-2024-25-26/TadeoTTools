@@ -116,10 +116,10 @@
   <!-- ################################## -->
   <div class="mt-6 hidden w-full max-w-7xl md:block">
     <div
-      class="overflow-x-auto rounded-lg border border-background-200 dark:border-background-700"
+      class="rounded-lg border border-background-200 dark:border-background-700"
     >
       <div class="max-h-[60vh] overflow-y-auto">
-        <table class="w-full border-collapse">
+        <table class="w-full table-fixed border-collapse">
           <thead
             class="sticky top-0 z-10 border-b border-background-200 bg-background-100 dark:border-background-700 dark:bg-background-900"
           >
@@ -174,6 +174,11 @@
                 class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
               >
                 Room
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+              >
+                Requested Infrastructure
               </th>
               <th
                 class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
@@ -248,14 +253,17 @@
                   {{ stop.roomNr || 'No room assigned' }}
                 </td>
                 <td
-                  class="max-w-[240px] truncate px-4 py-3"
-                  title="{{ getStopManagerNames(stop.id) }}"
+                  class="break-words px-4 py-3"
+                >
+                  {{ stop.infrastructure || 'None' }}
+                </td>
+                <td
+                  class="break-words px-4 py-3"
                 >
                   {{ getStopManagerNames(stop.id) }}
                 </td>
                 <td
-                  class="max-w-[200px] truncate px-4 py-3"
-                  title="{{ getDivisionNames(stop.divisionIds) }}"
+                  class="break-words px-4 py-3"
                 >
                   {{ getDivisionNames(stop.divisionIds) }}
                 </td>
@@ -308,7 +316,7 @@
             @if (filteredStops().length === 0) {
               <tr>
                 <td
-                  colspan="7"
+                  colspan="8"
                   class="px-4 py-10 text-center text-sm text-text-500"
                 >
                   <div class="flex flex-col items-center gap-2">
@@ -339,18 +347,18 @@
   <!-- ################################## -->
   <!-- MOBILE: Stops Cards (sm only)    -->
   <!-- ################################## -->
-  <div class="mt-6 w-full max-w-6xl space-y-4 md:hidden">
+  <div class="mt-6 w-full max-w-6xl space-y-4 px-2 md:hidden">
     @for (stop of filteredStops(); track stop.id) {
       <div
         class="card border border-background-200 bg-white shadow-lg dark:border-background-700 dark:bg-background-800"
       >
         <div class="card-body p-4">
-          <!-- Card Header: Title and Student Count -->
-          <div class="mb-2 flex items-start justify-between">
-            <h3 class="card-title text-lg font-bold text-secondary-content">
+          <!-- Card Header -->
+          <div class="mb-3 flex items-start justify-between gap-2">
+            <h3 class="text-base font-bold text-secondary-content">
               {{ stop.name }}
             </h3>
-            <span class="flex w-1/2 flex-col items-end gap-1">
+            <div class="flex flex-shrink-0 flex-row gap-1.5">
               <span
                 class="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
               >
@@ -361,51 +369,47 @@
               >
                 Ass: {{ getStudentCounts(stop.id).assigned }}
               </span>
-            </span>
+            </div>
           </div>
 
           <!-- Card Content -->
-          <div class="space-y-2 text-sm">
-            <div class="flex">
-              <span
-                class="w-24 flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
-                >Groups:</span
-              >
-              <span class="text-text-800 dark:text-text-200">{{
-                getStopGroupNames(stop.stopGroupIds)
-              }}</span>
-            </div>
-            <div class="flex">
-              <span
-                class="w-24 flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
-                >Room:</span
-              >
-              <span class="text-text-800 dark:text-text-200">{{
+          <div class="divide-y divide-background-200 text-sm dark:divide-background-700">
+            <!-- Inline rows for short fields -->
+            <div class="flex justify-between gap-2 py-2">
+              <span class="font-semibold text-text-600 dark:text-text-400">Room</span>
+              <span class="text-right text-text-800 dark:text-text-200">{{
                 stop.roomNr || 'No room assigned'
               }}</span>
             </div>
-            <div class="flex">
-              <span
-                class="w-24 flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
-                >Stop Managers:</span
-              >
-              <span class="truncate text-text-800 dark:text-text-200">{{
+            <div class="flex justify-between gap-2 py-2">
+              <span class="font-semibold text-text-600 dark:text-text-400">Groups</span>
+              <span class="text-right text-text-800 dark:text-text-200">{{
+                getStopGroupNames(stop.stopGroupIds)
+              }}</span>
+            </div>
+            <div class="flex justify-between gap-2 py-2">
+              <span class="font-semibold text-text-600 dark:text-text-400">Department</span>
+              <span class="text-right text-text-800 dark:text-text-200">{{
+                getDivisionNames(stop.divisionIds)
+              }}</span>
+            </div>
+
+            <div class="flex justify-between gap-2 py-2">
+              <span class="flex-shrink-0 font-semibold text-text-600 dark:text-text-400">Stop Managers</span>
+              <span class="break-words text-right text-text-800 dark:text-text-200">{{
                 getStopManagerNames(stop.id)
               }}</span>
             </div>
-            <div class="flex">
-              <span
-                class="w-24 flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
-                >Department:</span
-              >
-              <span class="truncate text-text-800 dark:text-text-200">{{
-                getDivisionNames(stop.divisionIds)
+            <div class="flex justify-between gap-2 py-2">
+              <span class="flex-shrink-0 font-semibold text-text-600 dark:text-text-400">Req. Infrastructure</span>
+              <span class="break-words text-right text-text-800 dark:text-text-200">{{
+                stop.infrastructure || 'None'
               }}</span>
             </div>
           </div>
 
           <!-- Card Actions -->
-          <div class="card-actions mt-4 justify-end">
+          <div class="mt-4 flex justify-end">
             <button
               class="btn btn-outline btn-sm"
               [routerLink]="['/stop']"

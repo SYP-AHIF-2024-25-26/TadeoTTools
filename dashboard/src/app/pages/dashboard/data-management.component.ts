@@ -15,9 +15,9 @@ type TabType = 'stop-managers' | 'admins' | 'data';
     DataPageComponent,
     StopManagerOverviewComponent,
   ],
-  templateUrl: './user-management.component.html',
+  templateUrl: './data-management.component.html',
 })
-export class UserManagementComponent implements OnInit {
+export class DataManagementComponent implements OnInit {
   private studentService = inject(StudentService);
   private scrollService = inject(ScrollPersistenceService);
 
