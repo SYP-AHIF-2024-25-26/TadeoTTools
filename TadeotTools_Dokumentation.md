@@ -166,11 +166,72 @@ Das in Entity-Framework Core hinterlegte PostgreSQL Datenmodell umfasst folgende
 
 ---
 
-## 6. How-To-Run
+## 6. How-To-Run / Deployment
 
 ### Lokale Entwicklung (Aspire)
-Für die lokale Entwicklung und Orchestrierung des Backends wird .NET Aspire verwendet. Wechsle dazu in das `AppHost` Verzeichnis und starte die Applikation:
+Für die lokale Entwicklung und Orchestrierung des Backends wird .NET Aspire verwendet. Zuerst müssen in `frontend` und `dashboard` die Node-Abhängigkeiten installiert werden:
+```bash
+cd frontend && npm i
+cd ../dashboard && npm i
+```
+Anschließend das Backend über das `AppHost` Projekt starten:
 ```bash
 cd backend/AppHost
 dotnet run
 ```
+
+### Deployment (Docker CI/CD)
+Das Projekt nutzt eine automatisierte Build-Pipeline (GitHub Actions). Bei jedem Push auf den Hauptzweig (`main`) werden automatisch neue Docker-Images für alle drei Services gebaut und in der **GitHub Container Registry (GHCR)** unter dem Owner `syp-ahif-2024-25-26` veröffentlicht:
+
+- `ghcr.io/syp-ahif-2024-25-26/tadeottools/backend`
+- `ghcr.io/syp-ahif-2024-25-26/tadeottools/frontend`
+- `ghcr.io/syp-ahif-2024-25-26/tadeottools/dashboard`
+
+#### Staging-Umgebung (automatisch)
+Nach jedem Push auf `main` wird die neue Version automatisch auf die **Staging-Umgebung** deployed:
+
+> **URL:** [vm45.htl-leonding.ac.at](http://vm45.htl-leonding.ac.at)
+
+Diese Umgebung dient zum Testen und Validieren von Änderungen vor dem produktiven Einsatz.
+
+#### Produktionsumgebung (manuell)
+Das Deployment auf die **Produktionsumgebung** muss manuell angestoßen werden:
+
+> **URL:** [tadeot.htl-leonding.ac.at](https://tadeot.htl-leonding.ac.at)
+
+Hier läuft die für den tatsächlichen Tag der offenen Tür relevante, stabile Version des Systems.
+
+### Environment-Variablen der Container
+
+> **Hinweis:** Die Datei `example-docker-compose.yml` beschreibt den generellen Aufbau des Deployments. Die darin referenzierten Docker-Images werden in der GitHub Container Registry (GHCR) unter `ghcr.io/syp-ahif-2024-25-26/tadeottools/` gehostet und **können nicht ohne GHCR-Authentifizierung gepullt werden**.
+
+**Frontend** (`tadeot-frontend-201126`):
+
+| Variable | Beschreibung | Beispielwert |
+|---|---|---|
+| `BACKEND_URL` | Öffentliche URL des Backends | `https://tadeot.htl-leonding.ac.at/tadeot-backend-201126` |
+
+**Dashboard** (`tadeot-dashboard-201126`):
+
+| Variable | Beschreibung | Beispielwert |
+|---|---|---|
+| `BASE_HREF` | Basispfad des Dashboards | `/adm-dashboard/` |
+| `BACKEND_URL` | Öffentliche URL des Backends inkl. `/v1` | `https://tadeot.htl-leonding.ac.at/tadeot-backend-201126/v1` |
+| `KEYCLOAK_REDIRECT_URI` | Redirect-URL nach Keycloak-Login | `https://tadeot.htl-leonding.ac.at/adm-dashboard/` |
+
+**Backend** (`tadeot-backend-201126`):
+
+| Variable | Beschreibung | Beispielwert |
+|---|---|---|
+| `ASPNETCORE_ENVIRONMENT` | Laufzeitumgebung | `Production` |
+| `ASPNETCORE_FORWARDEDHEADERS_ENABLED` | Aktiviert Proxy-Header-Weiterleitung | `true` |
+| `ConnectionStrings__DefaultConnection` | EF Core Datenbankverbindung | `Host=tadeot-postgres;Database=tadeot;Username=user;Password=...` |
+| `ASPNETCORE_URLS` | Interner Port-Binding | `http://+:4100` |
+
+**PostgreSQL** (`tadeot-postgres`):
+
+| Variable | Beschreibung | Beispielwert |
+|---|---|---|
+| `POSTGRES_USER` | Datenbankbenutzer | `user` |
+| `POSTGRES_PASSWORD` | Datenbankpasswort | `...` |
+| `POSTGRES_DB` | Name der Datenbank | `tadeot` |
