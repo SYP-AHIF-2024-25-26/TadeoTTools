@@ -454,7 +454,7 @@ public static class StopManagementEndpoints
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
         [Required, MaxLength(50)] string RoomNr,
-        [Required, MaxLength(500)] string Infrastructure,
+        [MaxLength(500)] string? Infrastructure,
         int[] DivisionIds,
         StudentOfStopDto[] StudentAssignments,
         string[] StopManagerAssignments
@@ -465,7 +465,7 @@ public static class StopManagementEndpoints
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
         [Required, MaxLength(50)] string RoomNr,
-        [Required, MaxLength(500)] string Infrastructure,
+        [MaxLength(500)] string? Infrastructure,
         StudentOfStopDto[] StudentAssignments
     );
 
@@ -473,7 +473,7 @@ public static class StopManagementEndpoints
         [Required, MaxLength(100)] string Name,
         [Required, MaxLength(500)] string Description,
         [Required, MaxLength(50)] string RoomNr,
-        [Required, MaxLength(500)] string Infrastructure,
+        [MaxLength(500)] string? Infrastructure,
         int[] DivisionIds,
         int[] StopGroupIds,
         StudentOfStopDto[] StudentAssignments,
