@@ -107,6 +107,40 @@ public class StopManagementTests(IntegrationTestWebAppFactory factory) : BaseInt
     }
 
     [Fact]
+    public async Task UpdateStop_ShouldReturnOk_WhenInfrastructureIsMissing()
+    {
+        // Arrange
+        var stop = new Stop
+        {
+            Name = "No Infrastructure",
+            Description = "Desc",
+            RoomNr = "3.04",
+            Infrastructure = "Beamer"
+        };
+        DbContext.Stops.Add(stop);
+        await DbContext.SaveChangesAsync();
+
+        var updateDto = new
+        {
+            stop.Id,
+            Name = "No Infrastructure",
+            Description = "Desc",
+            RoomNr = "3.04",
+            DivisionIds = Array.Empty<int>(),
+            StudentAssignments = Array.Empty<StudentOfStopDto>(),
+            StopManagerAssignments = Array.Empty<string>()
+        };
+
+        // Act
+        var response = await Client.PutAsJsonAsync(BaseUrl, updateDto);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var dbStop = await DbContext.Stops.AsNoTracking().FirstAsync(s => s.Id == stop.Id);
+        dbStop.Infrastructure.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task DeleteStop_ShouldReturnOk_WhenStopExists()
     {
         // Arrange
