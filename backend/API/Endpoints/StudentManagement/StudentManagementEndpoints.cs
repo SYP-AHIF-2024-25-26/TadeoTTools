@@ -15,6 +15,11 @@ public class StudentManagementEndpoints
         return Results.Ok(await StudentFunctions.GetAllStudentsAsync(context));
     }
 
+    public static async Task<IResult> GetStudentsForStopManager(TadeoTDbContext context, [FromRoute] string stopManagerId)
+    {
+        return Results.Ok(await StudentFunctions.GetStudentsForStopManagerAsync(context, stopManagerId));
+    }
+
     public record StudentNoAssignmentsDto(
         [Required, MaxLength(100)] string EdufsUsername,
         [Required, MaxLength(150)] string FirstName,

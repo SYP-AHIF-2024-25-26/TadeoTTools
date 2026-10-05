@@ -17,6 +17,14 @@ export class StudentService {
     );
   }
 
+  getStudentsForStopManager(stopManagerId: string): Promise<Student[]> {
+    return firstValueFrom(
+      this.httpClient.get<Student[]>(
+        `${this.baseUrl}/api/students/stop-manager/${stopManagerId}`
+      )
+    );
+  }
+
   updateStudent(student: Student): Promise<void> {
     return firstValueFrom(
       this.httpClient.put<void>(

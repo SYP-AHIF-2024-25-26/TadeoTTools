@@ -229,6 +229,25 @@
                   <span class="text-gray-500">--</span>
                 } @else if (student.studentAssignments.length === 1) {
                   {{ student.studentAssignments[0].stopName }}
+                } @else if (readOnly()) {
+                  <ul class="space-y-1">
+                    @for (
+                      assignment of student.studentAssignments;
+                      track $index
+                    ) {
+                      <li>
+                        {{ assignment.stopName }}
+                        @if (assignment.stopManagers?.length) {
+                          <span class="text-text-600 dark:text-text-400">
+                            ({{ assignment.stopManagers!.join(', ') }})
+                          </span>
+                        }
+                        <span class="{{ getStatusClass(assignment.status) }}">
+                          {{ getStatusText(assignment.status) }}
+                        </span>
+                      </li>
+                    }
+                  </ul>
                 } @else {
                   <span class="font-semibold text-orange-500">
                     {{ student.studentAssignments.length }} stops
@@ -343,6 +362,25 @@
                 --
               } @else if (student.studentAssignments.length === 1) {
                 {{ student.studentAssignments[0].stopName }}
+              } @else if (readOnly()) {
+                <ul class="space-y-1">
+                  @for (
+                    assignment of student.studentAssignments;
+                    track $index
+                  ) {
+                    <li>
+                      {{ assignment.stopName }}
+                      @if (assignment.stopManagers?.length) {
+                        <span class="text-text-600 dark:text-text-400">
+                          ({{ assignment.stopManagers!.join(', ') }})
+                        </span>
+                      }
+                      <span class="{{ getStatusClass(assignment.status) }}">
+                        {{ getStatusText(assignment.status) }}
+                      </span>
+                    </li>
+                  }
+                </ul>
               } @else {
                 <span class="font-semibold text-orange-500"
                   >{{ student.studentAssignments.length }} stops</span
