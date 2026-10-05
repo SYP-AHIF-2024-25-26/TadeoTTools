@@ -13,9 +13,41 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push:
+  # Find the services whose folder changed, so only their images are built
+  changes:
     runs-on: ubuntu-latest
-    
+
+    permissions:
+      contents: read
+      pull-requests: read
+
+    outputs:
+      services: ${{ steps.filter.outputs.changes }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect changed services
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+              - '.github/workflows/docker-build-push-images.yml'
+            backend:
+              - 'backend/**'
+              - '.github/workflows/docker-build-push-images.yml'
+            dashboard:
+              - 'dashboard/**'
+              - '.github/workflows/docker-build-push-images.yml'
+
+  build-and-push:
+    needs: changes
+    if: needs.changes.outputs.services != '[]'
+    runs-on: ubuntu-latest
+
     # Set permissions for GITHUB_TOKEN
     permissions:
       contents: read
@@ -23,17 +55,8 @@ jobs:
 
     strategy:
       matrix:
-        service: [frontend, backend, dashboard]
-        include:
-          - service: frontend
-            context: ./frontend
-            dockerfile: ./frontend/Dockerfile
-          - service: backend
-            context: ./backend
-            dockerfile: ./backend/Dockerfile
-          - service: dashboard
-            context: ./dashboard
-            dockerfile: ./dashboard/Dockerfile
+        # each service lives in ./<service> with its own Dockerfile
+        service: ${{ fromJSON(needs.changes.outputs.services) }}
 
     steps:
       - name: Checkout repository
@@ -67,8 +90,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v5
         with:
-          context: ${{ matrix.context }}
-          file: ${{ matrix.dockerfile }}
+          context: ./${{ matrix.service }}
+          file: ./${{ matrix.service }}/Dockerfile
           # the VMs are x86_64
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
