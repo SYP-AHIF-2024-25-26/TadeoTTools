@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using API.Endpoints.StudentManagement;
 using Database.Entities;
+using Database.Repository.Functions;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -21,6 +22,52 @@ public class StudentTests(IntegrationTestWebAppFactory factory) : BaseIntegratio
         // Assert
         response.Should().BeEmpty();
     }
+
+    [Fact]
+    public async Task GetStudentsForStopManager_ShouldReturnStudentsWithPendingOrAcceptedAssignmentToOwnStop()
+    {
+        // Arrange
+        var manager = new StopManager { EdufsUsername = "teacher", FirstName = "T", LastName = "Eacher" };
+        var otherManager = new StopManager { EdufsUsername = "other", FirstName = "Other", LastName = "Teacher" };
+        var ownStop = new Stop { Name = "Own", Description = "", RoomNr = "E01" };
+        var otherStop = new Stop { Name = "Other", Description = "", RoomNr = "E02" };
+        ownStop.StopManagerAssignments.Add(new StopManagerAssignment { StopManagerId = manager.EdufsUsername });
+        otherStop.StopManagerAssignments.Add(new StopManagerAssignment { StopManagerId = otherManager.EdufsUsername });
+        DbContext.StopManagers.AddRange(manager, otherManager);
+        DbContext.Stops.AddRange(ownStop, otherStop);
+        DbContext.Students.AddRange(
+            CreateStudent("pending", (ownStop, Status.PENDING), (otherStop, Status.PENDING)),
+            CreateStudent("accepted", (ownStop, Status.ACCEPTED)),
+            CreateStudent("declined", (ownStop, Status.DECLINED)),
+            CreateStudent("otherstop", (otherStop, Status.ACCEPTED)),
+            CreateStudent("unassigned"));
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var response = await Client.GetFromJsonAsync<List<StudentFunctions.StudentDto>>(
+            $"{BaseUrl}/stop-manager/TEACHER");
+
+        // Assert
+        response.Should().NotBeNull();
+        response!.Select(s => s.EdufsUsername).Should().BeEquivalentTo("pending", "accepted");
+        // conflicting assignments to other stops are included, together with their stop managers
+        var conflict = response.Single(s => s.EdufsUsername == "pending").StudentAssignments;
+        conflict.Should().HaveCount(2);
+        conflict.Single(a => a.StopId == ownStop.Id).StopManagers.Should().Equal("T Eacher");
+        conflict.Single(a => a.StopId == otherStop.Id).StopManagers.Should().Equal("Other Teacher");
+    }
+
+    private static Student CreateStudent(string username, params (Stop Stop, Status Status)[] assignments) => new()
+    {
+        EdufsUsername = username,
+        FirstName = username,
+        LastName = username,
+        StudentClass = "5AHIF",
+        Department = "HIF",
+        StudentAssignments = assignments
+            .Select(a => new StudentAssignment { EdufsUsername = username, Stop = a.Stop, Status = a.Status })
+            .ToList()
+    };
 
     [Fact]
     public async Task CreateStudent_ShouldReturnOk_WhenStudentIsValid()

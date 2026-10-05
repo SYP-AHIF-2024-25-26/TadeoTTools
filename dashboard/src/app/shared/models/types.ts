@@ -4,6 +4,7 @@ export type StudentAssignment = {
   stopId: number;
   stopName: string;
   status: Status;
+  stopManagers?: string[];
 };
 
 export type Student = {
@@ -113,7 +114,7 @@ export type Info = {
 export type FeatureFlag = {
   isEnabled: boolean;
   value: string;
-}
+};
 
 export type FeedbackQuestion = {
   id?: number;

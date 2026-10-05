@@ -20,7 +20,8 @@ public class StudentFunctions
         [Required, MaxLength(100)] string EdufsUsername,
         int StopId,
         string StopName,
-        Status Status
+        Status Status,
+        List<string>? StopManagers = null
     );
 
     public static async Task<List<StudentDto>> GetAllStudentsAsync(TadeoTDbContext context)
@@ -39,7 +40,36 @@ public class StudentFunctions
                     assignment.EdufsUsername,
                     assignment.StopId,
                     assignment.Stop != null ? assignment.Stop.Name : "Unknown Stop",
-                    assignment.Status
+                    assignment.Status,
+                    assignment.Stop!.StopManagerAssignments
+                        .Select(t => t.StopManager!.FirstName + " " + t.StopManager.LastName)
+                        .ToList()
+                )).ToList()
+            )).ToListAsync();
+    }
+
+    public static async Task<List<StudentDto>> GetStudentsForStopManagerAsync(TadeoTDbContext context, string stopManagerId)
+    {
+        return await context.Students
+            .Where(student => student.StudentAssignments.Any(assignment =>
+                assignment.Status != Status.DECLINED &&
+                assignment.Stop!.StopManagerAssignments.Any(t => EF.Functions.ILike(t.StopManagerId, stopManagerId))))
+            .Select(student => new StudentDto(
+                student.EdufsUsername,
+                student.FirstName,
+                student.LastName,
+                student.StudentClass,
+                student.Department,
+                // all assignments, so the stop manager also sees conflicts with other stops
+                student.StudentAssignments.Select(assignment => new StudentAssignmentDto(
+                    assignment.Id,
+                    assignment.EdufsUsername,
+                    assignment.StopId,
+                    assignment.Stop!.Name,
+                    assignment.Status,
+                    assignment.Stop.StopManagerAssignments
+                        .Select(t => t.StopManager!.FirstName + " " + t.StopManager.LastName)
+                        .ToList()
                 )).ToList()
             )).ToListAsync();
     }

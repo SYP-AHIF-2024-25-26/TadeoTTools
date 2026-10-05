@@ -13,6 +13,12 @@ public static class StudentManagementApi
             .Produces<List<StudentFunctions.StudentDto>>();
         //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
 
+        group.MapGet("api/students/stop-manager/{stopManagerId}", StudentManagementEndpoints.GetStudentsForStopManager)
+            .WithName(nameof(StudentManagementEndpoints.GetStudentsForStopManager))
+            .WithDescription("Get all students with a pending or accepted assignment to a stop of the given stop manager")
+            .Produces<List<StudentFunctions.StudentDto>>()
+            .RequireAuthorization(Setup.StopManagerOrAdminPolicyName);
+
         group.MapPost("api/students", StudentManagementEndpoints.CreateStudent)
             .WithName(nameof(StudentManagementEndpoints.CreateStudent))
             .WithDescription("Create a new student")
