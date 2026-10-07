@@ -42,7 +42,8 @@ public static class StudentManagementApi
         group.MapPost("api/students/upload", StudentManagementEndpoints.UploadCsvFile)
             .AddEndpointFilter(StudentManagementValidations.UploadCsvFileValidationAsync)
             .Produces<ImportResult>()
-            .DisableAntiforgery();
+            .DisableAntiforgery()
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapGet("api/students/csv", StudentManagementEndpoints.GetStudentsCsv)
             .WithName(nameof(StudentManagementEndpoints.GetStudentsCsv))
