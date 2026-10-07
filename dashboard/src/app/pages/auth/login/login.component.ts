@@ -6,7 +6,6 @@ import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spi
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [LoaderComponent],
   templateUrl: './login.component.html',
 })

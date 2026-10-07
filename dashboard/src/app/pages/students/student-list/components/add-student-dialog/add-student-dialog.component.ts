@@ -6,7 +6,6 @@ import { StudentService } from '@/core/services/student.service';
 
 @Component({
   selector: 'app-add-student-dialog',
-  standalone: true,
   imports: [FormsModule, CdkTrapFocus],
   templateUrl: './add-student-dialog.component.html',
   host: { '(document:keydown.escape)': 'close.emit()' },

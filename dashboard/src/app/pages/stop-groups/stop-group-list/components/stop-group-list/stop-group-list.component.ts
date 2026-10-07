@@ -5,7 +5,6 @@ import { Stop, StopGroup } from '@/shared/models/types';
 
 @Component({
   selector: 'app-stop-group-list',
-  standalone: true,
   imports: [CdkDropList, CdkDrag, RouterLink],
   templateUrl: './stop-group-list.component.html',
 })

@@ -75,6 +75,9 @@
   <div
     class="table-zebra hidden max-h-[600px] w-full max-w-full overflow-x-auto overflow-y-scroll rounded-box border border-base-content/5 bg-base-100 md:block"
   >
+    <p class="mb-2 text-sm text-text-700 dark:text-text-300">
+      Showing <strong>{{ filteredStudents().length }}</strong> students
+    </p>
     <table class="table">
       <thead>
         <tr>
@@ -184,7 +187,7 @@
             </div>
           </th>
           @if (!readOnly()) {
-            <th class="flex justify-between">
+            <th>
               <div class="flex items-center gap-1">
                 Action
                 @if (statusFilter() !== 'all') {
@@ -203,10 +206,6 @@
                     />
                   </svg>
                 }
-              </div>
-              <div>
-                Number of students:
-                <strong>{{ filteredStudents().length }}</strong>
               </div>
             </th>
           }

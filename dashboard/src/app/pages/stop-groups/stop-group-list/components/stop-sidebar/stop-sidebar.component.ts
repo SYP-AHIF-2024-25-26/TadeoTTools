@@ -6,7 +6,6 @@ import { FilterComponent } from '@/shared/components/filter-bar/filter-bar.compo
 
 @Component({
   selector: 'app-stop-sidebar',
-  standalone: true,
   imports: [CdkDropList, CdkDrag, RouterLink, FilterComponent],
   templateUrl: './stop-sidebar.component.html',
 })

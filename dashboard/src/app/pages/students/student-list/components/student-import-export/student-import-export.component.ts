@@ -5,7 +5,6 @@ import { errorText, ToastService } from '@/core/services/toast.service';
 
 @Component({
   selector: 'app-student-import-export',
-  standalone: true,
   templateUrl: './student-import-export.component.html',
 })
 export class StudentImportExportComponent {

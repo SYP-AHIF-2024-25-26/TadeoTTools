@@ -13,7 +13,7 @@
         }}</span>
       </button>
     </h2>
-    <div [ngClass]="{ hidden: !isExpanded() }">
+    <div [class.hidden]="!isExpanded()">
       <div class="mt-4 flex flex-col gap-4 md:flex-row">
         <!-- Selected Stop Managers (Left Side) -->
         <div class="w-full md:w-1/2">

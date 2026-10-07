@@ -7,7 +7,6 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
 import { Stop, Student, Status } from '@/shared/models/types';
 import { sortStudents, downloadFile } from '@/shared/utils/utils';
 import { StopService } from '@/core/services/stop.service';
@@ -15,8 +14,7 @@ import { errorText, ToastService } from '@/core/services/toast.service';
 
 @Component({
   selector: 'app-stop-students',
-  standalone: true,
-  imports: [FormsModule, NgClass],
+  imports: [FormsModule],
   templateUrl: './stop-students.component.html',
 })
 export class StopStudentsComponent {

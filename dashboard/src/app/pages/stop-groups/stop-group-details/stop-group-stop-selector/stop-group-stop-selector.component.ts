@@ -9,7 +9,6 @@ import {
 
 @Component({
   selector: 'app-stop-group-stop-selector',
-  standalone: true,
   imports: [FormsModule, DragDropModule],
   templateUrl: './stop-group-stop-selector.component.html',
 })

@@ -49,7 +49,6 @@ export interface DependencyFormGroup {
   selector: 'app-admin-dashboard',
   templateUrl: './configurator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     FeedbackPreviewComponent,

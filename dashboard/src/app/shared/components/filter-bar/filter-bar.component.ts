@@ -1,17 +1,15 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { Division } from '@/shared/models/types';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-filter',
-  standalone: true,
   templateUrl: './filter-bar.component.html',
   imports: [FormsModule],
 })
 export class FilterComponent {
-  @Input() elements!: Division[];
-  @Input() outsideFilterValue: number = 0;
-  @Output() filter = new EventEmitter<number>();
+  elements = input<Division[]>([]);
+  filter = output<number>();
 
   filterValue = signal<number>(0);
 
@@ -19,7 +17,7 @@ export class FilterComponent {
     this.filterValue.set(0);
   }
 
-  onFilterChange(event: Event) {
+  onFilterChange() {
     this.filter.emit(this.filterValue());
   }
 }

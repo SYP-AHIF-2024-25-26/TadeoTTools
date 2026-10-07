@@ -19,7 +19,7 @@
             <input
               type="checkbox"
               class="checkbox"
-              [checked]="isStopSelected(student!, stop.id)"
+              [checked]="isStopSelected(student(), stop.id)"
               (change)="onToggle(stop, $event)"
             />
           </label>
@@ -34,7 +34,7 @@
       <button
         class="btn btn-primary btn-sm"
         (click)="onApply()"
-        [disabled]="!student.selectedStops?.size"
+        [disabled]="!student().selectedStops?.size"
       >
         Assign
       </button>

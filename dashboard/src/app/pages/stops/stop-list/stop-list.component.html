@@ -1,8 +1,10 @@
 <div class="m-4 flex flex-col items-center text-text-950 dark:text-text-100">
-  <h2 class="my-6 ml-[20px] self-center text-2xl font-bold">Stops</h2>
-  <a [routerLink]="['/stop']" class="btn btn-primary absolute right-4">
-    Add Stop
-  </a>
+  <div
+    class="my-6 flex w-full max-w-6xl flex-wrap items-center justify-between gap-3"
+  >
+    <h2 class="text-2xl font-bold">Stops</h2>
+    <a [routerLink]="['/stop']" class="btn btn-primary">Add Stop</a>
+  </div>
 
   <!-- Action Buttons and Filter Toggle -->
   <div class="mb-6 flex flex-wrap justify-center gap-4">

@@ -1,11 +1,4 @@
-import {
-  Component,
-  computed,
-  EventEmitter,
-  Input,
-  Output,
-  signal,
-} from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { StudentWithUI } from '@/pages/students/student-list/student-list.component';
 import { Status, Stop } from '@/shared/models/types';
 import { FormsModule } from '@angular/forms';
@@ -16,12 +9,12 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './stop-selection-modal.component.html',
 })
 export class StopsPopupComponent {
-  @Input() student!: StudentWithUI;
-  @Input() allStops: Stop[] = [];
+  student = input.required<StudentWithUI>();
+  allStops = input<Stop[]>([]);
 
-  @Output() cancel = new EventEmitter<void>();
-  @Output() apply = new EventEmitter<StudentWithUI>();
-  @Output() stopToggle = new EventEmitter<{
+  cancel = output<void>();
+  apply = output<StudentWithUI>();
+  stopToggle = output<{
     student: StudentWithUI;
     stop: Stop;
     checked: boolean;
@@ -32,9 +25,9 @@ export class StopsPopupComponent {
   filteredStops = computed(() => {
     const term = this.searchTerm().toLowerCase().trim();
     if (!term) {
-      return this.allStops;
+      return this.allStops();
     }
-    return this.allStops.filter((stop) =>
+    return this.allStops().filter((stop) =>
       stop.name.toLowerCase().includes(term)
     );
   });
@@ -47,7 +40,7 @@ export class StopsPopupComponent {
 
   onToggle(stop: Stop, event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
-    this.stopToggle.emit({ student: this.student, stop, checked });
+    this.stopToggle.emit({ student: this.student(), stop, checked });
   }
 
   onCancel() {
@@ -55,6 +48,6 @@ export class StopsPopupComponent {
   }
 
   onApply() {
-    this.apply.emit(this.student);
+    this.apply.emit(this.student());
   }
 }

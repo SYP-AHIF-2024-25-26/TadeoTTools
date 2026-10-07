@@ -12,7 +12,7 @@
       }}</span>
     </button>
   </h2>
-  <div [ngClass]="{ hidden: !isExpanded() }">
+  <div [class.hidden]="!isExpanded()">
     <div class="mt-4 flex flex-col gap-4 md:flex-row">
       <!-- Selected Students (Left Side) -->
       <div class="w-full md:w-1/2">
@@ -83,7 +83,7 @@
                 <div class="flex items-center">
                   <span
                     class="mr-2 rounded-full px-2 py-0.5 text-xs font-medium"
-                    [ngClass]="getStatusClass(getAssignmentStatus(student))"
+                    [class]="getStatusClass(getAssignmentStatus(student))"
                   >
                     {{ getStatusLabel(getAssignmentStatus(student)) }}
                   </span>

@@ -1,20 +1,19 @@
 import {
   Component,
   computed,
-  EventEmitter,
   inject,
-  Input,
+  input,
   OnInit,
-  Output,
+  output,
   signal,
 } from '@angular/core';
+import { errorText } from '@/core/services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { BASE_URL } from '@/app.config';
 import { isValidString } from '@/shared/utils/utils';
-import { Division } from '@/shared/models/types';
 import { DivisionService } from '@/core/services/division.service';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 
@@ -28,15 +27,17 @@ export class DivisionDetailsComponent implements OnInit {
   private divisionService = inject(DivisionService);
   private scrollService = inject(ScrollPersistenceService);
 
-  @Input() id: number = -1;
-  @Output() cancel = new EventEmitter<void>();
+  id = input<number>(-1);
+  cancel = output<void>();
 
   baseUrl = inject(BASE_URL);
   name = signal<string>('');
   color = signal<string>('');
   errorMessage = signal<string | null>(null);
   selectedFile: File | null = null;
-  filePreview: string | ArrayBuffer | null = null;
+  // A signal so the preview renders when the FileReader finishes.
+  filePreview = signal<string | ArrayBuffer | null>(null);
+  saving = signal<boolean>(false);
 
   cancelPopup() {
     this.cancel.emit();
@@ -50,9 +51,9 @@ export class DivisionDetailsComponent implements OnInit {
   }
 
   async ngOnInit() {
-    if (this.id !== -1) {
+    if (this.id() !== -1) {
       const divisions = await this.divisionService.getDivisions();
-      const division = divisions.find((d) => d.id == this.id);
+      const division = divisions.find((d) => d.id == this.id());
 
       if (division) {
         this.name.set(division.name);
@@ -93,7 +94,7 @@ export class DivisionDetailsComponent implements OnInit {
 
     this.selectedFile = file;
     const reader = new FileReader();
-    reader.onload = () => (this.filePreview = reader.result);
+    reader.onload = () => this.filePreview.set(reader.result);
     reader.readAsDataURL(this.selectedFile);
   }
 
@@ -114,31 +115,43 @@ export class DivisionDetailsComponent implements OnInit {
       return;
     }
 
-    const division: Division = {
-      id: this.id,
-      name: this.name(),
-      color: this.color(),
-    };
-
-    if (this.id === -1) {
-      await this.divisionService.addDivision({
-        name: this.name(),
-        color: this.color(),
-      });
-    } else {
-      await this.divisionService.updateDivision({
-        id: this.id,
-        name: this.name(),
-        color: this.color(),
-      });
+    if (this.saving()) {
+      return;
     }
+    this.saving.set(true);
+    this.errorMessage.set(null);
+    try {
+      let id = this.id();
+      if (id === -1) {
+        // The image belongs to the division that was just created.
+        const created = await this.divisionService.addDivision({
+          name: this.name(),
+          color: this.color(),
+        });
+        id = created.id;
+      } else {
+        await this.divisionService.updateDivision({
+          id,
+          name: this.name(),
+          color: this.color(),
+        });
+      }
 
-    if (this.selectedFile) {
-      await this.divisionService.updateDivisionImg(this.id, this.selectedFile);
+      if (this.selectedFile) {
+        await this.divisionService.updateDivisionImg(id, this.selectedFile);
+      }
+    } catch (error) {
+      console.error('Failed to save division', error);
+      this.errorMessage.set(
+        errorText(error, 'The division could not be saved. Please try again.')
+      );
+      return;
+    } finally {
+      this.saving.set(false);
     }
 
     this.selectedFile = null;
-    this.filePreview = null;
+    this.filePreview.set(null);
     this.cancel.emit();
   }
 
@@ -158,7 +171,7 @@ export class DivisionDetailsComponent implements OnInit {
   async deleteAndGoBack() {
     this.deleting.set(true);
     try {
-      await this.divisionService.deleteDivision(this.id);
+      await this.divisionService.deleteDivision(this.id());
       this.confirmAction.set(null);
       this.cancel.emit();
     } catch (error) {
@@ -175,13 +188,13 @@ export class DivisionDetailsComponent implements OnInit {
   // Discards a newly chosen file; the stored image is untouched.
   clearPreview() {
     this.selectedFile = null;
-    this.filePreview = null;
+    this.filePreview.set(null);
   }
 
   async deleteImage() {
     this.deleting.set(true);
     try {
-      await this.divisionService.deleteDivisionImg(this.id);
+      await this.divisionService.deleteDivisionImg(this.id());
       this.clearPreview();
       this.imageDeleted.set(true);
     } catch (error) {

@@ -21,11 +21,9 @@
         <img
           class="h-32 w-32 object-cover"
           [src]="
-            baseUrl +
-            '/divisions/' +
-            division.id +
-            '/image?timestamp=1234567890'
+            baseUrl + '/divisions/' + division.id + '/image?v=' + imageVersion()
           "
+          [alt]="division.name"
           (error)="hideImage($event)"
         />
         <div class="flex">

@@ -5,7 +5,6 @@ import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirm
 
 @Component({
   selector: 'app-stop-groups',
-  standalone: true,
   imports: [FormsModule, DeletePopupComponent],
   templateUrl: './stop-groups.component.html',
 })

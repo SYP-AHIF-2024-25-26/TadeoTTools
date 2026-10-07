@@ -21,7 +21,6 @@ import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spi
 
 @Component({
   selector: 'app-stopgroups',
-  standalone: true,
   imports: [
     DeletePopupComponent,
     StopGroupHeaderComponent,

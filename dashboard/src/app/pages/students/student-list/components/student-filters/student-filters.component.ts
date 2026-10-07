@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-student-filters',
-  standalone: true,
   imports: [FormsModule],
   templateUrl: './student-filters.component.html',
 })

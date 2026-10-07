@@ -8,7 +8,6 @@ import { plural } from '@/shared/utils/utils';
 
 @Component({
   selector: 'app-stop-manager-overview',
-  standalone: true,
   imports: [CommonModule, FormsModule, DeletePopupComponent],
   templateUrl: './stop-manager-overview.component.html',
 })

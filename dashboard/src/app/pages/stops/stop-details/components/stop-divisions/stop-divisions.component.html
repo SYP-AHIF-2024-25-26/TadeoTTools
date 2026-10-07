@@ -12,7 +12,7 @@
       }}</span>
     </button>
   </h2>
-  <div [ngClass]="{ hidden: !isExpanded() }">
+  <div [class.hidden]="!isExpanded()">
     <div>
       @if (isAdmin()) {
         <div class="mb-6 mt-4">

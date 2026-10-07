@@ -4,7 +4,6 @@ import { FeedbackQuestion } from '@/shared/models/types';
 
 @Component({
   selector: 'app-feedback-preview',
-  standalone: true,
   templateUrl: './feedback-preview.component.html',
 })
 export class FeedbackPreviewComponent {

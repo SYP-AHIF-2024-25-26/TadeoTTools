@@ -49,7 +49,6 @@ export interface StudentWithUI extends Student {
     DeletePopupComponent,
   ],
   templateUrl: './student-list.component.html',
-  standalone: true,
 })
 export class ListStudentsComponent implements OnInit {
   private stopService = inject(StopService);
@@ -437,8 +436,8 @@ export class ListStudentsComponent implements OnInit {
       this.viewContainerRef
     );
     const compRef = this.overlayRef.attach(portal);
-    compRef.instance.student = student;
-    compRef.instance.allStops = this.stops();
+    compRef.setInput('student', student);
+    compRef.setInput('allStops', this.stops());
     compRef.instance.cancel.subscribe(() => {
       this.closeStopsPopup();
       this.popupStudent?.selectedStops?.clear();
