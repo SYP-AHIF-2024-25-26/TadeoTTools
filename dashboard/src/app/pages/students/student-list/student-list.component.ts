@@ -200,7 +200,6 @@ export class ListStudentsComponent implements OnInit {
       return s.studentAssignments.some((a) => {
         if (status === 'pending') return a.status === Status.Pending;
         if (status === 'approved') return a.status === Status.Accepted;
-        if (status === 'rejected') return a.status === Status.Declined;
         return false;
       });
     });
@@ -390,19 +389,17 @@ export class ListStudentsComponent implements OnInit {
     );
   }
 
-  // Resolves a conflict in one step: approve this stop, reject the others.
+  // Resolves a conflict in one step: approve this stop and delete the other
+  // requests. Duplicate requests are deleted rather than rejected; Undo
+  // restores them.
   async assignHere(student: Student, index: number) {
-    const stop = student.studentAssignments[index];
+    const previous = student.studentAssignments.map((a) => ({ ...a }));
+    const stop = previous[index];
     await this.saveAssignments(
       student,
-      student.studentAssignments.map((a, i) =>
-        i === index
-          ? { ...a, status: Status.Accepted }
-          : a.status === Status.Declined
-            ? { ...a }
-            : { ...a, status: Status.Declined }
-      ),
-      `${student.firstName} ${student.lastName} assigned to ${stop.stopName}.`
+      [{ ...stop, status: Status.Accepted }],
+      `${student.firstName} ${student.lastName} assigned to ${stop.stopName}; other requests removed.`,
+      previous
     );
   }
 
@@ -445,14 +442,6 @@ export class ListStudentsComponent implements OnInit {
 
   closeConflictDetails(): void {
     this.selectedStudent.set(null);
-  }
-
-  async rejectSingleAssignment(student: Student) {
-    await this.changeAssignmentStatus(
-      student,
-      primaryAssignmentIndex(student.studentAssignments),
-      Status.Declined
-    );
   }
 
   async undoSingleAssignment(student: Student) {

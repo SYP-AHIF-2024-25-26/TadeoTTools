@@ -39,8 +39,8 @@
     </div>
     <p id="conflict-dialog-hint" class="mb-4 text-sm text-text-700">
       {{ student().studentClass }} · {{ student().department }}. More than one
-      stop wants this student. "Assign here" approves that stop and rejects the
-      others.
+      stop wants this student. "Assign here" approves that stop and removes the
+      other requests.
     </p>
 
     <ul class="space-y-3">
@@ -79,16 +79,7 @@
                 Assign here
               </button>
             }
-            @if (assignment.status === Status.Pending) {
-              <button
-                type="button"
-                class="btn btn-outline btn-error btn-sm"
-                [disabled]="busy()"
-                (click)="setStatus.emit({ index: i, status: Status.Declined })"
-              >
-                Reject
-              </button>
-            } @else {
+            @if (assignment.status !== Status.Pending) {
               <button
                 type="button"
                 class="btn btn-ghost btn-sm"

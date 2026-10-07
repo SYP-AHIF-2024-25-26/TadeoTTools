@@ -3,6 +3,8 @@ import { Status, StudentAssignment } from '@/shared/models/types';
 // One place for how assignment states are named and coloured, so the student
 // list, the conflict dialog, the stop editor and the stops table agree.
 // Pending is teal: close to Approved (green), clearly apart from Conflict (orange).
+// The dashboard no longer rejects requests (duplicates are deleted instead);
+// "Rejected" only labels assignments stored before that change.
 
 export function statusText(status: Status): string {
   switch (status) {
@@ -44,21 +46,21 @@ export const CONFLICT_TEXT_CLASS =
 export const UNASSIGNED_TEXT_CLASS =
   'font-bold text-gray-600 dark:text-gray-400';
 
-/** Assignments that still count: pending or approved. */
+/** Assignments that still count: pending or approved (old rejected ones don't). */
 export function activeAssignments(
   assignments: StudentAssignment[]
 ): StudentAssignment[] {
   return assignments.filter((a) => a.status !== Status.Declined);
 }
 
-/** A conflict is more than one assignment that hasn't been rejected. */
+/** A conflict is more than one assignment that still counts. */
 export function isConflict(assignments: StudentAssignment[]): boolean {
   return activeAssignments(assignments).length > 1;
 }
 
 /**
  * The assignment a student's row acts on when there is no conflict: the one
- * active assignment, or the first rejected one if all were rejected.
+ * active assignment, or the first old rejected one if nothing else is left.
  */
 export function primaryAssignmentIndex(
   assignments: StudentAssignment[]

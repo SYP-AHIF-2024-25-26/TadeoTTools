@@ -290,13 +290,6 @@
                           Approve
                         </button>
                         <button
-                          class="btn btn-error btn-sm"
-                          [disabled]="isBusy(student)"
-                          (click)="rejectSingleAssignment(student)"
-                        >
-                          Reject
-                        </button>
-                        <button
                           class="btn btn-outline btn-error btn-sm"
                           [disabled]="isBusy(student)"
                           (click)="
@@ -429,13 +422,6 @@
                     (click)="approveSingleAssignment(student)"
                   >
                     Approve
-                  </button>
-                  <button
-                    class="btn btn-error btn-sm flex-grow"
-                    [disabled]="isBusy(student)"
-                    (click)="rejectSingleAssignment(student)"
-                  >
-                    Reject
                   </button>
                 } @else {
                   <button
