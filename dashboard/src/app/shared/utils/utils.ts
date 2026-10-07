@@ -20,6 +20,25 @@ export function sortStudents<T extends Student>(students: T[]): T[] {
   });
 }
 
+// Same format as the backend exports: ";" separated, UTF-8 with BOM, so Excel
+// opens it correctly.
+export function csvBlob(rows: string[][]): Blob {
+  const escape = (field: string) =>
+    /[;"\r\n]/.test(field) ? `"${field.replace(/"/g, '""')}"` : field;
+  const content = rows.map((row) => row.map(escape).join(';')).join('\r\n');
+  return new Blob(['﻿' + content], { type: 'text/csv;charset=utf-8' });
+}
+
+// "Robotics Lab (Übung)" -> "robotics-lab-ubung"
+export function fileSlug(text: string): string {
+  return text
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 export function downloadFile(blob: Blob, filename: string) {
   const url = window.URL.createObjectURL(blob);
 
