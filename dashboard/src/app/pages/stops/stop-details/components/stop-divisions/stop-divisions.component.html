@@ -83,6 +83,7 @@
   @if (showRemoveDivisionPopup()) {
     <app-delete-popup
       [title]="'Remove Division'"
+      confirmLabel="Remove"
       [message]="'Are you sure you want to remove this division from the stop?'"
       (cancel)="showRemoveDivisionPopup.set(false)"
       (removeConfirmed)="confirmDivisionRemove()"

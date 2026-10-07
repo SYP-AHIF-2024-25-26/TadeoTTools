@@ -1,0 +1,684 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-07T04:57:32.405695+00:00",
+  "title": "Design System: TadeoTTools",
+  "extensions": {
+    "colorMeta": {
+      "division-informatics": {
+        "role": "primary",
+        "displayName": "Informatik Blue",
+        "tonalRamp": [
+          "oklch(15% 0.144 253.2)",
+          "oklch(25% 0.144 253.2)",
+          "oklch(35% 0.144 253.2)",
+          "oklch(48% 0.144 253.2)",
+          "oklch(60% 0.144 253.2)",
+          "oklch(72% 0.144 253.2)",
+          "oklch(85% 0.144 253.2)",
+          "oklch(95% 0.051 253.2)"
+        ]
+      },
+      "division-media": {
+        "role": "secondary",
+        "displayName": "Medientechnik Sky",
+        "tonalRamp": [
+          "oklch(15% 0.087 233.5)",
+          "oklch(25% 0.087 233.5)",
+          "oklch(35% 0.087 233.5)",
+          "oklch(48% 0.087 233.5)",
+          "oklch(60% 0.087 233.5)",
+          "oklch(72% 0.087 233.5)",
+          "oklch(85% 0.087 233.5)",
+          "oklch(95% 0.031 233.5)"
+        ]
+      },
+      "division-electronics": {
+        "role": "secondary",
+        "displayName": "Elektronik Red",
+        "tonalRamp": [
+          "oklch(15% 0.213 25.5)",
+          "oklch(25% 0.213 25.5)",
+          "oklch(35% 0.213 25.5)",
+          "oklch(48% 0.213 25.5)",
+          "oklch(60% 0.213 25.5)",
+          "oklch(72% 0.213 25.5)",
+          "oklch(85% 0.213 25.5)",
+          "oklch(95% 0.074 25.5)"
+        ]
+      },
+      "division-medtech": {
+        "role": "secondary",
+        "displayName": "Medizintechnik Amber",
+        "tonalRamp": [
+          "oklch(15% 0.163 73.5)",
+          "oklch(25% 0.163 73.5)",
+          "oklch(35% 0.163 73.5)",
+          "oklch(48% 0.163 73.5)",
+          "oklch(60% 0.163 73.5)",
+          "oklch(72% 0.163 73.5)",
+          "oklch(85% 0.163 73.5)",
+          "oklch(95% 0.057 73.5)"
+        ]
+      },
+      "division-fallback": {
+        "role": "neutral",
+        "displayName": "Neutral Meadow Green",
+        "tonalRamp": [
+          "oklch(15% 0.122 141.1)",
+          "oklch(25% 0.122 141.1)",
+          "oklch(35% 0.122 141.1)",
+          "oklch(48% 0.122 141.1)",
+          "oklch(60% 0.122 141.1)",
+          "oklch(72% 0.122 141.1)",
+          "oklch(85% 0.122 141.1)",
+          "oklch(95% 0.043 141.1)"
+        ]
+      },
+      "guide-orange": {
+        "role": "primary",
+        "displayName": "Programme Orange",
+        "tonalRamp": [
+          "#431407",
+          "#7c2d12",
+          "#9a3412",
+          "#c2410c",
+          "#ea580c",
+          "#f97316",
+          "#fdba74",
+          "#fff7ed"
+        ]
+      },
+      "guide-orange-light": {
+        "role": "primary",
+        "displayName": "Light Orange",
+        "tonalRamp": [
+          "#431407",
+          "#7c2d12",
+          "#9a3412",
+          "#c2410c",
+          "#ea580c",
+          "#f97316",
+          "#fdba74",
+          "#fff7ed"
+        ]
+      },
+      "guide-orange-wash": {
+        "role": "primary",
+        "displayName": "Orange Wash",
+        "tonalRamp": [
+          "#431407",
+          "#7c2d12",
+          "#9a3412",
+          "#c2410c",
+          "#ea580c",
+          "#f97316",
+          "#fdba74",
+          "#fff7ed"
+        ]
+      },
+      "guide-orange-edge": {
+        "role": "primary",
+        "displayName": "Orange Edge",
+        "tonalRamp": [
+          "#431407",
+          "#7c2d12",
+          "#9a3412",
+          "#c2410c",
+          "#ea580c",
+          "#f97316",
+          "#fdba74",
+          "#fff7ed"
+        ]
+      },
+      "guide-canvas": {
+        "role": "neutral",
+        "displayName": "Programme Paper",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1f2937",
+          "#374151",
+          "#4b5563",
+          "#9ca3af",
+          "#e5e7eb",
+          "#f9fafb"
+        ]
+      },
+      "guide-surface": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1f2937",
+          "#374151",
+          "#4b5563",
+          "#9ca3af",
+          "#e5e7eb",
+          "#f9fafb"
+        ]
+      },
+      "guide-header": {
+        "role": "neutral",
+        "displayName": "Header Gray",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1f2937",
+          "#374151",
+          "#4b5563",
+          "#9ca3af",
+          "#e5e7eb",
+          "#f9fafb"
+        ]
+      },
+      "guide-ink-strong": {
+        "role": "neutral",
+        "displayName": "Strong Ink",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1f2937",
+          "#374151",
+          "#4b5563",
+          "#9ca3af",
+          "#e5e7eb",
+          "#f9fafb"
+        ]
+      },
+      "guide-ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1f2937",
+          "#374151",
+          "#4b5563",
+          "#9ca3af",
+          "#e5e7eb",
+          "#f9fafb"
+        ]
+      },
+      "guide-ink-muted": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1f2937",
+          "#374151",
+          "#4b5563",
+          "#9ca3af",
+          "#e5e7eb",
+          "#f9fafb"
+        ]
+      },
+      "guide-stone": {
+        "role": "neutral",
+        "displayName": "Stone",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1f2937",
+          "#374151",
+          "#4b5563",
+          "#9ca3af",
+          "#e5e7eb",
+          "#f9fafb"
+        ]
+      },
+      "guide-hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1f2937",
+          "#374151",
+          "#4b5563",
+          "#9ca3af",
+          "#e5e7eb",
+          "#f9fafb"
+        ]
+      },
+      "dash-primary": {
+        "role": "primary",
+        "displayName": "Dashboard Blue",
+        "tonalRamp": [
+          "oklch(15% 0.149 253.7)",
+          "oklch(25% 0.149 253.7)",
+          "oklch(35% 0.149 253.7)",
+          "oklch(48% 0.149 253.7)",
+          "oklch(60% 0.149 253.7)",
+          "oklch(72% 0.149 253.7)",
+          "oklch(85% 0.149 253.7)",
+          "oklch(95% 0.052 253.7)"
+        ]
+      },
+      "dash-primary-deep": {
+        "role": "primary",
+        "displayName": "Deep Dashboard Blue",
+        "tonalRamp": [
+          "oklch(15% 0.183 257.7)",
+          "oklch(25% 0.183 257.7)",
+          "oklch(35% 0.183 257.7)",
+          "oklch(48% 0.183 257.7)",
+          "oklch(60% 0.183 257.7)",
+          "oklch(72% 0.183 257.7)",
+          "oklch(85% 0.183 257.7)",
+          "oklch(95% 0.064 257.7)"
+        ]
+      },
+      "dash-field": {
+        "role": "primary",
+        "displayName": "Filled Field Blue",
+        "tonalRamp": [
+          "#070b0c",
+          "#1a2f3b",
+          "#2a475e",
+          "#3a6080",
+          "#4a7aa3",
+          "#6190c6",
+          "#99ccff",
+          "#e6f2ff"
+        ]
+      },
+      "dash-field-hover": {
+        "role": "primary",
+        "displayName": "Filled Field Blue Hover",
+        "tonalRamp": [
+          "#070b0c",
+          "#1a2f3b",
+          "#2a475e",
+          "#3a6080",
+          "#4a7aa3",
+          "#6190c6",
+          "#99ccff",
+          "#e6f2ff"
+        ]
+      },
+      "dash-nav": {
+        "role": "secondary",
+        "displayName": "Sky Nav",
+        "tonalRamp": [
+          "#070b0c",
+          "#1a2f3b",
+          "#2a475e",
+          "#3a6080",
+          "#4a7aa3",
+          "#6190c6",
+          "#99ccff",
+          "#e6f2ff"
+        ]
+      },
+      "dash-tint": {
+        "role": "secondary",
+        "displayName": "Pale Blue Tint",
+        "tonalRamp": [
+          "#070b0c",
+          "#1a2f3b",
+          "#2a475e",
+          "#3a6080",
+          "#4a7aa3",
+          "#6190c6",
+          "#99ccff",
+          "#e6f2ff"
+        ]
+      },
+      "dash-canvas": {
+        "role": "neutral",
+        "displayName": "Office Gray",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(25% 0.000 89.9)",
+          "oklch(35% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(60% 0.000 89.9)",
+          "oklch(72% 0.000 89.9)",
+          "oklch(85% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "dash-surface": {
+        "role": "neutral",
+        "displayName": "Dashboard White",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(25% 0.000 89.9)",
+          "oklch(35% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(60% 0.000 89.9)",
+          "oklch(72% 0.000 89.9)",
+          "oklch(85% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "dash-ink": {
+        "role": "neutral",
+        "displayName": "Dashboard Ink",
+        "tonalRamp": [
+          "oklch(15% 0.028 336.5)",
+          "oklch(25% 0.028 336.5)",
+          "oklch(35% 0.028 336.5)",
+          "oklch(48% 0.028 336.5)",
+          "oklch(60% 0.028 336.5)",
+          "oklch(72% 0.028 336.5)",
+          "oklch(85% 0.028 336.5)",
+          "oklch(95% 0.010 336.5)"
+        ]
+      },
+      "dash-error": {
+        "role": "status",
+        "displayName": "Error Red",
+        "tonalRamp": [
+          "oklch(15% 0.215 27.3)",
+          "oklch(25% 0.215 27.3)",
+          "oklch(35% 0.215 27.3)",
+          "oklch(48% 0.215 27.3)",
+          "oklch(60% 0.215 27.3)",
+          "oklch(72% 0.215 27.3)",
+          "oklch(85% 0.215 27.3)",
+          "oklch(95% 0.075 27.3)"
+        ]
+      },
+      "dash-success": {
+        "role": "status",
+        "displayName": "Success Green",
+        "tonalRamp": [
+          "oklch(15% 0.192 149.6)",
+          "oklch(25% 0.192 149.6)",
+          "oklch(35% 0.192 149.6)",
+          "oklch(48% 0.192 149.6)",
+          "oklch(60% 0.192 149.6)",
+          "oklch(72% 0.192 149.6)",
+          "oklch(85% 0.192 149.6)",
+          "oklch(95% 0.067 149.6)"
+        ]
+      },
+      "dash-warning": {
+        "role": "status",
+        "displayName": "Warning Yellow",
+        "tonalRamp": [
+          "oklch(15% 0.173 91.9)",
+          "oklch(25% 0.173 91.9)",
+          "oklch(35% 0.173 91.9)",
+          "oklch(48% 0.173 91.9)",
+          "oklch(60% 0.173 91.9)",
+          "oklch(72% 0.173 91.9)",
+          "oklch(85% 0.173 91.9)",
+          "oklch(95% 0.061 91.9)"
+        ]
+      },
+      "dash-dark-canvas": {
+        "role": "neutral",
+        "displayName": "Night Canvas",
+        "tonalRamp": [
+          "oklch(15% 0.022 267.3)",
+          "oklch(25% 0.022 267.3)",
+          "oklch(35% 0.022 267.3)",
+          "oklch(48% 0.022 267.3)",
+          "oklch(60% 0.022 267.3)",
+          "oklch(72% 0.022 267.3)",
+          "oklch(85% 0.022 267.3)",
+          "oklch(95% 0.008 267.3)"
+        ]
+      },
+      "dash-dark-surface": {
+        "role": "neutral",
+        "displayName": "Night Surface",
+        "tonalRamp": [
+          "oklch(15% 0.032 264.7)",
+          "oklch(25% 0.032 264.7)",
+          "oklch(35% 0.032 264.7)",
+          "oklch(48% 0.032 264.7)",
+          "oklch(60% 0.032 264.7)",
+          "oklch(72% 0.032 264.7)",
+          "oklch(85% 0.032 264.7)",
+          "oklch(95% 0.011 264.7)"
+        ]
+      },
+      "dash-dark-primary": {
+        "role": "primary",
+        "displayName": "Night Blue",
+        "tonalRamp": [
+          "oklch(15% 0.188 259.8)",
+          "oklch(25% 0.188 259.8)",
+          "oklch(35% 0.188 259.8)",
+          "oklch(48% 0.188 259.8)",
+          "oklch(60% 0.188 259.8)",
+          "oklch(72% 0.188 259.8)",
+          "oklch(85% 0.188 259.8)",
+          "oklch(95% 0.066 259.8)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "guide-display": {
+        "displayName": "GuideApp Display",
+        "purpose": "Welcome heading with the animated division gradient; once per app."
+      },
+      "guide-headline": {
+        "displayName": "GuideApp Headline",
+        "purpose": "Stop titles, About headings."
+      },
+      "guide-title": {
+        "displayName": "GuideApp Title",
+        "purpose": "Group card names, room line, breadcrumb."
+      },
+      "guide-body": {
+        "displayName": "GuideApp Body",
+        "purpose": "Descriptions; never below 16px."
+      },
+      "guide-label": {
+        "displayName": "GuideApp Card Label",
+        "purpose": "Bold white stop names on division cards."
+      },
+      "dash-headline": {
+        "displayName": "Dashboard Headline",
+        "purpose": "Centered page titles."
+      },
+      "dash-title": {
+        "displayName": "Dashboard Title",
+        "purpose": "Section and modal headings."
+      },
+      "dash-body": {
+        "displayName": "Dashboard Body",
+        "purpose": "Default dashboard text, tables and forms."
+      },
+      "dash-label": {
+        "displayName": "Dashboard Label",
+        "purpose": "Field labels, chips, meta."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-lift",
+        "value": "0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1)",
+        "purpose": "Resting elevation of cards and modals (shadow-lg)."
+      },
+      {
+        "name": "content-lift",
+        "value": "0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1)",
+        "purpose": "GuideApp detail card and pill buttons (shadow-md)."
+      },
+      {
+        "name": "tabbar-float",
+        "value": "0 25px 50px -12px rgba(0,0,0,.25)",
+        "purpose": "GuideApp bottom tab bar (shadow-2xl)."
+      },
+      {
+        "name": "drag-preview",
+        "value": "0 5px 15px rgba(0,0,0,0.1)",
+        "purpose": "Dashboard CDK drag preview."
+      }
+    ],
+    "motion": [
+      {
+        "name": "card-collapse",
+        "value": "250ms ease-in-out",
+        "purpose": "Ticked GuideApp cards shrink from 80px to 48px and fade to 50%."
+      },
+      {
+        "name": "check-pop",
+        "value": "jump-in 600ms ease-in-out",
+        "purpose": "Orange checkmark entrance (tailwindcss-animated)."
+      },
+      {
+        "name": "gradient-drift",
+        "value": "gradientMove 8s linear infinite",
+        "purpose": "Welcome heading division gradient."
+      },
+      {
+        "name": "drag-settle",
+        "value": "250ms cubic-bezier(0, 0, 0.2, 1)",
+        "purpose": "Dashboard drag-and-drop reorder."
+      },
+      {
+        "name": "progress-fill",
+        "value": "300ms",
+        "purpose": "Feedback progress bar width."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "GuideApp Primary Button",
+      "kind": "button",
+      "refersTo": "guide-button-primary",
+      "description": "Orange pill for the one main action on a GuideApp screen.",
+      "html": "<button class=\"ds-g-btn\">Auf der Karte</button>",
+      "css": ".ds-g-btn { font-family: Roboto, sans-serif; background: #f97316; color: #fff; border: none; border-radius: 16px; height: 40px; padding: 0 16px; font-size: 16px; font-weight: 500; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); cursor: pointer; transition: background .15s, opacity .15s; } .ds-g-btn:hover { background: #ea580c; } .ds-g-btn:focus-visible { outline: 2px solid #f97316; outline-offset: 2px; } .ds-g-btn:disabled { opacity: .5; }"
+    },
+    {
+      "name": "GuideApp Back Button",
+      "kind": "button",
+      "refersTo": "guide-button-back",
+      "description": "Neutral stone pill with arrow, above detail content.",
+      "html": "<button class=\"ds-g-back\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M19 12H5M12 19l-7-7 7-7\"/></svg>Zurück</button>",
+      "css": ".ds-g-back { font-family: Roboto, sans-serif; display: inline-flex; align-items: center; gap: 8px; background: #9ca3af; color: #fff; border: none; border-radius: 16px; padding: 8px 16px; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1); cursor: pointer; transition: background .15s; } .ds-g-back:hover { background: #6b7280; } .ds-g-back:focus-visible { outline: 2px solid #374151; outline-offset: 2px; }"
+    },
+    {
+      "name": "Stop Card",
+      "kind": "card",
+      "refersTo": "guide-stop-card",
+      "description": "Signature GuideApp card filled with the stop's division color(s); collapses and fades when ticked.",
+      "html": "<div class=\"ds-g-stops\"><div class=\"ds-g-stop\" style=\"background: linear-gradient(to right, #0059A7, #70B4D9)\"><span>Robotik-Labor</span><span class=\"ds-g-check\"></span></div><div class=\"ds-g-stop ds-g-stop--done\" style=\"background:#CE1223\"><span>Elektronik-Werkstätte</span><span class=\"ds-g-check ds-g-check--on\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#f97316\" stroke-width=\"5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 13l4 4L19 7\"/></svg></span></div></div>",
+      "css": ".ds-g-stops { display: grid; gap: 24px; width: 340px; } .ds-g-stop { font-family: Roboto, sans-serif; display: flex; align-items: center; justify-content: space-between; height: 80px; padding: 0 24px 0 32px; border-radius: 8px; color: #fff; font-weight: 700; font-size: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1); transition: height .25s ease-in-out, opacity .25s ease-in-out; cursor: pointer; } .ds-g-stop--done { height: 48px; opacity: .5; } .ds-g-check { width: 24px; height: 24px; border: 2px solid #6b7280; border-radius: 6px; background: #fff; display: flex; } .ds-g-check--on { background: #f3f4f6; } .ds-g-check svg { width: 100%; height: 100%; }"
+    },
+    {
+      "name": "Stop Group Card",
+      "kind": "card",
+      "refersTo": "guide-group-card",
+      "description": "White lifted card for a tour section with progress count and checkbox.",
+      "html": "<div class=\"ds-g-group\"><span class=\"ds-g-group-name\">Kurzpräsentationen</span><span class=\"ds-g-group-count\">3 / 7</span><span class=\"ds-g-box\"></span></div>",
+      "css": ".ds-g-group { font-family: Roboto, sans-serif; width: 340px; display: flex; align-items: center; gap: 16px; height: 80px; padding: 0 24px 0 32px; background: #fff; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1); color: #374151; cursor: pointer; } .ds-g-group-name { flex: 1; font-size: 18px; font-weight: 500; } .ds-g-group-count { font-size: 16px; font-weight: 500; } .ds-g-box { width: 24px; height: 24px; border: 2px solid #6b7280; border-radius: 6px; }"
+    },
+    {
+      "name": "GuideApp Choice Option",
+      "kind": "input",
+      "refersTo": "guide-option",
+      "description": "Feedback answer row; selected state uses orange wash and edge.",
+      "html": "<div class=\"ds-g-opts\"><label class=\"ds-g-opt ds-g-opt--on\"><span class=\"ds-g-radio\"><span></span></span>Sehr gut</label><label class=\"ds-g-opt\"><span class=\"ds-g-radio\"></span>Gut</label></div>",
+      "css": ".ds-g-opts { display: grid; gap: 8px; width: 320px; } .ds-g-opt { font-family: Roboto, sans-serif; display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; color: #374151; cursor: pointer; transition: background .15s, border-color .15s; } .ds-g-opt:hover { border-color: #fdba74; } .ds-g-opt--on { background: #fff7ed; border-color: #fdba74; } .ds-g-radio { width: 20px; height: 20px; border: 2px solid #d1d5db; border-radius: 9999px; display: flex; align-items: center; justify-content: center; } .ds-g-opt--on .ds-g-radio { border-color: #f97316; } .ds-g-radio span { width: 12px; height: 12px; border-radius: 9999px; background: #f97316; }"
+    },
+    {
+      "name": "GuideApp Bottom Tab Bar",
+      "kind": "nav",
+      "refersTo": "guide-bottom-nav",
+      "description": "Fixed white icon bar; active tab in orange.",
+      "html": "<nav class=\"ds-g-nav\"><button class=\"ds-g-tab ds-g-tab--on\" aria-label=\"Leitfaden\"><svg viewBox=\"0 0 20 20\" fill=\"currentColor\"><path d=\"m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z\"/></svg></button><button class=\"ds-g-tab\" aria-label=\"Karte\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"><polygon points=\"1 6 10 2 14 6 23 2 23 22 14 18 10 22 1 18 1 6\"/><line x1=\"10\" y1=\"22\" x2=\"10\" y2=\"6\"/><line x1=\"14\" y1=\"18\" x2=\"14\" y2=\"6\"/></svg></button><button class=\"ds-g-tab\" aria-label=\"Über uns\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" y1=\"16\" x2=\"12\" y2=\"12\"/><line x1=\"12\" y1=\"8\" x2=\"12.01\" y2=\"8\"/></svg></button></nav>",
+      "css": ".ds-g-nav { width: 340px; height: 56px; display: flex; align-items: center; justify-content: space-evenly; background: #fff; border-radius: 8px 8px 0 0; box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); } .ds-g-tab { background: none; border: none; color: #000; padding: 8px; cursor: pointer; } .ds-g-tab svg { width: 24px; height: 24px; display: block; } .ds-g-tab--on { color: #f97316; } .ds-g-tab:focus-visible { outline: 2px solid #f97316; border-radius: 6px; }"
+    },
+    {
+      "name": "Dashboard Primary Button",
+      "kind": "button",
+      "refersTo": "dash-button-primary",
+      "description": "DaisyUI btn-primary (btn-sm shown) in Dashboard Blue, next to the outline variant.",
+      "html": "<div style=\"display:flex;gap:8px\"><button class=\"ds-d-btn\">Add Stop</button><button class=\"ds-d-btn ds-d-btn--outline\">Clear Filters</button></div>",
+      "css": ".ds-d-btn { font-family: ui-sans-serif, system-ui, sans-serif; height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid #4590e6; background: #4590e6; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: background .2s, color .2s; } .ds-d-btn:hover { background: #015ec9; border-color: #015ec9; } .ds-d-btn:focus-visible { outline: 2px solid #4590e6; outline-offset: 2px; } .ds-d-btn:active { transform: scale(.97); } .ds-d-btn--outline { background: transparent; color: #130710; border-color: #130710; } .ds-d-btn--outline:hover { background: #4590e6; border-color: #4590e6; color: #fff; }"
+    },
+    {
+      "name": "Dashboard Filled Field",
+      "kind": "input",
+      "refersTo": "dash-field-filled",
+      "description": "Filter input filled with mid-blue and a white placeholder.",
+      "html": "<label class=\"ds-d-field\"><span>Stop Name Filter</span><input placeholder=\"Search stop names...\"></label>",
+      "css": ".ds-d-field { font-family: ui-sans-serif, system-ui, sans-serif; display: grid; gap: 6px; width: 280px; font-size: 14px; color: #130710; } .ds-d-field input { height: 48px; padding: 0 16px; border-radius: 8px; border: 1px solid rgba(19,7,16,.2); background: #73abea; color: #fff; font-size: 14px; transition: background .15s; } .ds-d-field input::placeholder { color: #fff; } .ds-d-field input:hover { background: #6190c6; } .ds-d-field input:focus-visible { outline: 2px solid #73abea; outline-offset: 2px; }"
+    },
+    {
+      "name": "Dashboard Top Nav",
+      "kind": "nav",
+      "refersTo": "dash-nav",
+      "description": "Sticky sky-blue bar with logo, links and active fill.",
+      "html": "<nav class=\"ds-d-nav\"><strong>HTL Leonding</strong><a>Stop Groups</a><a class=\"ds-d-nav--on\">Stops</a><a>Divisions</a><a>Students</a></nav>",
+      "css": ".ds-d-nav { font-family: ui-sans-serif, system-ui, sans-serif; display: flex; align-items: center; gap: 16px; padding: 16px; background: #6aa4c9; color: #130710; font-size: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.1); } .ds-d-nav strong { margin-right: 16px; } .ds-d-nav a { padding: 8px 12px; border-radius: 4px; cursor: pointer; } .ds-d-nav a:hover { background: #7ec4ee; } .ds-d-nav--on { background: #4590e6; text-decoration: underline; font-weight: 500; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Open-Day Programme",
+    "overview": "**Creative North Star: \"The Open-Day Programme\"**\n\nTadeoTTools works like an open-day programme you carry on your phone. The visitor GuideApp lists the day as a sequence of stop groups and stops, each one a card to open and tick off. It is colored by the school's own divisions (Informatik blue, Medientechnik sky blue, Elektronik red, Medizintechnik amber), so a glance at a card's color tells you which part of the school you are in. One warm orange is the programme's highlighter: it marks the current tab, the main button on a screen and every tick. The welcome heading carries the whole division palette as a slow moving gradient, the one festive gesture on an otherwise quiet gray-and-white page.\n\nThe surfaces are soft, chunky and touch-first. Cards are white or division-filled and lifted on clear shadows. Buttons are rounded pills (16px corners). Rows are tall (80px) because visitors tap them while walking. Type is Roboto throughout the GuideApp, set large (18px body) for reading at arm's length in a corridor.\n\nThe organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, a soft sky-blue palette instead of orange, and a full dark mode. Its distinctive habit is **filled blue fields**: filters and selects sit in solid mid-blue (`dash-field`) with white placeholders rather than white inputs with outlines. The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.",
+    "keyCharacteristics": [
+      "Division colors are the identity and the wayfinding signal; they come from the school, not from the design.",
+      "GuideApp: one orange accent, white cards lifted on `bg-gray-50`, pill buttons, a fixed bottom tab bar.",
+      "Dashboard: DaisyUI `light` / `darkCustom` themes, blue primary, filled blue form fields, a sticky sky-blue top nav.",
+      "Tall touch targets and a 16px side gutter on mobile; the GuideApp is designed only for phone width.",
+      "Copy: German with du-form in the GuideApp, English in the dashboard (today's state, not a rule)."
+    ],
+    "rules": [
+      {
+        "name": "The Division Owns Its Color Rule",
+        "body": "Division colors come from the school and the dashboard data. Never re-tint them, and never reuse a division hue for UI states like errors or links.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Highlighter Rule",
+        "body": "In the GuideApp, orange is the only accent: active tab, primary action, ticks, selections. A second accent color competes with the division colors.",
+        "section": "colors"
+      },
+      {
+        "name": "The Arm's-Length Rule",
+        "body": "GuideApp text is read while walking: body 18px, card labels at least 16px. The only 12px text today is the caption under the feedback rating scale.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lifted Card Rule",
+        "body": "Anything tappable in the GuideApp is a card on a shadow. Ticked cards do not lose their shadow; they shrink (80px → 48px) and fade to 50% opacity.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do fill stop cards with the stop's runtime division color and fall back to Neutral Meadow Green (`division-fallback`) only when the stop has no division.",
+      "Do keep GuideApp tap targets at least 40px tall, and list cards at 80px.",
+      "Do use Programme Orange for the single primary action and the active state on a GuideApp screen.",
+      "Do reserve bottom padding (at least 112px) on every GuideApp page so the fixed tab bar never covers the last card.",
+      "Do keep the HTL Leonding logo at the top of both apps (header block in the GuideApp, nav bar in the dashboard).",
+      "Do use DaisyUI component classes (`btn`, `input`, `select`, `table`, `toggle`) in the dashboard and define new colors as theme variables, so dark mode keeps working."
+    ],
+    "donts": [
+      "Don't re-tint, desaturate or replace division colors for aesthetic reasons; they are the school's identity.",
+      "Don't introduce a second accent color in the GuideApp alongside orange.",
+      "Don't use orange in the dashboard or dashboard blue in the GuideApp; each app keeps its own accent.",
+      "Don't set GuideApp body text below 16px.",
+      "Don't add raw hex colors in dashboard templates; extend the `--primary-*` / `--background-*` variables so both themes stay in sync."
+    ]
+  }
+}

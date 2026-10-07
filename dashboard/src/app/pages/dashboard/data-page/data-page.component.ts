@@ -31,7 +31,7 @@ export class DataPageComponent {
   async ngOnInit() {
     try {
       const showCountdown = await this.featureFlagService.getShowCountdown();
-      
+
       this.showCountdown.set(showCountdown.isEnabled);
       this.countdownValue.set(showCountdown.value);
     } catch (e) {
@@ -42,7 +42,10 @@ export class DataPageComponent {
   async setShowCountdown() {
     try {
       this.showCountdown.update((v) => !v);
-      await this.featureFlagService.updateShowCountdown(this.showCountdown(), this.countdownValue());
+      await this.featureFlagService.updateShowCountdown(
+        this.showCountdown(),
+        this.countdownValue()
+      );
     } catch (e) {
       console.error('Failed to update feature flag', e);
       // Revert on failure
@@ -52,7 +55,10 @@ export class DataPageComponent {
 
   async updateShowdownValue() {
     try {
-      await this.featureFlagService.updateShowCountdown(this.showCountdown(), this.countdownValue());
+      await this.featureFlagService.updateShowCountdown(
+        this.showCountdown(),
+        this.countdownValue()
+      );
     } catch (e) {
       console.error('Failed to update countdown value', e);
     }
@@ -144,8 +150,58 @@ export class DataPageComponent {
     }
   }
 
+  studentCount = signal<number | null>(null);
+  deletingStudents = signal<boolean>(false);
+  deleteStudentsResult = signal<{ ok: boolean; message: string } | null>(null);
+
+  async openDeleteStudents() {
+    this.deleteStudentsResult.set(null);
+    this.studentCount.set(null);
+    this.showDeleteStudentsPopup.set(true);
+    try {
+      this.studentCount.set((await this.studentService.getStudents()).length);
+    } catch (error) {
+      console.error('Failed to count students', error);
+    }
+  }
+
+  deleteStudentsMessage(): string {
+    const count = this.studentCount();
+    const who = count === null ? 'All students' : `All ${count} students`;
+    return (
+      `${who} and all of their stop assignments will be permanently deleted. ` +
+      'This cannot be undone.\nDownload the students data first if you may need it again.'
+    );
+  }
+
+  // Typing the student count proves the admin read how many will go.
+  deleteStudentsConfirmText(): string {
+    const count = this.studentCount();
+    return count === null ? 'DELETE' : String(count);
+  }
+
   async deleteAllStudents() {
-    await this.studentService.deleteAllStudents();
+    this.deletingStudents.set(true);
+    try {
+      await this.studentService.deleteAllStudents();
+      const count = this.studentCount();
+      this.deleteStudentsResult.set({
+        ok: true,
+        message:
+          count === null
+            ? 'All students were deleted.'
+            : `${count} students were deleted.`,
+      });
+    } catch (error) {
+      console.error('Failed to delete students', error);
+      this.deleteStudentsResult.set({
+        ok: false,
+        message: 'The students could not be deleted. Nothing was changed.',
+      });
+    } finally {
+      this.deletingStudents.set(false);
+      this.showDeleteStudentsPopup.set(false);
+    }
   }
 
   selectedStudentAssignmentFile: WritableSignal<File | null> = signal(null);

@@ -14,6 +14,7 @@ import { DataManagementComponent } from './pages/dashboard/data-management.compo
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { adminOrStopManagerGuard } from './core/guards/admin-or-stop-manager.guard';
+import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -22,6 +23,7 @@ export const routes: Routes = [
     component: StopGroupsComponent,
     canMatch: [authGuard],
     canActivate: [adminGuard],
+    canDeactivate: [unsavedChangesGuard],
   },
   {
     path: 'stops',
@@ -46,12 +48,14 @@ export const routes: Routes = [
     component: StopgroupDetailsComponent,
     canMatch: [authGuard],
     canActivate: [adminGuard],
+    canDeactivate: [unsavedChangesGuard],
   },
   {
     path: 'stop',
     component: StopDetailsComponent,
     canMatch: [authGuard],
     canActivate: [adminOrStopManagerGuard],
+    canDeactivate: [unsavedChangesGuard],
   },
   { path: 'student', component: StudentComponent, canMatch: [authGuard] },
   {

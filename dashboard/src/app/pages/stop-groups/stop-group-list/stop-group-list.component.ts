@@ -1,5 +1,9 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { CdkDragDrop, moveItemInArray, transferArrayItem, } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 import { Division, Info, Stop, StopGroup } from '@/shared/models/types';
 import { InfoPopupComponent } from '@/shared/modals/info-modal/info-modal.component';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
@@ -12,6 +16,8 @@ import { StopSidebarComponent } from './components/stop-sidebar/stop-sidebar.com
 import { AddStopDialogComponent } from './components/add-stop-dialog/add-stop-dialog.component';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 import { Router } from '@angular/router';
+import { HasUnsavedChanges } from '@/core/guards/unsaved-changes.guard';
+import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-stopgroups',
@@ -22,10 +28,12 @@ import { Router } from '@angular/router';
     StopGroupHeaderComponent,
     StopGroupListComponent,
     AddStopDialogComponent,
+    LoaderComponent,
   ],
   templateUrl: './stop-group-list.component.html',
+  host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
 })
-export class StopGroupsComponent implements OnInit {
+export class StopGroupsComponent implements OnInit, HasUnsavedChanges {
   private stopGroupService = inject(StopGroupService);
   private divisionService = inject(DivisionService);
   private stopService = inject(StopService);
@@ -33,7 +41,13 @@ export class StopGroupsComponent implements OnInit {
   private router = inject(Router);
 
   hasChanged = signal<boolean>(false);
+  loading = signal<boolean>(true);
+  loadFailed = signal<boolean>(false);
+  saving = signal<boolean>(false);
   infos = signal<Info[]>([]);
+
+  // Stop lists as last loaded/saved, so only groups whose stops changed are re-sent.
+  private savedStopIds = new Map<number, string>();
   stopGroups = signal<StopGroup[]>([]);
   divisions = signal<Division[]>([]);
   stops = signal<Stop[]>([]);
@@ -81,10 +95,44 @@ export class StopGroupsComponent implements OnInit {
   }
 
   async initialiseData() {
-    this.stopGroups.set(await this.stopGroupService.getStopGroups());
-    this.divisions.set(await this.divisionService.getDivisions());
-    this.stops.set(await this.stopService.getStops());
-    this.hasChanged.set(false);
+    this.loading.set(true);
+    this.loadFailed.set(false);
+    try {
+      const [groups, divisions, stops] = await Promise.all([
+        this.stopGroupService.getStopGroups(),
+        this.divisionService.getDivisions(),
+        this.stopService.getStops(),
+      ]);
+      this.stopGroups.set(groups);
+      this.divisions.set(divisions);
+      this.stops.set(stops);
+      this.rememberSavedStops();
+      this.hasChanged.set(false);
+    } catch (error) {
+      console.error('Failed to load stop groups', error);
+      this.loadFailed.set(true);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.hasChanged();
+  }
+
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    if (this.hasChanged()) {
+      event.preventDefault();
+    }
+  }
+
+  private rememberSavedStops() {
+    this.savedStopIds = new Map(
+      this.stopGroups().map((group) => [
+        group.id,
+        JSON.stringify(group.stopIds),
+      ])
+    );
   }
 
   toggleShowStops() {
@@ -152,7 +200,23 @@ export class StopGroupsComponent implements OnInit {
   }
 
   dropGroup(event: CdkDragDrop<any, any>) {
-    moveItemInArray(this.stopGroups(), event.previousIndex, event.currentIndex);
+    if (event.previousIndex === event.currentIndex) {
+      return;
+    }
+    // The drop indices count only the visible cards; private groups may be
+    // hidden, so translate them to positions in the full tour.
+    const all = this.stopGroups();
+    const visible = this.onlyPublicGroups()
+      ? all.filter((group) => group.isPublic)
+      : all;
+    const from = all.indexOf(visible[event.previousIndex]);
+    const to = all.indexOf(visible[event.currentIndex]);
+    if (from < 0 || to < 0) {
+      return;
+    }
+    const reordered = [...all];
+    moveItemInArray(reordered, from, to);
+    this.stopGroups.set(reordered);
     this.hasChanged.set(true);
   }
 
@@ -166,20 +230,42 @@ export class StopGroupsComponent implements OnInit {
     );
   }
 
-  saveChanges() {
-    this.stopGroupService.updateStopGroupOrder(
-      this.stopGroups().map((group) => group.id)
-    );
-    this.stopGroups().forEach(async (group) => {
-      await this.stopGroupService.updateStopGroup({
-        id: group.id,
-        name: group.name,
-        description: group.description,
-        isPublic: group.isPublic,
-        stopIds: group.stopIds,
-      });
-    });
-    this.hasChanged.set(false);
+  async saveChanges() {
+    if (this.saving()) {
+      return;
+    }
+    this.saving.set(true);
+    try {
+      await this.stopGroupService.updateStopGroupOrder(
+        this.stopGroups().map((group) => group.id)
+      );
+      const changedGroups = this.stopGroups().filter(
+        (group) =>
+          this.savedStopIds.get(group.id) !== JSON.stringify(group.stopIds)
+      );
+      await Promise.all(
+        changedGroups.map((group) =>
+          this.stopGroupService.updateStopGroup({
+            id: group.id,
+            name: group.name,
+            description: group.description,
+            isPublic: group.isPublic,
+            stopIds: group.stopIds,
+          })
+        )
+      );
+      this.rememberSavedStops();
+      this.hasChanged.set(false);
+      this.addInfo('info', 'Tour order saved.');
+    } catch (error) {
+      console.error('Failed to save the tour', error);
+      this.addInfo(
+        'error',
+        'The tour could not be saved. Your changes are still here, please try again.'
+      );
+    } finally {
+      this.saving.set(false);
+    }
   }
 
   selectStopToRemove(stopId: number, group: StopGroup) {

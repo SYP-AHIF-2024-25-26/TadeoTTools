@@ -1,6 +1,7 @@
 <app-stop-group-header
   [hasChanged]="hasChanged()"
   [onlyPublicGroups]="onlyPublicGroups()"
+  [saving]="saving()"
   (addGroup)="navigateToNewGroup()"
   (togglePublicGroups)="onlyPublicGroups.set(!onlyPublicGroups())"
   (save)="saveChanges()"
@@ -8,19 +9,35 @@
 />
 
 <div class="container mx-auto px-4 py-8">
-  <app-stop-group-list
-    [stopGroups]="stopGroups()"
-    [onlyPublicGroups]="onlyPublicGroups()"
-    [stops]="stops()"
-    [connectedDropLists]="dropGroups()"
-    (dropGroup)="dropGroup($event)"
-    (dropStop)="dropStop($event)"
-    (removeStop)="selectStopToRemove($event.stopId, $event.group)"
-  />
+  @if (loading()) {
+    <div class="flex justify-center py-16">
+      <app-loader text="Loading the tour…" />
+    </div>
+  } @else if (loadFailed()) {
+    <div
+      class="mx-auto flex max-w-md flex-col items-center gap-4 rounded-lg bg-background-100 p-6 text-center text-text-950 shadow-lg dark:bg-background-800 dark:text-text-100"
+      role="alert"
+    >
+      <p>The tour could not be loaded. Check your connection and try again.</p>
+      <button class="btn btn-primary btn-sm" (click)="initialiseData()">
+        Try again
+      </button>
+    </div>
+  } @else {
+    <app-stop-group-list
+      [stopGroups]="stopGroups()"
+      [onlyPublicGroups]="onlyPublicGroups()"
+      [stops]="stops()"
+      [connectedDropLists]="dropGroups()"
+      (dropGroup)="dropGroup($event)"
+      (dropStop)="dropStop($event)"
+      (removeStop)="selectStopToRemove($event.stopId, $event.group)"
+    />
+  }
 </div>
 
 <!-- Info Notifications -->
-<div class="fixed bottom-4 right-4 z-50 space-y-2">
+<div class="fixed bottom-4 right-4 z-50 space-y-2" aria-live="polite">
   @for (info of infos(); track info) {
     <app-info-popup
       (deleted)="deleteInfo($event)"
@@ -33,6 +50,7 @@
 @if (showRemoveStopPopup()) {
   <app-delete-popup
     [title]="'Remove Stop'"
+    confirmLabel="Remove"
     [message]="'Are you sure you want to remove this stop from the stop group?'"
     (cancel)="showRemoveStopPopup.set(false)"
     (removeConfirmed)="removeStop()"

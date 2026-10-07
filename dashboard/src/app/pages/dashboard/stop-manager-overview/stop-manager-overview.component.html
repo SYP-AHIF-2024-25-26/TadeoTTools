@@ -4,6 +4,12 @@
       Stop Manager Overview
     </h1>
 
+    @if (errorMessage()) {
+      <div role="alert" class="alert alert-error w-full max-w-4xl">
+        {{ errorMessage() }}
+      </div>
+    }
+
     <!-- Add new stop manager form -->
     <div
       class="w-full max-w-4xl rounded-xl bg-background-50 p-6 shadow-lg dark:bg-background-800"
@@ -175,7 +181,7 @@
                         </svg>
                       </button>
                       <button
-                        (click)="deleteStopManager(stopManager.edufsUsername)"
+                        (click)="stopManagerToDelete.set(stopManager)"
                         class="btn btn-ghost btn-xs text-error hover:bg-error/10"
                         title="Delete"
                       >
@@ -330,7 +336,7 @@
                 Edit
               </button>
               <button
-                (click)="deleteStopManager(stopManager.edufsUsername)"
+                (click)="stopManagerToDelete.set(stopManager)"
                 class="btn btn-ghost btn-sm text-error"
               >
                 <svg
@@ -377,3 +383,14 @@
     }
   </div>
 </div>
+
+@if (stopManagerToDelete()) {
+  <app-delete-popup
+    title="Delete stop manager"
+    [message]="deleteMessage()"
+    confirmLabel="Delete stop manager"
+    [busy]="deleting()"
+    (cancel)="stopManagerToDelete.set(null)"
+    (removeConfirmed)="deleteStopManager()"
+  />
+}

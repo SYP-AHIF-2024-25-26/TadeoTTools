@@ -7,7 +7,7 @@
   @for (group of stopGroups(); track group) {
     @if (!onlyPublicGroups() || group.isPublic) {
       <div
-        class="overflow-hidden rounded-lg bg-primary-100 dark:bg-primary-100 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+        class="overflow-hidden rounded-lg bg-primary-100 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 dark:bg-primary-100"
         cdkDrag
       >
         <div class="p-6">
@@ -69,5 +69,9 @@
         </div>
       </div>
     }
+  } @empty {
+    <p class="py-12 text-center text-text-600 dark:text-text-300">
+      No stop groups yet. Use “Add Group” to start the tour.
+    </p>
   }
 </div>

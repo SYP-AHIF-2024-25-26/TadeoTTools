@@ -15,7 +15,8 @@ import {
   StudentAssignment,
 } from '@/shared/models/types';
 import { CommonModule } from '@angular/common';
-import { sortStudents, downloadFile } from '@/shared/utils/utils';
+import { sortStudents, downloadFile, plural } from '@/shared/utils/utils';
+import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { StopService } from '@/core/services/stop.service';
 import {
   Overlay,
@@ -45,6 +46,7 @@ export interface StudentWithUI extends Student {
     StudentImportExportComponent,
     AddStudentDialogComponent,
     ConflictDetailsModalComponent,
+    DeletePopupComponent,
   ],
   templateUrl: './student-list.component.html',
   standalone: true,
@@ -206,28 +208,67 @@ export class ListStudentsComponent implements OnInit {
     );
   }
 
-  hasRequested = computed(() => {
-    return this.filteredStudents().some((s) =>
-      s.studentAssignments.some((a) => a.status === Status.Pending)
+  private hasPending(student: Student): boolean {
+    return student.studentAssignments.some((a) => a.status === Status.Pending);
+  }
+
+  // Students requested by more than one stop are left for manual resolution.
+  approvableStudents = computed(() =>
+    this.filteredStudents().filter(
+      (s) => this.hasPending(s) && s.studentAssignments.length === 1
+    )
+  );
+
+  skippedConflicts = computed(
+    () =>
+      this.filteredStudents().filter(
+        (s) => this.hasPending(s) && s.studentAssignments.length > 1
+      ).length
+  );
+
+  hasRequested = computed(() => this.approvableStudents().length > 0);
+
+  showApproveAllConfirm = signal<boolean>(false);
+  approving = signal<boolean>(false);
+  approveError = signal<string | null>(null);
+
+  approveAllMessage = computed(() => {
+    const count = this.approvableStudents().length;
+    const skipped = this.skippedConflicts();
+    return (
+      `${plural(count, 'pending request')} in the current filter will be approved.` +
+      (skipped > 0
+        ? `\n${plural(skipped, 'student')} with conflicting requests ` +
+          `${skipped === 1 ? 'is' : 'are'} skipped. Resolve ${skipped === 1 ? 'it' : 'them'} with "Manage Conflict".`
+        : '')
     );
   });
 
   async approveAllRequested(): Promise<void> {
-    const updates: Promise<void>[] = [];
-
-    for (const student of this.filteredStudents()) {
-      const pendingAssignments = student.studentAssignments.filter(
-        (a) => a.status === Status.Pending
+    this.approving.set(true);
+    this.approveError.set(null);
+    try {
+      await Promise.all(
+        this.approvableStudents().map((student) =>
+          this.studentService.updateStudent({
+            ...student,
+            studentAssignments: student.studentAssignments.map((a) =>
+              a.status === Status.Pending
+                ? { ...a, status: Status.Accepted }
+                : a
+            ),
+          })
+        )
       );
-      if (pendingAssignments.length > 0) {
-        pendingAssignments.forEach((a) => (a.status = Status.Accepted));
-        updates.push(this.studentService.updateStudent(student));
-      }
-    }
-
-    if (updates.length > 0) {
-      await Promise.all(updates);
+    } catch (error) {
+      console.error('Failed to approve requests', error);
+      this.approveError.set(
+        'Some requests could not be approved. The list shows the current state, please try again.'
+      );
+    } finally {
       await this.refreshStudents();
+      this.approving.set(false);
+      this.showApproveAllConfirm.set(false);
     }
   }
 

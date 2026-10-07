@@ -108,14 +108,14 @@
             />
             <button
               type="button"
-              (click)="deleteImage()"
-              class="btn btn-outline btn-error btn-sm"
+              (click)="clearPreview()"
+              class="btn btn-ghost btn-sm"
             >
-              Remove
+              Discard
             </button>
           </div>
         </div>
-      } @else if (id !== -1) {
+      } @else if (id !== -1 && !imageDeleted()) {
         <div class="mt-4">
           <label class="label"
             ><span class="label-text">Current Image:</span></label
@@ -128,7 +128,7 @@
             />
             <button
               type="button"
-              (click)="deleteImage()"
+              (click)="confirmAction.set('image')"
               class="btn btn-outline btn-error btn-sm"
             >
               Delete Image
@@ -145,7 +145,7 @@
           @if (id !== -1) {
             <button
               type="button"
-              (click)="deleteAndGoBack()"
+              (click)="confirmAction.set('division')"
               class="btn btn-error w-full sm:w-auto"
             >
               Delete Division
@@ -168,3 +168,23 @@
     </form>
   </div>
 </div>
+
+@if (confirmAction() === 'division') {
+  <app-delete-popup
+    title="Delete division"
+    [message]="deleteDivisionMessage()"
+    confirmLabel="Delete division"
+    [busy]="deleting()"
+    (cancel)="confirmAction.set(null)"
+    (removeConfirmed)="deleteAndGoBack()"
+  />
+} @else if (confirmAction() === 'image') {
+  <app-delete-popup
+    title="Delete image"
+    [message]="deleteImageMessage()"
+    confirmLabel="Delete image"
+    [busy]="deleting()"
+    (cancel)="confirmAction.set(null)"
+    (removeConfirmed)="deleteImage()"
+  />
+}

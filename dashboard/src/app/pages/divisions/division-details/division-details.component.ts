@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   EventEmitter,
   inject,
   Input,
@@ -9,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { BASE_URL } from '@/app.config';
 import { isValidString } from '@/shared/utils/utils';
 import { Division } from '@/shared/models/types';
@@ -18,7 +20,7 @@ import { ScrollPersistenceService } from '@/core/services/scroll-persistence.ser
 @Component({
   selector: 'app-division-details',
   standalone: true,
-  imports: [FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule, DeletePopupComponent],
   templateUrl: './division-details.component.html',
 })
 export class DivisionDetailsComponent implements OnInit {
@@ -132,14 +134,56 @@ export class DivisionDetailsComponent implements OnInit {
     this.cancel.emit();
   }
 
+  confirmAction = signal<'division' | 'image' | null>(null);
+  deleting = signal<boolean>(false);
+  imageDeleted = signal<boolean>(false);
+
+  deleteDivisionMessage = computed(
+    () =>
+      `"${this.name()}" will be permanently deleted.\n` +
+      'Its stops stay, but are no longer linked to this division.'
+  );
+  deleteImageMessage = computed(
+    () => `The image of "${this.name()}" will be permanently deleted.`
+  );
+
   async deleteAndGoBack() {
-    await this.divisionService.deleteDivision(this.id);
-    this.cancel.emit();
+    this.deleting.set(true);
+    try {
+      await this.divisionService.deleteDivision(this.id);
+      this.confirmAction.set(null);
+      this.cancel.emit();
+    } catch (error) {
+      console.error('Failed to delete division', error);
+      this.errorMessage.set(
+        'The division could not be deleted. Please try again.'
+      );
+      this.confirmAction.set(null);
+    } finally {
+      this.deleting.set(false);
+    }
+  }
+
+  // Discards a newly chosen file; the stored image is untouched.
+  clearPreview() {
+    this.selectedFile = null;
+    this.filePreview = null;
   }
 
   async deleteImage() {
-    this.selectedFile = null;
-    this.filePreview = null;
-    await this.divisionService.deleteDivisionImg(this.id);
+    this.deleting.set(true);
+    try {
+      await this.divisionService.deleteDivisionImg(this.id);
+      this.clearPreview();
+      this.imageDeleted.set(true);
+    } catch (error) {
+      console.error('Failed to delete division image', error);
+      this.errorMessage.set(
+        'The image could not be deleted. Please try again.'
+      );
+    } finally {
+      this.deleting.set(false);
+      this.confirmAction.set(null);
+    }
   }
 }

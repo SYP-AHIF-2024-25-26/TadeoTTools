@@ -62,6 +62,7 @@
 @if (showRemoveStopGroupPopup()) {
   <app-delete-popup
     [title]="'Remove Stop Group'"
+    confirmLabel="Remove"
     [message]="'Are you sure you want to remove this stop group from the stop?'"
     (cancel)="showRemoveStopGroupPopup.set(false)"
     (removeConfirmed)="confirmStopGroupRemove()"

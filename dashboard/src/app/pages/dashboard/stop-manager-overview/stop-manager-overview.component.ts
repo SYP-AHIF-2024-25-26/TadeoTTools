@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StopManager } from '@/shared/models/types';
+import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
+import { plural } from '@/shared/utils/utils';
 
 @Component({
   selector: 'app-stop-manager-overview',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DeletePopupComponent],
   templateUrl: './stop-manager-overview.component.html',
 })
 export class StopManagerOverviewComponent {
@@ -70,12 +72,36 @@ export class StopManagerOverviewComponent {
     this.editingStopManager.set(null);
   }
 
-  async deleteStopManager(edufsUsername: string) {
+  stopManagerToDelete = signal<StopManager | null>(null);
+  deleting = signal<boolean>(false);
+  errorMessage = signal<string | null>(null);
+
+  deleteMessage = computed(() => {
+    const manager = this.stopManagerToDelete();
+    if (!manager) return '';
+    const stops = manager.assignedStops?.length ?? 0;
+    return (
+      `${manager.firstName} ${manager.lastName} (${manager.edufsUsername}) will be permanently deleted` +
+      (stops > 0 ? ` and removed from ${plural(stops, 'stop')}.` : '.')
+    );
+  });
+
+  async deleteStopManager() {
+    const manager = this.stopManagerToDelete();
+    if (!manager) return;
+    this.deleting.set(true);
+    this.errorMessage.set(null);
     try {
-      await this.stopManagerService.deleteStopManager(edufsUsername);
+      await this.stopManagerService.deleteStopManager(manager.edufsUsername);
       await this.loadStopManagers();
     } catch (error) {
       console.error('Failed to delete stop manager:', error);
+      this.errorMessage.set(
+        `${manager.firstName} ${manager.lastName} could not be deleted. Please try again.`
+      );
+    } finally {
+      this.deleting.set(false);
+      this.stopManagerToDelete.set(null);
     }
   }
 

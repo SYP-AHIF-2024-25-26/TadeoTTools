@@ -3,6 +3,12 @@
     {{ readOnly() ? 'Students' : 'Student Manager' }}
   </h2>
 
+  @if (approveError()) {
+    <div role="alert" class="alert alert-error mb-4">
+      {{ approveError() }}
+    </div>
+  }
+
   <!-- Filter and actions bar -->
   <div class="mb-4 flex flex-col gap-4">
     <!-- Actions -->
@@ -16,10 +22,10 @@
       @if (!readOnly()) {
         <button
           class="btn btn-primary btn-md whitespace-nowrap"
-          (click)="approveAllRequested()"
+          (click)="showApproveAllConfirm.set(true)"
           [disabled]="!hasRequested()"
         >
-          Approve All Requested
+          Approve {{ approvableStudents().length }} pending
         </button>
         <button
           class="btn btn-primary btn-md whitespace-nowrap"
@@ -452,3 +458,15 @@
     />
   }
 </div>
+
+@if (showApproveAllConfirm()) {
+  <app-delete-popup
+    title="Approve pending requests"
+    tone="primary"
+    [message]="approveAllMessage()"
+    [confirmLabel]="'Approve ' + approvableStudents().length"
+    [busy]="approving()"
+    (cancel)="showApproveAllConfirm.set(false)"
+    (removeConfirmed)="approveAllRequested()"
+  />
+}
