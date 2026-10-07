@@ -239,7 +239,7 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 - **Label** (bold, 16px, white): stop names on division-colored cards, clamped to two lines.
 
 ### Hierarchy (Dashboard)
-- **Headline** (bold, 24px): page titles such as "Stops Overview", centered above the page actions.
+- **Headline** (bold, 24px): page titles such as "Stops" or "Students", centered above the page actions.
 - **Title** (semibold, 18px): section and modal headings.
 - **Body** (regular, 14px): tables, forms, lists, the default for almost all dashboard text.
 - **Label** (medium, 12px): field labels, chips, table meta.

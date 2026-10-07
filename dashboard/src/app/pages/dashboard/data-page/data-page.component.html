@@ -224,7 +224,11 @@
       {{ result.message }}
     </div>
   }
-  <button class="btn btn-error btn-sm gap-2" (click)="openDeleteStudents()">
+  <button
+    class="btn btn-error btn-sm gap-2"
+    [disabled]="countingStudents()"
+    (click)="openDeleteStudents()"
+  >
     <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         stroke-linecap="round"

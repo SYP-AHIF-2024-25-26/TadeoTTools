@@ -106,6 +106,8 @@ public class StudentFunctions
                     Department = cols[4],
                 })
                 .Where(s => !context.Students.Any(st => EF.Functions.ILike(st.EdufsUsername, s.EdufsUsername)))
+                // A username repeated within the file is imported once.
+                .DistinctBy(s => s.EdufsUsername.ToLowerInvariant())
                 .ToList();
 
             await context.Students.AddRangeAsync(students);
@@ -144,6 +146,7 @@ public class StudentFunctions
         var errors = new List<string>();
         var assignmentsToAdd = new List<StudentAssignment>();
         var skipped = 0;
+        var queued = new HashSet<(string Username, int StopId)>();
 
         foreach (var line in dataLines)
         {
@@ -186,9 +189,10 @@ public class StudentFunctions
             var existingAssignment = await context.StudentAssignments
                 .FirstOrDefaultAsync(sa => EF.Functions.ILike(sa.EdufsUsername, student.EdufsUsername) && sa.StopId == stop.Id);
 
-            if (existingAssignment != null)
+            // Skip assignments that already exist or appear twice in this file.
+            if (existingAssignment != null ||
+                !queued.Add((student.EdufsUsername.ToLowerInvariant(), stop.Id)))
             {
-                // Skip duplicate assignments
                 skipped++;
                 continue;
             }

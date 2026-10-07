@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import Keycloak from 'keycloak-js';
+import { errorText } from '@/core/services/toast.service';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '@/core/services/admin.service';
@@ -53,7 +54,9 @@ export class AdminOverviewComponent implements OnInit {
       this.admins.set(await this.service.getAdmins());
     } catch (error) {
       console.error('Failed to delete admin', error);
-      this.errorMessage.set(`${name} could not be removed. Please try again.`);
+      this.errorMessage.set(
+        errorText(error, `${name} could not be removed. Please try again.`)
+      );
     } finally {
       this.deleting.set(false);
       this.adminToDelete.set(null);

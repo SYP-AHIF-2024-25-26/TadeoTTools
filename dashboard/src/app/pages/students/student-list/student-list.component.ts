@@ -266,9 +266,13 @@ export class ListStudentsComponent implements OnInit {
         'Some requests could not be approved. The list shows the current state, please try again.'
       );
     } finally {
-      await this.refreshStudents();
-      this.approving.set(false);
-      this.showApproveAllConfirm.set(false);
+      // Close the dialog even if refreshing the list fails.
+      try {
+        await this.refreshStudents();
+      } finally {
+        this.approving.set(false);
+        this.showApproveAllConfirm.set(false);
+      }
     }
   }
 

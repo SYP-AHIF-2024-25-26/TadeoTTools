@@ -185,20 +185,18 @@ export class StopGroupsComponent implements OnInit, HasUnsavedChanges {
     if (event.previousIndex === event.currentIndex) {
       return;
     }
-    // The drop indices count only the visible cards; private groups may be
-    // hidden, so translate them to positions in the full tour.
+    // The drop indices count only the visible cards. Reorder the visible
+    // groups among the slots they already occupy, so hidden private groups
+    // keep their exact positions in the tour.
     const all = this.stopGroups();
-    const visible = this.onlyPublicGroups()
-      ? all.filter((group) => group.isPublic)
-      : all;
-    const from = all.indexOf(visible[event.previousIndex]);
-    const to = all.indexOf(visible[event.currentIndex]);
-    if (from < 0 || to < 0) {
-      return;
-    }
-    const reordered = [...all];
-    moveItemInArray(reordered, from, to);
-    this.stopGroups.set(reordered);
+    const isVisible = (group: StopGroup) =>
+      !this.onlyPublicGroups() || group.isPublic;
+    const visible = all.filter(isVisible);
+    moveItemInArray(visible, event.previousIndex, event.currentIndex);
+    let next = 0;
+    this.stopGroups.set(
+      all.map((group) => (isVisible(group) ? visible[next++] : group))
+    );
     this.hasChanged.set(true);
   }
 

@@ -41,8 +41,8 @@ It is built for this one school's open day, by HTL Leonding students (5AHIF SYP 
 - Dashboard pages: stop groups (tour order), stops (plus stop manager assignment), divisions (color, image, stops), students (assignments and conflicts), stop managers, user management (admins, stop managers, CSV import/export, wipe, feature flags), feedback configurator (text, rating and choice questions, with conditional dependencies).
 - There is one tour for the whole system. Its order (`StopGroup.Rank`, `StopGroupAssignment.Order`) decides what visitors see.
 - Feedback is anonymous.
-- Terminology (German UI): Station / Stop, Stationsgruppe / Stop Group, Leitfaden (the tour), Abteilung / Division, Stop-Manager, Guide, Tag der offenen Tür / TdoT.
-- **Open:** all current UI copy is German (du-form toward visitors), but German-only is not a confirmed commitment. Performance targets for low-end phones and poor Wi-Fi were not confirmed as requirements.
+- Terminology (German in the visitor app, English in the dashboard): Station / Stop, Stationsgruppe / Stop Group, Leitfaden (the tour), Abteilung / Division, Stop-Manager, Guide, Tag der offenen Tür / TdoT.
+- **Open:** the visitor app is German (du-form toward visitors) and the dashboard is English; neither language choice is a confirmed commitment. Performance targets for low-end phones and poor Wi-Fi were not confirmed as requirements.
 - Possible future features (README, not committed): shift planning, queue management, buffet voucher management, a standardized solution for other schools.
 
 ## Brand Commitments

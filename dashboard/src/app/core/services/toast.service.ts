@@ -37,8 +37,9 @@ export function errorText(error: unknown, fallback: string): string {
       return body;
     }
     if (body && typeof body === 'object') {
-      const detail = (body as { detail?: unknown; title?: unknown }).detail;
+      const { detail, title } = body as { detail?: unknown; title?: unknown };
       if (typeof detail === 'string' && detail !== '') return detail;
+      if (typeof title === 'string' && title !== '') return title;
     }
   }
   return fallback;

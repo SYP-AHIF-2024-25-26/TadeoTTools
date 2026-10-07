@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { RouterLink } from '@angular/router';
 import { Stop, StopGroup } from '@/shared/models/types';
@@ -14,6 +14,13 @@ export class StopGroupListComponent {
   onlyPublicGroups = input.required<boolean>();
   stops = input.required<Stop[]>();
   connectedDropLists = input.required<string[]>();
+
+  // Drag-and-drop indices refer to this list; the parent maps them back.
+  visibleGroups = computed(() =>
+    this.onlyPublicGroups()
+      ? this.stopGroups().filter((group) => group.isPublic)
+      : this.stopGroups()
+  );
 
   dropGroup = output<CdkDragDrop<any, any>>();
   dropStop = output<CdkDragDrop<any, any>>();

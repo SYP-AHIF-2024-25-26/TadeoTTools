@@ -48,6 +48,8 @@ public class StopManagerFunctions
                 })
                 // Existing stop managers are skipped instead of failing the whole import.
                 .Where(m => !context.StopManagers.Any(e => EF.Functions.ILike(e.EdufsUsername, m.EdufsUsername)))
+                // A username repeated within the file is imported once.
+                .DistinctBy(m => m.EdufsUsername.ToLowerInvariant())
                 .ToList();
 
             await context.StopManagers.AddRangeAsync(stopManagers);

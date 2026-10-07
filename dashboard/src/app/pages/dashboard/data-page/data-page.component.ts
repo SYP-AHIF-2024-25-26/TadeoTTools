@@ -148,43 +148,50 @@ export class DataPageComponent {
   deletingStudents = signal<boolean>(false);
   deleteStudentsResult = signal<{ ok: boolean; message: string } | null>(null);
 
+  countingStudents = signal<boolean>(false);
+
+  // The dialog only opens once the count is known, so the typed
+  // confirmation always matches the real number of students.
   async openDeleteStudents() {
+    if (this.countingStudents()) return;
     this.deleteStudentsResult.set(null);
-    this.studentCount.set(null);
-    this.showDeleteStudentsPopup.set(true);
+    this.countingStudents.set(true);
     try {
       this.studentCount.set((await this.studentService.getStudents()).length);
+      this.showDeleteStudentsPopup.set(true);
     } catch (error) {
       console.error('Failed to count students', error);
+      this.deleteStudentsResult.set({
+        ok: false,
+        message: errorText(
+          error,
+          'The students could not be counted, so nothing was deleted. Please try again.'
+        ),
+      });
+    } finally {
+      this.countingStudents.set(false);
     }
   }
 
   deleteStudentsMessage(): string {
-    const count = this.studentCount();
-    const who = count === null ? 'All students' : `All ${count} students`;
     return (
-      `${who} and all of their stop assignments will be permanently deleted. ` +
+      `All ${plural(this.studentCount() ?? 0, 'student')} and their stop assignments will be permanently deleted. ` +
       'This cannot be undone.\nDownload the students data first if you may need it again.'
     );
   }
 
   // Typing the student count proves the admin read how many will go.
   deleteStudentsConfirmText(): string {
-    const count = this.studentCount();
-    return count === null ? 'DELETE' : String(count);
+    return String(this.studentCount() ?? 0);
   }
 
   async deleteAllStudents() {
     this.deletingStudents.set(true);
     try {
       await this.studentService.deleteAllStudents();
-      const count = this.studentCount();
       this.deleteStudentsResult.set({
         ok: true,
-        message:
-          count === null
-            ? 'All students were deleted.'
-            : `${count} students were deleted.`,
+        message: `${plural(this.studentCount() ?? 0, 'student')} deleted.`,
       });
     } catch (error) {
       console.error('Failed to delete students', error);

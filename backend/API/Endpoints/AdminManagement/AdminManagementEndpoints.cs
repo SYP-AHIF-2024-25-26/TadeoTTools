@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Database.Entities;
 using Database.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -18,8 +19,15 @@ public class AdminManagementEndpoints
 
     public record AddAdminDto([Required, MaxLength(50)] string Name);
 
-    public static async Task<IResult> DeleteAdmin(TadeoTDbContext context, [FromRoute] string name)
+    // The user parameter stays last: endpoint filters read arguments by position.
+    public static async Task<IResult> DeleteAdmin(TadeoTDbContext context, [FromRoute] string name,
+        ClaimsPrincipal user)
     {
+        // Same claim the admin policy uses; removing yourself would lock you out.
+        var currentUser = user.FindFirst("preferred_username")?.Value;
+        if (currentUser != null && string.Equals(currentUser, name, StringComparison.OrdinalIgnoreCase))
+            return Results.BadRequest("You can't remove yourself as admin.");
+
         var admin = await context.Admins.FindAsync(name);
         if (admin == null)
             return Results.NotFound("Admin not found");
