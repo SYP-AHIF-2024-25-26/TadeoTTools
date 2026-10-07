@@ -463,10 +463,6 @@
       [busy]="isBusy(selectedStudent()!)"
       (close)="closeConflictDetails()"
       (assignHere)="assignHere(selectedStudent()!, $event)"
-      (setStatus)="
-        changeAssignmentStatus(selectedStudent()!, $event.index, $event.status)
-      "
-      (remove)="deleteAssignment(selectedStudent()!, $event)"
     />
   }
 </div>

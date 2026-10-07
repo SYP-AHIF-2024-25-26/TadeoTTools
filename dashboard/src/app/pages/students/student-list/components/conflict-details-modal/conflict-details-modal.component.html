@@ -39,8 +39,7 @@
     </div>
     <p id="conflict-dialog-hint" class="mb-4 text-sm text-text-700">
       {{ student().studentClass }} · {{ student().department }}. More than one
-      stop wants this student. "Assign here" approves that stop and removes the
-      other requests.
+      stop wants this student. Choose the stop that keeps them.
     </p>
 
     <ul class="space-y-3">
@@ -68,34 +67,14 @@
             </span>
           </div>
 
-          <div class="mt-3 flex flex-wrap gap-2">
-            @if (assignment.status !== Status.Accepted) {
-              <button
-                type="button"
-                class="btn btn-primary btn-sm"
-                [disabled]="busy()"
-                (click)="assignHere.emit(i)"
-              >
-                Assign here
-              </button>
-            }
-            @if (assignment.status !== Status.Pending) {
-              <button
-                type="button"
-                class="btn btn-ghost btn-sm"
-                [disabled]="busy()"
-                (click)="setStatus.emit({ index: i, status: Status.Pending })"
-              >
-                Back to Pending
-              </button>
-            }
+          <div class="mt-3 flex justify-end">
             <button
               type="button"
-              class="btn btn-ghost btn-sm ml-auto text-error"
+              class="btn btn-primary btn-sm"
               [disabled]="busy()"
-              (click)="remove.emit(i)"
+              (click)="confirmIndex.set(i)"
             >
-              Remove
+              Assign here
             </button>
           </div>
         </li>
@@ -103,3 +82,15 @@
     </ul>
   </div>
 </div>
+
+@if (confirmIndex() !== null) {
+  <app-delete-popup
+    tone="primary"
+    [title]="confirmTitle()"
+    [message]="confirmMessage()"
+    confirmLabel="Assign and Remove Others"
+    [busy]="busy()"
+    (cancel)="confirmIndex.set(null)"
+    (removeConfirmed)="confirmAssign()"
+  />
+}
