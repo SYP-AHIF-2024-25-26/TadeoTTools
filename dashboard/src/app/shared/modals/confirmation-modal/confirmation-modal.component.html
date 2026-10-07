@@ -7,6 +7,7 @@
     [attr.role]="tone() === 'danger' ? 'alertdialog' : 'dialog'"
     aria-modal="true"
     [attr.aria-labelledby]="titleId"
+    cdkTrapFocus
     (click)="$event.stopPropagation()"
   >
     <h2 [id]="titleId" class="mb-4 text-lg font-semibold">{{ title() }}</h2>

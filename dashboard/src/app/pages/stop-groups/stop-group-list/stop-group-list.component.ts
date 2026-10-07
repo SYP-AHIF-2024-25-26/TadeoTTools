@@ -182,17 +182,21 @@ export class StopGroupsComponent implements OnInit, HasUnsavedChanges {
   }
 
   dropGroup(event: CdkDragDrop<any, any>) {
-    if (event.previousIndex === event.currentIndex) {
+    this.moveVisibleGroup(event.previousIndex, event.currentIndex);
+  }
+
+  moveVisibleGroup(from: number, to: number) {
+    if (from === to) {
       return;
     }
-    // The drop indices count only the visible cards. Reorder the visible
+    // Indices count only the visible cards. Reorder the visible
     // groups among the slots they already occupy, so hidden private groups
     // keep their exact positions in the tour.
     const all = this.stopGroups();
     const isVisible = (group: StopGroup) =>
       !this.onlyPublicGroups() || group.isPublic;
     const visible = all.filter(isVisible);
-    moveItemInArray(visible, event.previousIndex, event.currentIndex);
+    moveItemInArray(visible, from, to);
     let next = 0;
     this.stopGroups.set(
       all.map((group) => (isVisible(group) ? visible[next++] : group))

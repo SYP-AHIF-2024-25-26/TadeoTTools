@@ -26,11 +26,15 @@
     >
       <ul class="divide-y divide-primary-100">
         @for (id of stop().stopGroupIds; track $index) {
-          <li
-            class="cursor-pointer px-4 py-2 text-sm text-text-950 hover:bg-primary-100"
-            (click)="onStopGroupRemove(id.toString())"
-          >
-            {{ getStopGroupById(id)!.name }}
+          <li>
+            <button
+              type="button"
+              class="w-full cursor-pointer px-4 py-2 text-left text-sm text-text-950 hover:bg-primary-100"
+              [attr.aria-label]="'Remove ' + getStopGroupById(id)!.name"
+              (click)="onStopGroupRemove(id.toString())"
+            >
+              {{ getStopGroupById(id)!.name }}
+            </button>
           </li>
         }
         @if (stop().stopGroupIds.length === 0) {

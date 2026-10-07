@@ -38,6 +38,13 @@ export class StopGroupStopSelectorComponent {
     this.stopGroup.update((sg) => ({ ...sg, stopIds }));
   }
 
+  // Keyboard alternative to dragging.
+  moveStop(index: number, delta: number) {
+    const stopIds = [...this.stopGroup().stopIds];
+    moveItemInArray(stopIds, index, index + delta);
+    this.stopGroup.update((sg) => ({ ...sg, stopIds }));
+  }
+
   addStop() {
     const stopId = Number(this.selectedStopId);
     if (stopId !== -1) {

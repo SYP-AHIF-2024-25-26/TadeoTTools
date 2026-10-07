@@ -3,19 +3,42 @@
 >
   <div
     class="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-background-100"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="division-dialog-title"
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
   >
     <!-- Form Header -->
     <div
       class="mb-6 flex items-center justify-between border-b border-background-200 pb-4 dark:border-background-700"
     >
-      <h2 class="text-2xl font-bold text-secondary-content">
+      <h2
+        id="division-dialog-title"
+        class="text-2xl font-bold text-secondary-content"
+      >
         {{ id === -1 ? 'New Division' : 'Edit Division' }}
       </h2>
       <button
+        type="button"
         (click)="cancelPopup()"
         class="btn btn-circle btn-ghost btn-sm text-secondary-content"
+        aria-label="Close"
       >
-        ✕
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
       </button>
     </div>
 

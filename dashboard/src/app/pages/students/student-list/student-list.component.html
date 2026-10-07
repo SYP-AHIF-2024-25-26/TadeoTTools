@@ -253,7 +253,9 @@
                     }
                   </ul>
                 } @else {
-                  <span class="font-semibold text-orange-500">
+                  <span
+                    class="font-semibold text-orange-700 dark:text-orange-400"
+                  >
                     {{ student.studentAssignments.length }} stops
                   </span>
                 }
@@ -315,7 +317,7 @@
                     }
                   } @else {
                     <button
-                      class="btn btn-warning btn-sm text-primary-content"
+                      class="btn btn-warning btn-sm"
                       (click)="showConflictDetails(student)"
                     >
                       Manage Conflict
@@ -386,7 +388,7 @@
                   }
                 </ul>
               } @else {
-                <span class="font-semibold text-orange-500"
+                <span class="font-semibold text-orange-700 dark:text-orange-400"
                   >{{ student.studentAssignments.length }} stops</span
                 >
               }

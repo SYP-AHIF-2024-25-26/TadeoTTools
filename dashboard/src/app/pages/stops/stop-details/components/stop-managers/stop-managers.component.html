@@ -1,12 +1,18 @@
 @if (isAdmin()) {
   <div class="mb-4">
-    <div
-      class="mb-2 flex cursor-pointer items-center justify-between rounded-lg bg-primary-200 p-2 pl-5"
-      (click)="toggle()"
-    >
-      <h1 class="text-lg font-medium text-text-950">Stop Managers</h1>
-      <span class="text-text-900">{{ isExpanded() ? '▼' : '►' }}</span>
-    </div>
+    <h2 class="mb-2">
+      <button
+        type="button"
+        class="flex w-full cursor-pointer items-center justify-between rounded-lg bg-primary-200 p-2 pl-5 text-left"
+        [attr.aria-expanded]="isExpanded()"
+        (click)="toggle()"
+      >
+        <span class="text-lg font-medium text-text-950">Stop Managers</span>
+        <span class="text-text-900" aria-hidden="true">{{
+          isExpanded() ? '▼' : '►'
+        }}</span>
+      </button>
+    </h2>
     <div [ngClass]="{ hidden: !isExpanded() }">
       <div class="mt-4 flex flex-col gap-4 md:flex-row">
         <!-- Selected Stop Managers (Left Side) -->
@@ -52,11 +58,19 @@
                     {{ stopManager.lastName + ' ' + stopManager.firstName }}
                   </div>
                   <div class="flex items-center">
-                    <span
-                      class="cursor-pointer text-lg font-bold text-accent-600"
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-xs text-lg font-bold text-accent-600"
+                      [attr.aria-label]="
+                        'Remove ' +
+                        stopManager.firstName +
+                        ' ' +
+                        stopManager.lastName
+                      "
                       (click)="removeStopManager(stopManager.edufsUsername)"
-                      >−</span
                     >
+                      −
+                    </button>
                   </div>
                 </li>
               }
@@ -112,11 +126,19 @@
                     {{ stopManager.lastName + ' ' + stopManager.firstName }}
                   </div>
                   <div class="flex items-center">
-                    <span
-                      class="cursor-pointer text-lg font-bold text-primary-600"
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-xs text-lg font-bold text-primary-600"
+                      [attr.aria-label]="
+                        'Add ' +
+                        stopManager.firstName +
+                        ' ' +
+                        stopManager.lastName
+                      "
                       (click)="addStopManager(stopManager.edufsUsername)"
-                      >+</span
                     >
+                      +
+                    </button>
                   </div>
                 </li>
               }

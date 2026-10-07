@@ -3,10 +3,37 @@
 >
   <div
     class="w-full max-w-xl rounded-lg bg-white p-6 shadow-lg dark:bg-background-800"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="add-student-dialog-title"
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
   >
     <div class="mb-4 flex items-center justify-between">
-      <h3 class="text-xl font-bold">Add Student</h3>
-      <button class="btn btn-circle btn-sm" (click)="close.emit()">✕</button>
+      <h3 id="add-student-dialog-title" class="text-xl font-bold">
+        Add Student
+      </h3>
+      <button
+        type="button"
+        class="btn btn-circle btn-ghost btn-sm"
+        aria-label="Close"
+        (click)="close.emit()"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
     </div>
 
     @if (addStudentError()) {
@@ -66,7 +93,7 @@
       <div class="form-control">
         <label class="label"><span class="label-text">Department</span></label>
         <select
-          class="select select-bordered w-full bg-primary-300 hover:bg-primary-400"
+          class="select select-bordered w-full"
           [(ngModel)]="newStudent.department"
         >
           <option value="">Select department</option>

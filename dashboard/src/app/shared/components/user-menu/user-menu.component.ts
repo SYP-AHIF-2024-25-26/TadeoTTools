@@ -1,19 +1,22 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
-  HostListener,
   inject,
   signal,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
-import { NgClass } from '@angular/common';
 import { Router } from '@angular/router';
 import Keycloak from 'keycloak-js';
 
 @Component({
   selector: 'app-admin-dropdown',
-  imports: [NgClass],
   templateUrl: './user-menu.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:mousedown)': 'onClickOutside($event)',
+    '(document:keydown.escape)': 'isOpen.set(false)',
+  },
 })
 export class AdminDropdownComponent {
   isOpen = signal(false);
@@ -21,7 +24,7 @@ export class AdminDropdownComponent {
   private readonly keycloak = inject(Keycloak);
   items = ['Student View', 'Stop Manager View', 'Logout'];
 
-  @ViewChild('dropdown', { static: false }) dropdownRef!: ElementRef;
+  private dropdownRef = viewChild<ElementRef<HTMLElement>>('dropdown');
 
   toggleDropdown(): void {
     this.isOpen.set(!this.isOpen());
@@ -44,13 +47,10 @@ export class AdminDropdownComponent {
     this.isOpen.set(false);
   }
 
-  @HostListener('document:mousedown', ['$event'])
   onClickOutside(event: MouseEvent) {
     if (!this.isOpen()) return;
-    if (
-      this.dropdownRef &&
-      !this.dropdownRef.nativeElement.contains(event.target)
-    ) {
+    const dropdown = this.dropdownRef()?.nativeElement;
+    if (dropdown && !dropdown.contains(event.target as Node)) {
       this.isOpen.set(false);
     }
   }

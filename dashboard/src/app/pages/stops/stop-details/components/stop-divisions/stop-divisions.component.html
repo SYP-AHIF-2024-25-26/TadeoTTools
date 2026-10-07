@@ -1,11 +1,17 @@
 <div class="mb-4">
-  <div
-    class="mb-2 flex cursor-pointer items-center justify-between rounded-lg bg-primary-200 p-2 pl-5"
-    (click)="toggle()"
-  >
-    <h1 class="text-lg font-medium text-text-950">Divisions</h1>
-    <span class="text-text-900">{{ isExpanded() ? '▼' : '►' }}</span>
-  </div>
+  <h2 class="mb-2">
+    <button
+      type="button"
+      class="flex w-full cursor-pointer items-center justify-between rounded-lg bg-primary-200 p-2 pl-5 text-left"
+      [attr.aria-expanded]="isExpanded()"
+      (click)="toggle()"
+    >
+      <span class="text-lg font-medium text-text-950">Divisions</span>
+      <span class="text-text-900" aria-hidden="true">{{
+        isExpanded() ? '▼' : '►'
+      }}</span>
+    </button>
+  </h2>
   <div [ngClass]="{ hidden: !isExpanded() }">
     <div>
       @if (isAdmin()) {
@@ -38,15 +44,19 @@
         >
           <ul class="divide-y divide-primary-100">
             @for (id of stop().divisionIds; track $index) {
-              <li
-                class="cursor-pointer px-4 py-2 text-sm text-text-950 hover:bg-primary-100"
-                (click)="onDivisionRemove(id.toString())"
-              >
-                {{ getDivisionById(id)!.name }}
-                <span
-                  class="ml-2 inline-block h-4 w-4 rounded-full"
-                  [style.background-color]="getDivisionById(id)!.color"
-                ></span>
+              <li>
+                <button
+                  type="button"
+                  class="w-full cursor-pointer px-4 py-2 text-left text-sm text-text-950 hover:bg-primary-100"
+                  [attr.aria-label]="'Remove ' + getDivisionById(id)!.name"
+                  (click)="onDivisionRemove(id.toString())"
+                >
+                  {{ getDivisionById(id)!.name }}
+                  <span
+                    class="ml-2 inline-block h-4 w-4 rounded-full"
+                    [style.background-color]="getDivisionById(id)!.color"
+                  ></span>
+                </button>
               </li>
             }
             @if (stop().divisionIds.length === 0) {

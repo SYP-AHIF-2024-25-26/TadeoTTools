@@ -1,11 +1,13 @@
 import { Component, inject, input, output } from '@angular/core';
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { Status, Student } from '@/shared/models/types';
 import { StudentService } from '@/core/services/student.service';
 
 @Component({
   selector: 'app-conflict-details-modal',
-  standalone: true,
+  imports: [CdkTrapFocus],
   templateUrl: './conflict-details-modal.component.html',
+  host: { '(document:keydown.escape)': 'close.emit()' },
 })
 export class ConflictDetailsModalComponent {
   private studentService = inject(StudentService);
@@ -45,11 +47,11 @@ export class ConflictDetailsModalComponent {
   getStatusClass(status: Status): string {
     switch (status) {
       case Status.Accepted:
-        return 'text-green-500 font-bold';
+        return 'text-green-700 dark:text-green-400 font-bold';
       case Status.Declined:
-        return 'text-red-500 font-bold';
+        return 'text-red-700 dark:text-red-400 font-bold';
       default:
-        return 'text-yellow-500 font-bold';
+        return 'text-amber-700 dark:text-amber-400 font-bold';
     }
   }
 

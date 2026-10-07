@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-07T07:02:35.896778+00:00",
+  "generatedAt": "2026-10-07T10:13:10.788415+00:00",
   "title": "Design System: TadeoTTools",
   "extensions": {
     "colorMeta": {
@@ -246,28 +246,28 @@
         "role": "primary",
         "displayName": "Dashboard Blue",
         "tonalRamp": [
-          "oklch(15% 0.149 253.7)",
-          "oklch(25% 0.149 253.7)",
-          "oklch(35% 0.149 253.7)",
-          "oklch(48% 0.149 253.7)",
-          "oklch(60% 0.149 253.7)",
-          "oklch(72% 0.149 253.7)",
-          "oklch(85% 0.149 253.7)",
-          "oklch(95% 0.052 253.7)"
+          "oklch(15% 0.169 256.3)",
+          "oklch(25% 0.169 256.3)",
+          "oklch(35% 0.169 256.3)",
+          "oklch(48% 0.169 256.3)",
+          "oklch(60% 0.169 256.3)",
+          "oklch(72% 0.169 256.3)",
+          "oklch(85% 0.169 256.3)",
+          "oklch(95% 0.059 256.3)"
         ]
       },
       "dash-primary-deep": {
         "role": "primary",
         "displayName": "Deep Dashboard Blue",
         "tonalRamp": [
-          "oklch(15% 0.183 257.7)",
-          "oklch(25% 0.183 257.7)",
-          "oklch(35% 0.183 257.7)",
-          "oklch(48% 0.183 257.7)",
-          "oklch(60% 0.183 257.7)",
-          "oklch(72% 0.183 257.7)",
-          "oklch(85% 0.183 257.7)",
-          "oklch(95% 0.064 257.7)"
+          "oklch(15% 0.157 258.0)",
+          "oklch(25% 0.157 258.0)",
+          "oklch(35% 0.157 258.0)",
+          "oklch(48% 0.157 258.0)",
+          "oklch(60% 0.157 258.0)",
+          "oklch(72% 0.157 258.0)",
+          "oklch(85% 0.157 258.0)",
+          "oklch(95% 0.055 258.0)"
         ]
       },
       "dash-field": {
@@ -279,7 +279,7 @@
           "#2a475e",
           "#3a6080",
           "#4a7aa3",
-          "#6190c6",
+          "#3a6080",
           "#99ccff",
           "#e6f2ff"
         ]
@@ -293,7 +293,7 @@
           "#2a475e",
           "#3a6080",
           "#4a7aa3",
-          "#6190c6",
+          "#3a6080",
           "#99ccff",
           "#e6f2ff"
         ]
@@ -307,7 +307,7 @@
           "#2a475e",
           "#3a6080",
           "#4a7aa3",
-          "#6190c6",
+          "#3a6080",
           "#99ccff",
           "#e6f2ff"
         ]
@@ -321,7 +321,7 @@
           "#2a475e",
           "#3a6080",
           "#4a7aa3",
-          "#6190c6",
+          "#3a6080",
           "#99ccff",
           "#e6f2ff"
         ]
@@ -442,14 +442,14 @@
         "role": "primary",
         "displayName": "Night Blue",
         "tonalRamp": [
-          "oklch(15% 0.188 259.8)",
-          "oklch(25% 0.188 259.8)",
-          "oklch(35% 0.188 259.8)",
-          "oklch(48% 0.188 259.8)",
-          "oklch(60% 0.188 259.8)",
-          "oklch(72% 0.188 259.8)",
-          "oklch(85% 0.188 259.8)",
-          "oklch(95% 0.066 259.8)"
+          "oklch(15% 0.215 262.9)",
+          "oklch(25% 0.215 262.9)",
+          "oklch(35% 0.215 262.9)",
+          "oklch(48% 0.215 262.9)",
+          "oklch(60% 0.215 262.9)",
+          "oklch(72% 0.215 262.9)",
+          "oklch(85% 0.215 262.9)",
+          "oklch(95% 0.075 262.9)"
         ]
       }
     },
@@ -614,7 +614,7 @@
       "refersTo": "dash-button-primary",
       "description": "DaisyUI btn-primary (btn-sm shown) in Dashboard Blue, next to the outline variant.",
       "html": "<div style=\"display:flex;gap:8px\"><button class=\"ds-d-btn\">Add Stop</button><button class=\"ds-d-btn ds-d-btn--outline\">Clear Filters</button></div>",
-      "css": ".ds-d-btn { font-family: ui-sans-serif, system-ui, sans-serif; height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid #4590e6; background: #4590e6; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: background .2s, color .2s; } .ds-d-btn:hover { background: #015ec9; border-color: #015ec9; } .ds-d-btn:focus-visible { outline: 2px solid #4590e6; outline-offset: 2px; } .ds-d-btn:active { transform: scale(.97); } .ds-d-btn--outline { background: transparent; color: #130710; border-color: #130710; } .ds-d-btn--outline:hover { background: #4590e6; border-color: #4590e6; color: #fff; }"
+      "css": ".ds-d-btn { font-family: ui-sans-serif, system-ui, sans-serif; height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid #1f6fd1; background: #1f6fd1; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: background .2s, color .2s; } .ds-d-btn:hover { background: #1a5bb5; border-color: #1a5bb5; } .ds-d-btn:focus-visible { outline: 2px solid #1f6fd1; outline-offset: 2px; } .ds-d-btn:active { transform: scale(.97); } .ds-d-btn--outline { background: transparent; color: #130710; border-color: #130710; } .ds-d-btn--outline:hover { background: #1f6fd1; border-color: #1f6fd1; color: #fff; }"
     },
     {
       "name": "Dashboard Filled Field",
@@ -622,7 +622,7 @@
       "refersTo": "dash-field-filled",
       "description": "Filter input filled with mid-blue and a white placeholder.",
       "html": "<label class=\"ds-d-field\"><span>Stop Name Filter</span><input placeholder=\"Search stop names...\"></label>",
-      "css": ".ds-d-field { font-family: ui-sans-serif, system-ui, sans-serif; display: grid; gap: 6px; width: 280px; font-size: 14px; color: #130710; } .ds-d-field input { height: 48px; padding: 0 16px; border-radius: 8px; border: 1px solid rgba(19,7,16,.2); background: #73abea; color: #fff; font-size: 14px; transition: background .15s; } .ds-d-field input::placeholder { color: #fff; } .ds-d-field input:hover { background: #6190c6; } .ds-d-field input:focus-visible { outline: 2px solid #73abea; outline-offset: 2px; }"
+      "css": ".ds-d-field { font-family: ui-sans-serif, system-ui, sans-serif; display: grid; gap: 6px; width: 280px; font-size: 14px; color: #130710; } .ds-d-field input { height: 48px; padding: 0 16px; border-radius: 8px; border: 1px solid rgba(19,7,16,.2); background: #4a7aa3; color: #fff; font-size: 14px; transition: background .15s; } .ds-d-field input::placeholder { color: #fff; } .ds-d-field input:hover { background: #3a6080; } .ds-d-field input:focus-visible { outline: 2px solid #4a7aa3; outline-offset: 2px; }"
     },
     {
       "name": "Dashboard Top Nav",
@@ -630,12 +630,12 @@
       "refersTo": "dash-nav",
       "description": "Sticky sky-blue bar with logo, links and active fill.",
       "html": "<nav class=\"ds-d-nav\"><strong>HTL Leonding</strong><a>Stop Groups</a><a class=\"ds-d-nav--on\">Stops</a><a>Divisions</a><a>Students</a></nav>",
-      "css": ".ds-d-nav { font-family: ui-sans-serif, system-ui, sans-serif; display: flex; align-items: center; gap: 16px; padding: 16px; background: #6aa4c9; color: #130710; font-size: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.1); } .ds-d-nav strong { margin-right: 16px; } .ds-d-nav a { padding: 8px 12px; border-radius: 4px; cursor: pointer; } .ds-d-nav a:hover { background: #7ec4ee; } .ds-d-nav--on { background: #4590e6; text-decoration: underline; font-weight: 500; }"
+      "css": ".ds-d-nav { font-family: ui-sans-serif, system-ui, sans-serif; display: flex; align-items: center; gap: 16px; padding: 16px; background: #6aa4c9; color: #130710; font-size: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.1); } .ds-d-nav strong { margin-right: 16px; } .ds-d-nav a { padding: 8px 12px; border-radius: 4px; cursor: pointer; } .ds-d-nav a:hover { background: #7ec4ee; } .ds-d-nav--on { background: #1f6fd1; text-decoration: underline; font-weight: 500; }"
     }
   ],
   "narrative": {
     "northStar": "The Open-Day Programme",
-    "overview": "**Creative North Star: \"The Open-Day Programme\"**\n\nTadeoTTools works like an open-day programme you carry on your phone. The visitor GuideApp lists the day as a sequence of stop groups and stops, each one a card to open and tick off. It is colored by the school's own divisions (Informatik blue, Medientechnik sky blue, Elektronik red, Medizintechnik amber), so a glance at a card's color tells you which part of the school you are in. One warm orange is the programme's highlighter: it marks the current tab, the main button on a screen and every tick. The welcome heading carries the whole division palette as a slow moving gradient, the one festive gesture on an otherwise quiet gray-and-white page.\n\nThe surfaces are soft, chunky and touch-first. Cards are white or division-filled and lifted on clear shadows. Buttons are rounded pills (16px corners). Rows are tall (80px) because visitors tap them while walking. Type is Roboto throughout the GuideApp, set large (18px body) for reading at arm's length in a corridor.\n\nThe organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, a soft sky-blue palette instead of orange, and a full dark mode. Its distinctive habit is **filled blue fields**: filters and selects sit in solid mid-blue (`dash-field`) with white placeholders rather than white inputs with outlines. The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.",
+    "overview": "**Creative North Star: \"The Open-Day Programme\"**\n\nTadeoTTools works like an open-day programme you carry on your phone. The visitor GuideApp lists the day as a sequence of stop groups and stops, each one a card to open and tick off. It is colored by the school's own divisions (Informatik blue, Medientechnik sky blue, Elektronik red, Medizintechnik amber), so a glance at a card's color tells you which part of the school you are in. One warm orange is the programme's highlighter: it marks the current tab, the main button on a screen and every tick. The welcome heading carries the whole division palette as a slow moving gradient, the one festive gesture on an otherwise quiet gray-and-white page.\n\nThe surfaces are soft, chunky and touch-first. Cards are white or division-filled and lifted on clear shadows. Buttons are rounded pills (16px corners). Rows are tall (80px) because visitors tap them while walking. Type is Roboto throughout the GuideApp, set large (18px body) for reading at arm's length in a corridor.\n\nThe organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, a sky-blue palette instead of orange, and a full dark mode. Its distinctive habit is **filled blue fields**: filters and selects sit in solid steel blue (`dash-field`) with white text and placeholders rather than white inputs with outlines. The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.",
     "keyCharacteristics": [
       "Division colors are the identity and the wayfinding signal; they come from the school, not from the design.",
       "GuideApp: one orange accent, white cards lifted on `bg-gray-50`, pill buttons, a fixed bottom tab bar.",
@@ -652,6 +652,11 @@
       {
         "name": "The One Highlighter Rule",
         "body": "In the GuideApp, orange is the only accent: active tab, primary action, ticks, selections. A second accent color competes with the division colors.",
+        "section": "colors"
+      },
+      {
+        "name": "The White Text Needs 4.5 Rule",
+        "body": "Any fill that carries white text in the dashboard (primary buttons, filled fields, toasts) must reach 4.5:1. That is why the primary is `#1f6fd1`, not the lighter `#4590e6`, and why status text uses the 700 shades (green, amber, red) in light mode and the 400 shades in dark mode.",
         "section": "colors"
       },
       {

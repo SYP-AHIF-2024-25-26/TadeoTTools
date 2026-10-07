@@ -4,7 +4,11 @@
   cdkDropList
   class="space-y-4"
 >
-  @for (group of visibleGroups(); track group.id) {
+  @for (
+    group of visibleGroups();
+    track group.id;
+    let i = $index, first = $first, last = $last
+  ) {
     <div
       class="overflow-hidden rounded-lg bg-primary-100 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 dark:bg-primary-100"
       cdkDrag
@@ -39,9 +43,54 @@
           <!-- Group Actions -->
           <div class="flex items-center gap-2">
             <button
+              type="button"
+              class="btn btn-ghost btn-xs"
+              [attr.aria-label]="'Move ' + group.name + ' up'"
+              [disabled]="first"
+              (click)="moveGroup.emit({ from: i, to: i - 1 })"
+            >
+              <svg
+                class="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 15l7-7 7 7"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="btn btn-ghost btn-xs"
+              [attr.aria-label]="'Move ' + group.name + ' down'"
+              [disabled]="last"
+              (click)="moveGroup.emit({ from: i, to: i + 1 })"
+            >
+              <svg
+                class="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+            <a
               class="btn btn-ghost btn-sm"
               [routerLink]="['/stopgroup']"
               [queryParams]="{ id: group.id }"
+              [attr.aria-label]="'Edit ' + group.name"
             >
               <svg
                 class="h-4 w-4"
@@ -62,7 +111,7 @@
                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                 ></path>
               </svg>
-            </button>
+            </a>
           </div>
         </div>
       </div>

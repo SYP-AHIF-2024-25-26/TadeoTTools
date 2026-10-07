@@ -1,4 +1,5 @@
 import { Component, inject, input, output, signal } from '@angular/core';
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { FormsModule } from '@angular/forms';
 import { Student } from '@/shared/models/types';
 import { StudentService } from '@/core/services/student.service';
@@ -6,8 +7,9 @@ import { StudentService } from '@/core/services/student.service';
 @Component({
   selector: 'app-add-student-dialog',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CdkTrapFocus],
   templateUrl: './add-student-dialog.component.html',
+  host: { '(document:keydown.escape)': 'close.emit()' },
 })
 export class AddStudentDialogComponent {
   private studentService = inject(StudentService);

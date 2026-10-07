@@ -3,23 +3,25 @@
     class="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
   >
     <div class="form-control">
-      <label class="label">
+      <label for="student-filter-search" class="label">
         <span class="label-text">Search</span>
       </label>
       <input
+        id="student-filter-search"
         type="text"
         placeholder="Search by (user)name"
-        class="input input-bordered w-full bg-primary-300 placeholder-white hover:bg-primary-400 dark:placeholder-white"
+        class="input input-bordered w-full bg-primary-500 placeholder-white hover:bg-primary-600 dark:bg-primary-300 dark:placeholder-white dark:hover:bg-primary-400"
         [(ngModel)]="searchTerm"
       />
     </div>
 
     <div class="form-control">
-      <label class="label">
+      <label for="student-filter-class" class="label">
         <span class="label-text">Class</span>
       </label>
       <select
-        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+        id="student-filter-class"
+        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
         [(ngModel)]="classFilter"
       >
         <option value="">All Classes</option>
@@ -30,11 +32,12 @@
     </div>
 
     <div class="form-control">
-      <label class="label">
+      <label for="student-filter-department" class="label">
         <span class="label-text">Department</span>
       </label>
       <select
-        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+        id="student-filter-department"
+        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
         [(ngModel)]="departmentFilter"
       >
         <option value="">All Departments</option>
@@ -45,11 +48,12 @@
     </div>
 
     <div class="form-control">
-      <label class="label">
+      <label for="student-filter-stop" class="label">
         <span class="label-text">Stop</span>
       </label>
       <select
-        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+        id="student-filter-stop"
+        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
         [(ngModel)]="stopFilter"
       >
         <option value="">All Stops</option>
@@ -60,11 +64,12 @@
     </div>
 
     <div class="form-control">
-      <label class="label">
+      <label for="student-filter-status" class="label">
         <span class="label-text">Status</span>
       </label>
       <select
-        class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+        id="student-filter-status"
+        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
         [(ngModel)]="statusFilter"
       >
         <option value="all">All</option>

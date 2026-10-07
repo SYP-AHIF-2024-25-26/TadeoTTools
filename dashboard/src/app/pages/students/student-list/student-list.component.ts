@@ -338,11 +338,11 @@ export class ListStudentsComponent implements OnInit {
   getStatusClass(status: Status): string {
     switch (status) {
       case Status.Accepted:
-        return 'text-green-500 font-bold';
+        return 'text-green-700 dark:text-green-400 font-bold';
       case Status.Declined:
-        return 'text-red-500 font-bold';
+        return 'text-red-700 dark:text-red-400 font-bold';
       default:
-        return 'text-yellow-500 font-bold';
+        return 'text-amber-700 dark:text-amber-400 font-bold';
     }
   }
 
@@ -365,9 +365,9 @@ export class ListStudentsComponent implements OnInit {
 
   getStudentStatusClass(student: Student): string {
     if (student.studentAssignments.length === 0)
-      return 'text-gray-500 font-bold';
+      return 'text-gray-600 dark:text-gray-400 font-bold';
     if (student.studentAssignments.length > 1)
-      return 'text-orange-500 font-bold';
+      return 'text-orange-700 dark:text-orange-400 font-bold';
     return this.getStatusClass(student.studentAssignments[0].status);
   }
 

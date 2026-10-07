@@ -9,12 +9,14 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 
 let nextId = 0;
 
 @Component({
   selector: 'app-delete-popup',
   templateUrl: './confirmation-modal.component.html',
+  imports: [CdkTrapFocus],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'cancelPopup()' },
 })
