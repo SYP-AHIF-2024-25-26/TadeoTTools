@@ -290,13 +290,6 @@
                           Approve
                         </button>
                         <button
-                          class="btn btn-error btn-sm"
-                          [disabled]="isBusy(student)"
-                          (click)="rejectSingleAssignment(student)"
-                        >
-                          Reject
-                        </button>
-                        <button
                           class="btn btn-outline btn-error btn-sm"
                           [disabled]="isBusy(student)"
                           (click)="
@@ -430,13 +423,6 @@
                   >
                     Approve
                   </button>
-                  <button
-                    class="btn btn-error btn-sm flex-grow"
-                    [disabled]="isBusy(student)"
-                    (click)="rejectSingleAssignment(student)"
-                  >
-                    Reject
-                  </button>
                 } @else {
                   <button
                     class="btn btn-primary btn-sm flex-grow"
@@ -477,10 +463,6 @@
       [busy]="isBusy(selectedStudent()!)"
       (close)="closeConflictDetails()"
       (assignHere)="assignHere(selectedStudent()!, $event)"
-      (setStatus)="
-        changeAssignmentStatus(selectedStudent()!, $event.index, $event.status)
-      "
-      (remove)="deleteAssignment(selectedStudent()!, $event)"
     />
   }
 </div>

@@ -12,7 +12,7 @@
     </div>
   } @else {
     <form (submit)="submitStopDetail()" class="mt-4">
-      <app-stop-general-info [(stop)]="stop" />
+      <app-stop-general-info [(stop)]="stop" [showErrors]="showFieldErrors()" />
 
       <!--<app-stop-groups
         [(stop)]="stop"

@@ -1,26 +1,24 @@
 <div class="mb-4">
   <div class="mb-4 mt-2">
-    <label for="name" class="mb-1 block text-sm font-medium text-text-950"
-      >Name</label
-    >
-    @if (stop().id == -1) {
-      <input
-        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
-        type="text"
-        [value]="stop().name"
-        [(ngModel)]="stop().name"
-        name="name-new"
-        id="name"
-      />
-    } @else {
-      <input
-        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
-        type="text"
-        [value]="stop().name"
-        [(ngModel)]="stop().name"
-        name="name"
-        id="name"
-      />
+    <label for="name" class="mb-1 block text-sm font-medium text-text-950">
+      Name <span aria-hidden="true">*</span>
+    </label>
+    <input
+      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      [class.border-error]="error('name')"
+      type="text"
+      [(ngModel)]="stop().name"
+      [name]="stop().id === -1 ? 'name-new' : 'name'"
+      id="name"
+      aria-required="true"
+      [attr.maxlength]="limits.name"
+      [attr.aria-invalid]="!!error('name')"
+      aria-describedby="name-error"
+    />
+    @if (error('name'); as message) {
+      <p id="name-error" class="mt-1 text-xs font-medium text-error">
+        {{ message }}
+      </p>
     }
   </div>
 
@@ -28,45 +26,69 @@
     <label
       for="description"
       class="mb-1 block text-sm font-medium text-text-950"
-      >Description</label
     >
+      Description <span aria-hidden="true">*</span>
+    </label>
     <textarea
       class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
-      [value]="stop().description"
+      [class.border-error]="error('description')"
       [(ngModel)]="stop().description"
       name="description"
       id="description"
       rows="4"
+      aria-required="true"
+      [attr.maxlength]="limits.description"
+      [attr.aria-invalid]="!!error('description')"
+      aria-describedby="description-hint"
     ></textarea>
+    <div id="description-hint" class="mt-1 flex justify-between gap-4 text-xs">
+      <span class="font-medium text-error">{{ error('description') }}</span>
+      <span
+        class="tabular-nums"
+        [class]="counterClass(stop().description, limits.description)"
+      >
+        {{ length(stop().description) }} / {{ limits.description }}
+      </span>
+    </div>
   </div>
 
-  <div class="mb-2">
-    <label for="roomNr" class="mb-1 block text-sm font-medium text-text-950"
-      >Room Number</label
-    >
+  <div class="mb-4">
+    <label for="roomNr" class="mb-1 block text-sm font-medium text-text-950">
+      Room Number <span aria-hidden="true">*</span>
+    </label>
     <input
       class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      [class.border-error]="error('roomNr')"
       type="text"
-      [value]="stop().roomNr"
       [(ngModel)]="stop().roomNr"
       name="roomNr"
       id="roomNr"
+      aria-required="true"
+      [attr.maxlength]="limits.roomNr"
+      [attr.aria-invalid]="!!error('roomNr')"
+      aria-describedby="roomNr-error"
     />
+    @if (error('roomNr'); as message) {
+      <p id="roomNr-error" class="mt-1 text-xs font-medium text-error">
+        {{ message }}
+      </p>
+    }
   </div>
 
   <div class="mb-2">
     <label
       for="infrastructure"
       class="mb-1 block text-sm font-medium text-text-950"
-      >Requested Infrastructure</label
     >
+      Requested Infrastructure
+    </label>
     <textarea
       class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
-      [value]="stop().infrastructure"
       [(ngModel)]="stop().infrastructure"
       name="infrastructure"
       id="infrastructure"
       rows="4"
+      [attr.maxlength]="limits.infrastructure"
     ></textarea>
   </div>
 </div>

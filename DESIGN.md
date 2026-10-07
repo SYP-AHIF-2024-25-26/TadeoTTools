@@ -218,7 +218,7 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 
 ### Status (Dashboard)
 - `dash-error` for destructive buttons and error alerts, `dash-success`, `dash-warning`.
-- **Assignment states** (`shared/utils/assignment-status.ts`): Approved green, **Pending teal**, Conflict orange, Rejected red, Unassigned gray. Text uses the 700 shade in light mode and the 400 shade in dark mode; badges use the 800 shade on the 100 tint.
+- **Assignment states** (`shared/utils/assignment-status.ts`): Approved green, **Pending teal**, Conflict orange, Unassigned gray. The dashboard doesn't reject requests; duplicates are deleted (with Undo). Red "Rejected" only labels requests stored before that change. Text uses the 700 shade in light mode and the 400 shade in dark mode; badges use the 800 shade on the 100 tint.
 
 ### Named Rules
 **The Division Owns Its Color Rule.** Division colors come from the school and the dashboard data. Never re-tint them, and never reuse a division hue for UI states like errors or links.
