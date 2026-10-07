@@ -9,7 +9,7 @@ import {
   Student,
   StopManager,
 } from '@/shared/models/types';
-import { isValidString, plural } from '@/shared/utils/utils';
+import { plural } from '@/shared/utils/utils';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { HasUnsavedChanges } from '@/core/guards/unsaved-changes.guard';
 import { firstValueFrom } from 'rxjs';
@@ -20,7 +20,10 @@ import { StopGroupService } from '@/core/services/stopgroup.service';
 import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StudentService } from '@/core/services/student.service';
 import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spinner.component';
-import { StopGeneralInfoComponent } from './components/stop-general-info/stop-general-info.component';
+import {
+  StopGeneralInfoComponent,
+  stopFieldErrors,
+} from './components/stop-general-info/stop-general-info.component';
 import { StopGroupsComponent } from './components/stop-groups/stop-groups.component';
 import { StopStudentsComponent } from './components/stop-students/stop-students.component';
 import { StopManagersComponent } from './components/stop-managers/stop-managers.component';
@@ -120,17 +123,15 @@ export class StopDetailsComponent implements OnInit, HasUnsavedChanges {
     this.scrollService.restoreScroll();
   }
 
+  // Field errors show from the first save attempt on and then update live.
+  showFieldErrors = signal<boolean>(false);
+
   isInputValid() {
-    if (!isValidString(this.stop().name, 50)) {
-      this.errorMessage.set('Name must be between 1 and 50 characters');
-      return false;
-    }
-    if (!isValidString(this.stop().description, 255)) {
-      this.errorMessage.set('Description must be between 1 and 255 characters');
-      return false;
-    }
-    if (!isValidString(this.stop().roomNr, 50)) {
-      this.errorMessage.set('Room number must be between 1 and 50 characters');
+    if (stopFieldErrors(this.stop())) {
+      this.showFieldErrors.set(true);
+      this.errorMessage.set(
+        'Some fields need attention, see the messages above.'
+      );
       return false;
     }
     return true;
