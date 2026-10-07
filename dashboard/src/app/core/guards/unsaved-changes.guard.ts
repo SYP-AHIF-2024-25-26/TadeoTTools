@@ -13,9 +13,9 @@ export const unsavedChangesGuard: CanDeactivateFn<HasUnsavedChanges> = (
     return true;
   }
   return inject(ConfirmDialogService).confirm({
-    title: 'Unsaved changes',
+    title: 'Unsaved Changes',
     message: 'You have changes that are not saved yet. Leave and discard them?',
-    confirmLabel: 'Discard changes',
-    cancelLabel: 'Keep editing',
+    confirmLabel: 'Discard Changes',
+    cancelLabel: 'Keep Editing',
   });
 };

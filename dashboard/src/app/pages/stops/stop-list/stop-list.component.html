@@ -1,5 +1,5 @@
 <div class="m-4 flex flex-col items-center text-text-950 dark:text-text-100">
-  <h2 class="my-6 ml-[20px] self-center text-2xl font-bold">Stops Overview</h2>
+  <h2 class="my-6 ml-[20px] self-center text-2xl font-bold">Stops</h2>
   <button [routerLink]="['/stop']" class="btn btn-primary absolute right-4">
     Add Stop
   </button>
@@ -33,9 +33,9 @@
         ></path>
       </svg>
       @if (showFilters()) {
-        Hide
+        Hide Filters
       } @else {
-        Show
+        Show Filters
       }
     </button>
   </div>
@@ -46,7 +46,7 @@
       <!-- Stop Name Search -->
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
         <label class="label">
-          <span class="label-text">Stop Name Filter</span>
+          <span class="label-text">Stop Name</span>
         </label>
         <input
           type="text"
@@ -59,7 +59,7 @@
       <!-- Stop Group Filter -->
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
         <label class="label">
-          <span class="label-text">Stop Group Filter</span>
+          <span class="label-text">Stop Group</span>
         </label>
         <select
           class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
@@ -75,7 +75,7 @@
       <!-- Stop Manager Search -->
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
         <label class="label">
-          <span class="label-text">Responsible Stop Managers Filter</span>
+          <span class="label-text">Stop Manager</span>
         </label>
         <input
           type="text"
@@ -89,7 +89,7 @@
 
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
         <label class="label">
-          <span class="label-text">Division Filter</span>
+          <span class="label-text">Division</span>
         </label>
         <select
           id="divisions"
@@ -97,7 +97,7 @@
           class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
           name="divisions-select"
         >
-          <option value="0" selected>Filter by Division</option>
+          <option value="0" selected>All Divisions</option>
 
           @for (division of divisions(); track division.id) {
             <option value="{{ division.id }}">{{ division.name }}</option>
@@ -184,7 +184,7 @@
                 class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
               >
                 <div class="flex items-center gap-1">
-                  Responsible Stop Managers
+                  Stop Managers
                   @if (stopManagerSearchTerm()) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -207,7 +207,7 @@
                 class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
               >
                 <div class="flex items-center gap-1">
-                  Department
+                  Divisions
                   @if (divisionFilter() != null && divisionFilter() != 0) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -252,19 +252,13 @@
                 <td class="px-4 py-3">
                   {{ stop.roomNr || 'No room assigned' }}
                 </td>
-                <td
-                  class="break-words px-4 py-3"
-                >
+                <td class="break-words px-4 py-3">
                   {{ stop.infrastructure || 'None' }}
                 </td>
-                <td
-                  class="break-words px-4 py-3"
-                >
+                <td class="break-words px-4 py-3">
                   {{ getStopManagerNames(stop.id) }}
                 </td>
-                <td
-                  class="break-words px-4 py-3"
-                >
+                <td class="break-words px-4 py-3">
                   {{ getDivisionNames(stop.divisionIds) }}
                 </td>
                 <td class="px-4 py-3">
@@ -272,12 +266,12 @@
                     <span
                       class="w-fit rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
                     >
-                      Req: {{ getStudentCounts(stop.id).requested }}
+                      Pending: {{ getStudentCounts(stop.id).requested }}
                     </span>
                     <span
                       class="w-fit rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300"
                     >
-                      Ass: {{ getStudentCounts(stop.id).assigned }}
+                      Approved: {{ getStudentCounts(stop.id).assigned }}
                     </span>
                   </div>
                 </td>
@@ -287,7 +281,7 @@
                       class="btn btn-ghost btn-xs"
                       [routerLink]="['/stop']"
                       [queryParams]="{ id: stop.id }"
-                      title="Details"
+                      title="Edit stop"
                     >
                       <svg
                         class="h-3 w-3"
@@ -362,49 +356,65 @@
               <span
                 class="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
               >
-                Req: {{ getStudentCounts(stop.id).requested }}
+                Pending: {{ getStudentCounts(stop.id).requested }}
               </span>
               <span
                 class="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300"
               >
-                Ass: {{ getStudentCounts(stop.id).assigned }}
+                Approved: {{ getStudentCounts(stop.id).assigned }}
               </span>
             </div>
           </div>
 
           <!-- Card Content -->
-          <div class="divide-y divide-background-200 text-sm dark:divide-background-700">
+          <div
+            class="divide-y divide-background-200 text-sm dark:divide-background-700"
+          >
             <!-- Inline rows for short fields -->
             <div class="flex justify-between gap-2 py-2">
-              <span class="font-semibold text-text-600 dark:text-text-400">Room</span>
+              <span class="font-semibold text-text-600 dark:text-text-400"
+                >Room</span
+              >
               <span class="text-right text-text-800 dark:text-text-200">{{
                 stop.roomNr || 'No room assigned'
               }}</span>
             </div>
             <div class="flex justify-between gap-2 py-2">
-              <span class="font-semibold text-text-600 dark:text-text-400">Groups</span>
+              <span class="font-semibold text-text-600 dark:text-text-400"
+                >Groups</span
+              >
               <span class="text-right text-text-800 dark:text-text-200">{{
                 getStopGroupNames(stop.stopGroupIds)
               }}</span>
             </div>
             <div class="flex justify-between gap-2 py-2">
-              <span class="font-semibold text-text-600 dark:text-text-400">Department</span>
+              <span class="font-semibold text-text-600 dark:text-text-400"
+                >Divisions</span
+              >
               <span class="text-right text-text-800 dark:text-text-200">{{
                 getDivisionNames(stop.divisionIds)
               }}</span>
             </div>
 
             <div class="flex justify-between gap-2 py-2">
-              <span class="flex-shrink-0 font-semibold text-text-600 dark:text-text-400">Stop Managers</span>
-              <span class="break-words text-right text-text-800 dark:text-text-200">{{
-                getStopManagerNames(stop.id)
-              }}</span>
+              <span
+                class="flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
+                >Stop Managers</span
+              >
+              <span
+                class="break-words text-right text-text-800 dark:text-text-200"
+                >{{ getStopManagerNames(stop.id) }}</span
+              >
             </div>
             <div class="flex justify-between gap-2 py-2">
-              <span class="flex-shrink-0 font-semibold text-text-600 dark:text-text-400">Req. Infrastructure</span>
-              <span class="break-words text-right text-text-800 dark:text-text-200">{{
-                stop.infrastructure || 'None'
-              }}</span>
+              <span
+                class="flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
+                >Req. Infrastructure</span
+              >
+              <span
+                class="break-words text-right text-text-800 dark:text-text-200"
+                >{{ stop.infrastructure || 'None' }}</span
+              >
             </div>
           </div>
 
@@ -415,7 +425,7 @@
               [routerLink]="['/stop']"
               [queryParams]="{ id: stop.id }"
             >
-              Details / Edit
+              Edit
               <svg
                 class="ml-1 h-3 w-3"
                 fill="none"

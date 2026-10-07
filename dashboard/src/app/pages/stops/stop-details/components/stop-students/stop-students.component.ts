@@ -168,9 +168,9 @@ export class StopStudentsComponent {
       case Status.Pending:
         return 'Pending';
       case Status.Accepted:
-        return 'Accepted';
+        return 'Approved';
       case Status.Declined:
-        return 'Declined';
+        return 'Rejected';
       default:
         return 'Unknown';
     }

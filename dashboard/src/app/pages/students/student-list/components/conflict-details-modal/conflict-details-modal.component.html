@@ -6,7 +6,7 @@
   >
     <div class="mb-4 flex items-center justify-between">
       <h3 class="text-xl font-bold">
-        Request Details for {{ student().firstName }}
+        Resolve Conflict: {{ student().firstName }}
         {{ student().lastName }}
       </h3>
       <button class="btn btn-circle btn-sm" (click)="close.emit()">✕</button>
@@ -18,8 +18,8 @@
           <tr>
             <th>Stop Name</th>
             <th>Status</th>
-            <th>Action</th>
-            <th>Delete</th>
+            <th>Decision</th>
+            <th><span class="sr-only">Remove</span></th>
           </tr>
         </thead>
         <tbody>
@@ -39,7 +39,7 @@
                     class="btn btn-primary btn-sm"
                     (click)="approveAssignment(i)"
                   >
-                    Accept
+                    Approve
                   </button>
                   <button
                     class="btn btn-error btn-sm"
@@ -52,7 +52,7 @@
                     class="btn btn-primary btn-sm"
                     (click)="undoAssignment(i)"
                   >
-                    Undo
+                    Back to Pending
                   </button>
                 }
               </td>
@@ -61,7 +61,7 @@
                   class="btn btn-error btn-sm"
                   (click)="deleteAssignment(i)"
                 >
-                  Delete
+                  Remove
                 </button>
               </td>
             </tr>
@@ -98,7 +98,7 @@
                 class="btn btn-primary btn-sm flex-1"
                 (click)="approveAssignment(i)"
               >
-                Accept
+                Approve
               </button>
               <button
                 class="btn btn-error btn-sm flex-1"
@@ -111,14 +111,14 @@
                 class="btn btn-primary btn-sm flex-1"
                 (click)="undoAssignment(i)"
               >
-                Undo
+                Back to Pending
               </button>
             }
             <button
               class="btn btn-outline btn-error btn-sm"
               (click)="deleteAssignment(i)"
             >
-              Delete
+              Remove
             </button>
           </div>
         </div>

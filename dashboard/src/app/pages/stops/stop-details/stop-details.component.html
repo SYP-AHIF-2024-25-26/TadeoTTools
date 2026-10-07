@@ -88,9 +88,9 @@
 
 @if (showDeleteConfirm()) {
   <app-delete-popup
-    title="Delete stop"
+    title="Delete Stop"
     [message]="deleteMessage()"
-    confirmLabel="Delete stop"
+    confirmLabel="Delete Stop"
     [busy]="deleting()"
     (cancel)="showDeleteConfirm.set(false)"
     (removeConfirmed)="deleteAndGoBack()"

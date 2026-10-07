@@ -1,5 +1,5 @@
 <div class="text-text-950">
-  <h1 class="p-10 text-center text-2xl font-semibold">Your stops:</h1>
+  <h1 class="p-10 text-center text-2xl font-semibold">Your Stops</h1>
   @if (loading()) {
     @for (placeholder of [1, 2]; track placeholder) {
       <div
@@ -32,7 +32,7 @@
             [routerLink]="['/stop']"
             [queryParams]="{ id: stop.id }"
           >
-            Details
+            Edit
           </button>
         </div>
       </div>

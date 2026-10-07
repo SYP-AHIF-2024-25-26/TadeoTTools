@@ -1,14 +1,11 @@
-<div class="my-6 text-center text-2xl text-text-950">
-  Data Importing and Exporting
-</div>
 <div
   class="flex flex-col items-center justify-center gap-y-8 px-4 text-text-950 md:flex-row md:items-start md:gap-x-16"
 >
   <div class="my-4 flex w-full flex-col md:w-auto">
-    <h1 class="mb-4 text-center text-3xl">Imports</h1>
+    <h1 class="mb-4 text-center text-3xl">Import</h1>
     <div class="mb-4 flex flex-col gap-4 sm:flex-row">
       <fieldset class="fieldset flex-grow">
-        <legend class="fieldset-legend text-lg">Import Student Csv</legend>
+        <legend class="fieldset-legend text-lg">Students (CSV)</legend>
         <input
           type="file"
           class="file-input file-input-primary file-input-sm w-full"
@@ -48,7 +45,7 @@
     }
     <div class="mb-4 flex flex-col gap-4 sm:flex-row">
       <fieldset class="fieldset flex-grow">
-        <legend class="fieldset-legend text-lg">Import Stop Manager Csv</legend>
+        <legend class="fieldset-legend text-lg">Stop Managers (CSV)</legend>
         <input
           type="file"
           class="file-input file-input-primary file-input-sm w-full"
@@ -89,7 +86,7 @@
     <div class="mb-4 flex flex-col gap-4 sm:flex-row">
       <fieldset class="fieldset flex-grow">
         <legend class="fieldset-legend text-lg">
-          Import Student Assignments Csv
+          Student Assignments (CSV)
         </legend>
         <input
           type="file"
@@ -118,7 +115,7 @@
         Stop;Klasse;Nachname;Vorname;Abteilung
       </p>
       <p class="mt-1 text-xs text-text-500">
-        Note: All imported assignments will be set to "Pending" status
+        Imported assignments start as Pending.
       </p>
     </div>
     @if (importResults().assignments; as result) {
@@ -133,7 +130,7 @@
     }
   </div>
   <div class="my-4 flex w-full flex-col gap-y-4 md:w-auto">
-    <h1 class="mb-4 text-center text-3xl">Exports</h1>
+    <h1 class="mb-4 text-center text-3xl">Export</h1>
     <button
       (click)="downloadQuestionAnswers()"
       class="btn btn-primary btn-sm w-full md:w-auto md:self-start"
@@ -172,7 +169,7 @@
           d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
         />
       </svg>
-      Download Students Data
+      Download Students
     </button>
     <button
       (click)="downloadStopsData()"
@@ -192,7 +189,7 @@
           d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
         />
       </svg>
-      Download Stops Data
+      Download Stops
     </button>
     <button
       (click)="downloadDivisionData()"
@@ -212,7 +209,7 @@
           d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
         />
       </svg>
-      Download Division Data
+      Download Divisions
     </button>
   </div>
 </div>
@@ -236,13 +233,15 @@
         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m10 0H5"
       ></path>
     </svg>
-    Delete all Students
+    Delete All Students
   </button>
 </div>
 <div class="mt-8 flex flex-col items-center gap-4">
   <div class="form-control">
     <label class="label cursor-pointer gap-4">
-      <span class="label-text text-lg font-bold">Show Countdown</span>
+      <span class="label-text text-lg font-bold"
+        >Show Countdown in Visitor App</span
+      >
       <input
         type="checkbox"
         class="toggle toggle-primary"
@@ -258,18 +257,18 @@
       [(ngModel)]="countdownValue"
     />
     <button class="btn btn-primary btn-sm" (click)="updateShowdownValue()">
-      Set Value
+      Save Date
     </button>
   </div>
 </div>
 
 @if (showDeleteStudentsPopup()) {
   <app-delete-popup
-    title="Delete all students"
+    title="Delete All Students"
     [message]="deleteStudentsMessage()"
     [confirmText]="deleteStudentsConfirmText()"
-    confirmLabel="Delete all students"
-    secondaryLabel="Download students data"
+    confirmLabel="Delete All Students"
+    secondaryLabel="Download Students"
     [busy]="deletingStudents()"
     (secondary)="downloadStudentsData()"
     (cancel)="showDeleteStudentsPopup.set(false)"

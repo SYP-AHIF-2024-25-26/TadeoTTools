@@ -1,7 +1,5 @@
 <div class="w-full px-8 py-8 text-text-950">
-  <h2 class="my-6 text-2xl font-bold">
-    {{ readOnly() ? 'Students' : 'Student Manager' }}
-  </h2>
+  <h2 class="my-6 text-2xl font-bold">Students</h2>
 
   @if (approveError()) {
     <div role="alert" class="alert alert-error mb-4">
@@ -296,7 +294,7 @@
                           class="btn btn-outline btn-error btn-sm"
                           (click)="deleteAssignment(student, 0)"
                         >
-                          Delete
+                          Remove
                         </button>
                       </div>
                     } @else {
@@ -305,13 +303,13 @@
                           class="btn btn-primary btn-sm"
                           (click)="undoSingleAssignment(student)"
                         >
-                          Undo
+                          Back to Pending
                         </button>
                         <button
                           class="btn btn-outline btn-error btn-sm"
                           (click)="deleteAssignment(student, 0)"
                         >
-                          Delete
+                          Remove
                         </button>
                       </div>
                     }
@@ -425,14 +423,14 @@
                     class="btn btn-primary btn-sm flex-grow"
                     (click)="undoSingleAssignment(student)"
                   >
-                    Undo
+                    Back to Pending
                   </button>
                 }
                 <button
                   class="btn btn-outline btn-error btn-sm flex-grow"
                   (click)="deleteAssignment(student, 0)"
                 >
-                  Delete
+                  Remove
                 </button>
               } @else {
                 <button
@@ -461,7 +459,7 @@
 
 @if (showApproveAllConfirm()) {
   <app-delete-popup
-    title="Approve pending requests"
+    title="Approve Pending Requests"
     tone="primary"
     [message]="approveAllMessage()"
     [confirmLabel]="'Approve ' + approvableStudents().length"

@@ -73,9 +73,9 @@
 
 @if (showDeleteConfirm()) {
   <app-delete-popup
-    title="Delete stop group"
+    title="Delete Stop Group"
     [message]="deleteMessage()"
-    confirmLabel="Delete group"
+    confirmLabel="Delete Group"
     [busy]="deleting()"
     (cancel)="showDeleteConfirm.set(false)"
     (removeConfirmed)="deleteAndGoBack()"

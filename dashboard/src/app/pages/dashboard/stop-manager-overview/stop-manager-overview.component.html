@@ -1,8 +1,6 @@
 <div class="container mx-auto px-4 py-8">
   <div class="mb-8 flex flex-col items-center gap-6">
-    <h1 class="text-3xl font-bold text-secondary-content">
-      Stop Manager Overview
-    </h1>
+    <h1 class="text-3xl font-bold text-secondary-content">Stop Managers</h1>
 
     @if (errorMessage()) {
       <div role="alert" class="alert alert-error w-full max-w-4xl">
@@ -132,7 +130,7 @@
                         (click)="saveEdit()"
                         class="btn btn-primary btn-xs"
                       >
-                        Save
+                        Save Changes
                       </button>
                       <button
                         (click)="cancelEdit()"
@@ -294,7 +292,7 @@
                   Cancel
                 </button>
                 <button (click)="saveEdit()" class="btn btn-primary btn-sm">
-                  Save
+                  Save Changes
                 </button>
               </div>
             </div>
@@ -386,9 +384,9 @@
 
 @if (stopManagerToDelete()) {
   <app-delete-popup
-    title="Delete stop manager"
+    title="Delete Stop Manager"
     [message]="deleteMessage()"
-    confirmLabel="Delete stop manager"
+    confirmLabel="Delete Stop Manager"
     [busy]="deleting()"
     (cancel)="stopManagerToDelete.set(null)"
     (removeConfirmed)="deleteStopManager()"

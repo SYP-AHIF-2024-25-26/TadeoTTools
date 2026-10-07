@@ -9,7 +9,7 @@
       class="flex items-center justify-between border-b border-background-200 p-6 pb-4"
     >
       <h3 class="text-xl font-semibold text-text-950">
-        {{ editingIndex() === -1 ? 'Add New Question' : 'Edit Question' }}
+        {{ editingIndex() === -1 ? 'New Question' : 'Edit Question' }}
       </h3>
       <button (click)="cancel.emit()" class="text-text-900 hover:text-text-950">
         <svg
@@ -366,7 +366,7 @@
             [disabled]="questionForm().invalid"
             class="btn btn-primary"
           >
-            Save Question
+            {{ editingIndex() === -1 ? 'Add Question' : 'Update Question' }}
           </button>
         </div>
       </form>

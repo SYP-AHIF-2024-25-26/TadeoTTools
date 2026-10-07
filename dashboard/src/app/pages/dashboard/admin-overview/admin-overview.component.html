@@ -1,5 +1,5 @@
 <div class="m-4 flex flex-col items-center text-text-950">
-  <div class="my-3 text-2xl text-text-950">Admin Overview</div>
+  <div class="my-3 text-2xl text-text-950">Admins</div>
   <div class="w-full max-w-xl">
     <div class="my-4 flex gap-5">
       <input
@@ -8,6 +8,7 @@
         [value]="addname()"
         [(ngModel)]="addname"
         name="addname"
+        placeholder="EduFS username, e.g. if123456"
         id="addname"
       />
       <button
@@ -39,7 +40,7 @@
             (click)="adminToDelete.set(admin)"
             class="btn btn-outline btn-error btn-sm"
           >
-            Delete
+            Remove
           </button>
         }
       </div>
@@ -49,9 +50,9 @@
 
 @if (adminToDelete(); as name) {
   <app-delete-popup
-    title="Remove admin"
+    title="Remove Admin"
     [message]="name + ' will lose admin access to the dashboard.'"
-    confirmLabel="Remove admin"
+    confirmLabel="Remove Admin"
     [busy]="deleting()"
     (cancel)="adminToDelete.set(null)"
     (removeConfirmed)="deleteAdmin()"

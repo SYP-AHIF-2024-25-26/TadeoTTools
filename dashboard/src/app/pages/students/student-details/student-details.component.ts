@@ -34,7 +34,14 @@ export class StudentComponent implements OnInit {
       this.loading.set(false);
     }
   }
-  getStatusName(status: Status): string {
-    return Status[status];
+  getStatusText(status: Status): string {
+    switch (status) {
+      case Status.Accepted:
+        return 'Approved';
+      case Status.Declined:
+        return 'Not selected for this stop';
+      default:
+        return 'Waiting for approval';
+    }
   }
 }

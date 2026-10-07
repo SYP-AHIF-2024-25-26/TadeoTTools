@@ -9,7 +9,7 @@
       class="mb-6 flex items-center justify-between border-b border-background-200 pb-4 dark:border-background-700"
     >
       <h2 class="text-2xl font-bold text-secondary-content">
-        {{ id === -1 ? 'Add New Division' : 'Edit Division' }}
+        {{ id === -1 ? 'New Division' : 'Edit Division' }}
       </h2>
       <button
         (click)="cancelPopup()"
@@ -161,7 +161,7 @@
             Cancel
           </button>
           <button type="submit" class="btn btn-primary w-full sm:w-auto">
-            {{ id === -1 ? 'Add Division' : 'Save Changes' }}
+            {{ id === -1 ? 'Create Division' : 'Save Changes' }}
           </button>
         </div>
       </div>
@@ -171,18 +171,18 @@
 
 @if (confirmAction() === 'division') {
   <app-delete-popup
-    title="Delete division"
+    title="Delete Division"
     [message]="deleteDivisionMessage()"
-    confirmLabel="Delete division"
+    confirmLabel="Delete Division"
     [busy]="deleting()"
     (cancel)="confirmAction.set(null)"
     (removeConfirmed)="deleteAndGoBack()"
   />
 } @else if (confirmAction() === 'image') {
   <app-delete-popup
-    title="Delete image"
+    title="Delete Image"
     [message]="deleteImageMessage()"
-    confirmLabel="Delete image"
+    confirmLabel="Delete Image"
     [busy]="deleting()"
     (cancel)="confirmAction.set(null)"
     (removeConfirmed)="deleteImage()"
