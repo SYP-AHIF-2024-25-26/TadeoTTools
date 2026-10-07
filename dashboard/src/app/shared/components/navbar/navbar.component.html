@@ -21,7 +21,7 @@
           <a
             class="px-3 py-2"
             [routerLink]="[link.route]"
-            routerLinkActive="bg-primary underline font-medium rounded"
+            routerLinkActive="bg-primary text-primary-content underline font-medium rounded"
             ariaCurrentWhenActive="page"
           >
             {{ link.label }}
@@ -94,7 +94,7 @@
                   class="block px-4 py-2 text-sm text-secondary-content"
                   (click)="mobileMenuOpen.set(false)"
                   [routerLink]="[link.route]"
-                  routerLinkActive="bg-primary font-medium"
+                  routerLinkActive="bg-primary text-primary-content font-medium"
                 >
                   {{ link.label }}
                 </a>
