@@ -200,6 +200,8 @@ export class ListStudentsComponent implements OnInit {
       return s.studentAssignments.some((a) => {
         if (status === 'pending') return a.status === Status.Pending;
         if (status === 'approved') return a.status === Status.Accepted;
+        // Requests rejected before duplicates were deleted instead.
+        if (status === 'rejected') return a.status === Status.Declined;
         return false;
       });
     });
@@ -460,11 +462,21 @@ export class ListStudentsComponent implements OnInit {
     return statusText(status);
   }
 
+  // With the "Rejected" filter, each row shows and acts on the student's old
+  // rejected request, so Remove deletes exactly that one.
+  private showsRejected = computed(() => this.statusFilter() === 'rejected');
+
   isConflictStudent(student: Student): boolean {
-    return isConflict(student.studentAssignments);
+    return !this.showsRejected() && isConflict(student.studentAssignments);
   }
 
   primaryIndex(student: Student): number {
+    if (this.showsRejected()) {
+      const rejected = student.studentAssignments.findIndex(
+        (a) => a.status === Status.Declined
+      );
+      if (rejected >= 0) return rejected;
+    }
     return primaryAssignmentIndex(student.studentAssignments);
   }
 
