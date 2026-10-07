@@ -83,6 +83,26 @@ public class StudentFunctions
     }
 
 
+    public const string OneApprovedStopMessage = "A student can only be approved for one stop.";
+
+    /// <summary>
+    /// Usernames from <paramref name="approvedUsernames"/> that are already approved at a stop
+    /// other than <paramref name="stopId"/>. A student may only be approved for one stop.
+    /// </summary>
+    public static async Task<List<string>> FindApprovedElsewhereAsync(TadeoTDbContext context,
+        IEnumerable<string> approvedUsernames, int stopId)
+    {
+        var usernames = approvedUsernames.Select(u => u.ToLower()).Distinct().ToList();
+        if (usernames.Count == 0) return [];
+
+        return await context.StudentAssignments
+            .Where(sa => sa.Status == Status.ACCEPTED && sa.StopId != stopId &&
+                         usernames.Contains(sa.EdufsUsername.ToLower()))
+            .Select(sa => sa.EdufsUsername)
+            .Distinct()
+            .ToListAsync();
+    }
+
     public static async Task<ImportResult> ParseStudentsCsv(string csvData, TadeoTDbContext context)
     {
         var lines = csvData.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);

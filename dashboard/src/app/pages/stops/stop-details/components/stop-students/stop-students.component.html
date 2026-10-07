@@ -172,7 +172,9 @@
                     >({{ student.studentClass }})</span
                   >
                   @if (hasOtherAssignments(student.edufsUsername)) {
-                    <span class="ml-2 text-sm font-medium text-amber-700">
+                    <span
+                      class="ml-2 text-sm font-medium text-orange-700 dark:text-orange-400"
+                    >
                       ({{
                         getStudentOtherAssignmentsCount(student.edufsUsername)
                       }}

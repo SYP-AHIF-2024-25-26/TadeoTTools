@@ -170,6 +170,14 @@ public static class StopManagementEndpoints
 
     public static async Task<IResult> CreateStop(TadeoTDbContext context, CreateStopRequestDto createStopDto)
     {
+        var approvedElsewhere = await StudentFunctions.FindApprovedElsewhereAsync(context,
+            createStopDto.StudentAssignments.Where(s => s.Status == Status.ACCEPTED).Select(s => s.EdufsUsername),
+            0);
+        if (approvedElsewhere.Count > 0)
+        {
+            return Results.BadRequest(
+                $"{StudentFunctions.OneApprovedStopMessage} Already approved elsewhere: {string.Join(", ", approvedElsewhere)}.");
+        }
         var studentIds = createStopDto.StudentAssignments.Select(s => s.EdufsUsername).ToList();
         var stopManagerIds = createStopDto.StopManagerAssignments.ToList();
         var divisionIds = createStopDto.DivisionIds.ToList();
@@ -241,6 +249,14 @@ public static class StopManagementEndpoints
     public static async Task<IResult> UpdateStop(TadeoTDbContext context, UpdateStopRequestDto updateStopDto,
         bool? updateOrder = true)
     {
+        var approvedElsewhere = await StudentFunctions.FindApprovedElsewhereAsync(context,
+            updateStopDto.StudentAssignments.Where(s => s.Status == Status.ACCEPTED).Select(s => s.EdufsUsername),
+            updateStopDto.Id);
+        if (approvedElsewhere.Count > 0)
+        {
+            return Results.BadRequest(
+                $"{StudentFunctions.OneApprovedStopMessage} Already approved elsewhere: {string.Join(", ", approvedElsewhere)}.");
+        }
         var studentIds = updateStopDto.StudentAssignments.Select(s => s.EdufsUsername).ToList();
         var stopManagerIds = updateStopDto.StopManagerAssignments.ToList();
         var divisionIds = updateStopDto.DivisionIds.ToList();
@@ -310,6 +326,14 @@ public static class StopManagementEndpoints
     public static async Task<IResult> UpdateStopAsStopManager(TadeoTDbContext context,
         UpdateStopAsStopManagerRequestDto updateStopDto)
     {
+        var approvedElsewhere = await StudentFunctions.FindApprovedElsewhereAsync(context,
+            updateStopDto.StudentAssignments.Where(s => s.Status == Status.ACCEPTED).Select(s => s.EdufsUsername),
+            updateStopDto.Id);
+        if (approvedElsewhere.Count > 0)
+        {
+            return Results.BadRequest(
+                $"{StudentFunctions.OneApprovedStopMessage} Already approved elsewhere: {string.Join(", ", approvedElsewhere)}.");
+        }
         var studentIds = updateStopDto.StudentAssignments.Select(s => s.EdufsUsername).ToList();
 
         var students = (await context.Students

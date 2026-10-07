@@ -218,13 +218,16 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 
 ### Status (Dashboard)
 - `dash-error` for destructive buttons and error alerts, `dash-success`, `dash-warning`.
+- **Assignment states** (`shared/utils/assignment-status.ts`): Approved green, **Pending teal**, Conflict orange, Rejected red, Unassigned gray. Text uses the 700 shade in light mode and the 400 shade in dark mode; badges use the 800 shade on the 100 tint.
 
 ### Named Rules
 **The Division Owns Its Color Rule.** Division colors come from the school and the dashboard data. Never re-tint them, and never reuse a division hue for UI states like errors or links.
 
 **The One Highlighter Rule.** In the GuideApp, orange is the only accent: active tab, primary action, ticks, selections. A second accent color competes with the division colors.
 
-**The White Text Needs 4.5 Rule.** Any fill that carries white text in the dashboard (primary buttons, filled fields, toasts) must reach 4.5:1. That is why the primary is `#1f6fd1`, not the lighter `#4590e6`, and why status text uses the 700 shades (green, amber, red) in light mode and the 400 shades in dark mode.
+**The White Text Needs 4.5 Rule.** Any fill that carries white text in the dashboard (primary buttons, filled fields, toasts) must reach 4.5:1. That is why the primary is `#1f6fd1`, not the lighter `#4590e6`, and why status text uses the 700 shades in light mode and the 400 shades in dark mode.
+
+**The Pending Is Not A Warning Rule.** Pending is teal, near Approved green: it means "on track, waiting for a decision". Orange is reserved for Conflict, the one state that needs the admin's attention.
 
 ## Typography
 

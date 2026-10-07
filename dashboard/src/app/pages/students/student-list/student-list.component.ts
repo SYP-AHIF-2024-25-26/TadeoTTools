@@ -31,6 +31,16 @@ import { StudentImportExportComponent } from './components/student-import-export
 import { AddStudentDialogComponent } from './components/add-student-dialog/add-student-dialog.component';
 import { ConflictDetailsModalComponent } from './components/conflict-details-modal/conflict-details-modal.component';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
+import { errorText, ToastService } from '@/core/services/toast.service';
+import {
+  activeAssignments,
+  CONFLICT_TEXT_CLASS,
+  isConflict,
+  primaryAssignmentIndex,
+  statusText,
+  statusTextClass,
+  UNASSIGNED_TEXT_CLASS,
+} from '@/shared/utils/assignment-status';
 
 export interface StudentWithUI extends Student {
   showStops?: boolean;
@@ -57,6 +67,7 @@ export class ListStudentsComponent implements OnInit {
   private viewContainerRef = inject(ViewContainerRef);
   private positionBuilder = inject(OverlayPositionBuilder);
   private scrollService = inject(ScrollPersistenceService);
+  private toast = inject(ToastService);
 
   classFilter = signal<string>('');
   departmentFilter = signal<string>('');
@@ -183,7 +194,7 @@ export class ListStudentsComponent implements OnInit {
 
     return students.filter((s) => {
       if (status === 'unassigned') return s.studentAssignments.length === 0;
-      if (status === 'conflict') return s.studentAssignments.length > 1;
+      if (status === 'conflict') return isConflict(s.studentAssignments);
       if (s.studentAssignments.length === 0) return false;
 
       return s.studentAssignments.some((a) => {
@@ -208,22 +219,37 @@ export class ListStudentsComponent implements OnInit {
   }
 
   private hasPending(student: Student): boolean {
-    return student.studentAssignments.some((a) => a.status === Status.Pending);
+    return activeAssignments(student.studentAssignments).some(
+      (a) => a.status === Status.Pending
+    );
   }
 
-  // Students requested by more than one stop are left for manual resolution.
+  // Students with conflicting requests are left for manual resolution.
   approvableStudents = computed(() =>
     this.filteredStudents().filter(
-      (s) => this.hasPending(s) && s.studentAssignments.length === 1
+      (s) => this.hasPending(s) && !isConflict(s.studentAssignments)
     )
   );
 
   skippedConflicts = computed(
     () =>
       this.filteredStudents().filter(
-        (s) => this.hasPending(s) && s.studentAssignments.length > 1
+        (s) => this.hasPending(s) && isConflict(s.studentAssignments)
       ).length
   );
+
+  // Approved students per stop, shown in the conflict dialog.
+  approvedCountByStop = computed(() => {
+    const counts = new Map<number, number>();
+    for (const student of this.students()) {
+      for (const a of student.studentAssignments) {
+        if (a.status === Status.Accepted) {
+          counts.set(a.stopId, (counts.get(a.stopId) ?? 0) + 1);
+        }
+      }
+    }
+    return counts;
+  });
 
   hasRequested = computed(() => this.approvableStudents().length > 0);
 
@@ -283,10 +309,72 @@ export class ListStudentsComponent implements OnInit {
     this.showAddStudent.set(false);
   }
 
+  busyStudents = signal<ReadonlySet<string>>(new Set());
+
+  isBusy(student: Student): boolean {
+    return this.busyStudents().has(student.edufsUsername);
+  }
+
+  private setBusy(student: Student, busy: boolean) {
+    this.busyStudents.update((current) => {
+      const next = new Set(current);
+      if (busy) next.add(student.edufsUsername);
+      else next.delete(student.edufsUsername);
+      return next;
+    });
+  }
+
+  // Saves a student's assignments. The row is disabled meanwhile, and the
+  // list reloads afterwards so it shows what the server stored.
+  private async saveAssignments(
+    student: Student,
+    assignments: StudentAssignment[],
+    success?: string,
+    undoTo?: StudentAssignment[]
+  ): Promise<void> {
+    if (this.isBusy(student)) return;
+    this.setBusy(student, true);
+    try {
+      await this.studentService.updateStudent({
+        ...student,
+        studentAssignments: assignments,
+      });
+      if (success) {
+        this.toast.success(
+          success,
+          undoTo
+            ? {
+                label: 'Undo',
+                run: () => this.saveAssignments(student, undoTo),
+              }
+            : undefined
+        );
+      }
+    } catch (error) {
+      console.error('Failed to save assignments', error);
+      this.toast.error(
+        errorText(
+          error,
+          `The assignments of ${student.firstName} ${student.lastName} could not be saved. Please try again.`
+        )
+      );
+    } finally {
+      this.setBusy(student, false);
+      await this.refreshStudents().catch((error) =>
+        console.error('Failed to reload students', error)
+      );
+    }
+  }
+
   async deleteAssignment(student: Student, index: number) {
-    student.studentAssignments.splice(index, 1);
-    await this.studentService.updateStudent(student);
-    await this.refreshStudents();
+    const previous = student.studentAssignments.map((a) => ({ ...a }));
+    const removed = previous[index];
+    await this.saveAssignments(
+      student,
+      previous.filter((_, i) => i !== index),
+      `${student.firstName} ${student.lastName} removed from ${removed.stopName}.`,
+      previous
+    );
   }
 
   async changeAssignmentStatus(
@@ -294,9 +382,28 @@ export class ListStudentsComponent implements OnInit {
     index: number,
     status: Status
   ) {
-    student.studentAssignments[index].status = status;
-    await this.studentService.updateStudent(student);
-    await this.refreshStudents();
+    await this.saveAssignments(
+      student,
+      student.studentAssignments.map((a, i) =>
+        i === index ? { ...a, status } : { ...a }
+      )
+    );
+  }
+
+  // Resolves a conflict in one step: approve this stop, reject the others.
+  async assignHere(student: Student, index: number) {
+    const stop = student.studentAssignments[index];
+    await this.saveAssignments(
+      student,
+      student.studentAssignments.map((a, i) =>
+        i === index
+          ? { ...a, status: Status.Accepted }
+          : a.status === Status.Declined
+            ? { ...a }
+            : { ...a, status: Status.Declined }
+      ),
+      `${student.firstName} ${student.lastName} assigned to ${stop.stopName}.`
+    );
   }
 
   async refreshStudents() {
@@ -312,10 +419,24 @@ export class ListStudentsComponent implements OnInit {
       }
     });
     this.students.set(students);
+
+    const selected = this.selectedStudent();
+    if (selected) {
+      const fresh = students.find(
+        (s) => s.edufsUsername === selected.edufsUsername
+      );
+      this.selectedStudent.set(
+        fresh && isConflict(fresh.studentAssignments) ? fresh : null
+      );
+    }
   }
 
   async approveSingleAssignment(student: Student): Promise<void> {
-    await this.changeAssignmentStatus(student, 0, Status.Accepted);
+    await this.changeAssignmentStatus(
+      student,
+      primaryAssignmentIndex(student.studentAssignments),
+      Status.Accepted
+    );
   }
 
   showConflictDetails(student: Student): void {
@@ -327,51 +448,61 @@ export class ListStudentsComponent implements OnInit {
   }
 
   async rejectSingleAssignment(student: Student) {
-    await this.changeAssignmentStatus(student, 0, Status.Declined);
+    await this.changeAssignmentStatus(
+      student,
+      primaryAssignmentIndex(student.studentAssignments),
+      Status.Declined
+    );
   }
 
   async undoSingleAssignment(student: Student) {
-    await this.changeAssignmentStatus(student, 0, Status.Pending);
+    await this.changeAssignmentStatus(
+      student,
+      primaryAssignmentIndex(student.studentAssignments),
+      Status.Pending
+    );
   }
 
   getStatusClass(status: Status): string {
-    switch (status) {
-      case Status.Accepted:
-        return 'text-green-700 dark:text-green-400 font-bold';
-      case Status.Declined:
-        return 'text-red-700 dark:text-red-400 font-bold';
-      default:
-        return 'text-amber-700 dark:text-amber-400 font-bold';
-    }
+    return statusTextClass(status);
   }
 
   getStatusText(status: Status): string {
-    switch (status) {
-      case Status.Accepted:
-        return 'Approved';
-      case Status.Declined:
-        return 'Rejected';
-      default:
-        return 'Pending';
-    }
+    return statusText(status);
+  }
+
+  isConflictStudent(student: Student): boolean {
+    return isConflict(student.studentAssignments);
+  }
+
+  primaryIndex(student: Student): number {
+    return primaryAssignmentIndex(student.studentAssignments);
+  }
+
+  activeCount(student: Student): number {
+    return activeAssignments(student.studentAssignments).length;
   }
 
   getStudentStatusText(student: Student): string {
     if (student.studentAssignments.length === 0) return 'Unassigned';
-    if (student.studentAssignments.length > 1) return 'Conflict';
-    return this.getStatusText(student.studentAssignments[0].status);
+    if (this.isConflictStudent(student)) return 'Conflict';
+    return statusText(
+      student.studentAssignments[this.primaryIndex(student)].status
+    );
   }
 
   getStudentStatusClass(student: Student): string {
-    if (student.studentAssignments.length === 0)
-      return 'text-gray-600 dark:text-gray-400 font-bold';
-    if (student.studentAssignments.length > 1)
-      return 'text-orange-700 dark:text-orange-400 font-bold';
-    return this.getStatusClass(student.studentAssignments[0].status);
+    if (student.studentAssignments.length === 0) return UNASSIGNED_TEXT_CLASS;
+    if (this.isConflictStudent(student)) return CONFLICT_TEXT_CLASS;
+    return statusTextClass(
+      student.studentAssignments[this.primaryIndex(student)].status
+    );
   }
 
   onStopToggle(student: StudentWithUI, stop: Stop, checked: boolean): void {
     if (checked) {
+      // One stop per student; picking another replaces the choice.
+      student.selectedStops?.clear();
       student.selectedStops?.add(stop.id);
     } else {
       student.selectedStops?.delete(stop.id);

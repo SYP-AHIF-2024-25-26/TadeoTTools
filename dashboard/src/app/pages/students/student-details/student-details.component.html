@@ -23,9 +23,9 @@
       You haven't been assigned to a stop yet.
     </div>
   } @else {
-    @if (stops().length > 1) {
+    @if (openRequests() > 1) {
       <p class="text-center text-lg">
-        You have been requested for {{ stops().length }} stops. An admin will
+        You have been requested for {{ openRequests() }} stops. An admin will
         decide which one you work at.
       </p>
     }

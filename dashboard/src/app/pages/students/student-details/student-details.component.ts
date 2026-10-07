@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { StopOfStudent } from '@/shared/models/types';
 import { StopService } from '@/core/services/stop.service';
 import { Status } from '@/shared/models/types';
@@ -14,6 +14,10 @@ export class StudentComponent implements OnInit {
   private scrollService = inject(ScrollPersistenceService);
 
   stops = signal<StopOfStudent[]>([]);
+  // Requests that are still open (pending or approved); rejected ones don't count.
+  openRequests = computed(
+    () => this.stops().filter((s) => s.status !== Status.Declined).length
+  );
   loading = signal<boolean>(true);
   loadFailed = signal<boolean>(false);
 

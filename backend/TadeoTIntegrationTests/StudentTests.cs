@@ -177,4 +177,52 @@ public class StudentTests(IntegrationTestWebAppFactory factory) : BaseIntegratio
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
+
+    [Fact]
+    public async Task UpdateStudent_ShouldReturnBadRequest_WhenTwoStopsAreApproved()
+    {
+        // Arrange
+        var stopA = new Stop { Name = "A", Description = "", RoomNr = "E01" };
+        var stopB = new Stop { Name = "B", Description = "", RoomNr = "E02" };
+        DbContext.Stops.AddRange(stopA, stopB);
+        DbContext.Students.Add(CreateStudent("double"));
+        await DbContext.SaveChangesAsync();
+
+        var dto = new StudentFunctions.StudentDto("double", "double", "double", "5AHIF", "HIF",
+        [
+            new StudentFunctions.StudentAssignmentDto(0, "double", stopA.Id, "A", Status.ACCEPTED),
+            new StudentFunctions.StudentAssignmentDto(0, "double", stopB.Id, "B", Status.ACCEPTED)
+        ]);
+
+        // Act
+        var response = await Client.PutAsJsonAsync($"{BaseUrl}/double", dto);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await response.Content.ReadAsStringAsync()).Should().Contain(StudentFunctions.OneApprovedStopMessage);
+        (await DbContext.StudentAssignments.AsNoTracking().CountAsync()).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task UpdateStudent_ShouldReturnOk_WhenOneStopIsApprovedAndOneRejected()
+    {
+        // Arrange
+        var stopA = new Stop { Name = "A", Description = "", RoomNr = "E01" };
+        var stopB = new Stop { Name = "B", Description = "", RoomNr = "E02" };
+        DbContext.Stops.AddRange(stopA, stopB);
+        DbContext.Students.Add(CreateStudent("resolved"));
+        await DbContext.SaveChangesAsync();
+
+        var dto = new StudentFunctions.StudentDto("resolved", "resolved", "resolved", "5AHIF", "HIF",
+        [
+            new StudentFunctions.StudentAssignmentDto(0, "resolved", stopA.Id, "A", Status.ACCEPTED),
+            new StudentFunctions.StudentAssignmentDto(0, "resolved", stopB.Id, "B", Status.DECLINED)
+        ]);
+
+        // Act
+        var response = await Client.PutAsJsonAsync($"{BaseUrl}/resolved", dto);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
 }
