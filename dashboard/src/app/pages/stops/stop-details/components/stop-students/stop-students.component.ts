@@ -11,6 +11,7 @@ import { NgClass } from '@angular/common';
 import { Stop, Student, Status } from '@/shared/models/types';
 import { sortStudents, downloadFile } from '@/shared/utils/utils';
 import { StopService } from '@/core/services/stop.service';
+import { errorText, ToastService } from '@/core/services/toast.service';
 
 @Component({
   selector: 'app-stop-students',
@@ -20,6 +21,7 @@ import { StopService } from '@/core/services/stop.service';
 })
 export class StopStudentsComponent {
   private stopService = inject(StopService);
+  private toast = inject(ToastService);
 
   stop = model.required<Stop>();
   students = input.required<Student[]>();
@@ -203,7 +205,10 @@ export class StopStudentsComponent {
       const blob = await this.stopService.getStopDataFile(this.stop().id);
       downloadFile(blob, 'students_of_stop_data.csv');
     } catch (error) {
-      alert('No students found for this Stop');
+      console.error('Failed to download students of stop', error);
+      this.toast.error(
+        errorText(error, 'The students of this stop could not be downloaded.')
+      );
     }
   }
 }

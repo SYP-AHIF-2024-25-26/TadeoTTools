@@ -25,7 +25,7 @@ public class StopManagerFunctions
             .FirstOrDefaultAsync();
     }
 
-    public static async Task ParseStopManagerCsv(string csvData, TadeoTDbContext context)
+    public static async Task<ImportResult> ParseStopManagerCsv(string csvData, TadeoTDbContext context)
     {
         var lines = csvData.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
 
@@ -37,18 +37,22 @@ public class StopManagerFunctions
                 throw new ArgumentException("Invalid CSV format");
             }
 
-            var stopManagers = lines
-                .Skip(1)
+            var rows = lines.Skip(1).ToList();
+            var stopManagers = rows
                 .Select(line => line.Split(';'))
                 .Select(cols => new StopManager
                 {
                     EdufsUsername = cols[0],
                     FirstName = cols[1],
                     LastName = cols[2],
-                });
+                })
+                // Existing stop managers are skipped instead of failing the whole import.
+                .Where(m => !context.StopManagers.Any(e => EF.Functions.ILike(e.EdufsUsername, m.EdufsUsername)))
+                .ToList();
 
             await context.StopManagers.AddRangeAsync(stopManagers);
             await context.SaveChangesAsync();
+            return new ImportResult(stopManagers.Count, rows.Count - stopManagers.Count);
         }
         else
         {

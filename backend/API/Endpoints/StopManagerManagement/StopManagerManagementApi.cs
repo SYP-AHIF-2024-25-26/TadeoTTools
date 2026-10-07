@@ -46,6 +46,7 @@ public static class StopManagerManagementApi
 
         group.MapPost("api/stopmanagers/upload", StopManagerManagementEndpoints.UploadCsvFile)
             .AddEndpointFilter(StopManagerManagementValidations.UploadCsvFileValidationAsync)
+            .Produces<ImportResult>()
             .DisableAntiforgery();
     }
 }

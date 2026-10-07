@@ -1,7 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BASE_URL } from '@/app.config';
-import { Student, CreateStudentRequest } from '@/shared/models/types';
+import {
+  Student,
+  CreateStudentRequest,
+  ImportResult,
+} from '@/shared/models/types';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({
@@ -40,12 +44,12 @@ export class StudentService {
     );
   }
 
-  uploadStudentsCsv(file: File): Promise<void> {
+  uploadStudentsCsv(file: File): Promise<ImportResult> {
     const formData = new FormData();
     formData.append('file', file);
 
     return firstValueFrom(
-      this.httpClient.post<void>(
+      this.httpClient.post<ImportResult>(
         `${this.baseUrl}/api/students/upload`,
         formData
       )
@@ -66,12 +70,12 @@ export class StudentService {
     );
   }
 
-  uploadStudentAssignmentsCsv(file: File): Promise<void> {
+  uploadStudentAssignmentsCsv(file: File): Promise<ImportResult> {
     const formData = new FormData();
     formData.append('file', file);
 
     return firstValueFrom(
-      this.httpClient.post<void>(
+      this.httpClient.post<ImportResult>(
         `${this.baseUrl}/api/students/assignments/upload`,
         formData
       )

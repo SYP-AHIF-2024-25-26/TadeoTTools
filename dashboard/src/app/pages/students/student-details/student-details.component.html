@@ -2,7 +2,25 @@
   <h2 class="my-8 text-center text-3xl font-bold">
     Welcome to the TadeoT Stop Management!
   </h2>
-  @if (!stops() || stops().length === 0) {
+  @if (loading()) {
+    <div
+      class="skeleton mx-auto mt-10 h-48 rounded-lg md:w-2/3"
+      aria-hidden="true"
+    ></div>
+    <span class="sr-only" role="status">Loading your stops…</span>
+  } @else if (loadFailed()) {
+    <div
+      class="mx-auto mt-10 flex flex-col items-center gap-3 rounded-lg bg-background-100 p-6 text-center shadow-lg md:w-2/3"
+      role="alert"
+    >
+      <p>
+        Your stops could not be loaded. Check your connection and try again.
+      </p>
+      <button class="btn btn-primary btn-sm" (click)="loadStops()">
+        Try again
+      </button>
+    </div>
+  } @else if (!stops() || stops().length === 0) {
     <div class="text-center text-xl font-semibold">
       No stops available. Please contact your stop manager or administrator.
     </div>

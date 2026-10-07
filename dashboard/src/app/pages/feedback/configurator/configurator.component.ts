@@ -20,6 +20,7 @@ import { FeedbackPreviewComponent } from './components/feedback-preview/feedback
 import { FeedbackQuestionListComponent } from './components/feedback-question-list/feedback-question-list.component';
 import { FeedbackQuestionEditorComponent } from './components/feedback-question-editor/feedback-question-editor.component';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
+import { errorText, ToastService } from '@/core/services/toast.service';
 
 export type QuestionType =
   | 'Text'
@@ -60,6 +61,8 @@ export class FeedbackConfiguratorComponent implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly feedbackService = inject(FeedbackService);
   private scrollService = inject(ScrollPersistenceService);
+  private toast = inject(ToastService);
+  saving = signal<boolean>(false);
 
   // State signals
   readonly questions = signal<FeedbackQuestion[]>([]);
@@ -109,9 +112,16 @@ export class FeedbackConfiguratorComponent implements OnInit {
   }
 
   async loadQuestions(): Promise<void> {
-    const fetchedQuestions =
-      await this.feedbackService.getAllFeedbackQuestions();
-    this.questions.set(fetchedQuestions);
+    try {
+      const fetchedQuestions =
+        await this.feedbackService.getAllFeedbackQuestions();
+      this.questions.set(fetchedQuestions);
+    } catch (error) {
+      console.error('Failed to load feedback questions', error);
+      this.toast.error(
+        errorText(error, 'The feedback questions could not be loaded.')
+      );
+    }
   }
 
   addNewQuestion(): void {
@@ -263,8 +273,22 @@ export class FeedbackConfiguratorComponent implements OnInit {
     if (title) this.formTitle.set(title);
     if (subtitle) this.formSubtitle.set(subtitle);
 
-    await this.feedbackService.saveFeedbackQuestions(this.questions());
-    alert('Changes saved successfully!');
+    if (this.saving()) return;
+    this.saving.set(true);
+    try {
+      await this.feedbackService.saveFeedbackQuestions(this.questions());
+      this.toast.success('Feedback questions saved.');
+    } catch (error) {
+      console.error('Failed to save feedback questions', error);
+      this.toast.error(
+        errorText(
+          error,
+          'The feedback questions could not be saved. Your changes are still here, please try again.'
+        )
+      );
+    } finally {
+      this.saving.set(false);
+    }
   }
 
   // Helper to get choice questions for dependency selection

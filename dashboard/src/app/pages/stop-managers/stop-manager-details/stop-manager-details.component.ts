@@ -30,6 +30,8 @@ export class StopManagerDetailsComponent implements OnInit {
   private stopManagerService = inject(StopManagerService);
   private scrollService = inject(ScrollPersistenceService);
   stops = signal<Stop[]>([]);
+  loading = signal<boolean>(true);
+  loadFailed = signal<boolean>(false);
   keycloak = inject(Keycloak);
 
   username = signal<string>('');
@@ -39,7 +41,7 @@ export class StopManagerDetailsComponent implements OnInit {
     const userProfile = await this.keycloak.loadUserProfile();
     const username = userProfile.username || '';
     this.username.set(username);
-    this.stops.set(await this.stopService.getStopsForStopManager(username));
+    await this.loadStops();
     try {
       this.stopManager.set(
         await this.stopManagerService.getStopManagerById(username)
@@ -48,5 +50,20 @@ export class StopManagerDetailsComponent implements OnInit {
       console.error('Failed to load stop manager profile', e);
     }
     this.scrollService.restoreScroll();
+  }
+
+  async loadStops() {
+    this.loading.set(true);
+    this.loadFailed.set(false);
+    try {
+      this.stops.set(
+        await this.stopService.getStopsForStopManager(this.username())
+      );
+    } catch (e) {
+      console.error('Failed to load stops of stop manager', e);
+      this.loadFailed.set(true);
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

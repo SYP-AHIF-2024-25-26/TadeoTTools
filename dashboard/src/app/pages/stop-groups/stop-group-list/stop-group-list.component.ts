@@ -4,8 +4,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { Division, Info, Stop, StopGroup } from '@/shared/models/types';
-import { InfoPopupComponent } from '@/shared/modals/info-modal/info-modal.component';
+import { Division, Stop, StopGroup } from '@/shared/models/types';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { StopGroupService } from '@/core/services/stopgroup.service';
 import { DivisionService } from '@/core/services/division.service';
@@ -16,6 +15,7 @@ import { StopSidebarComponent } from './components/stop-sidebar/stop-sidebar.com
 import { AddStopDialogComponent } from './components/add-stop-dialog/add-stop-dialog.component';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 import { Router } from '@angular/router';
+import { ToastService } from '@/core/services/toast.service';
 import { HasUnsavedChanges } from '@/core/guards/unsaved-changes.guard';
 import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spinner.component';
 
@@ -23,7 +23,6 @@ import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spi
   selector: 'app-stopgroups',
   standalone: true,
   imports: [
-    InfoPopupComponent,
     DeletePopupComponent,
     StopGroupHeaderComponent,
     StopGroupListComponent,
@@ -39,12 +38,12 @@ export class StopGroupsComponent implements OnInit, HasUnsavedChanges {
   private stopService = inject(StopService);
   private scrollService = inject(ScrollPersistenceService);
   private router = inject(Router);
+  private toast = inject(ToastService);
 
   hasChanged = signal<boolean>(false);
   loading = signal<boolean>(true);
   loadFailed = signal<boolean>(false);
   saving = signal<boolean>(false);
-  infos = signal<Info[]>([]);
 
   // Stop lists as last loaded/saved, so only groups whose stops changed are re-sent.
   private savedStopIds = new Map<number, string>();
@@ -150,23 +149,6 @@ export class StopGroupsComponent implements OnInit, HasUnsavedChanges {
     this.router.navigate(['/stopgroup']);
   }
 
-  addInfo(type: string, message: string): void {
-    const maxId = this.infos().reduce(
-      (max, item) => (item.id > max ? item.id : max),
-      0
-    );
-    const info = {
-      id: maxId + 1,
-      type: type,
-      message: message,
-    } as Info;
-    this.infos.update((oldInfos) => [...oldInfos, info]);
-  }
-
-  deleteInfo(index: number) {
-    this.infos.update((infos) => infos.filter((info) => info.id !== index));
-  }
-
   dropStop(event: CdkDragDrop<any, any>) {
     if (event.previousContainer.id === 'all-stops') {
       const stopId = this.filteredStops()[event.previousIndex].id;
@@ -256,11 +238,10 @@ export class StopGroupsComponent implements OnInit, HasUnsavedChanges {
       );
       this.rememberSavedStops();
       this.hasChanged.set(false);
-      this.addInfo('info', 'Tour order saved.');
+      this.toast.success('Tour order saved.');
     } catch (error) {
       console.error('Failed to save the tour', error);
-      this.addInfo(
-        'error',
+      this.toast.error(
         'The tour could not be saved. Your changes are still here, please try again.'
       );
     } finally {

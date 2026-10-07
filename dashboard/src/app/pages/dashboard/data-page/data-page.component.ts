@@ -8,6 +8,12 @@ import { downloadFile } from '@/shared/utils/utils';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { FeatureFlagService } from '@/core/services/feature-flag.service';
 import { FormsModule } from '@angular/forms';
+import { errorText, ToastService } from '@/core/services/toast.service';
+import { ImportResult } from '@/shared/models/types';
+import { plural } from '@/shared/utils/utils';
+type ImportKind = 'students' | 'stopManagers' | 'assignments';
+type ImportFeedback = { ok: boolean; message: string };
+
 @Component({
   selector: 'app-data-page',
   imports: [DeletePopupComponent, FormsModule],
@@ -27,6 +33,7 @@ export class DataPageComponent {
   private stopService = inject(StopService);
   private divisionService = inject(DivisionService);
   private featureFlagService = inject(FeatureFlagService);
+  private toast = inject(ToastService);
 
   async ngOnInit() {
     try {
@@ -36,6 +43,7 @@ export class DataPageComponent {
       this.countdownValue.set(showCountdown.value);
     } catch (e) {
       console.error('Failed to load feature flag', e);
+      this.toast.error('The countdown settings could not be loaded.');
     }
   }
 
@@ -46,10 +54,18 @@ export class DataPageComponent {
         this.showCountdown(),
         this.countdownValue()
       );
+      this.toast.success(
+        this.showCountdown()
+          ? 'The countdown is now shown in the visitor app.'
+          : 'The countdown is now hidden in the visitor app.'
+      );
     } catch (e) {
       console.error('Failed to update feature flag', e);
       // Revert on failure
       this.showCountdown.update((v) => !v);
+      this.toast.error(
+        errorText(e, 'The countdown setting could not be saved.')
+      );
     }
   }
 
@@ -59,8 +75,10 @@ export class DataPageComponent {
         this.showCountdown(),
         this.countdownValue()
       );
+      this.toast.success('Countdown date saved.');
     } catch (e) {
       console.error('Failed to update countdown value', e);
+      this.toast.error(errorText(e, 'The countdown date could not be saved.'));
     }
   }
 
@@ -71,42 +89,10 @@ export class DataPageComponent {
     }
   }
 
-  async submitStudentsCsv(): Promise<void> {
-    if (!this.selectedStudentFile) {
-      alert('Please select a CSV file first');
-      return;
-    }
-
-    try {
-      await this.studentService.uploadStudentsCsv(
-        this.selectedStudentFile() as File
-      );
-      location.reload();
-    } catch (error) {
-      console.error('Error uploading CSV:', error);
-    }
-  }
-
   onStopManagerFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedStopManagerFile.set(input.files[0]);
-    }
-  }
-
-  async submitStopManagersCsv(): Promise<void> {
-    if (!this.selectedStopManagerFile) {
-      alert('Please select a CSV file first');
-      return;
-    }
-
-    try {
-      await this.stopManagerService.uploadStopManagersCsv(
-        this.selectedStopManagerFile() as File
-      );
-      location.reload();
-    } catch (error) {
-      console.error('Error uploading CSV:', error);
     }
   }
 
@@ -116,7 +102,9 @@ export class DataPageComponent {
       downloadFile(blob, 'feedback_answers.csv');
     } catch (error) {
       console.error('Failed to download file:', error);
-      alert('Failed to download feedback answers');
+      this.toast.error(
+        errorText(error, 'The feedback answers could not be downloaded.')
+      );
     }
   }
 
@@ -126,7 +114,9 @@ export class DataPageComponent {
       downloadFile(blob, 'students_data.csv');
     } catch (error) {
       console.error('Failed to download file:', error);
-      alert('Failed to download students data');
+      this.toast.error(
+        errorText(error, 'The students data could not be downloaded.')
+      );
     }
   }
 
@@ -136,7 +126,9 @@ export class DataPageComponent {
       downloadFile(blob, 'stops_data.csv');
     } catch (error) {
       console.error('Failed to download file:', error);
-      alert('Failed to download stops data');
+      this.toast.error(
+        errorText(error, 'The stops data could not be downloaded.')
+      );
     }
   }
 
@@ -146,7 +138,9 @@ export class DataPageComponent {
       downloadFile(blob, 'division_data.csv');
     } catch (error) {
       console.error('Failed to download file:', error);
-      alert('Failed to download division data');
+      this.toast.error(
+        errorText(error, 'The division data could not be downloaded.')
+      );
     }
   }
 
@@ -213,41 +207,74 @@ export class DataPageComponent {
     }
   }
 
-  async submitStudentAssignmentsCsv(): Promise<void> {
-    if (!this.selectedStudentAssignmentFile()) {
-      alert('Please select a CSV file first');
+  importing = signal<ImportKind | null>(null);
+  importResults = signal<Partial<Record<ImportKind, ImportFeedback>>>({});
+
+  submitStudentsCsv() {
+    return this.runImport(
+      'students',
+      this.selectedStudentFile(),
+      (file) => this.studentService.uploadStudentsCsv(file),
+      'student'
+    );
+  }
+
+  submitStopManagersCsv() {
+    return this.runImport(
+      'stopManagers',
+      this.selectedStopManagerFile(),
+      (file) => this.stopManagerService.uploadStopManagersCsv(file),
+      'stop manager'
+    );
+  }
+
+  submitStudentAssignmentsCsv() {
+    return this.runImport(
+      'assignments',
+      this.selectedStudentAssignmentFile(),
+      (file) => this.studentService.uploadStudentAssignmentsCsv(file),
+      'assignment'
+    );
+  }
+
+  private async runImport(
+    kind: ImportKind,
+    file: File | null,
+    upload: (file: File) => Promise<ImportResult>,
+    noun: string
+  ) {
+    if (!file || this.importing()) {
       return;
     }
-
+    this.importing.set(kind);
+    this.setImportResult(kind, undefined);
     try {
-      await this.studentService.uploadStudentAssignmentsCsv(
-        this.selectedStudentAssignmentFile() as File
-      );
-      alert('Student assignments imported successfully!');
-      location.reload();
-    } catch (error: any) {
+      const result = await upload(file);
+      let message = `Imported ${plural(result.added, noun)}.`;
+      if (result.skipped > 0) {
+        message += ` ${plural(result.skipped, 'row')} skipped because ${
+          result.skipped === 1 ? 'it' : 'they'
+        } already existed.`;
+      }
+      this.setImportResult(kind, { ok: true, message });
+    } catch (error) {
       console.error('Error uploading CSV:', error);
-
-      // Extract error message from backend response
-      let errorMessage =
-        'Failed to import student assignments. Please check the file format.';
-
-      if (error?.error) {
-        // If error.error is a string, use it directly
-        if (typeof error.error === 'string') {
-          errorMessage = error.error;
-        }
-        // If error.error has a message property
-        else if (error.error?.message) {
-          errorMessage = error.error.message;
-        }
-      }
-      // If error has a message property directly
-      else if (error?.message) {
-        errorMessage = error.message;
-      }
-
-      alert(errorMessage);
+      this.setImportResult(kind, {
+        ok: false,
+        message: errorText(
+          error,
+          'The import failed. Check that the file matches the format shown below.'
+        ),
+      });
+    } finally {
+      this.importing.set(null);
     }
+  }
+
+  private setImportResult(
+    kind: ImportKind,
+    feedback: ImportFeedback | undefined
+  ) {
+    this.importResults.update((results) => ({ ...results, [kind]: feedback }));
   }
 }

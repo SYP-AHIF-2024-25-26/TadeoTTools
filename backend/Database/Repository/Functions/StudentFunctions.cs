@@ -83,7 +83,7 @@ public class StudentFunctions
     }
 
 
-    public static async Task ParseStudentsCsv(string csvData, TadeoTDbContext context)
+    public static async Task<ImportResult> ParseStudentsCsv(string csvData, TadeoTDbContext context)
     {
         var lines = csvData.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
 
@@ -105,10 +105,12 @@ public class StudentFunctions
                     StudentClass = cols[3],
                     Department = cols[4],
                 })
-                .Where(s => !context.Students.Any(st => EF.Functions.ILike(st.EdufsUsername, s.EdufsUsername)));
+                .Where(s => !context.Students.Any(st => EF.Functions.ILike(st.EdufsUsername, s.EdufsUsername)))
+                .ToList();
 
             await context.Students.AddRangeAsync(students);
             await context.SaveChangesAsync();
+            return new ImportResult(students.Count, lines.Length - students.Count);
         }
         else
         {
@@ -116,7 +118,7 @@ public class StudentFunctions
         }
     }
 
-    public static async Task ParseStudentAssignmentsCsv(string csvData, TadeoTDbContext context)
+    public static async Task<ImportResult> ParseStudentAssignmentsCsv(string csvData, TadeoTDbContext context)
     {
         var lines = csvData.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
 
@@ -141,6 +143,7 @@ public class StudentFunctions
 
         var errors = new List<string>();
         var assignmentsToAdd = new List<StudentAssignment>();
+        var skipped = 0;
 
         foreach (var line in dataLines)
         {
@@ -186,6 +189,7 @@ public class StudentFunctions
             if (existingAssignment != null)
             {
                 // Skip duplicate assignments
+                skipped++;
                 continue;
             }
 
@@ -210,5 +214,6 @@ public class StudentFunctions
 
         await context.StudentAssignments.AddRangeAsync(assignmentsToAdd);
         await context.SaveChangesAsync();
+        return new ImportResult(assignmentsToAdd.Count, skipped);
     }
 }

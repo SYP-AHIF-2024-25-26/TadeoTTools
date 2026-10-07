@@ -30,7 +30,11 @@
             </svg>
             {{ isPreviewMode() ? 'Exit Preview' : 'Preview Form' }}
           </button>
-          <button (click)="saveQuestions()" class="btn btn-primary">
+          <button
+            (click)="saveQuestions()"
+            class="btn btn-primary"
+            [disabled]="saving()"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="mr-1 h-5 w-5"
@@ -80,7 +84,11 @@
             </svg>
             {{ isPreviewMode() ? 'Exit Preview' : 'Preview Form' }}
           </button>
-          <button (click)="saveQuestions()" class="btn btn-primary">
+          <button
+            (click)="saveQuestions()"
+            class="btn btn-primary"
+            [disabled]="saving()"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="mr-1 h-5 w-5"

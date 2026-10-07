@@ -48,7 +48,7 @@
     </div>
 
     @if (!dataCollapsed()) {
-      <app-student-import-export />
+      <app-student-import-export (imported)="refreshStudents()" />
     }
 
     <!-- Filters and Search -->

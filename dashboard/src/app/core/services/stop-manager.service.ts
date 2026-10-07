@@ -3,6 +3,7 @@ import {
   StopManager,
   CreateStopManagerRequest,
   UpdateStopManagerRequest,
+  ImportResult,
 } from '@/shared/models/types';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from '@/app.config';
@@ -52,12 +53,12 @@ export class StopManagerService {
     );
   }
 
-  uploadStopManagersCsv(file: File) {
+  uploadStopManagersCsv(file: File): Promise<ImportResult> {
     const formData = new FormData();
     formData.append('file', file);
 
     return firstValueFrom(
-      this.httpClient.post<void>(
+      this.httpClient.post<ImportResult>(
         `${this.baseUrl}/api/stopmanagers/upload`,
         formData
       )

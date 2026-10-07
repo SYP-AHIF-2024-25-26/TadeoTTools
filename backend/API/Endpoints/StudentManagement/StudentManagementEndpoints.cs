@@ -96,10 +96,8 @@ public class StudentManagementEndpoints
             {
                 await file.File.CopyToAsync(stream);
                 var csvData = Encoding.UTF8.GetString(stream.ToArray());
-                await StudentFunctions.ParseStudentsCsv(csvData, context);
+                return Results.Ok(await StudentFunctions.ParseStudentsCsv(csvData, context));
             }
-
-            return Results.Ok("File uploaded successfully");
         }
         catch (Exception e)
         {
@@ -213,10 +211,8 @@ public class StudentManagementEndpoints
             {
                 await file.File.CopyToAsync(stream);
                 var csvData = Encoding.UTF8.GetString(stream.ToArray());
-                await StudentFunctions.ParseStudentAssignmentsCsv(csvData, context);
+                return Results.Ok(await StudentFunctions.ParseStudentAssignmentsCsv(csvData, context));
             }
-
-            return Results.Ok("Student assignments imported successfully");
         }
         catch (Exception e)
         {
