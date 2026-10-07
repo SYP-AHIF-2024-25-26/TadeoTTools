@@ -249,8 +249,8 @@
       <input
         type="checkbox"
         class="toggle toggle-primary"
-        [(ngModel)]="showCountdown"
-        (click)="setShowCountdown()"
+        [checked]="showCountdown()"
+        (change)="setShowCountdown()"
       />
     </label>
   </div>

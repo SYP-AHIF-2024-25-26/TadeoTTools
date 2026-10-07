@@ -9,7 +9,6 @@ import { FeedbackQuestion } from '@/shared/models/types';
 
 @Component({
   selector: 'app-feedback-question-list',
-  standalone: true,
   imports: [CdkDropList, CdkDrag, CdkDragHandle],
   templateUrl: './feedback-question-list.component.html',
 })

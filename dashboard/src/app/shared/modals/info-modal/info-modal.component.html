@@ -8,6 +8,15 @@
     [attr.role]="info.type === 'error' ? 'alert' : 'status'"
   >
     {{ info.message }}
+    @if (info.action; as action) {
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm ml-4 underline"
+        (click)="runAction()"
+      >
+        {{ action.label }}
+      </button>
+    }
     <button
       class="ml-6 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-medium hover:bg-black/10"
       aria-label="Dismiss"

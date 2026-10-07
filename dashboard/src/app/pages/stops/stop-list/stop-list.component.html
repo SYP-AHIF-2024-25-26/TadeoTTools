@@ -1,8 +1,10 @@
 <div class="m-4 flex flex-col items-center text-text-950 dark:text-text-100">
-  <h2 class="my-6 ml-[20px] self-center text-2xl font-bold">Stops</h2>
-  <button [routerLink]="['/stop']" class="btn btn-primary absolute right-4">
-    Add Stop
-  </button>
+  <div
+    class="my-6 flex w-full max-w-6xl flex-wrap items-center justify-between gap-3"
+  >
+    <h2 class="text-2xl font-bold">Stops</h2>
+    <a [routerLink]="['/stop']" class="btn btn-primary">Add Stop</a>
+  </div>
 
   <!-- Action Buttons and Filter Toggle -->
   <div class="mb-6 flex flex-wrap justify-center gap-4">
@@ -45,24 +47,26 @@
     <div class="mx-4 mb-4 flex w-full max-w-6xl flex-wrap justify-center gap-4">
       <!-- Stop Name Search -->
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
-        <label class="label">
+        <label for="stop-filter-stop-name" class="label">
           <span class="label-text">Stop Name</span>
         </label>
         <input
+          id="stop-filter-stop-name"
           type="text"
           placeholder="Search stop names..."
-          class="input input-bordered w-full bg-primary-300 placeholder-white hover:bg-primary-400 dark:placeholder-white"
+          class="input input-bordered w-full bg-primary-500 placeholder-white hover:bg-primary-600 dark:bg-primary-300 dark:placeholder-white dark:hover:bg-primary-400"
           [(ngModel)]="stopNameSearchTerm"
         />
       </div>
 
       <!-- Stop Group Filter -->
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
-        <label class="label">
+        <label for="stop-filter-stop-group" class="label">
           <span class="label-text">Stop Group</span>
         </label>
         <select
-          class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+          id="stop-filter-stop-group"
+          class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
           [(ngModel)]="stopGroupFilter"
         >
           <option value="">All Stop Groups</option>
@@ -74,13 +78,14 @@
 
       <!-- Stop Manager Search -->
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
-        <label class="label">
+        <label for="stop-filter-stop-manager" class="label">
           <span class="label-text">Stop Manager</span>
         </label>
         <input
+          id="stop-filter-stop-manager"
           type="text"
           placeholder="Search stop managers..."
-          class="input input-bordered w-full bg-primary-300 placeholder-white hover:bg-primary-400 dark:placeholder-white"
+          class="input input-bordered w-full bg-primary-500 placeholder-white hover:bg-primary-600 dark:bg-primary-300 dark:placeholder-white dark:hover:bg-primary-400"
           [(ngModel)]="stopManagerSearchTerm"
         />
       </div>
@@ -88,13 +93,13 @@
       <!-- Division Filter -->
 
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
-        <label class="label">
+        <label for="stop-filter-division" class="label">
           <span class="label-text">Division</span>
         </label>
         <select
-          id="divisions"
+          id="stop-filter-division"
           [(ngModel)]="divisionFilter"
-          class="select select-bordered w-full bg-primary-300 text-primary-content hover:bg-primary-400"
+          class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
           name="divisions-select"
         >
           <option value="0" selected>All Divisions</option>
@@ -264,7 +269,7 @@
                 <td class="px-4 py-3">
                   <div class="flex flex-col gap-1">
                     <span
-                      class="w-fit rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
+                      class="w-fit rounded-full bg-teal-100 px-2 py-0.5 text-xs font-medium text-teal-800 dark:bg-teal-900/30 dark:text-teal-300"
                     >
                       Pending: {{ getStudentCounts(stop.id).requested }}
                     </span>
@@ -277,11 +282,12 @@
                 </td>
                 <td class="px-4 py-2">
                   <div class="flex items-center gap-1">
-                    <button
+                    <a
                       class="btn btn-ghost btn-xs"
                       [routerLink]="['/stop']"
                       [queryParams]="{ id: stop.id }"
                       title="Edit stop"
+                      [attr.aria-label]="'Edit ' + stop.name"
                     >
                       <svg
                         class="h-3 w-3"
@@ -302,7 +308,7 @@
                           d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                         ></path>
                       </svg>
-                    </button>
+                    </a>
                   </div>
                 </td>
               </tr>
@@ -354,7 +360,7 @@
             </h3>
             <div class="flex flex-shrink-0 flex-row gap-1.5">
               <span
-                class="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
+                class="rounded-full bg-teal-100 px-2 py-0.5 text-xs font-medium text-teal-800 dark:bg-teal-900/30 dark:text-teal-300"
               >
                 Pending: {{ getStudentCounts(stop.id).requested }}
               </span>
@@ -420,7 +426,7 @@
 
           <!-- Card Actions -->
           <div class="mt-4 flex justify-end">
-            <button
+            <a
               class="btn btn-outline btn-sm"
               [routerLink]="['/stop']"
               [queryParams]="{ id: stop.id }"
@@ -439,7 +445,7 @@
                   d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"
                 ></path>
               </svg>
-            </button>
+            </a>
           </div>
         </div>
       </div>

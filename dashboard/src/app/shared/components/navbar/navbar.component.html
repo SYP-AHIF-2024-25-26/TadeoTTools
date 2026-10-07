@@ -18,13 +18,14 @@
     <div class="hidden space-x-4 md:flex md:items-center md:justify-start">
       @if (isAdmin()) {
         @for (link of navLinks; track link.route) {
-          <button
+          <a
             class="px-3 py-2"
             [routerLink]="[link.route]"
-            routerLinkActive="bg-primary underline font-medium rounded"
+            routerLinkActive="bg-primary text-primary-content underline font-medium rounded"
+            ariaCurrentWhenActive="page"
           >
             {{ link.label }}
-          </button>
+          </a>
         }
       }
     </div>
@@ -34,6 +35,8 @@
         <input
           type="checkbox"
           class="peer sr-only"
+          aria-label="Dark mode"
+          [checked]="!isWhiteMode()"
           (click)="changeDarkMode()"
         />
         <div
@@ -55,6 +58,9 @@
       <!-- Hamburger (mobile only) -->
       <button
         class="inline-flex items-center justify-center rounded p-2 text-text-900 hover:bg-background-300 focus:outline-none"
+        type="button"
+        aria-label="Menu"
+        [attr.aria-expanded]="mobileMenuOpen()"
         (click)="mobileMenuOpen.set(!mobileMenuOpen())"
       >
         <svg
@@ -88,7 +94,7 @@
                   class="block px-4 py-2 text-sm text-secondary-content"
                   (click)="mobileMenuOpen.set(false)"
                   [routerLink]="[link.route]"
-                  routerLinkActive="bg-primary font-medium"
+                  routerLinkActive="bg-primary text-primary-content font-medium"
                 >
                   {{ link.label }}
                 </a>

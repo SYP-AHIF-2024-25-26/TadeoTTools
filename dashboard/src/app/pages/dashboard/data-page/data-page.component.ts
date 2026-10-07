@@ -18,7 +18,6 @@ type ImportFeedback = { ok: boolean; message: string };
   selector: 'app-data-page',
   imports: [DeletePopupComponent, FormsModule],
   templateUrl: './data-page.component.html',
-  standalone: true,
 })
 export class DataPageComponent {
   selectedStudentFile: WritableSignal<File | null> = signal(null);

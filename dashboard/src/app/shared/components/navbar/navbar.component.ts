@@ -7,7 +7,6 @@ import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
-  standalone: true,
   imports: [
     RouterModule,
     RouterLinkActive,

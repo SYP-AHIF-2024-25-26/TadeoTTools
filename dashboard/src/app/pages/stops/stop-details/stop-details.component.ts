@@ -29,7 +29,6 @@ import { ScrollPersistenceService } from '@/core/services/scroll-persistence.ser
 
 @Component({
   selector: 'app-stop-details',
-  standalone: true,
   imports: [
     FormsModule,
     RouterModule,

@@ -7,16 +7,15 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
 import { Stop, Student, Status } from '@/shared/models/types';
 import { sortStudents, downloadFile } from '@/shared/utils/utils';
 import { StopService } from '@/core/services/stop.service';
 import { errorText, ToastService } from '@/core/services/toast.service';
+import { statusBadgeClass, statusText } from '@/shared/utils/assignment-status';
 
 @Component({
   selector: 'app-stop-students',
-  standalone: true,
-  imports: [FormsModule, NgClass],
+  imports: [FormsModule],
   templateUrl: './stop-students.component.html',
 })
 export class StopStudentsComponent {
@@ -164,35 +163,19 @@ export class StopStudentsComponent {
   }
 
   getStatusLabel(status: Status): string {
-    switch (status) {
-      case Status.Pending:
-        return 'Pending';
-      case Status.Accepted:
-        return 'Approved';
-      case Status.Declined:
-        return 'Rejected';
-      default:
-        return 'Unknown';
-    }
+    return statusText(status);
   }
 
   getStatusClass(status: Status): string {
-    switch (status) {
-      case Status.Pending:
-        return 'bg-yellow-200 text-yellow-800';
-      case Status.Accepted:
-        return 'bg-green-200 text-green-800';
-      case Status.Declined:
-        return 'bg-red-200 text-red-800';
-      default:
-        return '';
-    }
+    return statusBadgeClass(status);
   }
 
   getStudentOtherAssignmentsCount(edufsUsername: string): number {
     const assignments = this.students()
       .find((s) => s.edufsUsername === edufsUsername)
-      ?.studentAssignments.filter((a) => a.stopId !== this.stop().id);
+      ?.studentAssignments.filter(
+        (a) => a.stopId !== this.stop().id && a.status !== Status.Declined
+      );
     return assignments ? assignments.length : 0;
   }
 

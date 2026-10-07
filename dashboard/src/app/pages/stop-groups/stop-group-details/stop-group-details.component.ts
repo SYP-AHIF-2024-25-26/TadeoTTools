@@ -18,7 +18,6 @@ import { StopGroupStopSelectorComponent } from '@/pages/stop-groups/stop-group-d
 
 @Component({
   selector: 'app-stopgroup-details',
-  standalone: true,
   imports: [
     FormsModule,
     RouterModule,

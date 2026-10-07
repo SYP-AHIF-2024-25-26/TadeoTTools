@@ -1,66 +1,43 @@
-import { Component, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { Status, Student } from '@/shared/models/types';
-import { StudentService } from '@/core/services/student.service';
+import { plural } from '@/shared/utils/utils';
+import { statusBadgeClass, statusText } from '@/shared/utils/assignment-status';
 
+// Shows a student's competing requests. Saving happens in the student list,
+// which owns the busy state, error toasts and Undo.
 @Component({
   selector: 'app-conflict-details-modal',
-  standalone: true,
+  imports: [CdkTrapFocus],
   templateUrl: './conflict-details-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(document:keydown.escape)': 'close.emit()' },
 })
 export class ConflictDetailsModalComponent {
-  private studentService = inject(StudentService);
-
   readonly student = input.required<Student>();
+  // Approved students per stop id.
+  readonly approvedCounts = input<Map<number, number>>(new Map());
+  readonly busy = input<boolean>(false);
+
   readonly close = output<void>();
-  readonly refresh = output<void>();
+  readonly assignHere = output<number>();
+  readonly setStatus = output<{ index: number; status: Status }>();
+  readonly remove = output<number>();
 
   protected readonly Status = Status;
+  protected readonly statusText = statusText;
+  protected readonly statusBadgeClass = statusBadgeClass;
 
-  async deleteAssignment(index: number) {
-    const s = this.student();
-    s.studentAssignments.splice(index, 1);
-    await this.studentService.updateStudent(s);
-    this.refresh.emit();
+  approvedText(stopId: number): string {
+    return `${plural(this.approvedCounts().get(stopId) ?? 0, 'student')} approved`;
   }
 
-  async changeAssignmentStatus(index: number, status: Status) {
-    const s = this.student();
-    s.studentAssignments[index].status = status;
-    await this.studentService.updateStudent(s);
-    this.refresh.emit();
-  }
-
-  async approveAssignment(index: number): Promise<void> {
-    await this.changeAssignmentStatus(index, Status.Accepted);
-  }
-
-  async rejectAssignment(index: number): Promise<void> {
-    await this.changeAssignmentStatus(index, Status.Declined);
-  }
-
-  async undoAssignment(index: number): Promise<void> {
-    await this.changeAssignmentStatus(index, Status.Pending);
-  }
-
-  getStatusClass(status: Status): string {
-    switch (status) {
-      case Status.Accepted:
-        return 'text-green-500 font-bold';
-      case Status.Declined:
-        return 'text-red-500 font-bold';
-      default:
-        return 'text-yellow-500 font-bold';
-    }
-  }
-
-  getStatusText(status: Status): string {
-    switch (status) {
-      case Status.Accepted:
-        return 'Approved';
-      case Status.Declined:
-        return 'Rejected';
-      default:
-        return 'Pending';
-    }
+  requestedBy(managers: string[] | undefined): string {
+    return managers?.length ? managers.join(', ') : 'No stop manager';
   }
 }

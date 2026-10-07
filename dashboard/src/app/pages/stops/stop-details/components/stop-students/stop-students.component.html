@@ -1,12 +1,18 @@
 <div class="mb-4">
-  <div
-    class="mb-2 flex cursor-pointer items-center justify-between rounded-lg bg-primary-200 p-2 pl-5"
-    (click)="toggle()"
-  >
-    <h1 class="text-lg font-medium text-text-950">Students</h1>
-    <span class="text-text-900">{{ isExpanded() ? '▼' : '►' }}</span>
-  </div>
-  <div [ngClass]="{ hidden: !isExpanded() }">
+  <h2 class="mb-2">
+    <button
+      type="button"
+      class="flex w-full cursor-pointer items-center justify-between rounded-lg bg-primary-200 p-2 pl-5 text-left"
+      [attr.aria-expanded]="isExpanded()"
+      (click)="toggle()"
+    >
+      <span class="text-lg font-medium text-text-950">Students</span>
+      <span class="text-text-900" aria-hidden="true">{{
+        isExpanded() ? '▼' : '►'
+      }}</span>
+    </button>
+  </h2>
+  <div [class.hidden]="!isExpanded()">
     <div class="mt-4 flex flex-col gap-4 md:flex-row">
       <!-- Selected Students (Left Side) -->
       <div class="w-full md:w-1/2">
@@ -77,15 +83,20 @@
                 <div class="flex items-center">
                   <span
                     class="mr-2 rounded-full px-2 py-0.5 text-xs font-medium"
-                    [ngClass]="getStatusClass(getAssignmentStatus(student))"
+                    [class]="getStatusClass(getAssignmentStatus(student))"
                   >
                     {{ getStatusLabel(getAssignmentStatus(student)) }}
                   </span>
-                  <span
-                    class="cursor-pointer text-lg font-bold text-accent-600"
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-xs text-lg font-bold text-accent-600"
+                    [attr.aria-label]="
+                      'Remove ' + student.firstName + ' ' + student.lastName
+                    "
                     (click)="removeStudent(student.edufsUsername)"
-                    >−</span
                   >
+                    −
+                  </button>
                 </div>
               </li>
             }
@@ -161,7 +172,9 @@
                     >({{ student.studentClass }})</span
                   >
                   @if (hasOtherAssignments(student.edufsUsername)) {
-                    <span class="ml-2 text-sm font-medium text-amber-700">
+                    <span
+                      class="ml-2 text-sm font-medium text-orange-700 dark:text-orange-400"
+                    >
                       ({{
                         getStudentOtherAssignmentsCount(student.edufsUsername)
                       }}
@@ -175,11 +188,16 @@
                   }
                 </div>
                 <div class="flex items-center">
-                  <span
-                    class="cursor-pointer text-lg font-bold text-primary-600"
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-xs text-lg font-bold text-primary-600"
+                    [attr.aria-label]="
+                      'Add ' + student.firstName + ' ' + student.lastName
+                    "
                     (click)="onStudentClick(student.edufsUsername)"
-                    >+</span
                   >
+                    +
+                  </button>
                 </div>
               </li>
             }

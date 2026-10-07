@@ -3,19 +3,42 @@
 >
   <div
     class="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-background-100"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="division-dialog-title"
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
   >
     <!-- Form Header -->
     <div
       class="mb-6 flex items-center justify-between border-b border-background-200 pb-4 dark:border-background-700"
     >
-      <h2 class="text-2xl font-bold text-secondary-content">
-        {{ id === -1 ? 'New Division' : 'Edit Division' }}
+      <h2
+        id="division-dialog-title"
+        class="text-2xl font-bold text-secondary-content"
+      >
+        {{ id() === -1 ? 'New Division' : 'Edit Division' }}
       </h2>
       <button
+        type="button"
         (click)="cancelPopup()"
         class="btn btn-circle btn-ghost btn-sm text-secondary-content"
+        aria-label="Close"
       >
-        ✕
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
       </button>
     </div>
 
@@ -95,14 +118,14 @@
       </div>
 
       <!-- Image Preview -->
-      @if (filePreview) {
+      @if (filePreview()) {
         <div class="mt-4">
           <label class="label"
             ><span class="label-text">New Image Preview:</span></label
           >
           <div class="flex items-center gap-4">
             <img
-              [src]="filePreview"
+              [src]="filePreview()"
               alt="Image Preview"
               class="h-20 w-20 rounded-lg border border-base-300 object-cover"
             />
@@ -115,14 +138,14 @@
             </button>
           </div>
         </div>
-      } @else if (id !== -1 && !imageDeleted()) {
+      } @else if (id() !== -1 && !imageDeleted()) {
         <div class="mt-4">
           <label class="label"
             ><span class="label-text">Current Image:</span></label
           >
           <div class="flex items-center gap-4">
             <img
-              [src]="baseUrl + '/divisions/' + id + '/image'"
+              [src]="baseUrl + '/divisions/' + id() + '/image'"
               alt="Current Division Image"
               class="h-20 w-20 rounded-lg border border-base-300 object-cover"
             />
@@ -142,7 +165,7 @@
         class="flex flex-col-reverse gap-4 pt-6 sm:flex-row sm:justify-between"
       >
         <div>
-          @if (id !== -1) {
+          @if (id() !== -1) {
             <button
               type="button"
               (click)="confirmAction.set('division')"
@@ -160,8 +183,12 @@
           >
             Cancel
           </button>
-          <button type="submit" class="btn btn-primary w-full sm:w-auto">
-            {{ id === -1 ? 'Create Division' : 'Save Changes' }}
+          <button
+            type="submit"
+            class="btn btn-primary w-full sm:w-auto"
+            [disabled]="saving()"
+          >
+            {{ id() === -1 ? 'Create Division' : 'Save Changes' }}
           </button>
         </div>
       </div>

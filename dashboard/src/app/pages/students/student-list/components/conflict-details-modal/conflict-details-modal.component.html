@@ -1,128 +1,114 @@
 <div
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
 >
   <div
-    class="max-h-[80vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-white p-6 shadow-lg dark:bg-background-800"
+    class="max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-white p-6 shadow-lg dark:bg-background-800"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="conflict-dialog-title"
+    aria-describedby="conflict-dialog-hint"
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
   >
-    <div class="mb-4 flex items-center justify-between">
-      <h3 class="text-xl font-bold">
+    <div class="mb-2 flex items-center justify-between gap-4">
+      <h3 id="conflict-dialog-title" class="text-xl font-bold">
         Resolve Conflict: {{ student().firstName }}
         {{ student().lastName }}
       </h3>
-      <button class="btn btn-circle btn-sm" (click)="close.emit()">✕</button>
+      <button
+        type="button"
+        class="btn btn-circle btn-ghost btn-sm"
+        aria-label="Close"
+        (click)="close.emit()"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
     </div>
+    <p id="conflict-dialog-hint" class="mb-4 text-sm text-text-700">
+      {{ student().studentClass }} · {{ student().department }}. More than one
+      stop wants this student. "Assign here" approves that stop and rejects the
+      others.
+    </p>
 
-    <div class="hidden overflow-x-auto md:block">
-      <table class="table table-zebra w-full">
-        <thead>
-          <tr>
-            <th>Stop Name</th>
-            <th>Status</th>
-            <th>Decision</th>
-            <th><span class="sr-only">Remove</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (
-            assignment of student().studentAssignments;
-            track $index;
-            let i = $index
-          ) {
-            <tr>
-              <td>{{ assignment.stopName }}</td>
-              <td class="{{ getStatusClass(assignment.status) }}">
-                {{ getStatusText(assignment.status) }}
-              </td>
-              <td class="flex gap-2">
-                @if (assignment.status === Status.Pending) {
-                  <button
-                    class="btn btn-primary btn-sm"
-                    (click)="approveAssignment(i)"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    class="btn btn-error btn-sm"
-                    (click)="rejectAssignment(i)"
-                  >
-                    Reject
-                  </button>
-                } @else {
-                  <button
-                    class="btn btn-primary btn-sm"
-                    (click)="undoAssignment(i)"
-                  >
-                    Back to Pending
-                  </button>
-                }
-              </td>
-              <td>
-                <button
-                  class="btn btn-error btn-sm"
-                  (click)="deleteAssignment(i)"
-                >
-                  Remove
-                </button>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Mobile Card View -->
-    <div class="space-y-4 md:hidden">
+    <ul class="space-y-3">
       @for (
         assignment of student().studentAssignments;
-        track $index;
+        track assignment.stopId;
         let i = $index
       ) {
-        <div
-          class="rounded-lg bg-background-100 p-4 shadow dark:bg-background-900"
+        <li
+          class="rounded-lg border border-background-200 p-4 dark:border-background-600"
         >
-          <div class="flex items-start justify-between">
-            <p class="font-bold">{{ assignment.stopName }}</p>
+          <div class="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <p class="font-semibold">{{ assignment.stopName }}</p>
+              <p class="text-sm text-text-700">
+                Requested by {{ requestedBy(assignment.stopManagers) }} ·
+                {{ approvedText(assignment.stopId) }}
+              </p>
+            </div>
             <span
-              class="text-sm font-semibold px-2 py-1 rounded {{
-                getStatusClass(assignment.status)
-              }}"
+              class="rounded-full px-2 py-0.5 text-xs font-medium"
+              [class]="statusBadgeClass(assignment.status)"
             >
-              {{ getStatusText(assignment.status) }}
+              {{ statusText(assignment.status) }}
             </span>
           </div>
-          <div
-            class="mt-4 flex flex-wrap gap-2 border-t border-background-200 pt-4 dark:border-background-700"
-          >
+
+          <div class="mt-3 flex flex-wrap gap-2">
+            @if (assignment.status !== Status.Accepted) {
+              <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                [disabled]="busy()"
+                (click)="assignHere.emit(i)"
+              >
+                Assign here
+              </button>
+            }
             @if (assignment.status === Status.Pending) {
               <button
-                class="btn btn-primary btn-sm flex-1"
-                (click)="approveAssignment(i)"
-              >
-                Approve
-              </button>
-              <button
-                class="btn btn-error btn-sm flex-1"
-                (click)="rejectAssignment(i)"
+                type="button"
+                class="btn btn-outline btn-error btn-sm"
+                [disabled]="busy()"
+                (click)="setStatus.emit({ index: i, status: Status.Declined })"
               >
                 Reject
               </button>
             } @else {
               <button
-                class="btn btn-primary btn-sm flex-1"
-                (click)="undoAssignment(i)"
+                type="button"
+                class="btn btn-ghost btn-sm"
+                [disabled]="busy()"
+                (click)="setStatus.emit({ index: i, status: Status.Pending })"
               >
                 Back to Pending
               </button>
             }
             <button
-              class="btn btn-outline btn-error btn-sm"
-              (click)="deleteAssignment(i)"
+              type="button"
+              class="btn btn-ghost btn-sm ml-auto text-error"
+              [disabled]="busy()"
+              (click)="remove.emit(i)"
             >
               Remove
             </button>
           </div>
-        </div>
+        </li>
       }
-    </div>
+    </ul>
   </div>
 </div>

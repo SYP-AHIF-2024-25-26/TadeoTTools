@@ -8,8 +8,8 @@ export class ToastService {
   private nextId = 1;
   readonly toasts = signal<Info[]>([]);
 
-  success(message: string) {
-    this.add('info', message);
+  success(message: string, action?: Info['action']) {
+    this.add('info', message, action);
   }
 
   error(message: string) {
@@ -20,8 +20,8 @@ export class ToastService {
     this.toasts.update((toasts) => toasts.filter((t) => t.id !== id));
   }
 
-  private add(type: Info['type'], message: string) {
-    const info: Info = { id: this.nextId++, type, message };
+  private add(type: Info['type'], message: string, action?: Info['action']) {
+    const info: Info = { id: this.nextId++, type, message, action };
     this.toasts.update((toasts) => [...toasts, info]);
   }
 }

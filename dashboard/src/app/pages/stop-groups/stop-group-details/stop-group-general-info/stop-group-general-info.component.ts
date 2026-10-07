@@ -4,7 +4,6 @@ import { StopGroup } from '@/shared/models/types';
 
 @Component({
   selector: 'app-stop-group-general-info',
-  standalone: true,
   imports: [FormsModule],
   templateUrl: './stop-group-general-info.component.html',
 })

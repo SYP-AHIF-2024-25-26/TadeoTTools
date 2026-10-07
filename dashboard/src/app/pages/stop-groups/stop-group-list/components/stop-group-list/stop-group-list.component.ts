@@ -5,7 +5,6 @@ import { Stop, StopGroup } from '@/shared/models/types';
 
 @Component({
   selector: 'app-stop-group-list',
-  standalone: true,
   imports: [CdkDropList, CdkDrag, RouterLink],
   templateUrl: './stop-group-list.component.html',
 })
@@ -23,6 +22,8 @@ export class StopGroupListComponent {
   );
 
   dropGroup = output<CdkDragDrop<any, any>>();
+  // Keyboard alternative to dragging; indices refer to visibleGroups().
+  moveGroup = output<{ from: number; to: number }>();
   dropStop = output<CdkDragDrop<any, any>>();
   removeStop = output<{ stopId: number; group: StopGroup }>();
 

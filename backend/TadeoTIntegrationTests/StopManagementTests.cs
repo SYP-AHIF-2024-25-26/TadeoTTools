@@ -161,5 +161,54 @@ public class StopManagementTests(IntegrationTestWebAppFactory factory) : BaseInt
         var dbStop = await DbContext.Stops.FirstOrDefaultAsync(s => s.Id == stop.Id);
         dbStop.Should().BeNull();
     }
-}
 
+    [Fact]
+    public async Task UpdateStop_ShouldReturnBadRequest_WhenStudentIsApprovedAtAnotherStop()
+    {
+        // Arrange
+        var approvedStop = new Stop { Name = "Approved", Description = "", RoomNr = "E01" };
+        var stop = new Stop { Name = "Other", Description = "", RoomNr = "E02" };
+        DbContext.Stops.AddRange(approvedStop, stop);
+        DbContext.Students.Add(new Student
+        {
+            EdufsUsername = "taken", FirstName = "T", LastName = "Aken", StudentClass = "5AHIF", Department = "HIF",
+            StudentAssignments = [new StudentAssignment { EdufsUsername = "taken", Stop = approvedStop, Status = Status.ACCEPTED }]
+        });
+        await DbContext.SaveChangesAsync();
+
+        var updateDto = new StopManagementEndpoints.UpdateStopRequestDto(
+            stop.Id, "Other", "Desc", "E02", "", [], [new StudentOfStopDto("taken", Status.ACCEPTED)], []);
+
+        // Act
+        var response = await Client.PutAsJsonAsync(BaseUrl, updateDto);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await response.Content.ReadAsStringAsync()).Should().Contain(StudentFunctions.OneApprovedStopMessage);
+        (await DbContext.StudentAssignments.AsNoTracking().CountAsync(sa => sa.StopId == stop.Id)).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task UpdateStop_ShouldReturnOk_WhenStudentIsOnlyPendingElsewhere()
+    {
+        // Arrange
+        var pendingStop = new Stop { Name = "Pending", Description = "", RoomNr = "E01" };
+        var stop = new Stop { Name = "Other", Description = "", RoomNr = "E02" };
+        DbContext.Stops.AddRange(pendingStop, stop);
+        DbContext.Students.Add(new Student
+        {
+            EdufsUsername = "requested", FirstName = "R", LastName = "Equested", StudentClass = "5AHIF", Department = "HIF",
+            StudentAssignments = [new StudentAssignment { EdufsUsername = "requested", Stop = pendingStop, Status = Status.PENDING }]
+        });
+        await DbContext.SaveChangesAsync();
+
+        var updateDto = new StopManagementEndpoints.UpdateStopRequestDto(
+            stop.Id, "Other", "Desc", "E02", "", [], [new StudentOfStopDto("requested", Status.ACCEPTED)], []);
+
+        // Act
+        var response = await Client.PutAsJsonAsync(BaseUrl, updateDto);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+}

@@ -9,7 +9,6 @@ import {
 
 @Component({
   selector: 'app-stop-group-stop-selector',
-  standalone: true,
   imports: [FormsModule, DragDropModule],
   templateUrl: './stop-group-stop-selector.component.html',
 })
@@ -35,6 +34,13 @@ export class StopGroupStopSelectorComponent {
   drop(event: CdkDragDrop<string[]>) {
     const stopIds = [...this.stopGroup().stopIds];
     moveItemInArray(stopIds, event.previousIndex, event.currentIndex);
+    this.stopGroup.update((sg) => ({ ...sg, stopIds }));
+  }
+
+  // Keyboard alternative to dragging.
+  moveStop(index: number, delta: number) {
+    const stopIds = [...this.stopGroup().stopIds];
+    moveItemInArray(stopIds, index, index + delta);
     this.stopGroup.update((sg) => ({ ...sg, stopIds }));
   }
 

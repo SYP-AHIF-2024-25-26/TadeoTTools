@@ -9,7 +9,6 @@ import { InfoPopupComponent } from './shared/modals/info-modal/info-modal.compon
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [RouterOutlet, NavbarComponent, LoaderComponent, InfoPopupComponent],
   templateUrl: './app.component.html',
 })

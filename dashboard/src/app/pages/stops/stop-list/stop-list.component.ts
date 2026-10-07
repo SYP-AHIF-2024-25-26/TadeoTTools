@@ -137,23 +137,25 @@ export class StopsComponent {
     return stopManagers.map((t) => `${t.firstName} ${t.lastName}`).join(', ');
   }
 
+  // Counted once per student list instead of scanning all students for every
+  // table cell.
+  private studentCountsByStop = computed(() => {
+    const counts = new Map<number, { requested: number; assigned: number }>();
+    for (const student of this.students()) {
+      for (const a of student.studentAssignments as StudentAssignment[]) {
+        const entry = counts.get(a.stopId) ?? { requested: 0, assigned: 0 };
+        if (a.status === Status.Pending) entry.requested++;
+        if (a.status === Status.Accepted) entry.assigned++;
+        counts.set(a.stopId, entry);
+      }
+    }
+    return counts;
+  });
+
   getStudentCounts(stopId: number): { requested: number; assigned: number } {
-    const students = this.students().filter((s) =>
-      s.studentAssignments.some((a: StudentAssignment) => a.stopId === stopId)
+    return (
+      this.studentCountsByStop().get(stopId) ?? { requested: 0, assigned: 0 }
     );
-    const requested = students.filter((s) =>
-      s.studentAssignments.some(
-        (a: StudentAssignment) =>
-          a.stopId === stopId && a.status === Status.Pending
-      )
-    ).length;
-    const assigned = students.filter((s) =>
-      s.studentAssignments.some(
-        (a: StudentAssignment) =>
-          a.stopId === stopId && a.status === Status.Accepted
-      )
-    ).length;
-    return { requested, assigned };
   }
 
   getDivisionNames(divisionIds: number[]): string {

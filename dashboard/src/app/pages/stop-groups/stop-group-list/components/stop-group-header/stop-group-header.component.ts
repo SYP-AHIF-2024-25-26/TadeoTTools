@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-stop-group-header',
-  standalone: true,
   imports: [RouterLink, FormsModule],
   templateUrl: './stop-group-header.component.html',
 })

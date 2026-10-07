@@ -65,6 +65,11 @@ public class StudentManagementEndpoints
             return Results.NotFound("Student not found");
         }
 
+        if (studentDto.StudentAssignments.Count(a => a.Status == Status.ACCEPTED) > 1)
+        {
+            return Results.BadRequest(StudentFunctions.OneApprovedStopMessage);
+        }
+
         student.FirstName = studentDto.FirstName;
         student.LastName = studentDto.LastName;
         student.StudentClass = studentDto.StudentClass;

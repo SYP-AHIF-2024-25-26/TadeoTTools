@@ -30,6 +30,7 @@
       [stops]="stops()"
       [connectedDropLists]="dropGroups()"
       (dropGroup)="dropGroup($event)"
+      (moveGroup)="moveVisibleGroup($event.from, $event.to)"
       (dropStop)="dropStop($event)"
       (removeStop)="selectStopToRemove($event.stopId, $event.group)"
     />

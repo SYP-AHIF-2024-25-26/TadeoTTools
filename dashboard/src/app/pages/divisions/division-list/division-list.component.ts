@@ -9,7 +9,6 @@ import { ScrollPersistenceService } from '@/core/services/scroll-persistence.ser
 
 @Component({
   selector: 'app-divisions-list',
-  standalone: true,
   imports: [RouterModule, DeletePopupComponent, DivisionDetailsComponent],
   templateUrl: './division-list.component.html',
 })
@@ -18,6 +17,8 @@ export class DivisionsListComponent {
   private scrollService = inject(ScrollPersistenceService);
 
   divisions = signal<Division[]>([]);
+  // Changes on every reload so a replaced image is fetched again.
+  imageVersion = signal(Date.now());
   baseUrl = inject(BASE_URL);
   divisionIdToRemove: number = -1;
   divisionIdDetail: number = -1;
@@ -26,6 +27,7 @@ export class DivisionsListComponent {
 
   async ngOnInit() {
     this.divisions.set(await this.divisionService.getDivisions());
+    this.imageVersion.set(Date.now());
     this.scrollService.restoreScroll();
   }
 
@@ -33,6 +35,7 @@ export class DivisionsListComponent {
     await this.divisionService.deleteDivision(this.divisionIdToRemove);
     this.showRemoveDivisionPopUp.set(false);
     this.divisions.set(await this.divisionService.getDivisions());
+    this.imageVersion.set(Date.now());
   }
 
   showDeletePopup(divisionId: number): void {
@@ -47,6 +50,7 @@ export class DivisionsListComponent {
   async handleDivisionPopupClose(): Promise<void> {
     this.showDivisionDetailPopUp.set(false);
     this.divisions.set(await this.divisionService.getDivisions());
+    this.imageVersion.set(Date.now());
   }
 
   hideImage(event: Event): void {

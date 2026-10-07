@@ -1,12 +1,10 @@
 import { Component, computed, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
 import { Stop, StopManager } from '@/shared/models/types';
 
 @Component({
   selector: 'app-stop-managers',
-  standalone: true,
-  imports: [FormsModule, NgClass],
+  imports: [FormsModule],
   templateUrl: './stop-managers.component.html',
 })
 export class StopManagersComponent {

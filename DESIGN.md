@@ -19,10 +19,10 @@ colors:
   guide-ink-muted: "#4b5563"
   guide-stone: "#9ca3af"
   guide-hairline: "#e5e7eb"
-  dash-primary: "#4590e6"
-  dash-primary-deep: "#015ec9"
-  dash-field: "#73abea"
-  dash-field-hover: "#6190c6"
+  dash-primary: "#1f6fd1"
+  dash-primary-deep: "#1a5bb5"
+  dash-field: "#4a7aa3"
+  dash-field-hover: "#3a6080"
   dash-nav: "#6aa4c9"
   dash-tint: "#cce5ff"
   dash-canvas: "#f1f1f1"
@@ -33,7 +33,7 @@ colors:
   dash-warning: "#facc15"
   dash-dark-canvas: "#0b0f19"
   dash-dark-surface: "#111827"
-  dash-dark-primary: "#3b82f6"
+  dash-dark-primary: "#2563eb"
 typography:
   guide-display:
     fontFamily: "Roboto, sans-serif"
@@ -176,7 +176,7 @@ TadeoTTools works like an open-day programme you carry on your phone. The visito
 
 The surfaces are soft, chunky and touch-first. Cards are white or division-filled and lifted on clear shadows. Buttons are rounded pills (16px corners). Rows are tall (80px) because visitors tap them while walking. Type is Roboto throughout the GuideApp, set large (18px body) for reading at arm's length in a corridor.
 
-The organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, a soft sky-blue palette instead of orange, and a full dark mode. Its distinctive habit is **filled blue fields**: filters and selects sit in solid mid-blue (`dash-field`) with white placeholders rather than white inputs with outlines. The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.
+The organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, a sky-blue palette instead of orange, and a full dark mode. Its distinctive habit is **filled blue fields**: filters and selects sit in solid steel blue (`dash-field`) with white text and placeholders rather than white inputs with outlines. The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.
 
 **Key Characteristics:**
 - Division colors are the identity and the wayfinding signal; they come from the school, not from the design.
@@ -203,7 +203,7 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 
 ### Primary (Dashboard)
 - **Dashboard Blue** (`dash-primary`): DaisyUI `btn-primary` and the active nav link. **Deep Dashboard Blue** (`dash-primary-deep`) is its hover/focus state.
-- **Filled Field Blue** (`dash-field`, hover `dash-field-hover`): the background of filter inputs and selects, with white text and placeholders.
+- **Filled Field Blue** (`dash-field`, hover `dash-field-hover`): the background of filter inputs and selects, with white text and placeholders. In dark mode the fields keep the dark `primary-300` fill.
 - **Sky Nav** (`dash-nav`): the sticky top bar.
 - **Pale Blue Tint** (`dash-tint`): hover backgrounds on list rows and secondary actions.
 
@@ -218,11 +218,16 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 
 ### Status (Dashboard)
 - `dash-error` for destructive buttons and error alerts, `dash-success`, `dash-warning`.
+- **Assignment states** (`shared/utils/assignment-status.ts`): Approved green, **Pending teal**, Conflict orange, Rejected red, Unassigned gray. Text uses the 700 shade in light mode and the 400 shade in dark mode; badges use the 800 shade on the 100 tint.
 
 ### Named Rules
 **The Division Owns Its Color Rule.** Division colors come from the school and the dashboard data. Never re-tint them, and never reuse a division hue for UI states like errors or links.
 
 **The One Highlighter Rule.** In the GuideApp, orange is the only accent: active tab, primary action, ticks, selections. A second accent color competes with the division colors.
+
+**The White Text Needs 4.5 Rule.** Any fill that carries white text in the dashboard (primary buttons, filled fields, toasts) must reach 4.5:1. That is why the primary is `#1f6fd1`, not the lighter `#4590e6`, and why status text uses the 700 shades in light mode and the 400 shades in dark mode.
+
+**The Pending Is Not A Warning Rule.** Pending is teal, near Approved green: it means "on track, waiting for a decision". Orange is reserved for Conflict, the one state that needs the admin's attention.
 
 ## Typography
 

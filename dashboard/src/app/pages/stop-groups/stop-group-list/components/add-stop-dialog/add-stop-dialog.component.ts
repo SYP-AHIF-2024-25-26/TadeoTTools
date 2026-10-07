@@ -3,7 +3,6 @@ import { Stop } from '@/shared/models/types';
 
 @Component({
   selector: 'app-add-stop-dialog',
-  standalone: true,
   imports: [],
   templateUrl: './add-stop-dialog.component.html',
 })

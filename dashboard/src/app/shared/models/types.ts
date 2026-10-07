@@ -114,6 +114,8 @@ export type Info = {
   id: number;
   type: 'info' | 'error';
   message: string;
+  // Optional button in the toast, e.g. "Undo".
+  action?: { label: string; run: () => void };
 };
 
 export type FeatureFlag = {
