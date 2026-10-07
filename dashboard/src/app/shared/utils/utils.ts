@@ -23,8 +23,12 @@ export function sortStudents<T extends Student>(students: T[]): T[] {
 // Same format as the backend exports: ";" separated, UTF-8 with BOM, so Excel
 // opens it correctly.
 export function csvBlob(rows: string[][]): Blob {
-  const escape = (field: string) =>
-    /[;"\r\n]/.test(field) ? `"${field.replace(/"/g, '""')}"` : field;
+  const escape = (field: string) => {
+    const safeField = /^[=+\-@\t\r]/.test(field) ? `'${field}` : field;
+    return /[;"\r\n]/.test(safeField)
+      ? `"${safeField.replace(/"/g, '""')}"`
+      : safeField;
+  };
   const content = rows.map((row) => row.map(escape).join(';')).join('\r\n');
   return new Blob(['﻿' + content], { type: 'text/csv;charset=utf-8' });
 }
