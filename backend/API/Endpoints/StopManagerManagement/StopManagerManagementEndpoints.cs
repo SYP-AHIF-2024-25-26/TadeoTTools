@@ -55,10 +55,8 @@ public static class StopManagerManagementEndpoints
             {
                 await file.File.CopyToAsync(stream);
                 var csvData = Encoding.UTF8.GetString(stream.ToArray());
-                await StopManagerFunctions.ParseStopManagerCsv(csvData, context);
+                return Results.Ok(await StopManagerFunctions.ParseStopManagerCsv(csvData, context));
             }
-
-            return Results.Ok("File uploaded successfully");
         }
         catch (Exception e)
         {

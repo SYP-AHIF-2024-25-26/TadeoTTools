@@ -12,7 +12,8 @@ public static class StopManagerManagementApi
         group.MapGet("api/stopmanagers", StopManagerManagementEndpoints.GetAllStopManagers)
             .WithName(nameof(StopManagerManagementEndpoints.GetAllStopManagers))
             .WithDescription("Get all stop managers")
-            .Produces<List<StopManagerFunctions.StopManagerWithStopsDto>>();
+            .Produces<List<StopManagerFunctions.StopManagerWithStopsDto>>()
+            .RequireAuthorization(Setup.StopManagerOrAdminPolicyName);
 
         group.MapGet("api/stopmanagers/{id}", StopManagerManagementEndpoints.GetStopManagerById)
             .AddEndpointFilter(StopManagerManagementValidations.GetStopManagerByIdValidationAsync)
@@ -46,6 +47,8 @@ public static class StopManagerManagementApi
 
         group.MapPost("api/stopmanagers/upload", StopManagerManagementEndpoints.UploadCsvFile)
             .AddEndpointFilter(StopManagerManagementValidations.UploadCsvFileValidationAsync)
-            .DisableAntiforgery();
+            .Produces<ImportResult>()
+            .DisableAntiforgery()
+            .RequireAuthorization(Setup.AdminPolicyName);
     }
 }

@@ -1,24 +1,39 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  OnDestroy,
+  OnInit,
+  output,
+} from '@angular/core';
 import { Info } from '@/shared/models/types';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-info-popup',
-  standalone: true,
-  imports: [NgClass],
   templateUrl: './info-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InfoPopupComponent implements OnInit {
-  @Input() info: Info | undefined;
-  @Output() deleted = new EventEmitter<number>();
+export class InfoPopupComponent implements OnInit, OnDestroy {
+  info = input<Info>();
+  deleted = output<number>();
+
+  private timer: ReturnType<typeof setTimeout> | undefined;
 
   ngOnInit() {
-    setTimeout(() => {
-      this.closePopup();
-    }, 4000);
+    // Errors stay until dismissed so they can't be missed.
+    if (this.info()?.type !== 'error') {
+      this.timer = setTimeout(() => this.closePopup(), 4000);
+    }
+  }
+
+  ngOnDestroy() {
+    clearTimeout(this.timer);
   }
 
   closePopup() {
-    this.deleted.emit(this.info!.id);
+    const info = this.info();
+    if (info) {
+      this.deleted.emit(info.id);
+    }
   }
 }

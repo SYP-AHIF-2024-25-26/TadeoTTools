@@ -4,11 +4,13 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { LoaderComponent } from './shared/components/loading-spinner/loading-spinner.component';
 import { ScrollPersistenceService } from './core/services/scroll-persistence.service';
 import { BASE_URL } from './app.config';
+import { ToastService } from './core/services/toast.service';
+import { InfoPopupComponent } from './shared/modals/info-modal/info-modal.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, LoaderComponent],
+  imports: [RouterOutlet, NavbarComponent, LoaderComponent, InfoPopupComponent],
   templateUrl: './app.component.html',
 })
 export class AppComponent {
@@ -16,4 +18,5 @@ export class AppComponent {
   baseUrl = inject(BASE_URL);
   private scrollService = inject(ScrollPersistenceService);
   loading = signal(false);
+  toast = inject(ToastService);
 }

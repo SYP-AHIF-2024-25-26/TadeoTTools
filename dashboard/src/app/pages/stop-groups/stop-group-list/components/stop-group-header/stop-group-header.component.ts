@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 export class StopGroupHeaderComponent {
   hasChanged = input.required<boolean>();
   onlyPublicGroups = input.required<boolean>();
+  saving = input<boolean>(false);
 
   addGroup = output<void>();
   togglePublicGroups = output<void>();

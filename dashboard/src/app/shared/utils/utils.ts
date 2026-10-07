@@ -7,6 +7,10 @@ export function isValidString(
   return input != null && input.length > 0 && input.length <= maxLength;
 }
 
+export function plural(count: number, noun: string): string {
+  return `${count} ${noun}${count === 1 ? '' : 's'}`;
+}
+
 export function sortStudents<T extends Student>(students: T[]): T[] {
   return students.sort((a, b) => {
     if (a.studentClass < b.studentClass) return -1;

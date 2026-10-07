@@ -105,6 +105,11 @@ export type Division = {
   color: string;
 };
 
+export type ImportResult = {
+  added: number;
+  skipped: number;
+};
+
 export type Info = {
   id: number;
   type: 'info' | 'error';

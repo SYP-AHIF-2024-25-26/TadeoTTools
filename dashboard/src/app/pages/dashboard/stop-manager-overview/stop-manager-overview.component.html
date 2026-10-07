@@ -1,8 +1,12 @@
 <div class="container mx-auto px-4 py-8">
   <div class="mb-8 flex flex-col items-center gap-6">
-    <h1 class="text-3xl font-bold text-secondary-content">
-      Stop Manager Overview
-    </h1>
+    <h1 class="text-3xl font-bold text-secondary-content">Stop Managers</h1>
+
+    @if (errorMessage()) {
+      <div role="alert" class="alert alert-error w-full max-w-4xl">
+        {{ errorMessage() }}
+      </div>
+    }
 
     <!-- Add new stop manager form -->
     <div
@@ -126,7 +130,7 @@
                         (click)="saveEdit()"
                         class="btn btn-primary btn-xs"
                       >
-                        Save
+                        Save Changes
                       </button>
                       <button
                         (click)="cancelEdit()"
@@ -175,7 +179,7 @@
                         </svg>
                       </button>
                       <button
-                        (click)="deleteStopManager(stopManager.edufsUsername)"
+                        (click)="stopManagerToDelete.set(stopManager)"
                         class="btn btn-ghost btn-xs text-error hover:bg-error/10"
                         title="Delete"
                       >
@@ -288,7 +292,7 @@
                   Cancel
                 </button>
                 <button (click)="saveEdit()" class="btn btn-primary btn-sm">
-                  Save
+                  Save Changes
                 </button>
               </div>
             </div>
@@ -330,7 +334,7 @@
                 Edit
               </button>
               <button
-                (click)="deleteStopManager(stopManager.edufsUsername)"
+                (click)="stopManagerToDelete.set(stopManager)"
                 class="btn btn-ghost btn-sm text-error"
               >
                 <svg
@@ -377,3 +381,14 @@
     }
   </div>
 </div>
+
+@if (stopManagerToDelete()) {
+  <app-delete-popup
+    title="Delete Stop Manager"
+    [message]="deleteMessage()"
+    confirmLabel="Delete Stop Manager"
+    [busy]="deleting()"
+    (cancel)="stopManagerToDelete.set(null)"
+    (removeConfirmed)="deleteStopManager()"
+  />
+}

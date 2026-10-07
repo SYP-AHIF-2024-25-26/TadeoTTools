@@ -14,12 +14,34 @@ export class StudentComponent implements OnInit {
   private scrollService = inject(ScrollPersistenceService);
 
   stops = signal<StopOfStudent[]>([]);
+  loading = signal<boolean>(true);
+  loadFailed = signal<boolean>(false);
 
   async ngOnInit() {
-    this.stops.set(await this.stopService.getStopsOfStudent());
+    await this.loadStops();
     this.scrollService.restoreScroll();
   }
-  getStatusName(status: Status): string {
-    return Status[status];
+
+  async loadStops() {
+    this.loading.set(true);
+    this.loadFailed.set(false);
+    try {
+      this.stops.set(await this.stopService.getStopsOfStudent());
+    } catch (e) {
+      console.error('Failed to load stops of student', e);
+      this.loadFailed.set(true);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+  getStatusText(status: Status): string {
+    switch (status) {
+      case Status.Accepted:
+        return 'Approved';
+      case Status.Declined:
+        return 'Not selected for this stop';
+      default:
+        return 'Waiting for approval';
+    }
   }
 }

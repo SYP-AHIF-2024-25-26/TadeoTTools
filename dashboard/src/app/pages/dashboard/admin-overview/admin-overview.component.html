@@ -1,5 +1,5 @@
 <div class="m-4 flex flex-col items-center text-text-950">
-  <div class="my-3 text-2xl text-text-950">Admin Overview</div>
+  <div class="my-3 text-2xl text-text-950">Admins</div>
   <div class="w-full max-w-xl">
     <div class="my-4 flex gap-5">
       <input
@@ -8,6 +8,7 @@
         [value]="addname()"
         [(ngModel)]="addname"
         name="addname"
+        placeholder="EduFS username, e.g. if123456"
         id="addname"
       />
       <button
@@ -20,18 +21,40 @@
   </div>
 
   <div class="mt-4 w-full max-w-xl">
+    @if (errorMessage()) {
+      <div role="alert" class="alert alert-error mb-4">
+        {{ errorMessage() }}
+      </div>
+    }
     @for (admin of admins(); track $index) {
       <div
         class="mb-4 flex items-center justify-between rounded-lg bg-background-100 p-4 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
       >
         <div class="text-lg font-semibold">{{ admin }}</div>
-        <button
-          (click)="deleteAdmin(admin)"
-          class="btn btn-outline btn-error rounded px-4 py-2 text-black"
-        >
-          Delete
-        </button>
+        @if (isCurrentUser(admin)) {
+          <span class="text-sm text-text-600 dark:text-text-300">
+            That's you
+          </span>
+        } @else {
+          <button
+            (click)="adminToDelete.set(admin)"
+            class="btn btn-outline btn-error btn-sm"
+          >
+            Remove
+          </button>
+        }
       </div>
     }
   </div>
 </div>
+
+@if (adminToDelete(); as name) {
+  <app-delete-popup
+    title="Remove Admin"
+    [message]="name + ' will lose admin access to the dashboard.'"
+    confirmLabel="Remove Admin"
+    [busy]="deleting()"
+    (cancel)="adminToDelete.set(null)"
+    (removeConfirmed)="deleteAdmin()"
+  />
+}

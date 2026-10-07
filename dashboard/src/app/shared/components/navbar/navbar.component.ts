@@ -25,11 +25,11 @@ export class NavbarComponent {
 
   navLinks = [
     { label: 'Students', route: '/students' },
-    { label: 'StopGroups', route: '/stopgroups' },
+    { label: 'Stop Groups', route: '/stopgroups' },
     { label: 'Stops', route: '/stops' },
     { label: 'Divisions', route: '/divisions' },
     { label: 'Feedback', route: '/feedback' },
-    { label: 'Data Management', route: '/data-management' },
+    { label: 'Users & Data', route: '/data-management' },
   ];
 
   async logout() {

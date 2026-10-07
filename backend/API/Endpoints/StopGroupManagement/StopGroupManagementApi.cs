@@ -28,7 +28,8 @@ public static class StopGroupManagementApi
         group.MapPost("api/groups", StopGroupManagementEndpoints.CreateGroup)
             .WithName(nameof(StopGroupManagementEndpoints.CreateGroup))
             .WithDescription("Create a new stop group")
-            .Produces<StopGroup>();
+            .Produces<StopGroup>()
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPut("api/groups", StopGroupManagementEndpoints.UpdateGroup)
             .WithName(nameof(StopGroupManagementEndpoints.UpdateGroup))

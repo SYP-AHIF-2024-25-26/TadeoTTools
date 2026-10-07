@@ -19,34 +19,65 @@
         [allStops]="stops()"
       />
 
-      @if (errorMessage() != null) {
-        <p class="text-red-700">{{ errorMessage() }}</p>
-      }
-      <div class="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center">
-        <button
-          type="submit"
-          class="btn btn-primary btn-sm w-full gap-2 sm:w-auto"
-        >
-          Submit
-        </button>
-
-        <button
-          (click)="goBack()"
-          type="button"
-          class="btn btn-sm w-full bg-primary-200 text-text-800 hover:bg-primary-300 sm:w-auto"
-        >
-          Cancel
-        </button>
-        @if (stopGroup().id != -1) {
-          <button
-            (click)="deleteAndGoBack()"
-            type="button"
-            class="btn btn-sm w-full gap-2 bg-red-600 hover:bg-accent-300 sm:ml-auto sm:w-auto"
-          >
-            Delete
-          </button>
+      <div
+        class="sticky bottom-0 z-10 -mx-4 mt-6 border-t border-background-200 bg-background-100 px-4 py-3 dark:border-background-600 sm:-mx-6 sm:px-6"
+      >
+        @if (errorMessage() != null) {
+          <p role="alert" class="mb-2 text-sm font-medium text-error">
+            {{ errorMessage() }}
+          </p>
         }
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm gap-2"
+            [disabled]="saving() || !hasUnsavedChanges()"
+          >
+            @if (saving()) {
+              <span class="loading loading-spinner loading-xs"></span>
+              Saving…
+            } @else if (stopGroup().id == -1) {
+              Create Group
+            } @else {
+              Save Changes
+            }
+          </button>
+          <button
+            (click)="goBack()"
+            type="button"
+            class="btn btn-ghost btn-sm"
+            [disabled]="saving()"
+          >
+            Cancel
+          </button>
+          @if (hasUnsavedChanges() && !saving()) {
+            <span class="text-sm font-medium text-text-700 dark:text-text-300">
+              Unsaved changes
+            </span>
+          }
+          @if (stopGroup().id != -1) {
+            <button
+              (click)="showDeleteConfirm.set(true)"
+              type="button"
+              class="btn btn-error btn-sm ml-auto gap-2"
+              [disabled]="saving()"
+            >
+              Delete
+            </button>
+          }
+        </div>
       </div>
     </form>
   }
 </div>
+
+@if (showDeleteConfirm()) {
+  <app-delete-popup
+    title="Delete Stop Group"
+    [message]="deleteMessage()"
+    confirmLabel="Delete Group"
+    [busy]="deleting()"
+    (cancel)="showDeleteConfirm.set(false)"
+    (removeConfirmed)="deleteAndGoBack()"
+  />
+}

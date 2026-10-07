@@ -10,8 +10,8 @@ public static class StudentManagementApi
         group.MapGet("api/students", StudentManagementEndpoints.GetAllStudents)
             .WithName(nameof(StudentManagementEndpoints.GetAllStudents))
             .WithDescription("Get all students")
-            .Produces<List<StudentFunctions.StudentDto>>();
-        //.RequireAuthorization(Setup.TeacherOrAdminPolicyName);
+            .Produces<List<StudentFunctions.StudentDto>>()
+            .RequireAuthorization(Setup.StopManagerOrAdminPolicyName);
 
         group.MapGet("api/students/stop-manager/{stopManagerId}", StudentManagementEndpoints.GetStudentsForStopManager)
             .WithName(nameof(StudentManagementEndpoints.GetStudentsForStopManager))
@@ -41,7 +41,9 @@ public static class StudentManagementApi
 
         group.MapPost("api/students/upload", StudentManagementEndpoints.UploadCsvFile)
             .AddEndpointFilter(StudentManagementValidations.UploadCsvFileValidationAsync)
-            .DisableAntiforgery();
+            .Produces<ImportResult>()
+            .DisableAntiforgery()
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapGet("api/students/csv", StudentManagementEndpoints.GetStudentsCsv)
             .WithName(nameof(StudentManagementEndpoints.GetStudentsCsv))
@@ -53,7 +55,7 @@ public static class StudentManagementApi
         group.MapPost("api/students/assignments/upload", StudentManagementEndpoints.UploadStudentAssignmentsCsv)
             .WithName(nameof(StudentManagementEndpoints.UploadStudentAssignmentsCsv))
             .WithDescription("Upload student assignments from CSV file")
-            .Produces(StatusCodes.Status200OK)
+            .Produces<ImportResult>()
             .Produces(StatusCodes.Status400BadRequest)
             .DisableAntiforgery()
             .RequireAuthorization(Setup.AdminPolicyName);

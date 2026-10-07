@@ -9,7 +9,7 @@
       class="mb-6 flex items-center justify-between border-b border-background-200 pb-4 dark:border-background-700"
     >
       <h2 class="text-2xl font-bold text-secondary-content">
-        {{ id === -1 ? 'Add New Division' : 'Edit Division' }}
+        {{ id === -1 ? 'New Division' : 'Edit Division' }}
       </h2>
       <button
         (click)="cancelPopup()"
@@ -108,14 +108,14 @@
             />
             <button
               type="button"
-              (click)="deleteImage()"
-              class="btn btn-outline btn-error btn-sm"
+              (click)="clearPreview()"
+              class="btn btn-ghost btn-sm"
             >
-              Remove
+              Discard
             </button>
           </div>
         </div>
-      } @else if (id !== -1) {
+      } @else if (id !== -1 && !imageDeleted()) {
         <div class="mt-4">
           <label class="label"
             ><span class="label-text">Current Image:</span></label
@@ -128,7 +128,7 @@
             />
             <button
               type="button"
-              (click)="deleteImage()"
+              (click)="confirmAction.set('image')"
               class="btn btn-outline btn-error btn-sm"
             >
               Delete Image
@@ -145,7 +145,7 @@
           @if (id !== -1) {
             <button
               type="button"
-              (click)="deleteAndGoBack()"
+              (click)="confirmAction.set('division')"
               class="btn btn-error w-full sm:w-auto"
             >
               Delete Division
@@ -161,10 +161,30 @@
             Cancel
           </button>
           <button type="submit" class="btn btn-primary w-full sm:w-auto">
-            {{ id === -1 ? 'Add Division' : 'Save Changes' }}
+            {{ id === -1 ? 'Create Division' : 'Save Changes' }}
           </button>
         </div>
       </div>
     </form>
   </div>
 </div>
+
+@if (confirmAction() === 'division') {
+  <app-delete-popup
+    title="Delete Division"
+    [message]="deleteDivisionMessage()"
+    confirmLabel="Delete Division"
+    [busy]="deleting()"
+    (cancel)="confirmAction.set(null)"
+    (removeConfirmed)="deleteAndGoBack()"
+  />
+} @else if (confirmAction() === 'image') {
+  <app-delete-popup
+    title="Delete Image"
+    [message]="deleteImageMessage()"
+    confirmLabel="Delete Image"
+    [busy]="deleting()"
+    (cancel)="confirmAction.set(null)"
+    (removeConfirmed)="deleteImage()"
+  />
+}

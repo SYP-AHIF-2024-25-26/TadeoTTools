@@ -1,7 +1,9 @@
 <div class="">
   <div class="mx-auto max-w-7xl px-6 py-4">
     <div class="flex items-center justify-center">
-      <h1 class="text-2xl font-bold text-secondary-content">Data Management</h1>
+      <h1 class="text-2xl font-bold text-secondary-content">
+        Users &amp; Data
+      </h1>
     </div>
   </div>
 </div>
@@ -16,7 +18,7 @@
         [class.font-bold]="activeTab() === 'stop-managers'"
         (click)="activeTab.set('stop-managers')"
       >
-        Stop Manager Overview
+        Stop Managers
       </button>
 
       <button
@@ -24,7 +26,7 @@
         [class.font-bold]="activeTab() === 'admins'"
         (click)="activeTab.set('admins')"
       >
-        Admin Overview
+        Admins
       </button>
 
       <button
@@ -32,7 +34,7 @@
         [class.font-bold]="activeTab() === 'data'"
         (click)="activeTab.set('data')"
       >
-        Data Import/Export
+        Import &amp; Export
       </button>
     </div>
   </div>

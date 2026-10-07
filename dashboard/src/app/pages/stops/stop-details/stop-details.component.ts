@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { StopService } from '@/core/services/stop.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +9,9 @@ import {
   Student,
   StopManager,
 } from '@/shared/models/types';
-import { isValidString } from '@/shared/utils/utils';
+import { isValidString, plural } from '@/shared/utils/utils';
+import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
+import { HasUnsavedChanges } from '@/core/guards/unsaved-changes.guard';
 import { firstValueFrom } from 'rxjs';
 import { Location } from '@angular/common';
 import { LoginService } from '@/core/services/auth.service';
@@ -36,10 +38,12 @@ import { ScrollPersistenceService } from '@/core/services/scroll-persistence.ser
     StopStudentsComponent,
     StopManagersComponent,
     StopDivisionsComponent,
+    DeletePopupComponent,
   ],
   templateUrl: './stop-details.component.html',
+  host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
 })
-export class StopDetailsComponent implements OnInit {
+export class StopDetailsComponent implements OnInit, HasUnsavedChanges {
   private divisionService = inject(DivisionService);
   private stopGroupService = inject(StopGroupService);
   private stopService = inject(StopService);
@@ -98,6 +102,7 @@ export class StopDetailsComponent implements OnInit {
 
       if (id === -1) {
         this.stop.set({ ...this.emptyStop });
+        this.markSaved();
         return;
       }
 
@@ -106,6 +111,7 @@ export class StopDetailsComponent implements OnInit {
         this.errorMessage.set(`Could not find stop with ID ${id}`);
       } else {
         this.stop.set({ ...foundStop });
+        this.markSaved();
       }
     } catch (error) {
       this.errorMessage.set('An error occurred while loading data.');
@@ -131,31 +137,94 @@ export class StopDetailsComponent implements OnInit {
     return true;
   }
 
+  // Snapshot of the stop as loaded or last saved. Child sections edit the
+  // stop's arrays in place, so changes are detected by comparing serialized state.
+  private savedState: string | null = null;
+
+  private markSaved() {
+    this.savedState = JSON.stringify(this.stop());
+  }
+
+  hasUnsavedChanges(): boolean {
+    return (
+      this.savedState !== null &&
+      JSON.stringify(this.stop()) !== this.savedState
+    );
+  }
+
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    if (this.hasUnsavedChanges()) {
+      event.preventDefault();
+    }
+  }
+
+  saving = signal<boolean>(false);
+
   async submitStopDetail() {
-    if (!this.isInputValid()) {
+    if (this.saving() || !this.hasUnsavedChanges() || !this.isInputValid()) {
       return;
     }
+    this.errorMessage.set(null);
+    this.saving.set(true);
 
-    if (this.stop().id === -1) {
-      const returnedStop = await this.stopService.addStop(this.stop());
-      this.stop.set({ ...this.stop(), id: returnedStop.id });
-    } else {
-      if (this.isAdmin()) {
-        await this.stopService.updateStop(this.stop());
+    try {
+      if (this.stop().id === -1) {
+        const returnedStop = await this.stopService.addStop(this.stop());
+        this.stop.set({ ...this.stop(), id: returnedStop.id });
       } else {
-        await this.stopService.updateStopAsStopManager(this.stop());
+        if (this.isAdmin()) {
+          await this.stopService.updateStop(this.stop());
+        } else {
+          await this.stopService.updateStopAsStopManager(this.stop());
+        }
       }
+    } catch (error) {
+      console.error('Failed to save stop', error);
+      this.errorMessage.set(
+        'The stop could not be saved. Your changes are still here, please try again.'
+      );
+      this.saving.set(false);
+      return;
     }
-
+    this.saving.set(false);
+    this.markSaved();
     this.location.back();
   }
+
+  showDeleteConfirm = signal<boolean>(false);
+  deleting = signal<boolean>(false);
+
+  deleteMessage = computed(() => {
+    const stop = this.stop();
+    return (
+      `"${stop.name}" will be permanently deleted.\n` +
+      `It is in ${plural(stop.stopGroupIds?.length ?? 0, 'stop group')} ` +
+      `and has ${plural(stop.studentAssignments?.length ?? 0, 'student assignment')} ` +
+      `and ${plural(stop.stopManagerAssignments?.length ?? 0, 'stop manager')}.`
+    );
+  });
 
   async deleteAndGoBack() {
-    await this.stopService.deleteStop(this.stop().id);
-    this.location.back();
+    if (!this.isAdmin()) {
+      return;
+    }
+    this.deleting.set(true);
+    try {
+      await this.stopService.deleteStop(this.stop().id);
+      this.markSaved();
+      this.location.back();
+    } catch (error) {
+      console.error('Failed to delete stop', error);
+      this.errorMessage.set('The stop could not be deleted. Please try again.');
+      this.showDeleteConfirm.set(false);
+    } finally {
+      this.deleting.set(false);
+    }
   }
 
+  // Cancel is an explicit "discard my changes", so it skips the unsaved-changes prompt.
   goBack() {
+    this.markSaved();
     this.location.back();
   }
 }

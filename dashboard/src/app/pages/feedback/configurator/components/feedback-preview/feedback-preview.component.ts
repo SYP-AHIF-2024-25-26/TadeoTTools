@@ -1,4 +1,5 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
+import { ToastService } from '@/core/services/toast.service';
 import { FeedbackQuestion } from '@/shared/models/types';
 
 @Component({
@@ -7,6 +8,8 @@ import { FeedbackQuestion } from '@/shared/models/types';
   templateUrl: './feedback-preview.component.html',
 })
 export class FeedbackPreviewComponent {
+  private toast = inject(ToastService);
+
   readonly questions = input.required<FeedbackQuestion[]>();
   readonly formTitle = input.required<string>();
   readonly formSubtitle = input.required<string>();
@@ -79,8 +82,8 @@ export class FeedbackPreviewComponent {
     if (currentIndex < visible.length - 1) {
       this.previewQuestionIndex.set(currentIndex + 1);
     } else {
-      alert(
-        'Form preview completed! In the real form, this would submit the answers.'
+      this.toast.success(
+        'Preview finished. In the visitor app, the answers would be submitted now.'
       );
       this.previewQuestionIndex.set(0);
       this.previewAnswers.set({});

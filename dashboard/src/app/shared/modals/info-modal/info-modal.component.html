@@ -1,18 +1,32 @@
-@if (info != null) {
+@if (info(); as info) {
   <div
-    id="content"
-    class="mt-2 flex items-center justify-between rounded-lg px-4 py-2 text-text-950 shadow-md"
-    [ngClass]="{
-      'bg-secondary-200': info.type === 'info',
-      'bg-accent-200': info.type === 'error',
-    }"
+    class="mt-2 flex items-center justify-between rounded-lg px-4 py-2 shadow-md"
+    [class.bg-secondary-200]="info.type === 'info'"
+    [class.text-text-950]="info.type === 'info'"
+    [class.bg-error]="info.type === 'error'"
+    [class.text-error-content]="info.type === 'error'"
+    [attr.role]="info.type === 'error' ? 'alert' : 'status'"
   >
     {{ info.message }}
     <button
-      class="ml-6 flex h-6 w-6 items-center justify-center rounded-full font-medium text-text-950 hover:bg-primary-300"
+      class="ml-6 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-medium hover:bg-black/10"
+      aria-label="Dismiss"
       (click)="closePopup()"
     >
-      ✕
+      <svg
+        class="h-3 w-3"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.5"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
     </button>
   </div>
 }

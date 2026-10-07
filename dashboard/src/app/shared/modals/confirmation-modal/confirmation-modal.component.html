@@ -1,22 +1,65 @@
 <div
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 text-text-950"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 text-text-950 dark:text-text-100"
+  (click)="cancelPopup()"
 >
-  <div class="w-96 rounded-lg bg-background-100 p-6 shadow-lg">
-    <h2 class="mb-4 text-lg font-semibold">{{ title }}</h2>
-    <hr class="mb-4 border-background-200" />
-    <p class="mb-4">{{ message }}</p>
-    <div class="flex justify-end space-x-4">
+  <div
+    class="w-full max-w-md rounded-lg bg-background-100 p-6 shadow-lg dark:bg-background-800"
+    [attr.role]="tone() === 'danger' ? 'alertdialog' : 'dialog'"
+    aria-modal="true"
+    [attr.aria-labelledby]="titleId"
+    (click)="$event.stopPropagation()"
+  >
+    <h2 [id]="titleId" class="mb-4 text-lg font-semibold">{{ title() }}</h2>
+    <hr class="mb-4 border-background-200 dark:border-background-600" />
+    <p class="mb-4 whitespace-pre-line">{{ message() }}</p>
+
+    @if (confirmText()) {
+      <label class="mb-4 block text-sm">
+        Type <strong class="font-semibold">{{ confirmText() }}</strong> to
+        confirm
+        <input
+          type="text"
+          class="input input-sm input-bordered mt-2 w-full"
+          autocomplete="off"
+          [value]="typed()"
+          (input)="typed.set($any($event.target).value)"
+          (keydown.enter)="confirmRemove()"
+        />
+      </label>
+    }
+
+    <div class="flex flex-wrap justify-end gap-3">
+      @if (secondaryLabel()) {
+        <button
+          type="button"
+          class="btn btn-outline btn-sm mr-auto"
+          [disabled]="busy()"
+          (click)="secondary.emit()"
+        >
+          {{ secondaryLabel() }}
+        </button>
+      }
       <button
-        (click)="confirmRemove()"
-        class="rounded bg-red-500 px-4 py-2 text-black"
+        #cancelBtn
+        type="button"
+        class="btn btn-ghost btn-sm"
+        [disabled]="busy()"
+        (click)="cancelPopup()"
       >
-        Yes, Remove
+        {{ cancelLabel() }}
       </button>
       <button
-        (click)="cancelPopup()"
-        class="rounded bg-gray-300 px-4 py-2 text-black"
+        type="button"
+        class="btn btn-sm"
+        [class.btn-error]="tone() === 'danger'"
+        [class.btn-primary]="tone() === 'primary'"
+        [disabled]="!canConfirm()"
+        (click)="confirmRemove()"
       >
-        Cancel
+        @if (busy()) {
+          <span class="loading loading-spinner loading-xs"></span>
+        }
+        {{ confirmLabel() }}
       </button>
     </div>
   </div>

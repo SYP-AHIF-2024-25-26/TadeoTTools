@@ -9,3 +9,12 @@
     <app-loader [text]="'Loading...'"></app-loader>
   </div>
 }
+
+<div
+  class="fixed bottom-4 right-4 z-[60] flex max-w-sm flex-col gap-2"
+  aria-live="polite"
+>
+  @for (info of toast.toasts(); track info.id) {
+    <app-info-popup [info]="info" (deleted)="toast.dismiss($event)" />
+  }
+</div>
