@@ -1,0 +1,311 @@
+<section
+  class="mx-auto w-11/12 max-w-6xl text-text-950"
+  aria-labelledby="stop-manager-students-title"
+>
+  <div class="mb-4 flex flex-wrap items-end justify-between gap-4">
+    <div class="max-w-prose">
+      <h2 id="stop-manager-students-title" class="text-2xl font-bold">
+        Students at your stops
+      </h2>
+      <p class="mt-1 text-sm">
+        To request students for a stop, choose
+        <strong>Edit</strong> on that stop above and add them under
+        <strong>Students</strong>. New requests stay pending until an admin
+        approves them.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="loading() || visibleRows().length === 0"
+      (click)="exportCsv()"
+    >
+      Export CSV
+    </button>
+  </div>
+
+  <div class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+    <div class="form-control sm:col-span-2">
+      <label for="sms-search" class="label">
+        <span class="label-text">Search</span>
+      </label>
+      <input
+        id="sms-search"
+        type="search"
+        placeholder="Name, username, class, stop…"
+        class="input input-bordered w-full bg-primary-500 text-primary-content placeholder-white/80 hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+      />
+    </div>
+
+    @if (sortedStops().length > 1) {
+      <div class="form-control">
+        <label for="sms-stop" class="label">
+          <span class="label-text">Stop</span>
+        </label>
+        <select
+          id="sms-stop"
+          class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+          [ngModel]="stopFilter()"
+          (ngModelChange)="stopFilter.set($event)"
+        >
+          <option [ngValue]="null">All my stops</option>
+          @for (stop of sortedStops(); track stop.id) {
+            <option [ngValue]="stop.id">{{ stop.name }}</option>
+          }
+        </select>
+      </div>
+    }
+
+    <div class="form-control">
+      <label for="sms-class" class="label">
+        <span class="label-text">Class</span>
+      </label>
+      <select
+        id="sms-class"
+        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+        [ngModel]="classFilter()"
+        (ngModelChange)="classFilter.set($event)"
+      >
+        <option value="">All classes</option>
+        @for (studentClass of classes(); track studentClass) {
+          <option [value]="studentClass">{{ studentClass }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-control">
+      <label for="sms-status" class="label">
+        <span class="label-text">Status</span>
+      </label>
+      <select
+        id="sms-status"
+        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event)"
+      >
+        <option value="all">All</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="conflict">Conflict</option>
+      </select>
+    </div>
+  </div>
+
+  @if (loading()) {
+    @for (placeholder of [1, 2, 3]; track placeholder) {
+      <div
+        class="skeleton mb-2 h-12 w-full rounded-lg"
+        aria-hidden="true"
+      ></div>
+    }
+    <span class="sr-only" role="status">Loading students…</span>
+  } @else if (loadFailed()) {
+    <div
+      class="flex flex-col items-center gap-3 rounded-lg bg-background-100 p-6 text-center shadow-lg"
+      role="alert"
+    >
+      <p>
+        The students could not be loaded. Check your connection and try again.
+      </p>
+      <button class="btn btn-primary btn-sm" (click)="loadStudents()">
+        Try again
+      </button>
+    </div>
+  } @else {
+    <div class="mb-2 flex min-h-8 items-center justify-between gap-2">
+      <p class="text-sm" aria-live="polite">
+        @if (filtersActive()) {
+          Showing {{ visibleCount() }} of {{ totalCount() }} students
+        } @else {
+          {{ totalCount() }} {{ totalCount() === 1 ? 'student' : 'students' }}
+        }
+      </p>
+      @if (filtersActive()) {
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm"
+          (click)="clearFilters()"
+        >
+          Clear filters
+        </button>
+      }
+    </div>
+
+    @if (visibleRows().length === 0) {
+      <p class="rounded-lg bg-background-100 p-6 text-center shadow-lg">
+        @if (totalCount() === 0) {
+          You have not requested any students yet.
+        } @else {
+          No students match these filters.
+        }
+      </p>
+    } @else {
+      <!-- Desktop -->
+      <div
+        class="hidden overflow-x-auto rounded-box border border-base-content/5 bg-base-100 md:block"
+      >
+        <table class="table">
+          <caption class="sr-only">
+            Requests at your stops
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Class</th>
+              <th scope="col">Stop</th>
+              <th scope="col">Status</th>
+              <th scope="col">Other requests</th>
+              <th scope="col" class="w-px">
+                <span class="sr-only">Actions</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (
+              row of visibleRows();
+              track row.student.edufsUsername + '-' + row.assignment.stopId
+            ) {
+              <tr class="align-top">
+                <td class="whitespace-nowrap font-semibold">
+                  {{ row.student.lastName }} {{ row.student.firstName }}
+                </td>
+                <td class="whitespace-nowrap">
+                  {{ row.student.studentClass }}
+                </td>
+                <td>{{ row.assignment.stopName }}</td>
+                <td class="whitespace-nowrap">
+                  <span
+                    class="rounded-full px-2 py-0.5 text-xs font-semibold {{
+                      rowStatusClass(row)
+                    }}"
+                  >
+                    {{ rowStatusText(row) }}
+                  </span>
+                </td>
+                <td class="text-sm">
+                  <ng-container
+                    [ngTemplateOutlet]="otherRequests"
+                    [ngTemplateOutletContext]="{ $implicit: row }"
+                  />
+                </td>
+                <td class="text-right">
+                  <button
+                    type="button"
+                    class="btn btn-outline btn-error btn-sm"
+                    [attr.aria-label]="
+                      'Remove ' +
+                      fullName(row.student) +
+                      ' from ' +
+                      row.assignment.stopName
+                    "
+                    (click)="askRemove(row.student, row.assignment)"
+                  >
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile -->
+      <ul class="space-y-4 md:hidden">
+        @for (
+          row of visibleRows();
+          track row.student.edufsUsername + '-' + row.assignment.stopId
+        ) {
+          <li class="rounded-lg bg-white p-4 shadow dark:bg-background-100">
+            <div class="flex items-start justify-between gap-3">
+              <p class="text-lg font-bold">
+                {{ row.student.lastName }} {{ row.student.firstName }}
+              </p>
+              <span
+                class="shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold {{
+                  rowStatusClass(row)
+                }}"
+              >
+                {{ rowStatusText(row) }}
+              </span>
+            </div>
+            <p class="text-sm">
+              {{ row.student.studentClass }} · {{ row.assignment.stopName }}
+            </p>
+            @if (row.others.length) {
+              <div class="mt-3 text-sm">
+                <ng-container
+                  [ngTemplateOutlet]="otherRequests"
+                  [ngTemplateOutletContext]="{ $implicit: row }"
+                />
+              </div>
+            }
+            <button
+              type="button"
+              class="btn btn-outline btn-error btn-sm mt-3 w-full"
+              [attr.aria-label]="
+                'Remove ' +
+                fullName(row.student) +
+                ' from ' +
+                row.assignment.stopName
+              "
+              (click)="askRemove(row.student, row.assignment)"
+            >
+              Remove
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>
+
+<ng-template #otherRequests let-row>
+  @if (row.others.length) {
+    @if (row.conflict) {
+      <p
+        class="mb-1 flex items-center gap-1 font-semibold text-orange-700 dark:text-orange-400"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-4 shrink-0"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+          />
+        </svg>
+        An admin decides between:
+      </p>
+    }
+    <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+      @for (other of row.others; track other.stopId) {
+        <li>
+          {{ other.stopName }}
+          @if (other.stopManagers?.length) {
+            ({{ other.stopManagers.join(', ') }})
+          }
+          · {{ statusText(other.status) }}
+        </li>
+      }
+    </ul>
+  }
+</ng-template>
+
+@if (removal()) {
+  <app-delete-popup
+    [title]="removalTitle()"
+    [message]="removalMessage()"
+    [confirmLabel]="removalConfirmLabel()"
+    [busy]="removing()"
+    (cancel)="cancelRemove()"
+    (removeConfirmed)="confirmRemove()"
+  />
+}

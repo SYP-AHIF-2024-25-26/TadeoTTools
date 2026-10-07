@@ -3,7 +3,6 @@ import {
   computed,
   inject,
   signal,
-  input,
   ViewContainerRef,
   OnInit,
 } from '@angular/core';
@@ -81,21 +80,15 @@ export class ListStudentsComponent implements OnInit {
 
   showAddStudent = signal<boolean>(false);
   dataCollapsed = signal<boolean>(true);
-  readOnly = input<boolean>(false);
-  stopManagerId = input<string | null>(null);
 
   private overlayRef: OverlayRef | null = null;
   popupStudent: StudentWithUI | null = null;
   protected readonly Status = Status;
 
   async ngOnInit() {
-    // stops are only needed for assigning and require admin rights
-    if (!this.readOnly()) {
-      this.stops.set(await this.stopService.getStops());
-    }
+    this.stops.set(await this.stopService.getStops());
     await this.refreshStudents();
     this.scrollService.restoreScroll();
-    console.log('Initialising Student List');
   }
 
   toggleDataCollapsed(): void {
@@ -406,10 +399,7 @@ export class ListStudentsComponent implements OnInit {
   }
 
   async refreshStudents() {
-    const stopManagerId = this.stopManagerId();
-    const students = stopManagerId
-      ? await this.studentService.getStudentsForStopManager(stopManagerId)
-      : await this.studentService.getStudents();
+    const students = await this.studentService.getStudents();
     students.forEach((student) => {
       if (student.studentAssignments) {
         student.studentAssignments.sort((a, b) => a.stopId - b.stopId);
