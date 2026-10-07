@@ -54,7 +54,7 @@ public static class FeatureFlagApi
             await context.SaveChangesAsync();
 
             return Results.NoContent();
-        });
+        }).RequireAuthorization(Setup.AdminPolicyName);
     }
     
     record GetFeatureFlagDto(string Name, bool IsEnabled, string? Value);

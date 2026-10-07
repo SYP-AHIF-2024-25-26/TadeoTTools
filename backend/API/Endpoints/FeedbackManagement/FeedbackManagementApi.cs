@@ -28,6 +28,7 @@ public static class FeedbackManagementApi
             .WithName(nameof(FeedbackManagementEndpoints.GetFeedbackAnswersCsv))
             .WithDescription("Get all answers in a csv file")
             .Produces(StatusCodes.Status206PartialContent)
-            .Produces(StatusCodes.Status416RangeNotSatisfiable);
+            .Produces(StatusCodes.Status416RangeNotSatisfiable)
+            .RequireAuthorization(Setup.AdminPolicyName);
     }
 }
