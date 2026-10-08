@@ -8,8 +8,8 @@
       class="mx-auto grid w-11/12 max-w-6xl grid-cols-1 items-start gap-6 pb-10 lg:grid-cols-3"
       aria-hidden="true"
     >
-      <div class="skeleton h-80 rounded-lg lg:col-span-2"></div>
-      <div class="skeleton h-80 rounded-lg"></div>
+      <div class="skeleton h-96 rounded-lg lg:col-span-2"></div>
+      <div class="skeleton h-96 rounded-lg"></div>
     </div>
     <span class="sr-only" role="status">Loading the overview…</span>
   } @else if (loadFailed()) {
@@ -27,7 +27,7 @@
       <div
         class="mx-auto grid w-11/12 max-w-6xl grid-cols-1 items-start gap-6 pb-10 lg:grid-cols-3"
       >
-        <!-- Students, feedback and the visitor app switch, right of the tour -->
+        <!-- Students, feedback and the visitor app switch, right of the stops -->
         <div class="flex min-w-0 flex-col gap-6 lg:col-start-3 lg:row-start-1">
           <section
             class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
@@ -86,41 +86,6 @@
 
           <section
             class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
-            aria-labelledby="feedback-heading"
-          >
-            <h2 id="feedback-heading" class="text-lg font-bold">Feedback</h2>
-            <dl class="mt-2 text-sm">
-              <div
-                class="flex items-baseline justify-between gap-4 border-b border-gray-200 py-2 dark:border-gray-700"
-              >
-                <dt>
-                  <a class="link-hover link" routerLink="/feedback"
-                    >Questions</a
-                  >
-                </dt>
-                <dd class="text-base font-bold tabular-nums">
-                  {{ o.feedbackQuestionCount }}
-                </dd>
-              </div>
-              <div class="flex items-baseline justify-between gap-4 pt-2">
-                <dt>Responses</dt>
-                <dd class="text-right">
-                  <span class="text-base font-bold tabular-nums">{{
-                    o.feedbackSessionCount
-                  }}</span>
-                  @if (o.latestFeedbackAt) {
-                    <span class="block text-xs text-gray-600 dark:text-gray-300"
-                      >latest
-                      {{ o.latestFeedbackAt | date: 'd MMM y, HH:mm' }}</span
-                    >
-                  }
-                </dd>
-              </div>
-            </dl>
-          </section>
-
-          <section
-            class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
             aria-labelledby="visitor-app-heading"
           >
             <h2 id="visitor-app-heading" class="text-lg font-bold">
@@ -139,6 +104,8 @@
                   }
                   @if (countdownDate(); as date) {
                     · to {{ date | date: 'd MMM y' }}
+                  } @else if (!o.countdown.value) {
+                    · no countdown date set
                   }
                 </span>
               </label>
@@ -154,117 +121,212 @@
                 (change)="toggleCountdown($event)"
               />
             </div>
-            <a
-              class="link mt-3 inline-block text-sm font-medium"
-              routerLink="/data-management"
-              [queryParams]="{ tab: 'data' }"
+
+            <!-- Feedback is collected in the visitor app, so it sits here, set like the countdown above. The whole block opens the questions. -->
+            <div
+              class="mt-4 border-t border-gray-200 pt-3 dark:border-gray-700"
             >
-              @if (o.countdown.value) {
-                Change the countdown date
-              } @else {
-                Set a countdown date first
-              }
-            </a>
+              <a
+                class="focus-visible:outline-primary -mx-2 flex items-start justify-between gap-4 rounded px-2 py-1 text-sm hover:bg-primary-100 focus-visible:outline focus-visible:outline-2 dark:hover:bg-gray-800"
+                routerLink="/feedback"
+                title="Edit the feedback questions"
+              >
+                <div>
+                  <span class="block font-semibold">Feedback</span>
+                  <span class="block text-gray-600 dark:text-gray-300">
+                    {{ o.feedbackQuestionCount }}
+                    {{ word(o.feedbackQuestionCount, 'question', 'questions') }}
+                    @if (o.latestFeedbackAt) {
+                      · latest response
+                      {{ o.latestFeedbackAt | date: 'd MMM y, HH:mm' }}
+                    }
+                  </span>
+                </div>
+                <span class="shrink-0 text-right">
+                  <span
+                    class="block text-xl font-bold tabular-nums leading-none"
+                    >{{ o.feedbackSessionCount }}</span
+                  >
+                  <span
+                    class="block text-xs text-gray-600 dark:text-gray-300"
+                    >{{
+                      word(o.feedbackSessionCount, 'response', 'responses')
+                    }}</span
+                  >
+                </span>
+              </a>
+            </div>
           </section>
         </div>
 
-        <!-- The tour, stop by stop -->
+        <!-- All stops: the tour's groups in tour order, then the internal stops. Each row is collapsed to its student totals. -->
         <section
           class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 lg:col-span-2"
-          aria-labelledby="tour-heading"
+          aria-labelledby="stops-heading"
         >
           <div class="flex items-baseline justify-between gap-4">
-            <h2 id="tour-heading" class="text-lg font-bold">
-              The tour and its students
+            <h2 id="stops-heading" class="text-lg font-bold">
+              Stops and their students
             </h2>
-            <span class="whitespace-nowrap" title="Stops in the tour">
+            <span class="whitespace-nowrap text-right">
               <span class="text-2xl font-bold tabular-nums">{{
-                tourStopCount()
+                o.stops.length
               }}</span>
-              @if (tourStopCount() < o.stops.length) {
-                <span
-                  class="text-sm tabular-nums text-gray-600 dark:text-gray-300"
-                  >of {{ o.stops.length }}</span
+              <span class="sr-only">stops</span>
+              @if (o.stops.length > 0) {
+                <span class="block text-xs text-gray-600 dark:text-gray-300"
+                  >{{ tourStopCount() }} in the tour</span
                 >
               }
-              <span class="sr-only">stops in the tour</span>
             </span>
           </div>
 
-          @if (tour().length === 0) {
+          @if (o.stops.length === 0 && tour().length === 0) {
             <p class="mt-3 text-sm">
-              No public stop groups yet.
-              <a class="link font-medium" routerLink="/stopgroups">Edit Tour</a>
-              to show stops to visitors.
+              No stops yet.
+              <a class="link font-medium" routerLink="/stop">Create a stop</a>
+              or import the station plan.
             </p>
           } @else {
-            <ol class="mt-5 flex flex-wrap gap-x-8 gap-y-6">
-              @for (block of tour(); track block.group.id) {
-                <li class="min-w-0 max-w-full">
-                  <div class="mb-2 flex items-baseline gap-2 text-xs">
-                    <a
-                      class="max-w-56 truncate font-semibold hover:underline"
-                      routerLink="/stopgroup"
-                      [queryParams]="{ id: block.group.id }"
-                      [title]="block.group.name"
-                      >{{ block.group.name }}</a
-                    >
-                    <span
-                      class="tabular-nums text-gray-600 dark:text-gray-300"
-                      >{{ block.stops.length }}</span
-                    >
-                  </div>
-                  <ol
-                    class="flex flex-wrap gap-1"
-                    [attr.aria-label]="block.group.name + ': stops'"
-                  >
-                    @for (stop of block.stops; track stop.id) {
-                      <li class="flex flex-col items-center gap-1">
-                        <a
-                          class="focus-visible:outline-primary flex h-11 w-14 items-center justify-center rounded shadow transition duration-150 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-                          [style.background]="tileBackground(stop)"
-                          routerLink="/stop"
-                          [queryParams]="{ id: stop.id }"
-                          [title]="tileLabel(stop)"
-                          [attr.aria-label]="tileLabel(stop)"
-                        >
-                          <span
-                            class="text-white [text-shadow:0_1px_2px_rgb(0_0_0/0.5)]"
-                            aria-hidden="true"
-                            ><span class="text-sm font-bold tabular-nums">{{
-                              stop.approvedStudentCount
-                            }}</span>
-                            @if (stop.pendingStudentCount > 0) {
-                              <span class="ml-0.5 text-xs tabular-nums"
-                                >({{ stop.pendingStudentCount }})</span
-                              >
-                            }
-                          </span>
-                        </a>
-                        <span
-                          class="h-1.5 w-1.5 rounded-full"
-                          [class]="
-                            stopGaps(stop).length > 0
-                              ? 'bg-gray-700 dark:bg-gray-300'
-                              : 'bg-transparent'
-                          "
-                          aria-hidden="true"
-                        ></span>
-                      </li>
-                    } @empty {
-                      <li
-                        class="flex h-11 items-center rounded border border-dashed border-gray-400 px-3 text-xs text-gray-600 dark:border-gray-500 dark:text-gray-300"
-                      >
-                        No stops
-                      </li>
-                    }
-                  </ol>
+            <div
+              class="mt-4 grid grid-cols-[1.25rem_minmax(0,1fr)_2.5rem_2.5rem] gap-x-2 border-b border-gray-200 pb-2 text-xs text-gray-600 dark:border-gray-700 dark:text-gray-300 sm:grid-cols-[1.25rem_minmax(0,1fr)_5.5rem_5.5rem]"
+              aria-hidden="true"
+            >
+              <span></span>
+              <span>Stop group</span>
+
+              <span class="inline-flex items-center justify-end gap-1.5"
+                ><span
+                  class="h-2 w-2 rounded-full bg-green-600 dark:bg-green-500"
+                ></span
+                ><span class="hidden sm:inline">Approved</span></span
+              >
+              <span class="inline-flex items-center justify-end gap-1.5"
+                ><span
+                  class="h-2 w-2 rounded-full bg-teal-500 dark:bg-teal-400"
+                ></span
+                ><span class="hidden sm:inline">Pending</span></span
+              >
+            </div>
+            <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+              @for (block of tour(); track block.key) {
+                <li>
+                  <ng-container
+                    [ngTemplateOutlet]="stopRow"
+                    [ngTemplateOutletContext]="{ $implicit: block }"
+                  />
                 </li>
               }
-            </ol>
+              @if (internal().stops.length > 0) {
+                <li class="!border-t-2 !border-gray-300 dark:!border-gray-600">
+                  <ng-container
+                    [ngTemplateOutlet]="stopRow"
+                    [ngTemplateOutletContext]="{ $implicit: internal() }"
+                  />
+                </li>
+              }
+            </ul>
           }
         </section>
       </div>
     }
   }
 </div>
+
+<!-- One stop: colour stripe in its exact division colour(s), name, approved students, pending requests in brackets, a dot for gaps -->
+<ng-template #stopChip let-stop>
+  <a
+    class="focus-visible:outline-primary flex h-9 max-w-56 items-center gap-2 overflow-hidden rounded bg-white pr-2 text-xs shadow transition duration-150 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:bg-gray-800"
+    routerLink="/stop"
+    [queryParams]="{ id: stop.id }"
+    [title]="tileLabel(stop)"
+    [attr.aria-label]="tileLabel(stop)"
+  >
+    <span
+      class="h-full w-1.5 shrink-0"
+      [style.background]="tileBackground(stop)"
+      aria-hidden="true"
+    ></span>
+    <span class="min-w-0 truncate font-semibold" aria-hidden="true">{{
+      stop.name
+    }}</span>
+    <span class="shrink-0 whitespace-nowrap tabular-nums" aria-hidden="true"
+      ><span class="font-bold">{{ stop.approvedStudentCount }}</span>
+      @if (stop.pendingStudentCount > 0) {
+        <span class="text-[0.625rem]">({{ stop.pendingStudentCount }})</span>
+      }
+    </span>
+    @if (stopGaps(stop).length > 0) {
+      <span
+        class="h-1.5 w-1.5 shrink-0 rounded-full bg-gray-700 dark:bg-gray-300"
+        aria-hidden="true"
+      ></span>
+    }
+  </a>
+</ng-template>
+
+<!-- One collapsible row: a stop group (or the internal stops) with its student totals; open it for the stops -->
+<ng-template #stopRow let-block>
+  <details class="group">
+    <summary
+      class="focus-visible:outline-primary grid cursor-pointer list-none grid-cols-[1.25rem_minmax(0,1fr)_2.5rem_2.5rem] items-center gap-x-2 rounded py-2 text-sm hover:bg-primary-100 focus-visible:outline focus-visible:outline-2 dark:hover:bg-gray-800 sm:grid-cols-[1.25rem_minmax(0,1fr)_5.5rem_5.5rem] [&::-webkit-details-marker]:hidden"
+    >
+      <svg
+        class="h-4 w-4 transition-transform duration-150 group-open:rotate-90 motion-reduce:transition-none"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7" />
+      </svg>
+      <span class="flex min-w-0 items-baseline gap-2">
+        <span class="truncate font-semibold" [title]="block.name">{{
+          block.name
+        }}</span>
+        <span
+          class="shrink-0 whitespace-nowrap text-xs text-gray-600 dark:text-gray-300"
+        >
+          {{ block.stops.length }}
+          {{ word(block.stops.length, 'stop', 'stops') }}
+          @if (!block.group) {
+            <span class="hidden sm:inline">· not in the tour</span>
+          }
+        </span>
+      </span>
+      <span class="text-right font-bold tabular-nums"
+        >{{ block.approved }}<span class="sr-only"> approved</span></span
+      >
+      <span class="text-right tabular-nums"
+        >{{ block.pending }}<span class="sr-only"> pending</span></span
+      >
+    </summary>
+    <div class="pb-4 pl-7">
+      @if (block.stops.length > 0) {
+        <ul class="flex flex-wrap gap-1">
+          @for (stop of block.stops; track stop.id) {
+            <li>
+              <ng-container
+                [ngTemplateOutlet]="stopChip"
+                [ngTemplateOutletContext]="{ $implicit: stop }"
+              />
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          No stops in this group.
+        </p>
+      }
+      @if (block.group; as group) {
+        <a
+          class="link mt-2 inline-block text-xs font-medium"
+          routerLink="/stopgroup"
+          [queryParams]="{ id: group.id }"
+          >Open stop group</a
+        >
+      }
+    </div>
+  </details>
+</ng-template>
