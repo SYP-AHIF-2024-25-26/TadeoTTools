@@ -16,34 +16,9 @@ import { Overview, OverviewGroup, OverviewStop } from '@/shared/models/types';
 
 // Same fallback as the visitor app's stop cards: a stop without a division.
 const NO_DIVISION_COLOR = '#80c076';
-// How many names a to-do's explanation lists before it says "and N more".
-const NAMES_SHOWN = 5;
-
-type Tone = 'conflict' | 'pending' | 'neutral';
-
-export type Todo = {
-  key: string;
-  count: number;
-  title: string;
-  detail: string;
-  tone: Tone;
-  action: string;
-  route: string;
-  queryParams?: Record<string, string>;
-};
-
-export type Hint = {
-  key: string;
-  count: number;
-  title: string;
-  stops: OverviewStop[];
-  route: string;
-  queryParams?: Record<string, string>;
-  linkLabel: string;
-};
 
 type TourBlock = {
-  group: OverviewGroup | null;
+  group: OverviewGroup;
   stops: OverviewStop[];
 };
 
@@ -58,26 +33,6 @@ export class OverviewComponent implements OnInit {
   private featureFlagService = inject(FeatureFlagService);
   private confirmDialog = inject(ConfirmDialogService);
   private toast = inject(ToastService);
-
-  protected readonly shortcuts: {
-    label: string;
-    route: string;
-    queryParams?: Record<string, string>;
-  }[] = [
-    { label: 'Edit Tour Order', route: '/stopgroups' },
-    { label: 'Create Stop', route: '/stop' },
-    {
-      label: 'Import & Export',
-      route: '/data-management',
-      queryParams: { tab: 'data' },
-    },
-    {
-      label: 'Stop Managers',
-      route: '/data-management',
-      queryParams: { tab: 'stop-managers' },
-    },
-    { label: 'Feedback Questions', route: '/feedback' },
-  ];
 
   overview = signal<Overview | null>(null);
   loading = signal(true);
@@ -104,15 +59,6 @@ export class OverviewComponent implements OnInit {
   private stops = computed(() => this.overview()?.stops ?? []);
   private groups = computed(() => this.overview()?.groups ?? []);
 
-  /** Nothing has been set up yet: show first steps instead of to-dos. */
-  firstRun = computed(
-    () =>
-      this.overview() !== null &&
-      this.stops().length === 0 &&
-      this.groups().length === 0 &&
-      this.overview()!.students.total === 0
-  );
-
   private visibleStopIds = computed(
     () =>
       new Set(
@@ -121,122 +67,6 @@ export class OverviewComponent implements OnInit {
           .flatMap((g) => g.stopIds)
       )
   );
-
-  todos = computed<Todo[]>(() => {
-    const overview = this.overview();
-    if (!overview) return [];
-    const invisible = this.stops().filter(
-      (s) => !this.visibleStopIds().has(s.id)
-    );
-    const emptyGroups = this.groups().filter(
-      (g) => g.isPublic && g.stopIds.length === 0
-    );
-    const todos: Todo[] = [
-      {
-        key: 'conflict',
-        count: overview.students.conflict,
-        title:
-          word(overview.students.conflict, 'student', 'students') +
-          ' with a conflict',
-        detail: 'They asked for more than one stop. Assign each to one stop.',
-        tone: 'conflict',
-        action: 'Resolve',
-        route: '/students',
-        queryParams: { status: 'conflict' },
-      },
-      {
-        key: 'invisible',
-        count: invisible.length,
-        title: word(invisible.length, 'stop', 'stops') + ' visitors won’t see',
-        detail: 'Not in any public stop group: ' + nameList(invisible) + '.',
-        tone: 'neutral',
-        action: 'Edit Tour',
-        route: '/stopgroups',
-      },
-      {
-        key: 'empty-groups',
-        count: emptyGroups.length,
-        title:
-          word(emptyGroups.length, 'public stop group', 'public stop groups') +
-          ' without stops',
-        detail: 'Visitors see an empty group: ' + nameList(emptyGroups) + '.',
-        tone: 'neutral',
-        action: 'Edit Tour',
-        route: '/stopgroups',
-      },
-      {
-        key: 'pending',
-        count: overview.students.pending,
-        title:
-          word(
-            overview.students.pending,
-            'student request',
-            'student requests'
-          ) + ' waiting',
-        detail: 'Each student asked for one stop. Approve or change it.',
-        tone: 'pending',
-        action: 'Review',
-        route: '/students',
-        queryParams: { status: 'pending' },
-      },
-    ];
-    return todos.filter((t) => t.count > 0);
-  });
-
-  hints = computed<Hint[]>(() => {
-    const overview = this.overview();
-    if (!overview) return [];
-    const stops = this.stops();
-    const hints: Hint[] = [
-      {
-        key: 'no-manager',
-        count: 0,
-        title: 'without a stop manager',
-        stops: stops.filter((s) => s.managerCount === 0),
-        route: '/stops',
-        linkLabel: 'Stops',
-      },
-      {
-        key: 'no-students',
-        count: 0,
-        title: 'without an approved student',
-        stops: stops.filter((s) => s.approvedStudentCount === 0),
-        route: '/stops',
-        linkLabel: 'Stops',
-      },
-      {
-        key: 'no-room',
-        count: 0,
-        title: 'without a room',
-        stops: stops.filter((s) => s.roomNr.trim() === ''),
-        route: '/stops',
-        linkLabel: 'Stops',
-      },
-      {
-        key: 'no-description',
-        count: 0,
-        title: 'without a description',
-        stops: stops.filter((s) => !s.hasDescription),
-        route: '/stops',
-        linkLabel: 'Stops',
-      },
-    ];
-    return hints
-      .map((h) => ({ ...h, count: h.stops.length }))
-      .filter((h) => h.count > 0);
-  });
-
-  hiddenGroups = computed(() => this.groups().filter((g) => !g.isPublic));
-
-  statusLine = computed(() => {
-    const count = this.todos().length;
-    if (count === 0) {
-      return 'Nothing to do. Every student request is decided and every stop is in the tour.';
-    }
-    return count === 1
-      ? 'One thing to do before the open day.'
-      : `${count} things to do before the open day.`;
-  });
 
   studentSegments = computed(() => {
     const s = this.overview()?.students;
@@ -276,26 +106,20 @@ export class OverviewComponent implements OnInit {
     }));
   });
 
+  /** Public stop groups in tour order. Hidden groups and ungrouped stops are private on purpose. */
   tour = computed<TourBlock[]>(() => {
     const byId = new Map(this.stops().map((s) => [s.id, s]));
-    const grouped = new Set(this.groups().flatMap((g) => g.stopIds));
-    const blocks: TourBlock[] = this.groups().map((group) => ({
-      group,
-      stops: group.stopIds
-        .map((id) => byId.get(id))
-        .filter((s): s is OverviewStop => s !== undefined),
-    }));
-    const outside = this.stops().filter((s) => !grouped.has(s.id));
-    if (outside.length > 0) {
-      blocks.push({ group: null, stops: outside });
-    }
-    return blocks;
+    return this.groups()
+      .filter((group) => group.isPublic)
+      .map((group) => ({
+        group,
+        stops: group.stopIds
+          .map((id) => byId.get(id))
+          .filter((s): s is OverviewStop => s !== undefined),
+      }));
   });
 
   tourStopCount = computed(() => this.visibleStopIds().size);
-  publicGroupCount = computed(
-    () => this.groups().filter((g) => g.isPublic).length
-  );
 
   protected readonly word = word;
 
@@ -318,9 +142,9 @@ export class OverviewComponent implements OnInit {
 
   tileLabel(stop: OverviewStop): string {
     const parts = [stop.name];
-    if (stop.roomNr.trim() !== '') parts.push(`room ${stop.roomNr}`);
+    if (stop.roomNr.trim() !== '') parts.push(stop.roomNr);
     parts.push(
-      plural(stop.approvedStudentCount, 'approved student', 'approved students')
+      `${stop.approvedStudentCount} approved, ${stop.pendingStudentCount} pending`
     );
     const gaps = this.stopGaps(stop);
     if (gaps.length > 0) parts.push(gaps.join(', '));
@@ -388,14 +212,4 @@ export class OverviewComponent implements OnInit {
 
 function word(count: number, one: string, many: string): string {
   return count === 1 ? one : many;
-}
-
-function plural(count: number, one: string, many: string): string {
-  return `${count} ${word(count, one, many)}`;
-}
-
-function nameList(items: { name: string }[]): string {
-  const names = items.slice(0, NAMES_SHOWN).map((i) => i.name);
-  const rest = items.length - names.length;
-  return rest > 0 ? `${names.join(', ')} and ${rest} more` : names.join(', ');
 }
