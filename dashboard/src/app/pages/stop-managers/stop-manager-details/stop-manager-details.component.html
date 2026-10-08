@@ -27,31 +27,50 @@
       <div
         class="mx-auto mb-6 w-11/12 max-w-6xl rounded-lg bg-background-100 p-4 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 md:p-10"
       >
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <h2 class="text-lg font-bold">{{ stop.name }}</h2>
-            <p class="mt-1 text-sm">
-              @for (
-                fact of stopFacts().get(stop.id);
-                track fact.text;
-                let first = $first
-              ) {
-                @if (!first) {
-                  <span aria-hidden="true"> · </span>
-                }
-                <span
-                  [class.font-semibold]="fact.conflict"
-                  [class.text-orange-700]="fact.conflict"
-                  [class.dark:text-orange-400]="fact.conflict"
-                  >{{ fact.text }}</span
-                >
+        <div class="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+          <div class="min-w-0">
+            <h2 class="break-words text-lg font-bold">{{ stop.name }}</h2>
+            <div
+              class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm"
+            >
+              @if (stop.roomNr) {
+                <span class="font-semibold">{{ stop.roomNr }}</span>
               }
-            </p>
+              @if (studentCounts().get(stop.id); as counts) {
+                <span class="flex flex-wrap gap-2">
+                  @if (counts.approved > 0) {
+                    <span
+                      class="rounded-full px-2 py-0.5 text-xs font-medium"
+                      [class]="approvedClass"
+                    >
+                      Approved: {{ counts.approved }}
+                    </span>
+                  }
+                  @if (counts.pending > 0) {
+                    <span
+                      class="rounded-full px-2 py-0.5 text-xs font-medium"
+                      [class]="pendingClass"
+                    >
+                      Pending: {{ counts.pending }}
+                    </span>
+                  }
+                  @if (counts.conflict > 0) {
+                    <span
+                      class="rounded-full px-2 py-0.5 text-xs font-medium"
+                      [class]="conflictClass"
+                    >
+                      Conflict: {{ counts.conflict }}
+                    </span>
+                  }
+                </span>
+              }
+            </div>
           </div>
           <a
-            class="btn btn-primary"
+            class="btn btn-primary btn-sm"
             [routerLink]="['/stop']"
             [queryParams]="{ id: stop.id }"
+            [attr.aria-label]="'Edit ' + stop.name"
           >
             Edit
           </a>
