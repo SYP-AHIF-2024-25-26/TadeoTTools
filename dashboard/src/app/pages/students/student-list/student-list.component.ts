@@ -95,12 +95,20 @@ export class ListStudentsComponent implements OnInit {
   popupStudent: StudentWithUI | null = null;
   protected readonly Status = Status;
 
-  async ngOnInit() {
-    // The overview links here with ?status=conflict etc.
-    const status = this.route.snapshot.queryParamMap.get('status');
-    if (status && STATUS_FILTERS.includes(status)) {
-      this.statusFilter.set(status);
+  private readonly statusQuerySubscription = this.route.queryParamMap.subscribe(
+    (params) => {
+      const status = params.get('status');
+      this.statusFilter.set(
+        status && STATUS_FILTERS.includes(status) ? status : 'all'
+      );
     }
+  );
+
+  ngOnDestroy() {
+    this.statusQuerySubscription.unsubscribe();
+  }
+
+  async ngOnInit() {
     this.stops.set(await this.stopService.getStops());
     await this.refreshStudents();
     this.scrollService.restoreScroll();
