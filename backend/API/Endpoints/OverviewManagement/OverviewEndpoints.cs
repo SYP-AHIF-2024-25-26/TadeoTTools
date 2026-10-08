@@ -56,9 +56,8 @@ public static partial class OverviewEndpoints
             Unassigned: studentRequests.Count(s => s.Active == 0));
 
         return Results.Ok(new OverviewDto(
-            DivisionCount: await context.Divisions.CountAsync(),
-            StopManagerCount: await context.StopManagers.CountAsync(),
             Students: students,
+            FeedbackQuestionCount: await context.FeedbackQuestions.CountAsync(),
             FeedbackSessionCount: await context.FeedbackSessions.CountAsync(),
             LatestFeedbackAt: await context.FeedbackSessions.MaxAsync(f => (DateTime?)f.Timestamp),
             Countdown: new OverviewCountdownDto(countdown?.IsEnabled ?? false, countdown?.Value),
@@ -82,9 +81,8 @@ public static partial class OverviewEndpoints
     private static partial Regex HtmlTag();
 
     public record OverviewDto(
-        int DivisionCount,
-        int StopManagerCount,
         OverviewStudentsDto Students,
+        int FeedbackQuestionCount,
         int FeedbackSessionCount,
         DateTime? LatestFeedbackAt,
         OverviewCountdownDto Countdown,

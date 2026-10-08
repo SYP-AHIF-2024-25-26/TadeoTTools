@@ -220,9 +220,8 @@ export type OverviewStop = {
 };
 
 export type Overview = {
-  divisionCount: number;
-  stopManagerCount: number;
   students: OverviewStudents;
+  feedbackQuestionCount: number;
   feedbackSessionCount: number;
   latestFeedbackAt: string | null;
   countdown: { isEnabled: boolean; value: string | null };

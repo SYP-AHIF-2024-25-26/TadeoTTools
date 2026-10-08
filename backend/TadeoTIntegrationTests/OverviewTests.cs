@@ -28,6 +28,7 @@ public class OverviewTests(IntegrationTestWebAppFactory factory) : BaseIntegrati
         overview!.Stops.Should().BeEmpty();
         overview.Groups.Should().BeEmpty();
         overview.Students.Should().Be(new OverviewEndpoints.OverviewStudentsDto(0, 0, 0, 0, 0));
+        overview.FeedbackQuestionCount.Should().Be(0);
         overview.FeedbackSessionCount.Should().Be(0);
         overview.LatestFeedbackAt.Should().BeNull();
         overview.Countdown.IsEnabled.Should().BeFalse();
@@ -62,6 +63,7 @@ public class OverviewTests(IntegrationTestWebAppFactory factory) : BaseIntegrati
             CreateStudent("conflict", (staffed, Status.PENDING), (emptyDescription, Status.PENDING)),
             CreateStudent("oldrejected", (staffed, Status.DECLINED)),
             CreateStudent("none"));
+        DbContext.FeedbackQuestions.Add(new FeedbackTextQuestion { Question = "What did you like?", Order = 0 });
         DbContext.FeedbackSessions.Add(new FeedbackSession { Timestamp = new DateTime(2026, 1, 23, 10, 0, 0, DateTimeKind.Utc) });
         DbContext.FeatureFlags.Add(new FeatureFlag { FeatureKey = "showCountdown", IsEnabled = true, Value = "2027-01-22" });
         await DbContext.SaveChangesAsync();
@@ -90,8 +92,7 @@ public class OverviewTests(IntegrationTestWebAppFactory factory) : BaseIntegrati
         buffet.RoomNr.Should().BeEmpty();
         buffet.ManagerCount.Should().Be(0);
 
-        overview.DivisionCount.Should().Be(1);
-        overview.StopManagerCount.Should().Be(1);
+        overview.FeedbackQuestionCount.Should().Be(1);
         overview.FeedbackSessionCount.Should().Be(1);
         overview.LatestFeedbackAt.Should().NotBeNull();
         overview.Countdown.Should().Be(new OverviewEndpoints.OverviewCountdownDto(true, "2027-01-22"));
@@ -110,6 +111,9 @@ public class OverviewTests(IntegrationTestWebAppFactory factory) : BaseIntegrati
         await DbContext.Divisions.ExecuteDeleteAsync();
         await DbContext.FeedbackQuestionAnswers.ExecuteDeleteAsync();
         await DbContext.FeedbackSessions.ExecuteDeleteAsync();
+        await DbContext.FeedbackDependencies.ExecuteDeleteAsync();
+        await DbContext.FeedbackOptions.ExecuteDeleteAsync();
+        await DbContext.FeedbackQuestions.ExecuteDeleteAsync();
         await DbContext.FeatureFlags.ExecuteDeleteAsync();
     }
 
