@@ -10,8 +10,6 @@ export class FeedbackPreviewComponent {
   private toast = inject(ToastService);
 
   readonly questions = input.required<FeedbackQuestion[]>();
-  readonly formTitle = input.required<string>();
-  readonly formSubtitle = input.required<string>();
 
   readonly previewQuestionIndex = signal(0);
   readonly previewAnswers = signal<Record<number, string>>({});

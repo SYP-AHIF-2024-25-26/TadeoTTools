@@ -158,6 +158,82 @@ public static class FeedbackManagementEndpoints
         );
     }
 
+    public static async Task<IResult> GetFeedbackResponses(TadeoTDbContext context)
+    {
+        var questions = await context.FeedbackQuestions
+            .Include(q => ((FeedbackChoiceQuestion)q).Options)
+            .OrderBy(q => q.Order)
+            .ToListAsync();
+
+        var answers = await context.FeedbackQuestionAnswers
+            .Select(a => new { a.FeedbackQuestionId, a.Answer, a.FeedbackSession!.Timestamp })
+            .ToListAsync();
+        var answersByQuestion = answers.ToLookup(a => a.FeedbackQuestionId);
+
+        var responseCount = await context.FeedbackSessions.CountAsync();
+        var latestAt = await context.FeedbackSessions.MaxAsync(s => (DateTime?)s.Timestamp);
+
+        var summaries = questions.Select(q =>
+        {
+            var given = answersByQuestion[q.Id]
+                .Where(a => !string.IsNullOrWhiteSpace(a.Answer))
+                .ToList();
+
+            switch (q)
+            {
+                case FeedbackRatingQuestion rq:
+                {
+                    var ratings = given
+                        .Select(a => int.TryParse(a.Answer, out var r) ? r : (int?)null)
+                        .Where(r => r >= rq.MinRating && r <= rq.MaxRating)
+                        .Select(r => r!.Value)
+                        .ToList();
+                    var counts = Enumerable.Range(rq.MinRating, rq.MaxRating - rq.MinRating + 1)
+                        .Select(v => new FeedbackValueCountDto(v.ToString(), ratings.Count(r => r == v)))
+                        .ToList();
+                    return new FeedbackQuestionSummaryDto(q.Id, q.Question, FeedbackQuestionType.Rating,
+                        given.Count, ratings.Count > 0 ? ratings.Average() : null, counts,
+                        given.Count - ratings.Count, []);
+                }
+                case FeedbackChoiceQuestion cq:
+                {
+                    // Multiple choice answers are stored as the chosen options joined with ", ".
+                    var chosen = given
+                        .SelectMany(a => cq.AllowMultiple
+                            ? a.Answer.Split(", ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                            : [a.Answer.Trim()])
+                        .ToList();
+                    var optionValues = cq.Options.OrderBy(o => o.Id).Select(o => o.Value).ToList();
+                    var counts = optionValues
+                        .Select(o => new FeedbackValueCountDto(o, chosen.Count(c => c == o)))
+                        .ToList();
+                    var otherCount = chosen.Count(c => !optionValues.Contains(c));
+                    return new FeedbackQuestionSummaryDto(q.Id, q.Question,
+                        cq.AllowMultiple ? FeedbackQuestionType.MultipleChoice : FeedbackQuestionType.SingleChoice,
+                        given.Count, null, counts, otherCount, []);
+                }
+                default:
+                {
+                    var texts = given
+                        .OrderByDescending(a => a.Timestamp)
+                        .Select(a => new FeedbackTextAnswerDto(a.Answer, a.Timestamp))
+                        .ToList();
+                    return new FeedbackQuestionSummaryDto(q.Id, q.Question, FeedbackQuestionType.Text,
+                        given.Count, null, [], 0, texts);
+                }
+            }
+        }).ToList();
+
+        return Results.Ok(new FeedbackResponsesDto(responseCount, latestAt, summaries));
+    }
+
+    public static async Task<IResult> DeleteFeedbackResponses(TadeoTDbContext context)
+    {
+        // Answers are removed with their session by the cascade; the questions stay.
+        await context.FeedbackSessions.ExecuteDeleteAsync();
+        return Results.NoContent();
+    }
+
     private static async Task UpdateFeedbackQuestion(UpsertFeedbackQuestionDto dto, FeedbackQuestion existingQuestion, TadeoTDbContext context)
     {
         bool typeMismatch = false;
@@ -305,6 +381,27 @@ public record CreateFeedbackRequestDto(
 );
 
 public record GetFeedbackAnswerDto(string Answer);
+
+public record FeedbackResponsesDto(
+    int ResponseCount,
+    DateTime? LatestAt,
+    List<FeedbackQuestionSummaryDto> Questions
+);
+
+public record FeedbackQuestionSummaryDto(
+    int QuestionId,
+    string Question,
+    FeedbackQuestionType Type,
+    int AnsweredCount,
+    double? Average,
+    List<FeedbackValueCountDto> Counts,
+    int OtherCount,
+    List<FeedbackTextAnswerDto> TextAnswers
+);
+
+public record FeedbackValueCountDto(string Value, int Count);
+
+public record FeedbackTextAnswerDto(string Answer, DateTime Timestamp);
 
 public record FeedbackDependencyDto(
     int DependsOnQuestionId,

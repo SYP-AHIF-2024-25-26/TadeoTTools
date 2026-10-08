@@ -30,5 +30,17 @@ public static class FeedbackManagementApi
             .Produces(StatusCodes.Status206PartialContent)
             .Produces(StatusCodes.Status416RangeNotSatisfiable)
             .RequireAuthorization(Setup.AdminPolicyName);
+
+        group.MapGet("feedback-responses", FeedbackManagementEndpoints.GetFeedbackResponses)
+            .WithName(nameof(FeedbackManagementEndpoints.GetFeedbackResponses))
+            .WithDescription("Get the submitted feedback summarized per question")
+            .Produces<FeedbackResponsesDto>()
+            .RequireAuthorization(Setup.AdminPolicyName);
+
+        group.MapDelete("feedback-responses", FeedbackManagementEndpoints.DeleteFeedbackResponses)
+            .WithName(nameof(FeedbackManagementEndpoints.DeleteFeedbackResponses))
+            .WithDescription("Delete all submitted feedback, keeping the questions")
+            .Produces(StatusCodes.Status204NoContent)
+            .RequireAuthorization(Setup.AdminPolicyName);
     }
 }

@@ -1,26 +1,37 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
+  effect,
   inject,
   OnInit,
   signal,
+  untracked,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   FormArray,
   FormControl,
   FormGroup,
   NonNullableFormBuilder,
-  ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FeedbackService } from '@/core/services/feedback.service';
-import { FeedbackQuestion, FeedbackDependency } from '@/shared/models/types';
+import {
+  FeedbackQuestion,
+  FeedbackDependency,
+  FeedbackResponses,
+} from '@/shared/models/types';
 import { FeedbackPreviewComponent } from './components/feedback-preview/feedback-preview.component';
 import { FeedbackQuestionListComponent } from './components/feedback-question-list/feedback-question-list.component';
 import { FeedbackQuestionEditorComponent } from './components/feedback-question-editor/feedback-question-editor.component';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 import { errorText, ToastService } from '@/core/services/toast.service';
+import { downloadFile } from '@/shared/utils/utils';
+import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
+import { FeedbackResponsesComponent } from '../responses/feedback-responses.component';
 
 export type QuestionType =
   | 'Text'
@@ -50,10 +61,12 @@ export interface DependencyFormGroup {
   templateUrl: './configurator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ReactiveFormsModule,
     FeedbackPreviewComponent,
     FeedbackQuestionListComponent,
     FeedbackQuestionEditorComponent,
+    FeedbackResponsesComponent,
+    DeletePopupComponent,
+    RouterLink,
   ],
 })
 export class FeedbackConfiguratorComponent implements OnInit {
@@ -61,23 +74,39 @@ export class FeedbackConfiguratorComponent implements OnInit {
   private readonly feedbackService = inject(FeedbackService);
   private scrollService = inject(ScrollPersistenceService);
   private toast = inject(ToastService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   saving = signal<boolean>(false);
+
+  private queryParams = toSignal(this.route.queryParamMap);
+  readonly tab = computed<'questions' | 'responses'>(() =>
+    this.queryParams()?.get('tab') === 'responses' ? 'responses' : 'questions'
+  );
+
+  readonly responses = signal<FeedbackResponses | null>(null);
+  readonly responsesLoading = signal(false);
+  readonly responsesFailed = signal(false);
+
+  // The questions as last loaded from the server, to tell which saved ones a save would delete.
+  private savedQuestions: FeedbackQuestion[] = [];
+  readonly confirmingDeletedAnswers = signal<{
+    message: string;
+    confirmLabel: string;
+  } | null>(null);
+
+  constructor() {
+    // Fresh numbers whenever the tab changes, including the first load; the count also feeds the tab badge.
+    effect(() => {
+      this.tab();
+      untracked(() => this.loadResponses());
+    });
+  }
 
   // State signals
   readonly questions = signal<FeedbackQuestion[]>([]);
   readonly showQuestionEditor = signal(false);
   readonly editingIndex = signal(-1);
   readonly isPreviewMode = signal(false);
-
-  // Form configuration signals
-  readonly formTitle = signal('Willkommen am');
-  readonly formSubtitle = signal('Tag der offenen Tür!');
-
-  // Reactive forms
-  readonly configForm = this.fb.group({
-    title: ['Willkommen am'],
-    subtitle: ['Tag der offenen Tür!'],
-  });
 
   questionForm = this.createQuestionForm();
 
@@ -115,12 +144,81 @@ export class FeedbackConfiguratorComponent implements OnInit {
       const fetchedQuestions =
         await this.feedbackService.getAllFeedbackQuestions();
       this.questions.set(fetchedQuestions);
+      this.savedQuestions = fetchedQuestions;
     } catch (error) {
       console.error('Failed to load feedback questions', error);
       this.toast.error(
         errorText(error, 'The feedback questions could not be loaded.')
       );
     }
+  }
+
+  async loadResponses(): Promise<void> {
+    this.responsesLoading.set(true);
+    try {
+      this.responses.set(await this.feedbackService.getFeedbackResponses());
+      this.responsesFailed.set(false);
+    } catch (error) {
+      console.error('Failed to load feedback responses', error);
+      this.responses.set(null);
+      this.responsesFailed.set(true);
+    } finally {
+      this.responsesLoading.set(false);
+    }
+  }
+
+  showTab(tab: 'questions' | 'responses'): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tab === 'responses' ? 'responses' : null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  async downloadCsv(): Promise<void> {
+    try {
+      const blob = await this.feedbackService.getFeedbackQuestionAnswersFile();
+      downloadFile(blob, 'feedback_answers.csv');
+    } catch (error) {
+      console.error('Failed to download file:', error);
+      this.toast.error(
+        errorText(error, 'The feedback answers could not be downloaded.')
+      );
+    }
+  }
+
+  /**
+   * Saved questions this save would delete on the server, together with their answers:
+   * removed ones, and ones changed to another kind (text, rating, choice), which are replaced.
+   */
+  private questionsLosingAnswers(): { question: string; answers: number }[] {
+    const kind = (q: FeedbackQuestion) =>
+      q.type === 'SingleChoice' || q.type === 'MultipleChoice'
+        ? 'Choice'
+        : q.type;
+    const current = new Map(
+      this.questions()
+        .filter((q) => q.id !== undefined)
+        .map((q) => [q.id, q])
+    );
+    const answered = new Map(
+      (this.responses()?.questions ?? []).map((s) => [
+        s.questionId,
+        s.answeredCount,
+      ])
+    );
+
+    return this.savedQuestions
+      .filter((saved) => {
+        const now = current.get(saved.id);
+        return !now || kind(now) !== kind(saved);
+      })
+      .map((saved) => ({
+        question: saved.question,
+        answers: answered.get(saved.id!) ?? 0,
+      }))
+      .filter((q) => q.answers > 0);
   }
 
   addNewQuestion(): void {
@@ -267,16 +365,32 @@ export class FeedbackConfiguratorComponent implements OnInit {
     this.isPreviewMode.update((mode) => !mode);
   }
 
-  async saveQuestions(): Promise<void> {
-    const { title, subtitle } = this.configForm.getRawValue();
-    if (title) this.formTitle.set(title);
-    if (subtitle) this.formSubtitle.set(subtitle);
-
+  async saveQuestions(answersConfirmed = false): Promise<void> {
     if (this.saving()) return;
+
+    const losing = this.questionsLosingAnswers();
+    if (losing.length > 0 && !answersConfirmed) {
+      const total = losing.reduce((sum, q) => sum + q.answers, 0);
+      const answers = (n: number) => `${n} ${n === 1 ? 'answer' : 'answers'}`;
+      this.confirmingDeletedAnswers.set({
+        message:
+          'Saving removes these questions, or replaces them because their type changed, and deletes their answers:\n\n' +
+          losing
+            .map((q) => `“${q.question}”: ${answers(q.answers)}`)
+            .join('\n') +
+          "\n\nThe answers can't be restored. Download the CSV first if you want to keep them.",
+        confirmLabel: `Save and delete ${answers(total)}`,
+      });
+      return;
+    }
+
     this.saving.set(true);
     try {
       await this.feedbackService.saveFeedbackQuestions(this.questions());
+      this.confirmingDeletedAnswers.set(null);
       this.toast.success('Feedback questions saved.');
+      // Reload so new questions get their ids and the answer counts match the server again.
+      await Promise.all([this.loadQuestions(), this.loadResponses()]);
     } catch (error) {
       console.error('Failed to save feedback questions', error);
       this.toast.error(

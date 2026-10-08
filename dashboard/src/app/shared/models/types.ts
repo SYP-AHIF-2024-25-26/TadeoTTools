@@ -142,6 +142,25 @@ export type FeedbackDependency = {
   conditionValue: string;
 };
 
+export type FeedbackResponses = {
+  responseCount: number;
+  latestAt: string | null;
+  questions: FeedbackQuestionSummary[];
+};
+
+export type FeedbackQuestionSummary = {
+  questionId: number;
+  question: string;
+  type: FeedbackQuestion['type'];
+  answeredCount: number;
+  average: number | null;
+  // Rating: one entry per value from min to max. Choice: one per current option.
+  counts: { value: string; count: number }[];
+  // Answers that match no current option or are outside the rating range.
+  otherCount: number;
+  textAnswers: { answer: string; timestamp: string }[];
+};
+
 // Request DTOs
 
 export type CreateStopGroupRequest = {
