@@ -42,6 +42,9 @@ jobs:
             dashboard:
               - 'dashboard/**'
               - '.github/workflows/docker-build-push-images.yml'
+            feedback:
+              - 'feedback/**'
+              - '.github/workflows/docker-build-push-images.yml'
 
   build-and-push:
     needs: changes

@@ -1,0 +1,73 @@
+<main
+  class="flex flex-1 flex-col items-center justify-center gap-12 px-6 text-center"
+>
+  <img
+    ngSrc="assets/logo.png"
+    width="1536"
+    height="347"
+    priority
+    alt="HTL Leonding"
+    class="h-auto w-[min(70vw,32rem)]"
+  />
+
+  <div>
+    <h1 class="text-4xl font-bold text-gray-800 md:text-5xl">
+      Wie hat dir der Tag der offenen Tür gefallen?
+    </h1>
+    <p class="mt-4 text-xl text-gray-600">
+      Ein paar kurze Fragen, ganz anonym.
+    </p>
+  </div>
+
+  @if (hasQuestions()) {
+    <button
+      type="button"
+      class="flex h-20 items-center gap-3 rounded-2xl bg-orange-600 px-12 text-2xl font-bold text-white shadow-md hover:bg-orange-700 active:scale-[0.98]"
+      (click)="session.start()"
+    >
+      Feedback starten
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-7 w-7"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2.5"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  } @else {
+    <div class="max-w-md">
+      <p class="text-xl text-gray-700">
+        Die Fragen konnten nicht geladen werden. Bitte die WLAN-Verbindung
+        prüfen.
+      </p>
+      <button
+        type="button"
+        class="mt-6 h-14 rounded-2xl bg-gray-500 px-8 text-lg font-medium text-white shadow-md hover:bg-gray-600"
+        (click)="retry()"
+      >
+        Erneut versuchen
+      </button>
+    </div>
+  }
+</main>
+
+<!-- Status for the students running the tablet; stays out of the way otherwise -->
+@if (pendingCount() > 0 || (hasQuestions() && isOffline())) {
+  <footer
+    class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 px-6 pb-6 text-base text-gray-500"
+    aria-live="polite"
+  >
+    @if (isOffline() && hasQuestions()) {
+      <span>Offline: Fragen aus dem Zwischenspeicher</span>
+    }
+    @if (pendingCount() > 0) {
+      <button type="button" class="underline" (click)="retry()">
+        {{ pendingCount() }} noch nicht übertragen
+      </button>
+    }
+  </footer>
+}
