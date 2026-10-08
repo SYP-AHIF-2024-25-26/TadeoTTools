@@ -109,6 +109,7 @@ export class OverviewComponent implements OnInit {
     () =>
       this.overview() !== null &&
       this.stops().length === 0 &&
+      this.groups().length === 0 &&
       this.overview()!.students.total === 0
   );
 
