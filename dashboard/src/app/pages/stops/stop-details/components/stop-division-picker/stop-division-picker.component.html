@@ -1,0 +1,59 @@
+<fieldset>
+  <legend class="mb-1 block text-sm font-medium text-text-950">
+    Divisions
+  </legend>
+  <ul class="flex flex-wrap items-center gap-2">
+    @for (division of selected(); track division.id) {
+      <li
+        class="inline-flex min-h-8 items-center gap-2 rounded-full bg-primary-100 py-1 pl-3 text-sm font-medium text-text-950"
+        [class.pr-3]="!editable()"
+        [class.pr-1]="editable()"
+      >
+        <span
+          class="h-3 w-3 shrink-0 rounded-full"
+          aria-hidden="true"
+          [style.background-color]="division.color"
+        ></span>
+        {{ division.name }}
+        @if (editable()) {
+          <button
+            type="button"
+            class="btn btn-circle btn-ghost btn-xs"
+            [attr.aria-label]="'Remove ' + division.name"
+            (click)="remove(division.id)"
+          >
+            <svg
+              class="h-3.5 w-3.5"
+              aria-hidden="true"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        }
+      </li>
+    } @empty {
+      <li class="text-sm text-text-950">No divisions assigned</li>
+    }
+    @if (editable() && available().length > 0) {
+      <li>
+        <select
+          class="select select-bordered select-sm bg-background-50 text-text-950"
+          aria-label="Add division"
+          (change)="add($event)"
+        >
+          <option value="" selected>Add division…</option>
+          @for (division of available(); track division.id) {
+            <option [value]="division.id">{{ division.name }}</option>
+          }
+        </select>
+      </li>
+    }
+  </ul>
+  @if (!editable()) {
+    <p class="mt-1 text-xs text-text-950">Only admins can change divisions.</p>
+  }
+</fieldset>

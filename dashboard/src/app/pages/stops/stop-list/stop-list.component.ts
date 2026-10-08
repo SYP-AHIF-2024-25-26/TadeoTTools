@@ -122,18 +122,16 @@ export class StopsComponent {
   }
 
   getStopGroupNames(stopGroupIds: number[]): string {
-    const names = stopGroupIds
+    return stopGroupIds
       .map((id) => this.getGroupById(id)?.name)
       .filter((name) => name)
       .join(', ');
-    return names || 'No groups assigned';
   }
 
   getStopManagerNames(stopId: number): string {
     const stopManagers = this.stopManagers().filter((t) =>
       t.assignedStops.includes(stopId)
     );
-    if (stopManagers.length === 0) return 'No stop managers assigned';
     return stopManagers.map((t) => `${t.firstName} ${t.lastName}`).join(', ');
   }
 

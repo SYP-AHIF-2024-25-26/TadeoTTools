@@ -438,7 +438,6 @@ public static class StopManagementEndpoints
                 sa.StopId == stopId && (sa.Status == Status.ACCEPTED || sa.Status == Status.PENDING)))
             .OrderBy(s => s.Department)
             .ThenBy(s => s.StudentClass)
-            .ThenBy(s => s.EdufsUsername)
             .ThenBy(s => s.LastName)
             .ThenBy(s => s.FirstName)
             .ToListAsync();
@@ -449,19 +448,18 @@ public static class StopManagementEndpoints
         }
 
         var csvBuilder = new StringBuilder();
-        csvBuilder.AppendLine("Abteilung;Klasse;EdufsUsername;Nachname;Vorname;Status");
+        csvBuilder.AppendLine("Abteilung;Klasse;Nachname;Vorname;Status");
         foreach (var student in students)
         {
             var escapedDepartment = Utils.EscapeCsvField(student.Department);
             var escapedClass = Utils.EscapeCsvField(student.StudentClass);
-            var escapedEdufsUsername = Utils.EscapeCsvField(student.EdufsUsername);
             var escapedLastname = Utils.EscapeCsvField(student.LastName);
             var escapedFirstname = Utils.EscapeCsvField(student.FirstName);
             var escapedStatus = Utils.EscapeCsvField(student.StudentAssignments
                 .First(sa => sa.StopId == stopId && sa.Status is Status.ACCEPTED or Status.PENDING)
                 .Status
                 .ToString());
-            csvBuilder.AppendLine($"{escapedDepartment};{escapedClass};{escapedEdufsUsername};{escapedLastname};{escapedFirstname};{escapedStatus}");
+            csvBuilder.AppendLine($"{escapedDepartment};{escapedClass};{escapedLastname};{escapedFirstname};{escapedStatus}");
         }
 
         var csvBytes = Utils.ToUtf8Bom(csvBuilder.ToString());
