@@ -192,3 +192,40 @@ export type UpdateDivisionRequest = {
 export type AddAdminRequest = {
   name: string;
 };
+
+export type OverviewStudents = {
+  total: number;
+  approved: number;
+  pending: number;
+  conflict: number;
+  unassigned: number;
+};
+
+export type OverviewGroup = {
+  id: number;
+  name: string;
+  isPublic: boolean;
+  stopIds: number[];
+};
+
+export type OverviewStop = {
+  id: number;
+  name: string;
+  roomNr: string;
+  hasDescription: boolean;
+  divisionColors: string[];
+  managerCount: number;
+  approvedStudentCount: number;
+  pendingStudentCount: number;
+};
+
+export type Overview = {
+  divisionCount: number;
+  stopManagerCount: number;
+  students: OverviewStudents;
+  feedbackSessionCount: number;
+  latestFeedbackAt: string | null;
+  countdown: { isEnabled: boolean; value: string | null };
+  groups: OverviewGroup[];
+  stops: OverviewStop[];
+};

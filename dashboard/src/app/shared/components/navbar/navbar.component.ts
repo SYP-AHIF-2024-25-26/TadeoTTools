@@ -23,6 +23,7 @@ export class NavbarComponent {
   mobileMenuOpen = signal(false);
 
   navLinks = [
+    { label: 'Overview', route: '/overview' },
     { label: 'Students', route: '/students' },
     { label: 'Stop Groups', route: '/stopgroups' },
     { label: 'Stops', route: '/stops' },

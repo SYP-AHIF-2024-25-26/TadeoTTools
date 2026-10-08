@@ -1,0 +1,554 @@
+<div class="text-text-950">
+  <header class="mx-auto w-11/12 max-w-6xl pb-6 pt-10">
+    <h1 class="text-3xl font-bold">Overview</h1>
+    @if (overview() && !firstRun()) {
+      <p class="mt-2 text-lg" role="status">{{ statusLine() }}</p>
+    }
+  </header>
+
+  @if (loading()) {
+    <div
+      class="mx-auto grid w-11/12 max-w-6xl grid-cols-1 items-start gap-6 pb-10 lg:grid-cols-3"
+      aria-hidden="true"
+    >
+      <div class="skeleton h-80 rounded-lg lg:col-span-2"></div>
+      <div class="skeleton h-80 rounded-lg"></div>
+      <div class="skeleton h-40 rounded-lg lg:col-span-2"></div>
+    </div>
+    <span class="sr-only" role="status">Loading the overview…</span>
+  } @else if (loadFailed()) {
+    <div
+      class="mx-auto mb-10 flex w-11/12 max-w-6xl flex-col items-center gap-3 rounded-lg bg-background-100 p-6 text-center shadow-lg"
+      role="alert"
+    >
+      <p>
+        The overview could not be loaded. Check your connection and try again.
+      </p>
+      <button class="btn btn-primary btn-sm" (click)="load()">Try again</button>
+    </div>
+  } @else if (overview()) {
+    @if (overview(); as o) {
+      <div
+        class="mx-auto grid w-11/12 max-w-6xl grid-cols-1 items-start gap-6 pb-10 lg:grid-cols-3"
+      >
+        <!-- What still needs doing -->
+        <section
+          class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 lg:col-span-2"
+          aria-labelledby="todo-heading"
+        >
+          <h2 id="todo-heading" class="text-lg font-bold">
+            Before the open day
+          </h2>
+
+          @if (firstRun()) {
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+              There is no data yet. Set up the open day in three steps.
+            </p>
+            <ol class="mt-4 divide-y divide-gray-200 dark:divide-gray-700">
+              <li class="flex items-center gap-4 py-4">
+                <span
+                  class="w-10 shrink-0 text-right text-2xl font-bold tabular-nums"
+                  aria-hidden="true"
+                  >1</span
+                >
+                <div class="min-w-0 flex-1">
+                  <p class="font-semibold">
+                    Import students and the station plan
+                  </p>
+                  <p class="text-sm text-gray-600 dark:text-gray-300">
+                    CSV files for students, teachers and stops.
+                  </p>
+                </div>
+                <a
+                  class="btn btn-primary btn-sm"
+                  routerLink="/data-management"
+                  [queryParams]="{ tab: 'data' }"
+                  >Import</a
+                >
+              </li>
+              <li class="flex items-center gap-4 py-4">
+                <span
+                  class="w-10 shrink-0 text-right text-2xl font-bold tabular-nums"
+                  aria-hidden="true"
+                  >2</span
+                >
+                <div class="min-w-0 flex-1">
+                  <p class="font-semibold">Check the divisions</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-300">
+                    Names, colours and images that stops show to visitors.
+                  </p>
+                </div>
+                <a class="btn btn-outline btn-sm" routerLink="/divisions"
+                  >Divisions</a
+                >
+              </li>
+              <li class="flex items-center gap-4 py-4">
+                <span
+                  class="w-10 shrink-0 text-right text-2xl font-bold tabular-nums"
+                  aria-hidden="true"
+                  >3</span
+                >
+                <div class="min-w-0 flex-1">
+                  <p class="font-semibold">Build the tour</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-300">
+                    Put stops into stop groups in the order visitors walk them.
+                  </p>
+                </div>
+                <a class="btn btn-outline btn-sm" routerLink="/stopgroups"
+                  >Edit Tour</a
+                >
+              </li>
+            </ol>
+          } @else {
+            @if (todos().length > 0) {
+              <ul class="mt-2 divide-y divide-gray-200 dark:divide-gray-700">
+                @for (todo of todos(); track todo.key; let first = $first) {
+                  <li
+                    class="flex flex-wrap items-center gap-x-4 gap-y-2 py-4 sm:flex-nowrap"
+                  >
+                    <span
+                      class="w-10 shrink-0 text-right text-3xl font-bold tabular-nums leading-none"
+                      [class]="
+                        todo.tone === 'conflict'
+                          ? 'text-orange-700 dark:text-orange-400'
+                          : todo.tone === 'pending'
+                            ? 'text-teal-700 dark:text-teal-400'
+                            : ''
+                      "
+                      >{{ todo.count }}</span
+                    >
+                    <div
+                      class="w-[calc(100%-3.5rem)] min-w-0 sm:w-auto sm:flex-1"
+                    >
+                      <p class="font-semibold">{{ todo.title }}</p>
+                      <p
+                        class="break-words text-sm text-gray-600 dark:text-gray-300"
+                      >
+                        {{ todo.detail }}
+                      </p>
+                    </div>
+                    <a
+                      class="btn btn-sm ml-14 sm:ml-0"
+                      [class]="first ? 'btn-primary' : 'btn-outline'"
+                      [routerLink]="todo.route"
+                      [queryParams]="todo.queryParams"
+                      [attr.aria-label]="
+                        todo.action + ': ' + todo.count + ' ' + todo.title
+                      "
+                      >{{ todo.action }}</a
+                    >
+                  </li>
+                }
+              </ul>
+            } @else {
+              <div class="mt-4 flex items-start gap-3">
+                <svg
+                  class="mt-0.5 h-6 w-6 shrink-0 text-green-700 dark:text-green-400"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+                <div>
+                  <p class="font-semibold">Ready for the open day</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-300">
+                    No conflicts, no waiting requests, no stops missing from the
+                    tour.
+                  </p>
+                </div>
+              </div>
+            }
+
+            @if (
+              hints().length > 0 ||
+              hiddenGroups().length > 0 ||
+              o.students.unassigned > 0
+            ) {
+              <h3
+                class="mt-8 border-t border-gray-200 pt-6 font-semibold dark:border-gray-700"
+              >
+                Worth a look
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-300">
+                Can be intentional, e.g. a buffet without students.
+              </p>
+              <ul class="mt-3 space-y-3 text-sm">
+                @for (hint of hints(); track hint.key) {
+                  <li class="flex gap-4">
+                    <span
+                      class="w-10 shrink-0 text-right font-bold tabular-nums"
+                      >{{ hint.count }}</span
+                    >
+                    <p class="min-w-0 break-words">
+                      {{ word(hint.count, 'stop', 'stops') }} {{ hint.title }}:
+                      @for (
+                        stop of hint.stops;
+                        track stop.id;
+                        let last = $last
+                      ) {
+                        <a
+                          class="link-hover link font-medium"
+                          routerLink="/stop"
+                          [queryParams]="{ id: stop.id }"
+                          >{{ stop.name }}</a
+                        >{{ last ? '' : ', ' }}
+                      }
+                    </p>
+                  </li>
+                }
+                @if (o.students.unassigned > 0) {
+                  <li class="flex gap-4">
+                    <span
+                      class="w-10 shrink-0 text-right font-bold tabular-nums"
+                      >{{ o.students.unassigned }}</span
+                    >
+                    <p class="min-w-0 break-words">
+                      {{
+                        word(o.students.unassigned, 'student', 'students')
+                      }}
+                      without a stop request:
+                      <a
+                        class="link-hover link font-medium"
+                        routerLink="/students"
+                        [queryParams]="{ status: 'unassigned' }"
+                        >Unassigned students</a
+                      >
+                    </p>
+                  </li>
+                }
+                @if (hiddenGroups().length > 0) {
+                  <li class="flex gap-4">
+                    <span
+                      class="w-10 shrink-0 text-right font-bold tabular-nums"
+                      >{{ hiddenGroups().length }}</span
+                    >
+                    <p class="min-w-0 break-words">
+                      {{
+                        word(
+                          hiddenGroups().length,
+                          'stop group is',
+                          'stop groups are'
+                        )
+                      }}
+                      hidden from visitors:
+                      @for (
+                        group of hiddenGroups();
+                        track group.id;
+                        let last = $last
+                      ) {
+                        <a
+                          class="link-hover link font-medium"
+                          routerLink="/stopgroup"
+                          [queryParams]="{ id: group.id }"
+                          >{{ group.name }}</a
+                        >{{ last ? '' : ', ' }}
+                      }
+                    </p>
+                  </li>
+                }
+              </ul>
+            }
+          }
+        </section>
+
+        <!-- Figures, visitor app switch, shortcuts -->
+        <aside
+          class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 lg:row-span-2"
+          aria-label="Figures and shortcuts"
+        >
+          <section aria-labelledby="glance-heading">
+            <h2 id="glance-heading" class="text-lg font-bold">At a glance</h2>
+            <dl class="mt-2 text-sm">
+              <div
+                class="flex items-baseline justify-between gap-4 border-b border-gray-200 py-2 dark:border-gray-700"
+              >
+                <dt>Stops</dt>
+                <dd class="text-right">
+                  <span class="text-base font-bold tabular-nums">{{
+                    o.stops.length
+                  }}</span>
+                  @if (o.stops.length > 0) {
+                    <span class="block text-xs text-gray-600 dark:text-gray-300"
+                      >{{ tourStopCount() }} in the tour</span
+                    >
+                  }
+                </dd>
+              </div>
+              <div
+                class="flex items-baseline justify-between gap-4 border-b border-gray-200 py-2 dark:border-gray-700"
+              >
+                <dt>Stop groups</dt>
+                <dd class="text-base font-bold tabular-nums">
+                  {{ o.groups.length }}
+                </dd>
+              </div>
+              <div
+                class="flex items-baseline justify-between gap-4 border-b border-gray-200 py-2 dark:border-gray-700"
+              >
+                <dt>Divisions</dt>
+                <dd class="text-base font-bold tabular-nums">
+                  {{ o.divisionCount }}
+                </dd>
+              </div>
+              <div
+                class="flex items-baseline justify-between gap-4 border-b border-gray-200 py-2 dark:border-gray-700"
+              >
+                <dt>Stop managers</dt>
+                <dd class="text-base font-bold tabular-nums">
+                  {{ o.stopManagerCount }}
+                </dd>
+              </div>
+              <div
+                class="grid grid-cols-[1fr_auto] items-baseline gap-x-4 border-b border-gray-200 py-2 dark:border-gray-700"
+              >
+                <dt>Students</dt>
+                <dd class="text-base font-bold tabular-nums">
+                  {{ o.students.total }}
+                </dd>
+                @if (o.students.total > 0) {
+                  <dd class="col-span-2">
+                    <div
+                      class="mt-2 flex h-2.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"
+                      aria-hidden="true"
+                    >
+                      @for (seg of studentSegments(); track seg.key) {
+                        <div
+                          [class]="seg.bar"
+                          [style.width.%]="seg.percent"
+                        ></div>
+                      }
+                    </div>
+                    <ul class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+                      @for (seg of studentSegments(); track seg.key) {
+                        <li>
+                          <a
+                            class="flex items-center gap-2 rounded hover:underline"
+                            routerLink="/students"
+                            [queryParams]="{ status: seg.status }"
+                          >
+                            <span
+                              class="h-2.5 w-2.5 shrink-0 rounded-full"
+                              [class]="seg.bar"
+                              aria-hidden="true"
+                            ></span>
+                            <span class="flex-1">{{ seg.label }}</span>
+                            <span class="font-semibold tabular-nums">{{
+                              seg.count
+                            }}</span>
+                          </a>
+                        </li>
+                      }
+                    </ul>
+                  </dd>
+                }
+              </div>
+              <div class="flex items-baseline justify-between gap-4 py-2">
+                <dt>Feedback responses</dt>
+                <dd class="text-right">
+                  <span class="text-base font-bold tabular-nums">{{
+                    o.feedbackSessionCount
+                  }}</span>
+                  @if (o.latestFeedbackAt) {
+                    <span class="block text-xs text-gray-600 dark:text-gray-300"
+                      >latest
+                      {{ o.latestFeedbackAt | date: 'd MMM y, HH:mm' }}</span
+                    >
+                  }
+                </dd>
+              </div>
+            </dl>
+          </section>
+
+          <section
+            class="mt-4 border-t border-gray-200 pt-5 dark:border-gray-700"
+            aria-labelledby="visitor-app-heading"
+          >
+            <h2 id="visitor-app-heading" class="text-lg font-bold">
+              Visitor app
+            </h2>
+            <div class="mt-3 flex items-start justify-between gap-4">
+              <label for="countdown-toggle" class="cursor-pointer text-sm">
+                <span class="block font-semibold"
+                  >Countdown instead of the tour</span
+                >
+                <span class="block text-gray-600 dark:text-gray-300">
+                  @if (o.countdown.isEnabled) {
+                    On: visitors see the countdown
+                  } @else {
+                    Off: visitors see the tour
+                  }
+                  @if (countdownDate(); as date) {
+                    · to {{ date | date: 'd MMM y' }}
+                  }
+                </span>
+              </label>
+              <input
+                id="countdown-toggle"
+                type="checkbox"
+                class="toggle toggle-primary mt-0.5 shrink-0"
+                [checked]="o.countdown.isEnabled"
+                [disabled]="
+                  savingCountdown() ||
+                  (!o.countdown.isEnabled && !o.countdown.value)
+                "
+                (change)="toggleCountdown($event)"
+              />
+            </div>
+            @if (!o.countdown.isEnabled && !o.countdown.value) {
+              <p class="mt-2 text-sm">
+                Set a countdown date in
+                <a
+                  class="link font-medium"
+                  routerLink="/data-management"
+                  [queryParams]="{ tab: 'data' }"
+                  >Users &amp; Data</a
+                >
+                first.
+              </p>
+            }
+          </section>
+
+          <nav
+            class="mt-5 border-t border-gray-200 pt-5 dark:border-gray-700"
+            aria-labelledby="shortcuts-heading"
+          >
+            <h2 id="shortcuts-heading" class="text-lg font-bold">Shortcuts</h2>
+            <ul class="-mx-3 mt-2 text-sm">
+              @for (link of shortcuts; track link.label) {
+                <li>
+                  <a
+                    class="focus-visible:outline-primary flex items-center justify-between rounded-lg px-3 py-2 font-medium hover:bg-primary-100 focus-visible:outline focus-visible:outline-2"
+                    [routerLink]="link.route"
+                    [queryParams]="link.queryParams"
+                  >
+                    {{ link.label }}
+                    <svg
+                      class="h-4 w-4 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m9 5 7 7-7 7"
+                      />
+                    </svg>
+                  </a>
+                </li>
+              }
+            </ul>
+          </nav>
+        </aside>
+
+        <!-- The tour, stop by stop -->
+        <section
+          class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 lg:col-span-2"
+          aria-labelledby="tour-heading"
+        >
+          <div
+            class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1"
+          >
+            <h2 id="tour-heading" class="text-lg font-bold">The tour</h2>
+            @if (tour().length > 0) {
+              <p class="text-sm text-gray-600 dark:text-gray-300">
+                {{ tourStopCount() }}
+                {{ word(tourStopCount(), 'stop', 'stops') }} in
+                {{ publicGroupCount() }} public
+                {{ word(publicGroupCount(), 'group', 'groups') }}, in the order
+                visitors see them. A dot marks a stop with something worth a
+                look.
+              </p>
+            }
+          </div>
+
+          @if (tour().length === 0) {
+            <p class="mt-3 text-sm">
+              No stops yet.
+              <a class="link font-medium" routerLink="/stop">Create a stop</a>
+              or import the station plan.
+            </p>
+          } @else {
+            <ol class="mt-5 flex flex-wrap gap-x-8 gap-y-6">
+              @for (block of tour(); track block.group?.id ?? 'outside') {
+                <li class="min-w-0 max-w-full">
+                  <div class="mb-2 flex items-baseline gap-2 text-xs">
+                    @if (block.group; as group) {
+                      <a
+                        class="max-w-56 truncate font-semibold hover:underline"
+                        routerLink="/stopgroup"
+                        [queryParams]="{ id: group.id }"
+                        [title]="group.name"
+                        >{{ group.name }}</a
+                      >
+                      @if (!group.isPublic) {
+                        <span
+                          class="rounded-full bg-gray-200 px-2 py-0.5 font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-100"
+                          >Hidden</span
+                        >
+                      }
+                    } @else {
+                      <span class="font-semibold">Not in a stop group</span>
+                    }
+                    <span
+                      class="tabular-nums text-gray-600 dark:text-gray-300"
+                      >{{ block.stops.length }}</span
+                    >
+                  </div>
+                  <ol
+                    class="flex flex-wrap gap-1"
+                    [class]="
+                      block.group?.isPublic
+                        ? ''
+                        : 'rounded-md border border-dashed border-gray-400 p-1 dark:border-gray-500'
+                    "
+                    [attr.aria-label]="
+                      (block.group?.name ?? 'Not in a stop group') + ': stops'
+                    "
+                  >
+                    @for (stop of block.stops; track stop.id) {
+                      <li class="flex flex-col items-center gap-1">
+                        <a
+                          class="focus-visible:outline-primary block h-10 w-7 rounded shadow transition duration-150 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                          [style.background]="tileBackground(stop)"
+                          routerLink="/stop"
+                          [queryParams]="{ id: stop.id }"
+                          [title]="tileLabel(stop)"
+                          [attr.aria-label]="tileLabel(stop)"
+                        ></a>
+                        <span
+                          class="h-1.5 w-1.5 rounded-full"
+                          [class]="
+                            stopGaps(stop).length > 0
+                              ? 'bg-gray-700 dark:bg-gray-300'
+                              : 'bg-transparent'
+                          "
+                          aria-hidden="true"
+                        ></span>
+                      </li>
+                    } @empty {
+                      <li
+                        class="flex h-10 items-center rounded border border-dashed border-gray-400 px-3 text-xs text-gray-600 dark:border-gray-500 dark:text-gray-300"
+                      >
+                        No stops
+                      </li>
+                    }
+                  </ol>
+                </li>
+              }
+            </ol>
+          }
+        </section>
+      </div>
+    }
+  }
+</div>

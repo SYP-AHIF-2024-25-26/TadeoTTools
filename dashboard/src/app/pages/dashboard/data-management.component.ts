@@ -1,4 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AdminOverviewComponent } from './admin-overview/admin-overview.component';
 import { DataPageComponent } from './data-page/data-page.component';
 import { StopManagerOverviewComponent } from './stop-manager-overview/stop-manager-overview.component';
@@ -20,10 +21,16 @@ type TabType = 'stop-managers' | 'admins' | 'data';
 export class DataManagementComponent implements OnInit {
   private studentService = inject(StudentService);
   private scrollService = inject(ScrollPersistenceService);
+  private route = inject(ActivatedRoute);
 
   activeTab = signal<TabType>('stop-managers');
 
   ngOnInit() {
+    // The overview's shortcuts open a tab directly, e.g. ?tab=data.
+    const tab = this.route.snapshot.queryParamMap.get('tab');
+    if (tab === 'stop-managers' || tab === 'admins' || tab === 'data') {
+      this.activeTab.set(tab);
+    }
     this.scrollService.restoreScroll();
   }
 }
