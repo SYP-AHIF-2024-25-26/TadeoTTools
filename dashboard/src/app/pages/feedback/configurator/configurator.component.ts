@@ -160,8 +160,9 @@ export class FeedbackConfiguratorComponent implements OnInit {
       this.responsesFailed.set(false);
     } catch (error) {
       console.error('Failed to load feedback responses', error);
+      this.responses.set(null);
       this.responsesFailed.set(true);
-    } finally {
+    }
       this.responsesLoading.set(false);
     }
   }
