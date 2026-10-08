@@ -153,7 +153,7 @@
                 </ul>
               } @else {
                 <ul class="space-y-2">
-                  @for (bar of block.bars; track bar.label) {
+                  @for (bar of block.bars; track $index) {
                     <li
                       class="grid grid-cols-[minmax(0,11rem)_minmax(0,1fr)_4.5rem] items-center gap-3 text-sm"
                     >
