@@ -6,7 +6,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { OverviewService } from '@/core/services/overview.service';
 import { FeatureFlagService } from '@/core/services/feature-flag.service';
@@ -16,15 +16,22 @@ import { Overview, OverviewGroup, OverviewStop } from '@/shared/models/types';
 
 // Same fallback as the visitor app's stop cards: a stop without a division.
 const NO_DIVISION_COLOR = '#80c076';
+// Internal stops without a division are gray, so they read as staff-only at a glance.
+const INTERNAL_NO_DIVISION_COLOR = '#6b7280';
 
-type TourBlock = {
-  group: OverviewGroup;
+type StopBlock = {
+  key: string;
+  name: string;
+  /** null: the internal stops, which are in no public stop group. */
+  group: OverviewGroup | null;
   stops: OverviewStop[];
+  approved: number;
+  pending: number;
 };
 
 @Component({
   selector: 'app-overview',
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, NgTemplateOutlet],
   templateUrl: './overview.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -107,26 +114,46 @@ export class OverviewComponent implements OnInit {
   });
 
   /** Public stop groups in tour order. Hidden groups and ungrouped stops are private on purpose. */
-  tour = computed<TourBlock[]>(() => {
+  tour = computed<StopBlock[]>(() => {
     const byId = new Map(this.stops().map((s) => [s.id, s]));
     return this.groups()
       .filter((group) => group.isPublic)
-      .map((group) => ({
-        group,
-        stops: group.stopIds
-          .map((id) => byId.get(id))
-          .filter((s): s is OverviewStop => s !== undefined),
-      }));
+      .map((group) =>
+        stopBlock(
+          `group-${group.id}`,
+          group.name,
+          group,
+          group.stopIds
+            .map((id) => byId.get(id))
+            .filter((s): s is OverviewStop => s !== undefined)
+        )
+      );
   });
 
   tourStopCount = computed(() => this.visibleStopIds().size);
+
+  /** Stops outside the public tour: staff-only, for internal organisation. Busiest stops first. */
+  internal = computed<StopBlock>(() =>
+    stopBlock(
+      'internal',
+      'Internal stops',
+      null,
+      this.stops()
+        .filter((s) => !this.visibleStopIds().has(s.id))
+        .sort(byStudents)
+    )
+  );
 
   protected readonly word = word;
 
   /** The stop's exact division colours, side by side like on the visitor's stop cards. */
   tileBackground(stop: OverviewStop): string {
     const colors = stop.divisionColors;
-    if (colors.length === 0) return NO_DIVISION_COLOR;
+    if (colors.length === 0) {
+      return this.isInternal(stop)
+        ? INTERNAL_NO_DIVISION_COLOR
+        : NO_DIVISION_COLOR;
+    }
     if (colors.length === 1) return colors[0];
     return `linear-gradient(to right, ${colors.join(', ')})`;
   }
@@ -136,8 +163,15 @@ export class OverviewComponent implements OnInit {
     if (stop.managerCount === 0) gaps.push('no stop manager');
     if (stop.approvedStudentCount === 0) gaps.push('no approved student');
     if (stop.roomNr.trim() === '') gaps.push('no room');
-    if (!stop.hasDescription) gaps.push('no description');
+    // Only visitors read descriptions.
+    if (!stop.hasDescription && !this.isInternal(stop)) {
+      gaps.push('no description');
+    }
     return gaps;
+  }
+
+  private isInternal(stop: OverviewStop): boolean {
+    return !this.visibleStopIds().has(stop.id);
   }
 
   tileLabel(stop: OverviewStop): string {
@@ -212,4 +246,29 @@ export class OverviewComponent implements OnInit {
 
 function word(count: number, one: string, many: string): string {
   return count === 1 ? one : many;
+}
+
+/** Most approved students first, then most pending requests, then by name. */
+function byStudents(a: OverviewStop, b: OverviewStop): number {
+  return (
+    b.approvedStudentCount - a.approvedStudentCount ||
+    b.pendingStudentCount - a.pendingStudentCount ||
+    a.name.localeCompare(b.name)
+  );
+}
+
+function stopBlock(
+  key: string,
+  name: string,
+  group: OverviewGroup | null,
+  stops: OverviewStop[]
+): StopBlock {
+  return {
+    key,
+    name,
+    group,
+    stops,
+    approved: stops.reduce((sum, s) => sum + s.approvedStudentCount, 0),
+    pending: stops.reduce((sum, s) => sum + s.pendingStudentCount, 0),
+  };
 }
