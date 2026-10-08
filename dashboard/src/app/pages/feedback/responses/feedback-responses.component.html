@@ -1,0 +1,250 @@
+<section
+  class="rounded-lg bg-background-100 p-6 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+  aria-labelledby="responses-heading"
+  [attr.aria-busy]="loading()"
+>
+  @if (responses(); as r) {
+    <!-- Count and the two actions on the whole set -->
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 id="responses-heading" class="text-lg font-bold">
+          <span class="tabular-nums">{{ r.responseCount }}</span>
+          {{ word(r.responseCount, 'response', 'responses') }}
+        </h2>
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          @if (r.latestAt) {
+            Latest {{ r.latestAt | date: 'd MMM y, HH:mm' }}
+          } @else {
+            Nothing submitted yet
+          }
+          @if (loading()) {
+            <span
+              class="loading loading-spinner loading-xs ml-1 align-middle"
+              aria-label="Refreshing"
+            ></span>
+          }
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <button
+          type="button"
+          class="btn btn-outline btn-sm"
+          [disabled]="r.responseCount === 0 || downloading()"
+          (click)="downloadCsv()"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            />
+          </svg>
+          Download CSV
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline btn-error btn-sm"
+          [disabled]="r.responseCount === 0"
+          (click)="confirmingDelete.set(true)"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
+          </svg>
+          Delete all responses
+        </button>
+      </div>
+    </div>
+
+    @if (r.responseCount === 0) {
+      <div class="mt-6 border-t border-gray-200 pt-6 dark:border-gray-700">
+        <p class="font-semibold">No responses yet</p>
+        <p class="mt-1 max-w-prose text-sm text-gray-600 dark:text-gray-300">
+          They show up here when visitors send the feedback form in the
+          GuideApp.
+        </p>
+      </div>
+    } @else if (blocks().length === 0) {
+      <div class="mt-6 border-t border-gray-200 pt-6 dark:border-gray-700">
+        <p class="font-semibold">No questions to summarize</p>
+        <p class="mt-1 max-w-prose text-sm text-gray-600 dark:text-gray-300">
+          The questionnaire is empty, so there are no answers to show.
+        </p>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm mt-4"
+          (click)="showQuestions.emit()"
+        >
+          Go to the questions
+        </button>
+      </div>
+    } @else {
+      <!-- One row per question, in questionnaire order -->
+      <ol
+        class="mt-6 divide-y divide-gray-200 border-t border-gray-200 dark:divide-gray-700 dark:border-gray-700"
+      >
+        @for (block of blocks(); track block.summary.questionId) {
+          @let q = block.summary;
+          <li
+            class="grid gap-x-8 gap-y-4 py-6 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]"
+          >
+            <div>
+              <h3 class="text-balance font-semibold">{{ q.question }}</h3>
+              <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                {{ typeLabel(q) }} · answered by
+                <span class="tabular-nums">{{ q.answeredCount }}</span> of
+                <span class="tabular-nums">{{ r.responseCount }}</span>
+              </p>
+              @if (q.type === 'Rating' && q.average !== null) {
+                <p class="mt-3">
+                  <span class="text-2xl font-bold tabular-nums leading-none">{{
+                    q.average | number: '1.1-1'
+                  }}</span>
+                  <span class="text-sm text-gray-600 dark:text-gray-300">
+                    average, {{ q.counts[0].value }} to
+                    {{ q.counts[q.counts.length - 1].value }}</span
+                  >
+                </p>
+              }
+            </div>
+
+            <div class="min-w-0">
+              @if (q.answeredCount === 0) {
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                  Nobody answered this question yet.
+                </p>
+              } @else if (q.type === 'Text') {
+                <ul
+                  class="max-h-72 divide-y divide-gray-200 overflow-y-auto rounded border border-gray-200 dark:divide-gray-700 dark:border-gray-700"
+                  tabindex="0"
+                  [attr.aria-label]="'Answers to ' + q.question"
+                >
+                  @for (a of q.textAnswers; track $index) {
+                    <li class="px-3 py-2">
+                      <p class="whitespace-pre-line break-words text-sm">
+                        {{ a.answer }}
+                      </p>
+                      <p
+                        class="mt-0.5 text-xs tabular-nums text-gray-600 dark:text-gray-300"
+                      >
+                        {{ a.timestamp | date: 'd MMM y, HH:mm' }}
+                      </p>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <ul class="space-y-2">
+                  @for (bar of block.bars; track bar.label) {
+                    <li
+                      class="grid grid-cols-[minmax(0,11rem)_minmax(0,1fr)_4.5rem] items-center gap-3 text-sm"
+                    >
+                      <span
+                        class="truncate"
+                        [class]="
+                          bar.other ? 'text-gray-600 dark:text-gray-300' : ''
+                        "
+                        [title]="bar.label"
+                        >{{ bar.label }}</span
+                      >
+                      <span
+                        class="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"
+                        aria-hidden="true"
+                      >
+                        <span
+                          class="block h-full rounded-full"
+                          [class]="bar.other ? 'bg-gray-400' : 'bg-primary-500'"
+                          [style.width.%]="bar.share * 100"
+                        ></span>
+                      </span>
+                      <span class="text-right tabular-nums">
+                        {{ bar.count }}
+                        <span class="text-gray-600 dark:text-gray-300"
+                          >· {{ bar.share * 100 | number: '1.0-0' }}%</span
+                        >
+                      </span>
+                    </li>
+                  }
+                </ul>
+                @if (q.type === 'MultipleChoice') {
+                  <p class="mt-2 text-xs text-gray-600 dark:text-gray-300">
+                    Visitors could pick several options, so the shares add up to
+                    more than 100%.
+                  </p>
+                }
+              }
+            </div>
+          </li>
+        }
+      </ol>
+    }
+  } @else if (failed()) {
+    <h2 id="responses-heading" class="text-lg font-bold">Responses</h2>
+    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+      The responses could not be loaded. Check your connection and try again.
+    </p>
+    <button
+      type="button"
+      class="btn btn-primary btn-sm mt-4"
+      (click)="reload.emit()"
+    >
+      Try again
+    </button>
+  } @else {
+    <h2 id="responses-heading" class="sr-only">Loading responses</h2>
+    <div class="skeleton h-6 w-40"></div>
+    <div class="skeleton mt-2 h-4 w-56"></div>
+    @for (i of [1, 2, 3]; track i) {
+      <div class="mt-8 grid gap-8 md:grid-cols-[1fr_2fr]">
+        <div class="skeleton h-5 w-3/4"></div>
+        <div class="space-y-3">
+          <div class="skeleton h-3 w-full"></div>
+          <div class="skeleton h-3 w-5/6"></div>
+          <div class="skeleton h-3 w-2/3"></div>
+        </div>
+      </div>
+    }
+  }
+</section>
+
+@if (confirmingDelete() && responses(); as r) {
+  <app-delete-popup
+    [title]="
+      'Delete all ' +
+      r.responseCount +
+      ' feedback ' +
+      word(r.responseCount, 'response', 'responses') +
+      '?'
+    "
+    [message]="deleteMessage()"
+    [confirmLabel]="
+      'Delete ' +
+      r.responseCount +
+      ' ' +
+      word(r.responseCount, 'response', 'responses')
+    "
+    secondaryLabel="Download CSV"
+    [busy]="deleting()"
+    (secondary)="downloadCsv()"
+    (removeConfirmed)="deleteAll()"
+    (cancel)="confirmingDelete.set(false)"
+  />
+}

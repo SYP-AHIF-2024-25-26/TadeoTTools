@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FeedbackQuestion } from '@/shared/models/types';
+import { FeedbackQuestion, FeedbackResponses } from '@/shared/models/types';
 import { firstValueFrom } from 'rxjs';
 import { BASE_URL } from '@/app.config';
 
@@ -30,6 +30,20 @@ export class FeedbackService {
       this.httpClient.get(`${this.baseUrl}/get-answers-csv`, {
         responseType: 'blob',
       })
+    );
+  }
+
+  getFeedbackResponses(): Promise<FeedbackResponses> {
+    return firstValueFrom(
+      this.httpClient.get<FeedbackResponses>(
+        `${this.baseUrl}/feedback-responses`
+      )
+    );
+  }
+
+  deleteFeedbackResponses(): Promise<void> {
+    return firstValueFrom(
+      this.httpClient.delete<void>(`${this.baseUrl}/feedback-responses`)
     );
   }
 }
