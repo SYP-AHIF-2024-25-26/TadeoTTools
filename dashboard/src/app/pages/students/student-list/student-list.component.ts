@@ -7,6 +7,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import {
   Status,
   Stop,
@@ -41,6 +42,14 @@ import {
   UNASSIGNED_TEXT_CLASS,
 } from '@/shared/utils/assignment-status';
 
+const STATUS_FILTERS = [
+  'unassigned',
+  'conflict',
+  'pending',
+  'approved',
+  'rejected',
+];
+
 export interface StudentWithUI extends Student {
   showStops?: boolean;
   selectedStops?: Set<number>;
@@ -67,6 +76,7 @@ export class ListStudentsComponent implements OnInit {
   private positionBuilder = inject(OverlayPositionBuilder);
   private scrollService = inject(ScrollPersistenceService);
   private toast = inject(ToastService);
+  private route = inject(ActivatedRoute);
 
   classFilter = signal<string>('');
   departmentFilter = signal<string>('');
@@ -86,6 +96,11 @@ export class ListStudentsComponent implements OnInit {
   protected readonly Status = Status;
 
   async ngOnInit() {
+    // The overview links here with ?status=conflict etc.
+    const status = this.route.snapshot.queryParamMap.get('status');
+    if (status && STATUS_FILTERS.includes(status)) {
+      this.statusFilter.set(status);
+    }
     this.stops.set(await this.stopService.getStops());
     await this.refreshStudents();
     this.scrollService.restoreScroll();
@@ -186,7 +201,9 @@ export class ListStudentsComponent implements OnInit {
     if (!status || status === 'all') return students;
 
     return students.filter((s) => {
-      if (status === 'unassigned') return s.studentAssignments.length === 0;
+      // Old rejected requests don't count, as on the overview.
+      if (status === 'unassigned')
+        return activeAssignments(s.studentAssignments).length === 0;
       if (status === 'conflict') return isConflict(s.studentAssignments);
       if (s.studentAssignments.length === 0) return false;
 

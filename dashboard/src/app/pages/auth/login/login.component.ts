@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
       // Check for Admin role
       const isAdmin = await this.checkUserRole('is-admin', 'admin');
       if (isAdmin) {
-        this.router.navigate(['/students']);
+        this.router.navigate(['/overview']);
         return;
       }
 

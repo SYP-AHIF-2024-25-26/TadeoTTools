@@ -11,6 +11,7 @@ import { StopManagerDetailsComponent } from './pages/stop-managers/stop-manager-
 import { ListStudentsComponent } from './pages/students/student-list/student-list.component';
 import { FeedbackConfiguratorComponent } from './pages/feedback/configurator/configurator.component';
 import { DataManagementComponent } from './pages/dashboard/data-management.component';
+import { OverviewComponent } from './pages/overview/overview.component';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { adminOrStopManagerGuard } from './core/guards/admin-or-stop-manager.guard';
@@ -18,6 +19,12 @@ import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  {
+    path: 'overview',
+    component: OverviewComponent,
+    canMatch: [authGuard],
+    canActivate: [adminGuard],
+  },
   {
     path: 'stopgroups',
     component: StopGroupsComponent,

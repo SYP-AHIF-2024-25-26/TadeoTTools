@@ -14,6 +14,7 @@ using API.Endpoints.StopManagerManagement;
 using API.Endpoints.AdminManagement;
 using API.Endpoints.FeedbackManagement;
 using API.Endpoints.FeatureFlagManagement;
+using API.Endpoints.OverviewManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -117,6 +118,7 @@ app.MapUserEndpoints();
 app.MapAdminEndpoints();
 app.MapFeedbackEndpoints();
 app.MapFeatureFlagEndpoints();
+app.MapOverviewEndpoints();
 
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetService<TadeoTDbContext>();
