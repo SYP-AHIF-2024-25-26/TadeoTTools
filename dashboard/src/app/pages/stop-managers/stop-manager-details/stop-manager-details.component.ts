@@ -13,7 +13,9 @@ import { StopService } from '@/core/services/stop.service';
 import { Status, Stop, StopManager, Student } from '@/shared/models/types';
 import {
   activeAssignments,
+  CONFLICT_BADGE_CLASS,
   isConflict,
+  statusBadgeClass,
 } from '@/shared/utils/assignment-status';
 import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StopManagerStudentsComponent } from './components/stop-manager-students/stop-manager-students.component';
@@ -45,6 +47,10 @@ export class StopManagerDetailsComponent implements OnInit {
   username = signal<string>('');
   stopManager = signal<StopManager | null>(null);
 
+  protected readonly approvedClass = statusBadgeClass(Status.Accepted);
+  protected readonly pendingClass = statusBadgeClass(Status.Pending);
+  protected readonly conflictClass = CONFLICT_BADGE_CLASS;
+
   async ngOnInit() {
     const userProfile = await this.keycloak.loadUserProfile();
     const username = userProfile.username || '';
@@ -75,10 +81,10 @@ export class StopManagerDetailsComponent implements OnInit {
     }
   }
 
-  // Room and student counts per stop, shown on the stop cards. The counts use
-  // the same rule as the status column below: a student with more than one
-  // open request counts as a conflict.
-  stopFacts = computed(() => {
+  // Student counts per stop for the badges on the stop cards. They use the
+  // same rule as the status column below: a student with more than one open
+  // request counts as a conflict.
+  studentCounts = computed(() => {
     const counts = new Map<
       number,
       { approved: number; pending: number; conflict: number }
@@ -98,27 +104,6 @@ export class StopManagerDetailsComponent implements OnInit {
         counts.set(a.stopId, c);
       }
     }
-
-    const loaded = this.students() !== null;
-    return new Map(
-      this.stops().map((stop) => {
-        const facts: { text: string; conflict?: boolean }[] = [];
-        if (stop.roomNr) facts.push({ text: stop.roomNr });
-        if (loaded) {
-          const c = counts.get(stop.id);
-          if (!c) facts.push({ text: 'No students yet' });
-          else {
-            if (c.approved) facts.push({ text: `${c.approved} approved` });
-            if (c.pending) facts.push({ text: `${c.pending} pending` });
-            if (c.conflict)
-              facts.push({
-                text: `${c.conflict} ${c.conflict === 1 ? 'conflict' : 'conflicts'}`,
-                conflict: true,
-              });
-          }
-        }
-        return [stop.id, facts] as const;
-      })
-    );
+    return counts;
   });
 }
