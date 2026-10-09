@@ -1,4 +1,4 @@
-<div class="w-full px-8 py-8 text-text-950">
+<div class="w-full px-8 py-8 text-ink">
   <h2 class="my-6 text-2xl font-bold">Students</h2>
 
   @if (approveError()) {
@@ -73,7 +73,7 @@
   <div
     class="table-zebra hidden max-h-[600px] w-full max-w-full overflow-x-auto overflow-y-scroll rounded-box border border-base-content/5 bg-base-100 md:block"
   >
-    <p class="mb-2 text-sm text-text-700 dark:text-text-300">
+    <p class="mb-2 text-sm text-ink">
       Showing <strong>{{ filteredStudents().length }}</strong> students
     </p>
     <table class="table">
@@ -225,7 +225,7 @@
               </td>
               <td>
                 @if (student.studentAssignments.length === 0) {
-                  <span class="text-gray-500">--</span>
+                  <span class="text-ink-muted">--</span>
                 } @else if (!isConflictStudent(student)) {
                   {{
                     student.studentAssignments[primaryIndex(student)].stopName
@@ -324,10 +324,10 @@
               <p class="text-lg font-bold">
                 {{ student.firstName }} {{ student.lastName }}
               </p>
-              <p class="text-sm text-text-600 dark:text-text-400">
+              <p class="text-sm text-ink-muted">
                 {{ student.studentClass }}
               </p>
-              <p class="text-sm text-text-600 dark:text-text-400">
+              <p class="text-sm text-ink-muted">
                 {{ student.department }}
               </p>
             </div>
@@ -343,7 +343,7 @@
             class="mt-3 border-t border-background-200 pt-3 dark:border-background-700"
           >
             <p class="text-sm">
-              <span class="text-text-600 dark:text-text-400">Assignments:</span>
+              <span class="text-ink-muted">Assignments:</span>
               @if (student.studentAssignments.length === 0) {
                 --
               } @else if (!isConflictStudent(student)) {

@@ -5,21 +5,18 @@
 
 body {
   @apply bg-background-50;
+  color: var(--ink);
 }
 
 @layer base {
   :root {
-    --text-50: #130710;
-    --text-100: #130710;
-    --text-200: #130710;
-    --text-300: #130710;
-    --text-400: #130710;
-    --text-500: #130710;
-    --text-600: #130710;
-    --text-700: #130710;
-    --text-800: #130710;
-    --text-900: #130710;
-    --text-950: #130710;
+    /* Text roles (#74): strong for headings, ink for body text, muted for
+       hints and metadata. Muted passes 4.5:1 on every light surface. */
+    --ink-strong: #130710;
+    --ink: #2a2430;
+    --ink-muted: #57525c;
+    /* Focus ring for fields, buttons and links: 3:1 against the page. */
+    --focus-ring: #1f6fd1;
 
     --background-50: #f1f1f1;
     --background-100: #f1f1f1;
@@ -70,19 +67,31 @@ body {
     --accent-950: #060a0b;
   }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--ink-strong);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* The sky-blue nav bar is too light for the blue ring. */
+  :root:not(.dark) .nav-surface {
+    --focus-ring: var(--ink-strong);
+  }
+
   .dark {
-    /* Mostly white text across the board for strong contrast */
-    --text-50: #ffffff;
-    --text-100: #ffffff;
-    --text-200: #ffffff;
-    --text-300: #ffffff;
-    --text-400: #ffffff;
-    --text-500: #ffffff;
-    --text-600: #ffffff;
-    --text-700: #ffffff;
-    --text-800: #ffffff;
-    --text-900: #ffffff;
-    --text-950: #ffffff;
+    /* Muted also passes 4.5:1 on the lighter dark surfaces (background-800/900). */
+    --ink-strong: #ffffff;
+    --ink: #f3f4f6;
+    --ink-muted: #d8dee6;
+    --focus-ring: #60a5fa;
 
     /* Dark blue-toned backgrounds for contrast */
     --background-50: #0b0f19;
@@ -136,6 +145,21 @@ body {
     --accent-900: #dbeafe;
     --accent-950: #eff6ff;
   }
+}
+
+/* One focus ring (#74): DaisyUI draws its own, weaker outlines on these. */
+.btn:focus-visible,
+.tab:focus-visible,
+.checkbox:focus-visible,
+.toggle:focus-visible,
+.radio:focus-visible,
+.input:focus,
+.input:focus-within,
+.select:focus,
+.textarea:focus,
+.file-input:focus {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /* Limit DaisyUI collapse checkbox click area to the arrow only on stopgroups */

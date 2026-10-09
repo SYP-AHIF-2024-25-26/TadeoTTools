@@ -62,7 +62,7 @@ export class StopGeneralInfoComponent {
   counterClass(value: string | undefined | null, limit: number): string {
     return this.length(value) >= limit * 0.9
       ? 'text-orange-700 dark:text-orange-400'
-      : 'text-text-700';
+      : 'text-ink';
   }
 
   error(field: RequiredField): string | undefined {

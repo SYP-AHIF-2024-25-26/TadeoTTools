@@ -10,12 +10,10 @@
     <div
       class="flex items-center justify-between border-b border-background-200 p-4 dark:border-background-700"
     >
-      <h3 class="text-lg font-semibold text-secondary-content">
-        Add Stop
-      </h3>
+      <h3 class="text-lg font-semibold">Add Stop</h3>
       <button
         (click)="close.emit()"
-        class="btn btn-circle btn-ghost btn-sm text-secondary-content"
+        class="btn btn-circle btn-ghost btn-sm text-ink"
       >
         <svg
           class="h-4 w-4"
@@ -40,15 +38,12 @@
             (click)="addStop.emit(stop.id)"
             class="flex cursor-pointer items-center justify-between rounded-lg p-3 transition-colors hover:bg-background-200 dark:hover:bg-background-700"
           >
-            <span
-              class="text-sm font-medium text-secondary-content"
-              >{{ stop.name }}</span
-            >
+            <span class="text-sm font-medium text-ink">{{ stop.name }}</span>
           </div>
         }
         @if (stops().length === 0) {
           <div class="py-12 text-center">
-            <p class="text-sm text-text-500">No available stops to add.</p>
+            <p class="text-sm text-ink-muted">No available stops to add.</p>
           </div>
         }
       </div>

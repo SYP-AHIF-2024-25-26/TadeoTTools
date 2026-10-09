@@ -1,5 +1,5 @@
 <div
-  class="mb-6 rounded-lg bg-background-100 p-6 text-text-950 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+  class="mb-6 rounded-lg bg-background-100 p-6 text-ink shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
 >
   <div class="mb-4 flex items-center justify-between">
     <h2 class="text-lg font-semibold">Questions</h2>
@@ -25,7 +25,7 @@
     </button>
   </div>
 
-  <div class="mb-4 text-sm text-text-900">
+  <div class="mb-4 text-sm text-ink">
     Drag and drop to reorder questions. Click on a question to edit it.
   </div>
 
@@ -37,7 +37,7 @@
         class="flex cursor-move items-center rounded-lg bg-background-300 p-4 transition-colors hover:border hover:border-primary-300"
       >
         <!-- Drag Handle -->
-        <div cdkDragHandle class="mr-3 cursor-grab text-text-950">
+        <div cdkDragHandle class="mr-3 cursor-grab text-ink">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-5 w-5"
@@ -56,15 +56,15 @@
 
         <!-- Question Number -->
         <div
-          class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 font-medium text-text-950"
+          class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 font-medium text-ink"
         >
           {{ i + 1 }}
         </div>
 
         <!-- Question Content -->
         <div class="flex-1" (click)="editQuestion.emit(i)">
-          <p class="font-medium text-text-950">{{ question.question }}</p>
-          <p class="text-sm text-text-950">
+          <p class="font-medium text-ink">{{ question.question }}</p>
+          <p class="text-sm text-ink">
             {{ question.required ? 'Required' : 'Optional' }} ·
             {{
               question.type === 'Text'
@@ -87,7 +87,7 @@
         <div class="flex space-x-2">
           <button
             (click)="editQuestion.emit(i)"
-            class="p-1 text-text-950"
+            class="p-1 text-ink"
             title="Edit question"
           >
             <svg
@@ -107,7 +107,7 @@
           </button>
           <button
             (click)="deleteQuestion.emit(i)"
-            class="p-1 text-text-950 hover:text-red-500"
+            class="p-1 text-ink hover:text-red-500"
             title="Delete question"
           >
             <svg
@@ -136,7 +136,7 @@
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="mx-auto mb-3 h-12 w-12 text-gray-400"
+          class="mx-auto mb-3 h-12 w-12 text-ink-muted"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -148,7 +148,7 @@
             d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <p class="mb-4 text-text-950">No questions added yet</p>
+        <p class="mb-4 text-ink">No questions added yet</p>
         <button (click)="addQuestion.emit()" class="btn btn-primary">
           <svg
             xmlns="http://www.w3.org/2000/svg"

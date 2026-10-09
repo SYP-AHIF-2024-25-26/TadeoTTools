@@ -27,7 +27,10 @@ colors:
   dash-tint: "#cce5ff"
   dash-canvas: "#f1f1f1"
   dash-surface: "#ffffff"
-  dash-ink: "#130710"
+  dash-ink-strong: "#130710"
+  dash-ink: "#2a2430"
+  dash-ink-muted: "#57525c"
+  dash-focus: "#1f6fd1"
   dash-error: "#dc2626"
   dash-success: "#22c55e"
   dash-warning: "#facc15"
@@ -213,8 +216,8 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 - **Header Gray** (`guide-header`): the logo header block.
 - **Ink** (`guide-ink-strong` for titles, `guide-ink` for card labels, `guide-ink-muted` for body text): the gray-800/700/600 steps.
 - **Stone** (`guide-stone`): the neutral "Zurück" button. **Hairline** (`guide-hairline`): borders on inputs and unselected options.
-- **Office Gray** (`dash-canvas`): dashboard page background (also used for modals and cards, which are then separated only by shadow). **Dashboard Ink** (`dash-ink`): near-black with a slight plum tint, used for all dashboard text.
-- **Dark mode:** `dash-dark-canvas` / `dash-dark-surface` with `dash-dark-primary`. The dark theme collapses primary, secondary and accent to the same blue range and uses white text.
+- **Office Gray** (`dash-canvas`): dashboard page background (also used for modals and cards, which are then separated only by shadow). **Dashboard text** has three roles, as CSS variables and Tailwind colours: **Ink Strong** (`--ink-strong`, `text-ink-strong`, near-black with a slight plum tint) for headings, which get it from the base layer; **Ink** (`--ink`, `text-ink`) for body text, table cells and labels, also the `body` colour; **Ink Muted** (`--ink-muted`, `text-ink-muted`) for hints, metadata, empty states and table headers. Muted passes 4.5:1 on every surface it sits on. There are no other text greys: no `text-gray-*`, no `text-secondary-content`, no numbered `text-text-*` steps.
+- **Dark mode:** `dash-dark-canvas` / `dash-dark-surface` with `dash-dark-primary`. The dark theme collapses primary, secondary and accent to the same blue range. Text is white (strong), `#f3f4f6` (ink) and `#d8dee6` (muted, still 4.5:1 on the lighter `background-800/900` surfaces).
 
 ### Status (Dashboard)
 - `dash-error` for destructive buttons and error alerts, `dash-success`, `dash-warning`.
@@ -304,7 +307,7 @@ Gently rounded throughout. Cards and containers use 8px corners (`rounded-lg`). 
 - **GuideApp checkbox (signature):** a 24px rounded square with a 2px gray-500 border. Ticking it pops in a thick orange checkmark (`animate-jump-in`, 600ms).
 - **Dashboard filter field:** DaisyUI `input input-bordered` / `select select-bordered` filled with Filled Field Blue, white text and placeholders (placeholders at 4.5:1 too), darkening on hover. Used only in filter bars above lists.
 - **Dashboard form field:** DaisyUI `input` / `select` / `textarea` / `file-input` with `-bordered` on the surface color, `w-full`, never hand-written border classes. Every field has a visible label above it (`label for` matching the field `id`); placeholders only show an example. Required fields get a `*` after the label, nothing else.
-- **Focus (both):** a 2px `primary-300` ring on every field, button and link.
+- **Focus (all controls):** one 2px outline in `--focus-ring` with a 2px offset on every field, button, tab and link (Dashboard Blue `dash-focus` in light mode, `#60a5fa` in dark mode, Ink Strong on the sky-blue nav bar). It is set globally in `styles.css`; templates don't add `focus:ring-*` or `focus:outline-none`.
 
 ### Navigation
 - **GuideApp bottom tab bar:** a white 56px bar fixed to the bottom, four evenly spaced 20–24px icons, black at rest and Programme Orange when active. Icons only, no labels.

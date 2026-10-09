@@ -1,11 +1,9 @@
 <fieldset>
-  <legend class="mb-1 block text-sm font-medium text-text-950">
-    Divisions
-  </legend>
+  <legend class="mb-1 block text-sm font-medium text-ink">Divisions</legend>
   <ul class="flex flex-wrap items-center gap-2">
     @for (division of selected(); track division.id) {
       <li
-        class="inline-flex min-h-8 items-center gap-2 rounded-full bg-primary-100 py-1 pl-3 text-sm font-medium text-text-950"
+        class="inline-flex min-h-8 items-center gap-2 rounded-full bg-primary-100 py-1 pl-3 text-sm font-medium text-ink"
         [class.pr-3]="!editable()"
         [class.pr-1]="editable()"
       >
@@ -36,12 +34,12 @@
         }
       </li>
     } @empty {
-      <li class="text-sm text-text-950">No divisions assigned</li>
+      <li class="text-sm text-ink">No divisions assigned</li>
     }
     @if (editable() && available().length > 0) {
       <li>
         <select
-          class="select select-bordered select-sm bg-background-50 text-text-950"
+          class="select select-bordered select-sm bg-background-50 text-ink"
           aria-label="Add division"
           (change)="add($event)"
         >
@@ -54,6 +52,6 @@
     }
   </ul>
   @if (!editable()) {
-    <p class="mt-1 text-xs text-text-950">Only admins can change divisions.</p>
+    <p class="mt-1 text-xs text-ink">Only admins can change divisions.</p>
   }
 </fieldset>

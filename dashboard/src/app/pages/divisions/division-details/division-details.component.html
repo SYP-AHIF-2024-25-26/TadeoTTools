@@ -13,16 +13,13 @@
     <div
       class="mb-6 flex items-center justify-between border-b border-background-200 pb-4 dark:border-background-700"
     >
-      <h2
-        id="division-dialog-title"
-        class="text-2xl font-bold text-secondary-content"
-      >
+      <h2 id="division-dialog-title" class="text-2xl font-bold">
         {{ id() === -1 ? 'New Division' : 'Edit Division' }}
       </h2>
       <button
         type="button"
         (click)="cancelPopup()"
-        class="btn btn-circle btn-ghost btn-sm text-secondary-content"
+        class="btn btn-circle btn-ghost btn-sm text-ink"
         aria-label="Close"
       >
         <svg
@@ -67,15 +64,13 @@
       <!-- Division Name -->
       <div class="form-control">
         <label class="label" for="name">
-          <span class="label-text text-text-700 dark:text-text-300"
-            >Division Name</span
-          >
+          <span class="label-text text-ink">Division Name</span>
         </label>
         <input
           type="text"
           id="name"
           placeholder="e.g. Informatik"
-          class="input input-bordered w-full bg-background-50 text-text-700 dark:bg-background-700 dark:text-text-300"
+          class="input input-bordered w-full bg-background-50 text-ink dark:bg-background-700"
           [(ngModel)]="name"
           name="name"
         />
@@ -84,7 +79,7 @@
       <!-- Division Color -->
       <div class="form-control">
         <label class="label" for="color">
-          <span class="label-text text-text-700 dark:text-text-300">Color</span>
+          <span class="label-text text-ink">Color</span>
         </label>
         <div class="flex items-center gap-4">
           <input
@@ -104,7 +99,7 @@
       <!-- File Upload -->
       <div class="form-control">
         <label class="label" for="file">
-          <span class="label-text text-text-700 dark:text-text-300"
+          <span class="label-text text-ink"
             >Division Image (SVG, PNG, JPG)</span
           >
         </label>
@@ -112,7 +107,7 @@
           type="file"
           id="file"
           (change)="onFileChange($event)"
-          class="file-input file-input-bordered w-full bg-background-50 text-text-700 dark:bg-background-700 dark:text-text-300"
+          class="file-input file-input-bordered w-full bg-background-50 text-ink dark:bg-background-700"
           accept="image/jpeg,image/png,image/svg+xml"
         />
       </div>
@@ -179,7 +174,7 @@
           <button
             type="button"
             (click)="cancelPopup()"
-            class="btn btn-ghost w-full text-text-700 dark:text-text-300 sm:w-auto"
+            class="btn btn-ghost w-full text-ink sm:w-auto"
           >
             Cancel
           </button>

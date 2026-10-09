@@ -18,7 +18,7 @@
     </button>
   } @else {
     @if (isNew()) {
-      <h1 class="text-xl text-text-950">New Stop</h1>
+      <h1 class="text-xl">New Stop</h1>
     } @else {
       <!-- Stop details: read-only summary, or the edit section in its place -->
       <section
@@ -27,7 +27,7 @@
       >
         @if (detailsDraft(); as draft) {
           <form (submit)="$event.preventDefault(); saveDetails()">
-            <h1 id="stop-title" class="text-xl font-semibold text-text-950">
+            <h1 id="stop-title" class="text-xl font-semibold">
               Edit Stop Details
             </h1>
             <app-stop-general-info
@@ -137,9 +137,7 @@
             {{ isNew() ? 'Cancel' : 'Back' }}
           </button>
           @if (hasPageChanges() && !saving()) {
-            <span class="text-sm font-medium text-text-700 dark:text-text-300">
-              Unsaved changes
-            </span>
+            <span class="text-sm font-medium text-ink"> Unsaved changes </span>
           }
           @if (isAdmin() && !isNew()) {
             <button

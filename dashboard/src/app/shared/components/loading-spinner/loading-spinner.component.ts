@@ -9,7 +9,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         class="loader h-12 w-12 rounded-full border-8 border-t-8 border-primary-200 ease-linear"
       ></div>
       @if (text()) {
-        <p class="text-text-600">{{ text() }}</p>
+        <p class="text-ink-muted">{{ text() }}</p>
       }
     </div>
   `,

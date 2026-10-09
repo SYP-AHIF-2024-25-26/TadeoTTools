@@ -37,7 +37,7 @@
         </svg>
       </button>
     </div>
-    <p id="conflict-dialog-hint" class="mb-4 text-sm text-text-700">
+    <p id="conflict-dialog-hint" class="mb-4 text-sm text-ink">
       {{ student().studentClass }} · {{ student().department }}. More than one
       stop wants this student. Choose the stop that keeps them.
     </p>
@@ -54,7 +54,7 @@
           <div class="flex flex-wrap items-start justify-between gap-2">
             <div>
               <p class="font-semibold">{{ assignment.stopName }}</p>
-              <p class="text-sm text-text-700">
+              <p class="text-sm text-ink">
                 Requested by {{ requestedBy(assignment.stopManagers) }} ·
                 {{ approvedText(assignment.stopId) }}
               </p>

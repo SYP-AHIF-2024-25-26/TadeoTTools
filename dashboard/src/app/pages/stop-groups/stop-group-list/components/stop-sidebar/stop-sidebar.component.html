@@ -8,7 +8,7 @@
         class="border-b border-background-200 p-4 dark:border-background-700"
       >
         <div class="mb-3 flex items-center justify-between">
-          <h3 class="font-semibold text-secondary-content">
+          <h3 class="font-semibold">
             {{ showAssignedStops() ? 'All Stops' : 'Stops' }}
           </h3>
           <app-filter
@@ -21,7 +21,7 @@
         <!-- Add Toggle Switch -->
         <div class="flex items-center gap-2">
           <label class="label cursor-pointer justify-start gap-2">
-            <span class="label-text text-xs text-text-600"
+            <span class="label-text text-xs text-ink-muted"
               >Show assigned stops</span
             >
             <input
@@ -47,7 +47,7 @@
               cdkDrag
             >
               <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-medium text-secondary-content">
+                <p class="truncate text-sm font-medium text-ink">
                   {{ stop.name }}
                 </p>
               </div>
@@ -58,7 +58,7 @@
                 [attr.aria-label]="'Edit ' + stop.name"
               >
                 <svg
-                  class="h-3 w-3 text-secondary-content"
+                  class="h-3 w-3 text-ink"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -82,7 +82,7 @@
           @if (filteredStops().length === 0) {
             <div class="py-12 text-center">
               <svg
-                class="mx-auto mb-2 h-8 w-8 text-text-400"
+                class="mx-auto mb-2 h-8 w-8 text-ink-muted"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -94,7 +94,7 @@
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 ></path>
               </svg>
-              <p class="text-sm text-text-500">
+              <p class="text-sm text-ink-muted">
                 {{ showAssignedStops() ? 'No stops' : 'No unassigned stops' }}
               </p>
             </div>

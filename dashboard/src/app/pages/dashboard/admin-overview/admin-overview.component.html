@@ -1,12 +1,12 @@
-<div class="m-4 flex flex-col items-center text-text-950">
-  <div class="my-3 text-2xl text-text-950">Admins</div>
+<div class="m-4 flex flex-col items-center text-ink">
+  <div class="my-3 text-2xl text-ink">Admins</div>
   <div class="w-full max-w-xl">
     <label for="addname" class="mb-1 block text-sm font-medium">
       Add an admin by EduFS username
     </label>
     <div class="mb-4 flex gap-5">
       <input
-        class="input flex-1 rounded-lg bg-white px-4 py-3 shadow outline-none transition-all focus:shadow-lg dark:bg-background-800"
+        class="input flex-1 rounded-lg bg-white px-4 py-3 shadow transition-all focus:shadow-lg dark:bg-background-800"
         type="text"
         [value]="addname()"
         [(ngModel)]="addname"
@@ -14,10 +14,7 @@
         placeholder="EduFS username, e.g. if123456"
         id="addname"
       />
-      <button
-        (click)="addAdmin()"
-        class="btn btn-primary px-4 py-2 shadow"
-      >
+      <button (click)="addAdmin()" class="btn btn-primary px-4 py-2 shadow">
         Add Admin
       </button>
     </div>
@@ -35,9 +32,7 @@
       >
         <div class="text-lg font-semibold">{{ admin }}</div>
         @if (isCurrentUser(admin)) {
-          <span class="text-sm text-text-600 dark:text-text-300">
-            That's you
-          </span>
+          <span class="text-sm text-ink-muted"> That's you </span>
         } @else {
           <button
             (click)="adminToDelete.set(admin)"

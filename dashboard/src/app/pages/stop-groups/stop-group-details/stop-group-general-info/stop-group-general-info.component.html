@@ -1,11 +1,11 @@
 <div class="mb-4">
   <div class="mb-4 mt-2">
-    <label for="name" class="mb-1 block text-sm font-medium text-text-950"
+    <label for="name" class="mb-1 block text-sm font-medium text-ink"
       >Name</label
     >
     @if (stopGroup().id == -1) {
       <input
-        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-ink"
         type="text"
         [value]="stopGroup().name"
         (input)="updateName($any($event.target).value)"
@@ -14,7 +14,7 @@
       />
     } @else {
       <input
-        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-ink"
         type="text"
         [value]="stopGroup().name"
         (input)="updateName($any($event.target).value)"
@@ -25,13 +25,11 @@
   </div>
 
   <div class="mb-4">
-    <label
-      for="description"
-      class="mb-1 block text-sm font-medium text-text-950"
+    <label for="description" class="mb-1 block text-sm font-medium text-ink"
       >Description</label
     >
     <textarea
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-ink"
       [value]="stopGroup().description"
       (input)="updateDescription($any($event.target).value)"
       name="description"
@@ -41,11 +39,11 @@
   </div>
 
   <div class="mb-2 flex items-center gap-2">
-    <label for="isPublic" class="block text-sm font-medium text-text-950"
+    <label for="isPublic" class="block text-sm font-medium text-ink"
       >Public (shown in the visitor app)</label
     >
     <input
-      class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+      class="h-4 w-4 rounded border-gray-300 text-primary-600"
       type="checkbox"
       [checked]="stopGroup().isPublic"
       (change)="updateIsPublic($any($event.target).checked)"

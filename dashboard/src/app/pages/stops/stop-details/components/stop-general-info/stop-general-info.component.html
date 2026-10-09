@@ -1,10 +1,10 @@
 <div class="mb-4">
   <div class="mb-4 mt-2">
-    <label for="name" class="mb-1 block text-sm font-medium text-text-950">
+    <label for="name" class="mb-1 block text-sm font-medium text-ink">
       Name <span aria-hidden="true">*</span>
     </label>
     <input
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-ink"
       [class.border-error]="error('name')"
       type="text"
       [(ngModel)]="stop().name"
@@ -23,14 +23,11 @@
   </div>
 
   <div class="mb-4">
-    <label
-      for="description"
-      class="mb-1 block text-sm font-medium text-text-950"
-    >
+    <label for="description" class="mb-1 block text-sm font-medium text-ink">
       Description <span aria-hidden="true">*</span>
     </label>
     <textarea
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-ink"
       [class.border-error]="error('description')"
       [(ngModel)]="stop().description"
       name="description"
@@ -53,11 +50,11 @@
   </div>
 
   <div class="mb-4">
-    <label for="roomNr" class="mb-1 block text-sm font-medium text-text-950">
+    <label for="roomNr" class="mb-1 block text-sm font-medium text-ink">
       Room Number <span aria-hidden="true">*</span>
     </label>
     <input
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-ink"
       [class.border-error]="error('roomNr')"
       type="text"
       [(ngModel)]="stop().roomNr"
@@ -76,14 +73,11 @@
   </div>
 
   <div class="mb-2">
-    <label
-      for="infrastructure"
-      class="mb-1 block text-sm font-medium text-text-950"
-    >
+    <label for="infrastructure" class="mb-1 block text-sm font-medium text-ink">
       Requested Infrastructure
     </label>
     <textarea
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-ink"
       [(ngModel)]="stop().infrastructure"
       name="infrastructure"
       id="infrastructure"

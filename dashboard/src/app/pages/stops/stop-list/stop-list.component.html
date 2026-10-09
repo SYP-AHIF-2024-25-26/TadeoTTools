@@ -1,4 +1,4 @@
-<div class="m-4 flex flex-col items-center text-text-950 dark:text-text-100">
+<div class="m-4 flex flex-col items-center text-ink">
   <div
     class="my-6 flex w-full max-w-6xl flex-wrap items-center justify-between gap-3"
   >
@@ -112,7 +112,7 @@
     </div>
   }
 
-  <div class="mt-4 text-sm text-text-600 dark:text-text-400">
+  <div class="mt-4 text-sm text-ink-muted">
     Showing {{ filteredStops().length }} of {{ stops().length }} stops
   </div>
 
@@ -130,7 +130,7 @@
           >
             <tr>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted"
               >
                 <div class="flex items-center gap-1">
                   Stop Name
@@ -153,7 +153,7 @@
                 </div>
               </th>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted"
               >
                 <div class="flex items-center gap-1">
                   Stop Groups
@@ -176,17 +176,17 @@
                 </div>
               </th>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted"
               >
                 Room
               </th>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted"
               >
                 Requested Infrastructure
               </th>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted"
               >
                 <div class="flex items-center gap-1">
                   Stop Managers
@@ -209,7 +209,7 @@
                 </div>
               </th>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted"
               >
                 <div class="flex items-center gap-1">
                   Divisions
@@ -232,12 +232,12 @@
                 </div>
               </th>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted"
               >
                 Students
               </th>
               <th
-                class="w-24 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-600 dark:text-text-400"
+                class="w-24 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted"
               >
                 Actions
               </th>
@@ -248,7 +248,7 @@
               <tr
                 class="border-b border-background-200 bg-white transition-colors hover:bg-background-50 dark:border-background-700 dark:bg-background-800 dark:hover:bg-background-700"
               >
-                <td class="px-4 py-3 font-medium text-secondary-content">
+                <td class="px-4 py-3 font-medium text-ink">
                   {{ stop.name }}
                 </td>
                 <td class="px-4 py-3">
@@ -321,11 +321,11 @@
               <tr>
                 <td
                   colspan="8"
-                  class="px-4 py-10 text-center text-sm text-text-500"
+                  class="px-4 py-10 text-center text-sm text-ink-muted"
                 >
                   <div class="flex flex-col items-center gap-2">
                     <svg
-                      class="h-8 w-8 text-text-400"
+                      class="h-8 w-8 text-ink-muted"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -359,7 +359,7 @@
         <div class="card-body p-4">
           <!-- Card Header -->
           <div class="mb-3 flex items-start justify-between gap-2">
-            <h3 class="text-base font-bold text-secondary-content">
+            <h3 class="text-base font-bold">
               {{ stop.name }}
             </h3>
             <div class="flex flex-shrink-0 flex-row gap-1.5">
@@ -386,49 +386,37 @@
           >
             <!-- Inline rows for short fields -->
             <div class="flex justify-between gap-2 py-2">
-              <span class="font-semibold text-text-600 dark:text-text-400"
-                >Room</span
-              >
-              <span class="text-right text-text-800 dark:text-text-200">{{
-                stop.roomNr
-              }}</span>
+              <span class="font-semibold text-ink-muted">Room</span>
+              <span class="text-right text-ink">{{ stop.roomNr }}</span>
             </div>
             <div class="flex justify-between gap-2 py-2">
-              <span class="font-semibold text-text-600 dark:text-text-400"
-                >Groups</span
-              >
-              <span class="text-right text-text-800 dark:text-text-200">{{
+              <span class="font-semibold text-ink-muted">Groups</span>
+              <span class="text-right text-ink">{{
                 getStopGroupNames(stop.stopGroupIds)
               }}</span>
             </div>
             <div class="flex justify-between gap-2 py-2">
-              <span class="font-semibold text-text-600 dark:text-text-400"
-                >Divisions</span
-              >
-              <span class="text-right text-text-800 dark:text-text-200">{{
+              <span class="font-semibold text-ink-muted">Divisions</span>
+              <span class="text-right text-ink">{{
                 getDivisionNames(stop.divisionIds)
               }}</span>
             </div>
 
             <div class="flex justify-between gap-2 py-2">
-              <span
-                class="flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
+              <span class="flex-shrink-0 font-semibold text-ink-muted"
                 >Stop Managers</span
               >
-              <span
-                class="break-words text-right text-text-800 dark:text-text-200"
-                >{{ getStopManagerNames(stop.id) }}</span
-              >
+              <span class="break-words text-right text-ink">{{
+                getStopManagerNames(stop.id)
+              }}</span>
             </div>
             <div class="flex justify-between gap-2 py-2">
-              <span
-                class="flex-shrink-0 font-semibold text-text-600 dark:text-text-400"
+              <span class="flex-shrink-0 font-semibold text-ink-muted"
                 >Req. Infrastructure</span
               >
-              <span
-                class="break-words text-right text-text-800 dark:text-text-200"
-                >{{ stop.infrastructure }}</span
-              >
+              <span class="break-words text-right text-ink">{{
+                stop.infrastructure
+              }}</span>
             </div>
           </div>
 
@@ -461,10 +449,10 @@
 
     <!-- Mobile "No Stops" message -->
     @if (filteredStops().length === 0) {
-      <div class="px-4 py-10 text-center text-sm text-text-500">
+      <div class="px-4 py-10 text-center text-sm text-ink-muted">
         <div class="flex flex-col items-center gap-2">
           <svg
-            class="h-10 w-10 text-text-400"
+            class="h-10 w-10 text-ink-muted"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -477,7 +465,7 @@
             ></path>
           </svg>
           <span class="mt-2 text-lg">No stops found</span>
-          <span class="text-text-400">Try adjusting your filters.</span>
+          <span class="text-ink-muted">Try adjusting your filters.</span>
         </div>
       </div>
     }

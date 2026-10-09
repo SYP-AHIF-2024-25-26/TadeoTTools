@@ -45,8 +45,7 @@ export const CONFLICT_TEXT_CLASS =
   'font-bold text-orange-700 dark:text-orange-400';
 export const CONFLICT_BADGE_CLASS =
   'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300';
-export const UNASSIGNED_TEXT_CLASS =
-  'font-bold text-gray-600 dark:text-gray-400';
+export const UNASSIGNED_TEXT_CLASS = 'font-bold text-ink-muted';
 
 /** Assignments that still count: pending or approved (old rejected ones don't). */
 export function activeAssignments(

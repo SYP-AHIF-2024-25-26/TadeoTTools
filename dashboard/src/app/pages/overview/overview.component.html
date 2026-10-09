@@ -1,4 +1,4 @@
-<div class="text-text-950">
+<div class="text-ink">
   <header class="mx-auto w-11/12 max-w-6xl pb-6 pt-10">
     <h1 class="text-3xl font-bold">Overview</h1>
   </header>
@@ -96,7 +96,7 @@
                 <span class="block font-semibold"
                   >Countdown instead of the tour</span
                 >
-                <span class="block text-gray-600 dark:text-gray-300">
+                <span class="block text-ink-muted">
                   @if (o.countdown.isEnabled) {
                     On: visitors see the countdown
                   } @else {
@@ -127,12 +127,12 @@
               class="mt-4 flex items-start justify-between gap-2 border-t border-gray-200 pt-3 text-sm dark:border-gray-700"
             >
               <a
-                class="focus-visible:outline-primary -mx-2 min-w-0 rounded px-2 py-1 hover:bg-primary-100 focus-visible:outline focus-visible:outline-2 dark:hover:bg-gray-800"
+                class="-mx-2 min-w-0 rounded px-2 py-1 hover:bg-primary-100 dark:hover:bg-gray-800"
                 routerLink="/feedback"
                 title="Edit the feedback questions"
               >
                 <span class="block font-semibold">Feedback</span>
-                <span class="block text-gray-600 dark:text-gray-300">
+                <span class="block text-ink-muted">
                   {{ o.feedbackQuestionCount }}
                   {{ word(o.feedbackQuestionCount, 'question', 'questions') }}
                   @if (o.latestFeedbackAt) {
@@ -142,7 +142,7 @@
                 </span>
               </a>
               <a
-                class="focus-visible:outline-primary -mr-2 shrink-0 rounded px-2 py-1 text-right hover:bg-primary-100 focus-visible:outline focus-visible:outline-2 dark:hover:bg-gray-800"
+                class="-mr-2 shrink-0 rounded px-2 py-1 text-right hover:bg-primary-100 dark:hover:bg-gray-800"
                 routerLink="/feedback"
                 [queryParams]="{ tab: 'responses' }"
                 title="See the feedback responses"
@@ -151,7 +151,7 @@
                   class="block text-xl font-bold tabular-nums leading-none"
                   >{{ o.feedbackSessionCount }}</span
                 >
-                <span class="block text-xs text-gray-600 dark:text-gray-300">{{
+                <span class="block text-xs text-ink-muted">{{
                   word(o.feedbackSessionCount, 'response', 'responses')
                 }}</span>
               </a>
@@ -174,7 +174,7 @@
               }}</span>
               <span class="sr-only">stops</span>
               @if (o.stops.length > 0) {
-                <span class="block text-xs text-gray-600 dark:text-gray-300"
+                <span class="block text-xs text-ink-muted"
                   >{{ tourStopCount() }} in the tour</span
                 >
               }
@@ -189,7 +189,7 @@
             </p>
           } @else {
             <div
-              class="mt-4 grid grid-cols-[1.25rem_minmax(0,1fr)_2.5rem_2.5rem] gap-x-2 border-b border-gray-200 pb-2 text-xs text-gray-600 dark:border-gray-700 dark:text-gray-300 sm:grid-cols-[1.25rem_minmax(0,1fr)_5.5rem_5.5rem]"
+              class="mt-4 grid grid-cols-[1.25rem_minmax(0,1fr)_2.5rem_2.5rem] gap-x-2 border-b border-gray-200 pb-2 text-xs text-ink-muted dark:border-gray-700 sm:grid-cols-[1.25rem_minmax(0,1fr)_5.5rem_5.5rem]"
               aria-hidden="true"
             >
               <span></span>
@@ -236,7 +236,7 @@
 <!-- One stop: colour stripe in its exact division colour(s), name, approved students, pending requests in brackets, a dot for gaps -->
 <ng-template #stopChip let-stop>
   <a
-    class="focus-visible:outline-primary flex h-9 max-w-56 items-center gap-2 overflow-hidden rounded bg-white pr-2 text-xs shadow transition duration-150 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:bg-gray-800"
+    class="flex h-9 max-w-56 items-center gap-2 overflow-hidden rounded bg-white pr-2 text-xs shadow transition duration-150 ease-out hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:bg-gray-800"
     routerLink="/stop"
     [queryParams]="{ id: stop.id }"
     [title]="tileLabel(stop)"
@@ -269,7 +269,7 @@
 <ng-template #stopRow let-block>
   <details class="group">
     <summary
-      class="focus-visible:outline-primary grid cursor-pointer list-none grid-cols-[1.25rem_minmax(0,1fr)_2.5rem_2.5rem] items-center gap-x-2 rounded py-2 text-sm hover:bg-primary-100 focus-visible:outline focus-visible:outline-2 dark:hover:bg-gray-800 sm:grid-cols-[1.25rem_minmax(0,1fr)_5.5rem_5.5rem] [&::-webkit-details-marker]:hidden"
+      class="grid cursor-pointer list-none grid-cols-[1.25rem_minmax(0,1fr)_2.5rem_2.5rem] items-center gap-x-2 rounded py-2 text-sm hover:bg-primary-100 dark:hover:bg-gray-800 sm:grid-cols-[1.25rem_minmax(0,1fr)_5.5rem_5.5rem] [&::-webkit-details-marker]:hidden"
     >
       <svg
         class="h-4 w-4 transition-transform duration-150 group-open:rotate-90 motion-reduce:transition-none"
@@ -285,9 +285,7 @@
         <span class="truncate font-semibold" [title]="block.name">{{
           block.name
         }}</span>
-        <span
-          class="shrink-0 whitespace-nowrap text-xs text-gray-600 dark:text-gray-300"
-        >
+        <span class="shrink-0 whitespace-nowrap text-xs text-ink-muted">
           {{ block.stops.length }}
           {{ word(block.stops.length, 'stop', 'stops') }}
           @if (!block.group) {
@@ -315,9 +313,7 @@
           }
         </ul>
       } @else {
-        <p class="text-sm text-gray-600 dark:text-gray-300">
-          No stops in this group.
-        </p>
+        <p class="text-sm text-ink-muted">No stops in this group.</p>
       }
       @if (block.group; as group) {
         <a
