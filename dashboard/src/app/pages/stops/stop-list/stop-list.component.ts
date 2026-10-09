@@ -26,10 +26,16 @@ import { StudentService } from '@/core/services/student.service';
 import { FilterStateService } from '@/core/services/filter-state.service';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
+import { ActionIconComponent } from '@/shared/components/action-icon/action-icon.component';
 
 @Component({
   selector: 'app-stops',
-  imports: [RouterModule, FormsModule, PageHeaderComponent],
+  imports: [
+    RouterModule,
+    FormsModule,
+    PageHeaderComponent,
+    ActionIconComponent,
+  ],
   templateUrl: './stop-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

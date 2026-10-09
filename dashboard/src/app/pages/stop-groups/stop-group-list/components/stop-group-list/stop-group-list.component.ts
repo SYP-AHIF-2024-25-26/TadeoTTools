@@ -2,10 +2,11 @@ import { Component, computed, input, output } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { RouterLink } from '@angular/router';
 import { Stop, StopGroup } from '@/shared/models/types';
+import { ActionIconComponent } from '@/shared/components/action-icon/action-icon.component';
 
 @Component({
   selector: 'app-stop-group-list',
-  imports: [CdkDropList, CdkDrag, RouterLink],
+  imports: [CdkDropList, CdkDrag, RouterLink, ActionIconComponent],
   templateUrl: './stop-group-list.component.html',
 })
 export class StopGroupListComponent {

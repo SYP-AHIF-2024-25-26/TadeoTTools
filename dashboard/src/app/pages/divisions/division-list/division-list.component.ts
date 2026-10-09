@@ -8,10 +8,16 @@ import { DivisionService } from '@/core/services/division.service';
 import { Division } from '@/shared/models/types';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
+import { ActionIconComponent } from '@/shared/components/action-icon/action-icon.component';
 
 @Component({
   selector: 'app-divisions-list',
-  imports: [RouterModule, DivisionDetailsComponent, PageHeaderComponent],
+  imports: [
+    RouterModule,
+    DivisionDetailsComponent,
+    PageHeaderComponent,
+    ActionIconComponent,
+  ],
   templateUrl: './division-list.component.html',
 })
 export class DivisionsListComponent {

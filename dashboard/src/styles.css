@@ -186,6 +186,18 @@ body {
   border-bottom-color: var(--focus-ring);
 }
 
+/* Conflict actions (#74) use the Conflict orange of the assignment states,
+   not DaisyUI's yellow btn-warning; white text at 5.2:1 in both themes. */
+.btn-conflict {
+  @apply border-orange-700 bg-orange-700 text-white hover:border-orange-800 hover:bg-orange-800;
+}
+
+/* Approve actions (#74) use the Approved green of the assignment states;
+   green-700 in both themes keeps white text at 5:1. */
+.btn-approve {
+  @apply border-green-700 bg-green-700 text-white hover:border-green-800 hover:bg-green-800;
+}
+
 /* One focus ring (#74): DaisyUI draws its own, weaker outlines on these. */
 .btn:focus-visible,
 .tab:focus-visible,

@@ -4,25 +4,18 @@
   </app-page-header>
 
   <!-- Action Buttons and Filter Toggle -->
-  <div class="mb-6 flex flex-wrap gap-4">
-    @if (filteredStops().length != stops().length) {
-      <button
-        (click)="clearFilters()"
-        class="btn btn-outline hover:btn-primary"
-      >
-        Clear Filters
-      </button>
-    }
+  <div class="mb-6 flex flex-wrap gap-2">
     <button
       (click)="showFilters.set(!showFilters())"
-      class="btn btn-outline hover:btn-primary"
-      [title]="showFilters() ? 'Hide Filters' : 'Show Filters'"
+      class="btn btn-outline btn-sm"
+      [attr.aria-expanded]="showFilters()"
     >
       <svg
-        class="h-5 w-5"
+        class="h-4 w-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        aria-hidden="true"
       >
         <path
           stroke-linecap="round"
@@ -37,6 +30,11 @@
         Show Filters
       }
     </button>
+    @if (filteredStops().length != stops().length) {
+      <button (click)="clearFilters()" class="btn btn-ghost btn-sm">
+        Clear Filters
+      </button>
+    }
   </div>
 
   <!-- Expandable Filters Section -->
@@ -292,31 +290,13 @@
                 <td class="px-4 py-2">
                   <div class="flex items-center gap-1">
                     <a
-                      class="btn btn-ghost btn-xs"
+                      class="btn btn-ghost btn-sm"
                       [routerLink]="['/stop']"
                       [queryParams]="{ id: stop.id }"
-                      title="Edit stop"
+                      title="Edit"
                       [attr.aria-label]="'Edit ' + stop.name"
                     >
-                      <svg
-                        class="h-3 w-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        ></path>
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        ></path>
-                      </svg>
+                      <app-action-icon name="edit" />
                     </a>
                   </div>
                 </td>
@@ -428,24 +408,13 @@
           <!-- Card Actions -->
           <div class="mt-4 flex justify-end">
             <a
-              class="btn btn-outline btn-sm"
+              class="btn btn-ghost btn-sm"
               [routerLink]="['/stop']"
               [queryParams]="{ id: stop.id }"
+              title="Edit"
+              [attr.aria-label]="'Edit ' + stop.name"
             >
-              Edit
-              <svg
-                class="ml-1 h-3 w-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"
-                ></path>
-              </svg>
+              <app-action-icon name="edit" />
             </a>
           </div>
         </div>

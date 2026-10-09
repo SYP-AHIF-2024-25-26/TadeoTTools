@@ -111,6 +111,11 @@ export class FeedbackConfiguratorComponent implements OnInit {
   readonly showQuestionEditor = signal(false);
   readonly editingIndex = signal(-1);
   readonly isPreviewMode = signal(false);
+  // The questions as last loaded/saved; Save Changes is enabled only after an edit.
+  private readonly savedSnapshot = signal('[]');
+  readonly hasChanges = computed(
+    () => JSON.stringify(this.questions()) !== this.savedSnapshot()
+  );
 
   questionForm = this.createQuestionForm();
 
@@ -149,6 +154,7 @@ export class FeedbackConfiguratorComponent implements OnInit {
         await this.feedbackService.getAllFeedbackQuestions();
       this.questions.set(fetchedQuestions);
       this.savedQuestions = fetchedQuestions;
+      this.savedSnapshot.set(JSON.stringify(fetchedQuestions));
     } catch (error) {
       console.error('Failed to load feedback questions', error);
       this.toast.error(

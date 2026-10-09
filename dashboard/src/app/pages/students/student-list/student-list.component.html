@@ -1,7 +1,20 @@
 <div class="page-shell">
   <app-page-header title="Students">
     <button
-      class="btn btn-outline btn-sm"
+      class="btn btn-approve whitespace-nowrap"
+      (click)="showApproveAllConfirm.set(true)"
+      [disabled]="!hasRequested()"
+    >
+      Approve {{ approvableStudents().length }} pending
+    </button>
+    <button
+      class="btn btn-primary whitespace-nowrap"
+      (click)="openAddStudentDialog()"
+    >
+      Add Student
+    </button>
+    <button
+      class="btn btn-outline whitespace-nowrap"
       (click)="toggleDataCollapsed()"
       [attr.aria-expanded]="!dataCollapsed()"
     >
@@ -10,16 +23,6 @@
       } @else {
         Hide Import/Export
       }
-    </button>
-    <button
-      class="btn btn-outline btn-sm"
-      (click)="showApproveAllConfirm.set(true)"
-      [disabled]="!hasRequested()"
-    >
-      Approve {{ approvableStudents().length }} pending
-    </button>
-    <button class="btn btn-primary btn-sm" (click)="openAddStudentDialog()">
-      Add Student
     </button>
   </app-page-header>
 
@@ -252,7 +255,7 @@
                   ) {
                     <div class="flex gap-1">
                       <button
-                        class="btn btn-primary btn-sm"
+                        class="btn btn-approve btn-sm"
                         [disabled]="isBusy(student)"
                         (click)="approveSingleAssignment(student)"
                       >
@@ -271,7 +274,7 @@
                   } @else {
                     <div class="flex gap-1">
                       <button
-                        class="btn btn-primary btn-sm"
+                        class="btn btn-outline btn-sm"
                         [disabled]="isBusy(student)"
                         (click)="undoSingleAssignment(student)"
                       >
@@ -290,7 +293,7 @@
                   }
                 } @else {
                   <button
-                    class="btn btn-warning btn-sm"
+                    class="btn btn-conflict btn-sm"
                     [disabled]="isBusy(student)"
                     (click)="showConflictDetails(student)"
                   >
@@ -365,7 +368,7 @@
                 Status.Pending
               ) {
                 <button
-                  class="btn btn-primary btn-sm flex-grow"
+                  class="btn btn-approve btn-sm flex-grow"
                   [disabled]="isBusy(student)"
                   (click)="approveSingleAssignment(student)"
                 >
@@ -373,7 +376,7 @@
                 </button>
               } @else {
                 <button
-                  class="btn btn-primary btn-sm flex-grow"
+                  class="btn btn-outline btn-sm flex-grow"
                   [disabled]="isBusy(student)"
                   (click)="undoSingleAssignment(student)"
                 >
@@ -389,7 +392,7 @@
               </button>
             } @else {
               <button
-                class="btn btn-warning btn-sm flex-grow"
+                class="btn btn-conflict btn-sm flex-grow"
                 [disabled]="isBusy(student)"
                 (click)="showConflictDetails(student)"
               >

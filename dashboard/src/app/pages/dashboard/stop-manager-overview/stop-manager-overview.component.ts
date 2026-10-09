@@ -5,10 +5,16 @@ import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StopManager } from '@/shared/models/types';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { plural } from '@/shared/utils/utils';
+import { ActionIconComponent } from '@/shared/components/action-icon/action-icon.component';
 
 @Component({
   selector: 'app-stop-manager-overview',
-  imports: [CommonModule, FormsModule, DeletePopupComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DeletePopupComponent,
+    ActionIconComponent,
+  ],
   templateUrl: './stop-manager-overview.component.html',
 })
 export class StopManagerOverviewComponent {

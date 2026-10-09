@@ -161,16 +161,16 @@
                   <td class="px-6 py-4">
                     <div class="flex gap-2">
                       <button
-                        (click)="saveEdit()"
-                        class="btn btn-primary btn-xs"
-                      >
-                        Save Changes
-                      </button>
-                      <button
                         (click)="cancelEdit()"
-                        class="btn btn-ghost btn-xs"
+                        class="btn btn-ghost btn-sm"
                       >
                         Cancel
+                      </button>
+                      <button
+                        (click)="saveEdit()"
+                        class="btn btn-primary btn-sm"
+                      >
+                        Save Changes
                       </button>
                     </div>
                   </td>
@@ -194,42 +194,32 @@
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-2">
                       <button
+                        type="button"
                         (click)="startEdit(stopManager)"
-                        class="text-primary btn btn-ghost btn-xs hover:bg-primary-100"
+                        class="btn btn-ghost btn-sm"
                         title="Edit"
+                        [attr.aria-label]="
+                          'Edit ' +
+                          stopManager.firstName +
+                          ' ' +
+                          stopManager.lastName
+                        "
                       >
-                        <svg
-                          class="h-4 w-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"
-                          ></path>
-                        </svg>
+                        <app-action-icon name="edit" />
                       </button>
                       <button
+                        type="button"
                         (click)="stopManagerToDelete.set(stopManager)"
-                        class="btn btn-ghost btn-xs text-error hover:bg-error/10"
+                        class="btn btn-ghost btn-sm text-error"
                         title="Delete"
+                        [attr.aria-label]="
+                          'Delete ' +
+                          stopManager.firstName +
+                          ' ' +
+                          stopManager.lastName
+                        "
                       >
-                        <svg
-                          class="h-4 w-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m10 0H5"
-                          ></path>
-                        </svg>
+                        <app-action-icon name="delete" />
                       </button>
                     </div>
                   </td>
@@ -357,42 +347,26 @@
             </div>
             <div class="card-actions mt-4 justify-end gap-2">
               <button
+                type="button"
                 (click)="startEdit(stopManager)"
-                class="text-primary btn btn-ghost btn-sm"
+                class="btn btn-ghost btn-sm"
+                title="Edit"
+                [attr.aria-label]="
+                  'Edit ' + stopManager.firstName + ' ' + stopManager.lastName
+                "
               >
-                <svg
-                  class="mr-1 h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"
-                  ></path>
-                </svg>
-                Edit
+                <app-action-icon name="edit" />
               </button>
               <button
+                type="button"
                 (click)="stopManagerToDelete.set(stopManager)"
                 class="btn btn-ghost btn-sm text-error"
+                title="Delete"
+                [attr.aria-label]="
+                  'Delete ' + stopManager.firstName + ' ' + stopManager.lastName
+                "
               >
-                <svg
-                  class="mr-1 h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m10 0H5"
-                  ></path>
-                </svg>
-                Delete
+                <app-action-icon name="delete" />
               </button>
             </div>
           }
