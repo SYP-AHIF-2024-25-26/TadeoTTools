@@ -154,4 +154,24 @@ public class FeedbackManagementTests(IntegrationTestWebAppFactory factory) : Bas
         (await DbContext.FeedbackQuestionAnswers.CountAsync()).Should().Be(0);
         (await DbContext.FeedbackQuestions.CountAsync()).Should().Be(1);
     }
+
+    [Fact]
+    public async Task GetFeedbackQuestions_ShouldReturnOptionsInSavedOrder()
+    {
+        // Arrange
+        UpsertFeedbackQuestionDto ChoiceQuestion(int? id, string[] options) => new(
+            id, "Which topics?", FeedbackQuestionType.MultipleChoice, false,
+            null, options, null, null, null, 0, []);
+
+        await Client.PostAsJsonAsync("/v1/save-questions", new[] { ChoiceQuestion(null, ["Zebra", "Apple", "Mango"]) });
+        var saved = await Client.GetFromJsonAsync<List<GetFeedbackQuestionDto>>("/v1/feedback-questions");
+
+        // Act
+        await Client.PostAsJsonAsync("/v1/save-questions", new[] { ChoiceQuestion(saved![0].Id, ["Mango", "Zebra", "Apple"]) });
+        var resaved = await Client.GetFromJsonAsync<List<GetFeedbackQuestionDto>>("/v1/feedback-questions");
+
+        // Assert
+        saved[0].Options.Should().Equal("Zebra", "Apple", "Mango");
+        resaved![0].Options.Should().Equal("Mango", "Zebra", "Apple");
+    }
 }

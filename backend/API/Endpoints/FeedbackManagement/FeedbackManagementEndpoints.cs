@@ -27,7 +27,8 @@ public static class FeedbackManagementEndpoints
             };
 
             var placeholder = (q as FeedbackTextQuestion)?.Placeholder;
-            var options = (q as FeedbackChoiceQuestion)?.Options.Select(o => o.Value).ToArray();
+            // saving recreates the options in list order, so ordering by Id keeps the entered order
+            var options = (q as FeedbackChoiceQuestion)?.Options.OrderBy(o => o.Id).Select(o => o.Value).ToArray();
             var minRating = (q as FeedbackRatingQuestion)?.MinRating;
             var maxRating = (q as FeedbackRatingQuestion)?.MaxRating;
             var ratingLabels = (q as FeedbackRatingQuestion)?.RatingLabels;
