@@ -1,13 +1,10 @@
-<div class="m-4 flex flex-col items-center text-ink">
-  <div
-    class="my-6 flex w-full max-w-6xl flex-wrap items-center justify-between gap-3"
-  >
-    <h2 class="text-2xl font-bold">Stops</h2>
-    <a [routerLink]="['/stop']" class="btn btn-primary">Add Stop</a>
-  </div>
+<div class="page-shell">
+  <app-page-header title="Stops">
+    <a [routerLink]="['/stop']" class="btn btn-primary btn-sm">Add Stop</a>
+  </app-page-header>
 
   <!-- Action Buttons and Filter Toggle -->
-  <div class="mb-6 flex flex-wrap justify-center gap-4">
+  <div class="mb-6 flex flex-wrap gap-4">
     @if (filteredStops().length != stops().length) {
       <button
         (click)="clearFilters()"
@@ -44,7 +41,7 @@
 
   <!-- Expandable Filters Section -->
   @if (showFilters()) {
-    <div class="mx-4 mb-4 flex w-full max-w-6xl flex-wrap justify-center gap-4">
+    <div class="mb-4 flex w-full flex-wrap gap-4">
       <!-- Stop Name Search -->
       <div class="form-control w-full sm:w-auto sm:max-w-xs">
         <label for="stop-filter-stop-name" class="label">
@@ -119,7 +116,7 @@
   <!-- ################################## -->
   <!-- DESKTOP: Stops Table (md and up) -->
   <!-- ################################## -->
-  <div class="mt-6 hidden w-full max-w-7xl md:block">
+  <div class="mt-6 hidden w-full md:block">
     <div
       class="rounded-lg border border-background-200 dark:border-background-700"
     >
@@ -351,7 +348,7 @@
   <!-- ################################## -->
   <!-- MOBILE: Stops Cards (sm only)    -->
   <!-- ################################## -->
-  <div class="mt-6 w-full max-w-6xl space-y-4 px-2 md:hidden">
+  <div class="mt-6 w-full space-y-4 md:hidden">
     @for (stop of filteredStops(); track stop.id) {
       <div
         class="card border border-background-200 bg-white shadow-lg dark:border-background-700 dark:bg-background-800"

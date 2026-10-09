@@ -147,6 +147,11 @@ body {
   }
 }
 
+/* The content area of every dashboard page (#74), list or detail. */
+.page-shell {
+  @apply mx-auto w-11/12 max-w-6xl pb-10;
+}
+
 /* One focus ring (#74): DaisyUI draws its own, weaker outlines on these. */
 .btn:focus-visible,
 .tab:focus-visible,

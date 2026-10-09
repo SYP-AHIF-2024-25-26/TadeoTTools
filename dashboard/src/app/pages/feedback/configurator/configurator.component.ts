@@ -32,6 +32,7 @@ import { errorText, ToastService } from '@/core/services/toast.service';
 import { downloadFile } from '@/shared/utils/utils';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { FeedbackResponsesComponent } from '../responses/feedback-responses.component';
+import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 
 export type QuestionType =
   | 'Text'
@@ -67,6 +68,7 @@ export interface DependencyFormGroup {
     FeedbackResponsesComponent,
     DeletePopupComponent,
     RouterLink,
+    PageHeaderComponent,
   ],
 })
 export class FeedbackConfiguratorComponent implements OnInit {

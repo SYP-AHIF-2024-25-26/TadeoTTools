@@ -1,11 +1,9 @@
-<div class="text-ink">
-  <header class="mx-auto w-11/12 max-w-6xl pb-6 pt-10">
-    <h1 class="text-3xl font-bold">Overview</h1>
-  </header>
+<div class="page-shell">
+  <app-page-header title="Overview" />
 
   @if (loading()) {
     <div
-      class="mx-auto grid w-11/12 max-w-6xl grid-cols-1 items-start gap-6 pb-10 lg:grid-cols-3"
+      class="grid grid-cols-1 items-start gap-6 lg:grid-cols-3"
       aria-hidden="true"
     >
       <div class="skeleton h-96 rounded-lg lg:col-span-2"></div>
@@ -14,7 +12,7 @@
     <span class="sr-only" role="status">Loading the overview…</span>
   } @else if (loadFailed()) {
     <div
-      class="mx-auto mb-10 flex w-11/12 max-w-6xl flex-col items-center gap-3 rounded-lg bg-background-100 p-6 text-center shadow-lg"
+      class="flex flex-col items-center gap-3 rounded-lg bg-background-100 p-6 text-center shadow-lg"
       role="alert"
     >
       <p>
@@ -24,9 +22,7 @@
     </div>
   } @else if (overview()) {
     @if (overview(); as o) {
-      <div
-        class="mx-auto grid w-11/12 max-w-6xl grid-cols-1 items-start gap-6 pb-10 lg:grid-cols-3"
-      >
+      <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
         <!-- Students, feedback and the visitor app switch, right of the stops -->
         <div class="flex min-w-0 flex-col gap-6 lg:col-start-3 lg:row-start-1">
           <section

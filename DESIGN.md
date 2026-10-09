@@ -260,9 +260,9 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 
 **GuideApp:** a single column at phone width. Content sits in a 16px side gutter (`mx-4`), and cards stack with 24px between them (`mt-6`). The header (logo plus optional welcome) is a gray block at the top. A white tab bar with four icon buttons (Leitfaden, Karte, Feedback, Über uns) is fixed to the bottom with an 8px inset, and pages reserve 112–128px of bottom padding so the last card clears it. Detail pages add a breadcrumb and a back pill above one large content card. Pages scroll vertically only (`touch-pan-y`) and allow swipe gestures. There is no desktop layout; the feedback form caps at `max-w-md` (448px).
 
-**Dashboard:** the top nav is `max-w-screen-xl` (1280px). Every page, list or detail, uses one content shell: `mx-auto w-11/12 max-w-6xl` (1152px). Pages follow one pattern:
+**Dashboard:** the top nav is `max-w-screen-xl` (1280px). Every page, list or detail, uses one content shell: the `.page-shell` class in `styles.css` (`mx-auto w-11/12 max-w-6xl pb-10`, 1152px). Pages follow one pattern:
 
-1. **Page header** (shared component): the `h1` on the left, an optional one-line subtitle under it, and the page's actions on the right. Below `sm` the actions wrap under the title.
+1. **Page header** (`app-page-header`, `title` and optional `subtitle` inputs, actions projected): the `h1` on the left, an optional one-line subtitle under it, and the page's actions on the right. Below `sm` the actions wrap under the title.
 2. **Tabs**, if the page has several views (see Tabs).
 3. **Filter bar** of filled blue fields (full width on mobile, `max-w-xs` from `sm`), with Clear Filters shown only while a filter is set.
 4. The table, card list or form.

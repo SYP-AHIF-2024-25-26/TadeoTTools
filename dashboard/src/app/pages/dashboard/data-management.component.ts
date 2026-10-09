@@ -6,6 +6,7 @@ import { StopManagerOverviewComponent } from './stop-manager-overview/stop-manag
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { StudentService } from '@/core/services/student.service';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
+import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 
 type TabType = 'stop-managers' | 'admins' | 'data';
 
@@ -15,6 +16,7 @@ type TabType = 'stop-managers' | 'admins' | 'data';
     AdminOverviewComponent,
     DataPageComponent,
     StopManagerOverviewComponent,
+    PageHeaderComponent,
   ],
   templateUrl: './data-management.component.html',
 })

@@ -1,13 +1,13 @@
-<div class="flex h-full w-full flex-col items-center">
-  <div class="mb-2 mt-4 flex justify-center">
-    <button class="btn btn-primary" (click)="showDivisionPopUp(-1)">
+<div class="page-shell">
+  <app-page-header title="Divisions">
+    <button class="btn btn-primary btn-sm" (click)="showDivisionPopUp(-1)">
       Add Division
     </button>
-  </div>
-  <div class="flex flex-wrap justify-center gap-5">
+  </app-page-header>
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
     @for (division of divisions(); track $index) {
       <div
-        class="m-2 flex w-64 flex-col flex-wrap justify-between rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+        class="flex flex-col flex-wrap justify-between rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
       >
         <div class="flex flex-nowrap justify-evenly">
           <div class="flex w-3/4">

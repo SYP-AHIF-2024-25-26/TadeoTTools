@@ -1,10 +1,9 @@
 import { Component, input, output } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-stop-group-header',
-  imports: [RouterLink, FormsModule],
+  imports: [FormsModule],
   templateUrl: './stop-group-header.component.html',
 })
 export class StopGroupHeaderComponent {
@@ -12,7 +11,6 @@ export class StopGroupHeaderComponent {
   onlyPublicGroups = input.required<boolean>();
   saving = input<boolean>(false);
 
-  addGroup = output<void>();
   togglePublicGroups = output<void>();
   save = output<void>();
   cancel = output<void>();

@@ -1,72 +1,74 @@
-<div
-  class="mx-auto mt-4 w-full max-w-5xl rounded-lg bg-background-100 p-4 shadow-lg sm:p-6 md:mt-10"
->
-  @if (stopGroup().id == -1) {
-    <h4 class="text-xl">New Stop Group</h4>
-  } @else {
-    <h4 class="text-xl">Edit Stop Group</h4>
-  }
-  @if (isLoading()) {
-    <div class="flex h-32 items-center justify-center">
-      <app-loader></app-loader>
-    </div>
-  } @else {
-    <form (submit)="submitStopGroupDetail()" class="mt-4">
-      <app-stop-group-general-info [(stopGroup)]="stopGroup" />
+<div class="page-shell pt-8">
+  <div class="rounded-lg bg-background-100 p-4 shadow-lg sm:p-6">
+    @if (stopGroup().id == -1) {
+      <h1 class="text-2xl font-bold">New Stop Group</h1>
+    } @else {
+      <h1 class="text-2xl font-bold">Edit Stop Group</h1>
+    }
+    @if (isLoading()) {
+      <div class="flex h-32 items-center justify-center">
+        <app-loader></app-loader>
+      </div>
+    } @else {
+      <form (submit)="submitStopGroupDetail()" class="mt-4">
+        <app-stop-group-general-info [(stopGroup)]="stopGroup" />
 
-      <app-stop-group-stop-selector
-        [(stopGroup)]="stopGroup"
-        [allStops]="stops()"
-      />
+        <app-stop-group-stop-selector
+          [(stopGroup)]="stopGroup"
+          [allStops]="stops()"
+        />
 
-      <div
-        class="sticky bottom-0 z-10 -mx-4 mt-6 border-t border-background-200 bg-background-100 px-4 py-3 dark:border-background-600 sm:-mx-6 sm:px-6"
-      >
-        @if (errorMessage() != null) {
-          <p role="alert" class="mb-2 text-sm font-medium text-error">
-            {{ errorMessage() }}
-          </p>
-        }
-        <div class="flex flex-wrap items-center gap-2">
-          <button
-            type="submit"
-            class="btn btn-primary btn-sm gap-2"
-            [disabled]="saving() || !hasUnsavedChanges()"
-          >
-            @if (saving()) {
-              <span class="loading loading-spinner loading-xs"></span>
-              Saving…
-            } @else if (stopGroup().id == -1) {
-              Create Group
-            } @else {
-              Save Changes
-            }
-          </button>
-          <button
-            (click)="goBack()"
-            type="button"
-            class="btn btn-ghost btn-sm"
-            [disabled]="saving()"
-          >
-            Cancel
-          </button>
-          @if (hasUnsavedChanges() && !saving()) {
-            <span class="text-sm font-medium text-ink"> Unsaved changes </span>
+        <div
+          class="sticky bottom-0 z-10 -mx-4 mt-6 border-t border-background-200 bg-background-100 px-4 py-3 dark:border-background-600 sm:-mx-6 sm:px-6"
+        >
+          @if (errorMessage() != null) {
+            <p role="alert" class="mb-2 text-sm font-medium text-error">
+              {{ errorMessage() }}
+            </p>
           }
-          @if (stopGroup().id != -1) {
+          <div class="flex flex-wrap items-center gap-2">
             <button
-              (click)="showDeleteConfirm.set(true)"
+              type="submit"
+              class="btn btn-primary btn-sm gap-2"
+              [disabled]="saving() || !hasUnsavedChanges()"
+            >
+              @if (saving()) {
+                <span class="loading loading-spinner loading-xs"></span>
+                Saving…
+              } @else if (stopGroup().id == -1) {
+                Create Group
+              } @else {
+                Save Changes
+              }
+            </button>
+            <button
+              (click)="goBack()"
               type="button"
-              class="btn btn-error btn-sm ml-auto gap-2"
+              class="btn btn-ghost btn-sm"
               [disabled]="saving()"
             >
-              Delete
+              Cancel
             </button>
-          }
+            @if (hasUnsavedChanges() && !saving()) {
+              <span class="text-sm font-medium text-ink">
+                Unsaved changes
+              </span>
+            }
+            @if (stopGroup().id != -1) {
+              <button
+                (click)="showDeleteConfirm.set(true)"
+                type="button"
+                class="btn btn-error btn-sm ml-auto gap-2"
+                [disabled]="saving()"
+              >
+                Delete
+              </button>
+            }
+          </div>
         </div>
-      </div>
-    </form>
-  }
+      </form>
+    }
+  </div>
 </div>
 
 @if (showDeleteConfirm()) {

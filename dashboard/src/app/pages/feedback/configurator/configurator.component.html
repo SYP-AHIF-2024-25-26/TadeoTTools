@@ -1,13 +1,12 @@
-<div class="min-h-screen">
-  <div class="container mx-auto px-4 py-8">
-    <!-- Header -->
-    <header class="mb-8">
-      <h1 class="text-center text-2xl font-bold md:text-left">Feedback</h1>
+<div>
+  <div class="page-shell">
+    <app-page-header title="Feedback" />
+    <div class="mb-8">
       <!-- Questions edit the form; Responses reads what visitors sent. The tab is in the URL so other pages can link to it. -->
       <div
         role="tablist"
         aria-label="Feedback"
-        class="tabs tabs-bordered mt-6 w-fit"
+        class="tabs tabs-bordered w-fit"
       >
         <a
           role="tab"
@@ -87,7 +86,7 @@
           </button>
         </div>
       }
-    </header>
+    </div>
 
     @if (tab() === 'questions') {
       <!-- Preview Mode -->

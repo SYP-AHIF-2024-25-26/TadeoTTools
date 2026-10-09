@@ -12,6 +12,7 @@ import { OverviewService } from '@/core/services/overview.service';
 import { FeatureFlagService } from '@/core/services/feature-flag.service';
 import { ConfirmDialogService } from '@/core/services/confirm-dialog.service';
 import { errorText, ToastService } from '@/core/services/toast.service';
+import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 import { Overview, OverviewGroup, OverviewStop } from '@/shared/models/types';
 
 // Same fallback as the visitor app's stop cards: a stop without a division.
@@ -31,7 +32,7 @@ type StopBlock = {
 
 @Component({
   selector: 'app-overview',
-  imports: [RouterLink, DatePipe, NgTemplateOutlet],
+  imports: [RouterLink, DatePipe, NgTemplateOutlet, PageHeaderComponent],
   templateUrl: './overview.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

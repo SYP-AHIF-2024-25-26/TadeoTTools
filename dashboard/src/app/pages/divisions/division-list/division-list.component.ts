@@ -6,10 +6,16 @@ import { DivisionDetailsComponent } from '@/pages/divisions/division-details/div
 import { DivisionService } from '@/core/services/division.service';
 import { Division } from '@/shared/models/types';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
+import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-divisions-list',
-  imports: [RouterModule, DeletePopupComponent, DivisionDetailsComponent],
+  imports: [
+    RouterModule,
+    DeletePopupComponent,
+    DivisionDetailsComponent,
+    PageHeaderComponent,
+  ],
   templateUrl: './division-list.component.html',
 })
 export class DivisionsListComponent {

@@ -25,10 +25,11 @@ import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StudentService } from '@/core/services/student.service';
 import { FilterStateService } from '@/core/services/filter-state.service';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
+import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-stops',
-  imports: [RouterModule, FormsModule],
+  imports: [RouterModule, FormsModule, PageHeaderComponent],
   templateUrl: './stop-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
