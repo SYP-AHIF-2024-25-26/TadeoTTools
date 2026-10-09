@@ -7,50 +7,68 @@
       Add Division
     </button>
   </div>
-  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-    @for (division of divisions(); track $index) {
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    @for (division of divisions(); track division.id) {
       <div
-        class="flex flex-col rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+        class="flex items-start gap-4 rounded-lg bg-background-100 p-5 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
       >
-        <div class="flex items-center gap-3">
-          <div
-            class="h-8 w-8 shrink-0 rounded-md"
-            [style.background-color]="division.color"
-            aria-hidden="true"
-          ></div>
-          <h2 class="min-w-0 flex-1 break-words font-bold">
-            {{ division.name }}
-          </h2>
-          <div class="flex shrink-0 gap-1">
-            <button
-              type="button"
-              class="btn btn-ghost btn-sm"
-              [attr.aria-label]="'Edit ' + division.name"
-              title="Edit"
-              (click)="showDivisionPopUp(division.id)"
+        <!-- The image as the visitor app shows it; a placeholder when there is none. -->
+        <div
+          class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-white dark:border-white/15"
+        >
+          @if (missingImages().has(division.id)) {
+            <span class="px-1 text-center text-xs text-ink-muted"
+              >No image</span
             >
-              <app-action-icon name="edit" />
-            </button>
-            <button
-              type="button"
-              class="btn btn-ghost btn-sm text-error"
-              [attr.aria-label]="'Delete ' + division.name"
-              title="Delete"
-              (click)="deleteDivision(division)"
-            >
-              <app-action-icon name="delete" />
-            </button>
-          </div>
+          } @else {
+            <img
+              class="h-full w-full object-contain"
+              [src]="
+                baseUrl +
+                '/divisions/' +
+                division.id +
+                '/image?v=' +
+                imageVersion()
+              "
+              alt=""
+              (error)="markImageMissing(division.id)"
+            />
+          }
         </div>
-        <img
-          class="mt-4 h-32 w-32 object-cover"
-          [src]="
-            baseUrl + '/divisions/' + division.id + '/image?v=' + imageVersion()
-          "
-          [alt]="division.name"
-          (error)="hideImage($event)"
-        />
+        <div class="min-w-0 flex-1">
+          <h2 class="break-words font-bold">{{ division.name }}</h2>
+          <p class="mt-1 flex items-center gap-2 text-sm text-ink-muted">
+            <span
+              class="h-3 w-3 shrink-0 rounded-sm"
+              [style.background-color]="division.color"
+              aria-hidden="true"
+            ></span>
+            {{ division.color }}
+          </p>
+        </div>
+        <div class="flex shrink-0 gap-1">
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm"
+            [attr.aria-label]="'Edit ' + division.name"
+            title="Edit"
+            (click)="showDivisionPopUp(division.id)"
+          >
+            <app-action-icon name="edit" />
+          </button>
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm text-error"
+            [attr.aria-label]="'Delete ' + division.name"
+            title="Delete"
+            (click)="deleteDivision(division)"
+          >
+            <app-action-icon name="delete" />
+          </button>
+        </div>
       </div>
+    } @empty {
+      <p class="text-ink-muted">No divisions yet.</p>
     }
   </div>
 </div>

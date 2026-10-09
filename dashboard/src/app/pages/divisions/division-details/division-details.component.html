@@ -68,67 +68,71 @@
       </div>
     </div>
 
-    <!-- File Upload -->
+    <!-- Image: the new file's preview, else the current image, else a placeholder. -->
     <div class="form-control">
       <label class="label" for="file">
-        <span class="label-text">Division Image (SVG, PNG, JPG)</span>
+        <span class="label-text">Division Image (PNG or JPG)</span>
       </label>
-      <input
-        type="file"
-        id="file"
-        (change)="onFileChange($event)"
-        class="file-input file-input-bordered w-full"
-        accept="image/jpeg,image/png,image/svg+xml"
-      />
-    </div>
-
-    <!-- Image Preview -->
-    @if (filePreview()) {
-      <div class="mt-4">
-        <label class="label"
-          ><span class="label-text">New Image Preview:</span></label
+      <div class="flex flex-wrap items-center gap-4">
+        <div
+          class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-black/10 bg-white dark:border-white/15"
         >
-        <div class="flex items-center gap-4">
-          <img
-            [src]="filePreview()"
-            alt="Image Preview"
-            class="h-20 w-20 rounded-lg border border-base-300 object-cover"
-          />
-          <button
-            type="button"
-            (click)="clearPreview()"
-            class="btn btn-ghost btn-sm"
-          >
-            Discard
-          </button>
-        </div>
-      </div>
-    } @else if (id() !== -1 && !imageDeleted()) {
-      <div class="mt-4">
-        <label class="label"
-          ><span class="label-text">Current Image:</span></label
-        >
-        @if (imageMissing()) {
-          <p class="text-sm text-ink-muted">No image uploaded yet.</p>
-        } @else {
-          <div class="flex items-center gap-4">
+          @if (filePreview()) {
             <img
-              [src]="baseUrl + '/divisions/' + id() + '/image'"
-              alt="Current Division Image"
-              class="h-20 w-20 rounded-lg border border-base-300 object-cover"
+              [src]="filePreview()"
+              alt="Preview of the new image"
+              class="h-full w-full object-contain"
+            />
+          } @else if (hasCurrentImage()) {
+            <img
+              [src]="currentImageUrl()"
+              [alt]="'Current image of ' + name()"
+              class="h-full w-full object-contain"
               (error)="imageMissing.set(true)"
             />
-            <button
-              type="button"
-              (click)="confirmAction.set('image')"
-              class="btn btn-outline btn-error btn-sm"
+          } @else {
+            <span class="px-2 text-center text-xs text-ink-muted"
+              >No image</span
             >
-              Delete Image
-            </button>
-          </div>
-        }
+          }
+        </div>
+        <div class="flex min-w-0 flex-1 flex-col gap-2">
+          <input
+            #fileInput
+            type="file"
+            id="file"
+            (change)="onFileChange($event)"
+            class="file-input file-input-bordered file-input-sm w-full"
+            accept="image/jpeg,image/png"
+          />
+          @if (filePreview()) {
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs text-ink-muted"
+                >Saved with
+                {{ id() === -1 ? 'Create Division' : 'Save Changes' }}.</span
+              >
+              <button
+                type="button"
+                (click)="clearPreview()"
+                class="btn btn-ghost btn-sm"
+              >
+                Discard
+              </button>
+            </div>
+          } @else if (hasCurrentImage()) {
+            <div>
+              <button
+                type="button"
+                (click)="confirmAction.set('image')"
+                class="btn btn-outline btn-error btn-sm"
+              >
+                Delete Image
+              </button>
+            </div>
+          }
+        </div>
       </div>
-    }
+    </div>
   </form>
 
   <div dialog-actions class="contents">

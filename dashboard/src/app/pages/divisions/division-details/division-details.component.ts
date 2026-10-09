@@ -1,11 +1,13 @@
 import {
   Component,
   computed,
+  ElementRef,
   inject,
   input,
   OnInit,
   output,
   signal,
+  viewChild,
 } from '@angular/core';
 import { errorText } from '@/core/services/toast.service';
 import { FormsModule } from '@angular/forms';
@@ -76,12 +78,7 @@ export class DivisionDetailsComponent implements OnInit {
     const file = input.files[0];
     this.errorMessage.set(null);
 
-    const validFileTypes = [
-      'image/jpeg',
-      'image/png',
-      'image/jpg',
-      'image/svg+xml',
-    ];
+    const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
     if (!validFileTypes.includes(file.type)) {
       this.errorMessage.set(
@@ -159,6 +156,15 @@ export class DivisionDetailsComponent implements OnInit {
   imageDeleted = signal<boolean>(false);
   // The image request fails when the division has none (or it cannot be shown).
   imageMissing = signal<boolean>(false);
+  // Opening time as a cache buster, so a just-replaced image is not served from cache.
+  private readonly openedAt = Date.now();
+  readonly currentImageUrl = computed(
+    () => `${this.baseUrl}/divisions/${this.id()}/image?v=${this.openedAt}`
+  );
+  readonly hasCurrentImage = computed(
+    () => this.id() !== -1 && !this.imageDeleted() && !this.imageMissing()
+  );
+  private fileInput = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
   deleteDivisionMessage = computed(
     () =>
@@ -190,6 +196,9 @@ export class DivisionDetailsComponent implements OnInit {
   clearPreview() {
     this.selectedFile = null;
     this.filePreview.set(null);
+    // Reset the field too, so picking the same file again fires (change).
+    const input = this.fileInput()?.nativeElement;
+    if (input) input.value = '';
   }
 
   async deleteImage() {

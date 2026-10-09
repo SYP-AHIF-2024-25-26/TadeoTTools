@@ -30,8 +30,7 @@ export class DivisionsListComponent {
   showDivisionDetailPopUp = signal<boolean>(false);
 
   async ngOnInit() {
-    this.divisions.set(await this.divisionService.getDivisions());
-    this.imageVersion.set(Date.now());
+    await this.reload();
     this.scrollService.restoreScroll();
   }
 
@@ -51,9 +50,9 @@ export class DivisionsListComponent {
         errorText(error, `"${division.name}" could not be deleted.`)
       );
     }
-    this.divisions.set(await this.divisionService.getDivisions());
-    this.imageVersion.set(Date.now());
+    await this.reload();
   }
+
   showDivisionPopUp(id: number): void {
     this.divisionIdDetail = id;
     this.showDivisionDetailPopUp.set(true);
@@ -61,7 +60,13 @@ export class DivisionsListComponent {
 
   async handleDivisionPopupClose(): Promise<void> {
     this.showDivisionDetailPopUp.set(false);
+    await this.reload();
+  }
+
+  // Fresh list and images, e.g. after an image was uploaded or deleted.
+  private async reload(): Promise<void> {
     this.divisions.set(await this.divisionService.getDivisions());
+    this.missingImages.set(new Set());
     this.imageVersion.set(Date.now());
   }
 
@@ -77,8 +82,10 @@ export class DivisionsListComponent {
     }
   }
 
-  hideImage(event: Event): void {
-    const imgElement = event.target as HTMLImageElement;
-    imgElement.style.display = 'none';
+  // Divisions whose image request failed (none uploaded); they show a placeholder.
+  missingImages = signal<ReadonlySet<number>>(new Set());
+
+  markImageMissing(id: number): void {
+    this.missingImages.update((ids) => new Set(ids).add(id));
   }
 }
