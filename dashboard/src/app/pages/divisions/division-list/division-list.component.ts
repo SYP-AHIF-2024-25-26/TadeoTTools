@@ -1,7 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BASE_URL } from '@/app.config';
-import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
+import { ConfirmDialogService } from '@/core/services/confirm-dialog.service';
+import { errorText, ToastService } from '@/core/services/toast.service';
 import { DivisionDetailsComponent } from '@/pages/divisions/division-details/division-details.component';
 import { DivisionService } from '@/core/services/division.service';
 import { Division } from '@/shared/models/types';
@@ -10,25 +11,20 @@ import { PageHeaderComponent } from '@/shared/components/page-header/page-header
 
 @Component({
   selector: 'app-divisions-list',
-  imports: [
-    RouterModule,
-    DeletePopupComponent,
-    DivisionDetailsComponent,
-    PageHeaderComponent,
-  ],
+  imports: [RouterModule, DivisionDetailsComponent, PageHeaderComponent],
   templateUrl: './division-list.component.html',
 })
 export class DivisionsListComponent {
   private divisionService = inject(DivisionService);
   private scrollService = inject(ScrollPersistenceService);
+  private confirmDialog = inject(ConfirmDialogService);
+  private toast = inject(ToastService);
 
   divisions = signal<Division[]>([]);
   // Changes on every reload so a replaced image is fetched again.
   imageVersion = signal(Date.now());
   baseUrl = inject(BASE_URL);
-  divisionIdToRemove: number = -1;
   divisionIdDetail: number = -1;
-  showRemoveDivisionPopUp = signal<boolean>(false);
   showDivisionDetailPopUp = signal<boolean>(false);
 
   async ngOnInit() {
@@ -37,16 +33,24 @@ export class DivisionsListComponent {
     this.scrollService.restoreScroll();
   }
 
-  async deleteDivision() {
-    await this.divisionService.deleteDivision(this.divisionIdToRemove);
-    this.showRemoveDivisionPopUp.set(false);
+  async deleteDivision(division: Division): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      title: 'Delete Division',
+      message:
+        `"${division.name}" will be permanently deleted.
+` + 'Its stops stay, but are no longer linked to this division.',
+      confirmLabel: 'Delete Division',
+    });
+    if (!confirmed) return;
+    try {
+      await this.divisionService.deleteDivision(division.id);
+    } catch (error) {
+      this.toast.error(
+        errorText(error, `"${division.name}" could not be deleted.`)
+      );
+    }
     this.divisions.set(await this.divisionService.getDivisions());
     this.imageVersion.set(Date.now());
-  }
-
-  showDeletePopup(divisionId: number): void {
-    this.divisionIdToRemove = divisionId;
-    this.showRemoveDivisionPopUp.set(true);
   }
   showDivisionPopUp(id: number): void {
     this.divisionIdDetail = id;

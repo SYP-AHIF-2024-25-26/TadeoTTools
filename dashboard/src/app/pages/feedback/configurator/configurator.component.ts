@@ -29,7 +29,8 @@ import { FeedbackQuestionListComponent } from './components/feedback-question-li
 import { FeedbackQuestionEditorComponent } from './components/feedback-question-editor/feedback-question-editor.component';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 import { errorText, ToastService } from '@/core/services/toast.service';
-import { downloadFile } from '@/shared/utils/utils';
+import { downloadFile, plural } from '@/shared/utils/utils';
+import { ConfirmDialogService } from '@/core/services/confirm-dialog.service';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { FeedbackResponsesComponent } from '../responses/feedback-responses.component';
 import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
@@ -76,6 +77,7 @@ export class FeedbackConfiguratorComponent implements OnInit {
   private readonly feedbackService = inject(FeedbackService);
   private scrollService = inject(ScrollPersistenceService);
   private toast = inject(ToastService);
+  private confirmDialog = inject(ConfirmDialogService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   saving = signal<boolean>(false);
@@ -345,8 +347,22 @@ export class FeedbackConfiguratorComponent implements OnInit {
     this.editingIndex.set(-1);
   }
 
-  deleteQuestion(index: number): void {
-    if (!confirm('Are you sure you want to delete this question?')) return;
+  async deleteQuestion(index: number): Promise<void> {
+    const question = this.questions()[index];
+    const followUps = this.questions().filter((q) =>
+      q.dependencies?.some((d) => d.dependsOnQuestionId === question.id)
+    ).length;
+    const confirmed = await this.confirmDialog.confirm({
+      title: 'Delete Question',
+      message:
+        `"${question.question}" is removed from the form when you save the changes.` +
+        (followUps > 0
+          ? `
+${plural(followUps, 'follow-up question')} ${followUps === 1 ? 'depends' : 'depend'} on its answer.`
+          : ''),
+      confirmLabel: 'Delete Question',
+    });
+    if (!confirmed) return;
 
     this.questions.update((questions) =>
       questions

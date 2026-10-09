@@ -11,7 +11,6 @@ import { DivisionService } from '@/core/services/division.service';
 import { StopService } from '@/core/services/stop.service';
 import { StopGroupHeaderComponent } from './components/stop-group-header/stop-group-header.component';
 import { StopGroupListComponent } from './components/stop-group-list/stop-group-list.component';
-import { StopSidebarComponent } from './components/stop-sidebar/stop-sidebar.component';
 import { AddStopDialogComponent } from './components/add-stop-dialog/add-stop-dialog.component';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 import { Router, RouterLink } from '@angular/router';

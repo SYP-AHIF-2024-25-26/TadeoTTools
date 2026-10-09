@@ -3,15 +3,10 @@
     <app-page-header title="Feedback" />
     <div class="mb-8">
       <!-- Questions edit the form; Responses reads what visitors sent. The tab is in the URL so other pages can link to it. -->
-      <div
-        role="tablist"
-        aria-label="Feedback"
-        class="tabs tabs-bordered w-fit"
-      >
+      <div role="tablist" aria-label="Feedback" class="page-tabs">
         <a
           role="tab"
-          class="tab"
-          [class.tab-active]="tab() === 'questions'"
+          class="page-tab"
           [attr.aria-selected]="tab() === 'questions'"
           routerLink="."
           [queryParams]="{ tab: null }"
@@ -21,8 +16,7 @@
         >
         <a
           role="tab"
-          class="tab gap-2"
-          [class.tab-active]="tab() === 'responses'"
+          class="page-tab"
           [attr.aria-selected]="tab() === 'responses'"
           routerLink="."
           [queryParams]="{ tab: 'responses' }"

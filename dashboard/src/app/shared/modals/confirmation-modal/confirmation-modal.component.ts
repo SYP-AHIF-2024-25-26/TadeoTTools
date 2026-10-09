@@ -1,26 +1,20 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
-  ElementRef,
   input,
   output,
   signal,
-  viewChild,
 } from '@angular/core';
-import { CdkTrapFocus } from '@angular/cdk/a11y';
-
-let nextId = 0;
+import { DialogComponent } from '@/shared/components/dialog/dialog.component';
 
 @Component({
   selector: 'app-delete-popup',
   templateUrl: './confirmation-modal.component.html',
-  imports: [CdkTrapFocus],
+  imports: [DialogComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(document:keydown.escape)': 'cancelPopup()' },
 })
-export class DeletePopupComponent implements AfterViewInit {
+export class DeletePopupComponent {
   title = input<string>('Delete');
   message = input<string>('');
   confirmLabel = input<string>('Delete');
@@ -37,20 +31,12 @@ export class DeletePopupComponent implements AfterViewInit {
   cancel = output<void>();
   secondary = output<void>();
 
-  readonly titleId = `confirm-title-${nextId++}`;
   typed = signal('');
   canConfirm = computed(
     () =>
       !this.busy() &&
       (this.confirmText() === '' || this.typed().trim() === this.confirmText())
   );
-
-  private cancelButton = viewChild<ElementRef<HTMLButtonElement>>('cancelBtn');
-
-  ngAfterViewInit() {
-    // Start on the safe choice.
-    this.cancelButton()?.nativeElement.focus();
-  }
 
   confirmRemove() {
     if (this.canConfirm()) {

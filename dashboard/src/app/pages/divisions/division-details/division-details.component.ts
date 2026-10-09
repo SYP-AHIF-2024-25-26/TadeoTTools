@@ -10,7 +10,7 @@ import {
 import { errorText } from '@/core/services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { CdkTrapFocus } from '@angular/cdk/a11y';
+import { DialogComponent } from '@/shared/components/dialog/dialog.component';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { BASE_URL } from '@/app.config';
 import { isValidString } from '@/shared/utils/utils';
@@ -19,9 +19,8 @@ import { ScrollPersistenceService } from '@/core/services/scroll-persistence.ser
 
 @Component({
   selector: 'app-division-details',
-  imports: [FormsModule, RouterModule, DeletePopupComponent, CdkTrapFocus],
+  imports: [FormsModule, RouterModule, DeletePopupComponent, DialogComponent],
   templateUrl: './division-details.component.html',
-  host: { '(document:keydown.escape)': 'onEscape()' },
 })
 export class DivisionDetailsComponent implements OnInit {
   private divisionService = inject(DivisionService);
@@ -43,7 +42,7 @@ export class DivisionDetailsComponent implements OnInit {
     this.cancel.emit();
   }
 
-  // Esc closes the confirmation first when one is open on top.
+  // The dialog closes on Esc; a confirmation open on top closes first.
   onEscape() {
     if (this.confirmAction() === null) {
       this.cancelPopup();

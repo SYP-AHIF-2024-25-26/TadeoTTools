@@ -1,67 +1,59 @@
-<div
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 text-ink"
-  (click)="cancelPopup()"
+<app-dialog
+  [title]="title()"
+  size="md"
+  [role]="tone() === 'danger' ? 'alertdialog' : 'dialog'"
+  [busy]="busy()"
+  (close)="cancel.emit()"
 >
-  <div
-    class="w-full max-w-md rounded-lg bg-background-100 p-6 shadow-lg dark:bg-background-800"
-    [attr.role]="tone() === 'danger' ? 'alertdialog' : 'dialog'"
-    aria-modal="true"
-    [attr.aria-labelledby]="titleId"
-    cdkTrapFocus
-    (click)="$event.stopPropagation()"
-  >
-    <h2 [id]="titleId" class="mb-4 text-lg font-semibold">{{ title() }}</h2>
-    <hr class="mb-4 border-background-200 dark:border-background-600" />
-    <p class="mb-4 whitespace-pre-line">{{ message() }}</p>
+  <p class="whitespace-pre-line">{{ message() }}</p>
 
-    @if (confirmText()) {
-      <label class="mb-4 block text-sm">
-        Type <strong class="font-semibold">{{ confirmText() }}</strong> to
-        confirm
-        <input
-          type="text"
-          class="input input-sm input-bordered mt-2 w-full"
-          autocomplete="off"
-          [value]="typed()"
-          (input)="typed.set($any($event.target).value)"
-          (keydown.enter)="confirmRemove()"
-        />
-      </label>
-    }
+  @if (confirmText()) {
+    <label class="mt-4 block text-sm">
+      Type <strong class="font-semibold">{{ confirmText() }}</strong> to confirm
+      <input
+        type="text"
+        class="input input-sm input-bordered mt-2 w-full"
+        autocomplete="off"
+        [value]="typed()"
+        (input)="typed.set($any($event.target).value)"
+        (keydown.enter)="confirmRemove()"
+      />
+    </label>
+  }
 
-    <div class="flex flex-wrap justify-end gap-3">
-      @if (secondaryLabel()) {
-        <button
-          type="button"
-          class="btn btn-outline btn-sm mr-auto"
-          [disabled]="busy()"
-          (click)="secondary.emit()"
-        >
-          {{ secondaryLabel() }}
-        </button>
-      }
+  <div dialog-actions class="contents">
+    @if (secondaryLabel()) {
       <button
-        #cancelBtn
         type="button"
-        class="btn btn-ghost btn-sm"
+        class="btn btn-outline btn-sm mr-auto"
         [disabled]="busy()"
-        (click)="cancelPopup()"
+        (click)="secondary.emit()"
       >
-        {{ cancelLabel() }}
+        {{ secondaryLabel() }}
       </button>
-      <button
-        type="button"
-        class="btn btn-sm"
-        [class.btn-error]="tone() === 'danger'"
-        [class.btn-primary]="tone() === 'primary'"
-        [disabled]="!canConfirm()"
-        (click)="confirmRemove()"
-      >
-        @if (busy()) {
-          <span class="loading loading-spinner loading-xs"></span>
-        }
-        {{ confirmLabel() }}
-      </button>
-    </div>
+    }
+    <!-- Start on the safe choice. -->
+    <button
+      cdkFocusInitial
+      type="button"
+      class="btn btn-ghost btn-sm"
+      [disabled]="busy()"
+      (click)="cancelPopup()"
+    >
+      {{ cancelLabel() }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-sm"
+      [class.btn-error]="tone() === 'danger'"
+      [class.btn-primary]="tone() === 'primary'"
+      [disabled]="!canConfirm()"
+      (click)="confirmRemove()"
+    >
+      @if (busy()) {
+        <span class="loading loading-spinner loading-xs"></span>
+      }
+      {{ confirmLabel() }}
+    </button>
   </div>
-</div>
+</app-dialog>

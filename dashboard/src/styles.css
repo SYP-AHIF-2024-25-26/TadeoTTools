@@ -158,6 +158,34 @@ body {
   @apply bg-primary-500 text-white placeholder:text-white hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400;
 }
 
+/* Page tabs (#74): a full-width line under the page header; the active tab
+   sits on it with a pale blue fill, a 3px Dashboard Blue underline and
+   strong text. Use
+   role="tablist" / role="tab" with aria-selected; the style follows it. */
+.page-tabs {
+  @apply mb-6 flex gap-2 overflow-x-auto;
+  /* The full-width line, drawn inside so the active underline covers it. */
+  box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.15);
+}
+
+.dark .page-tabs {
+  box-shadow: inset 0 -2px 0 rgb(255 255 255 / 0.2);
+}
+
+.page-tab {
+  @apply inline-flex items-center gap-2 whitespace-nowrap rounded-t-lg border-b-[3px] border-transparent px-5 py-3 text-base font-semibold text-ink-muted transition-colors hover:border-black/20 hover:text-ink dark:hover:border-white/30;
+}
+
+/* Inside the scrolling tab bar an outer outline would be clipped. */
+.page-tab:focus-visible {
+  outline-offset: -2px;
+}
+
+.page-tab[aria-selected='true'] {
+  @apply bg-primary-100 text-ink-strong;
+  border-bottom-color: var(--focus-ring);
+}
+
 /* One focus ring (#74): DaisyUI draws its own, weaker outlines on these. */
 .btn:focus-visible,
 .tab:focus-visible,

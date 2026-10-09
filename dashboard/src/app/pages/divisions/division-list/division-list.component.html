@@ -35,7 +35,7 @@
           </button>
           <button
             class="btn btn-outline btn-error my-1 ml-auto mt-4 shadow-lg"
-            (click)="showDeletePopup(division.id)"
+            (click)="deleteDivision(division)"
           >
             Delete
           </button>
@@ -45,14 +45,6 @@
   </div>
 </div>
 
-@if (showRemoveDivisionPopUp()) {
-  <app-delete-popup
-    [title]="'Delete Division'"
-    [message]="'Are you sure you want to delete this division?'"
-    (cancel)="showRemoveDivisionPopUp.set(false)"
-    (removeConfirmed)="deleteDivision()"
-  />
-}
 @if (showDivisionDetailPopUp()) {
   <app-division-details
     [id]="divisionIdDetail"

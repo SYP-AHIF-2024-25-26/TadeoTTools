@@ -1,5 +1,5 @@
 import { Component, inject, input, output, computed } from '@angular/core';
-import { CdkTrapFocus } from '@angular/cdk/a11y';
+import { DialogComponent } from '@/shared/components/dialog/dialog.component';
 import {
   FormArray,
   FormControl,
@@ -16,9 +16,8 @@ import {
 
 @Component({
   selector: 'app-feedback-question-editor',
-  imports: [ReactiveFormsModule, CdkTrapFocus],
+  imports: [ReactiveFormsModule, DialogComponent],
   templateUrl: './feedback-question-editor.component.html',
-  host: { '(document:keydown.escape)': 'cancel.emit()' },
 })
 export class FeedbackQuestionEditorComponent {
   private readonly fb = inject(NonNullableFormBuilder);
