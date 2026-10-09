@@ -9,7 +9,8 @@
         <div class="flex flex-col gap-4 sm:flex-row">
           <input
             type="file"
-            class="file-input file-input-primary file-input-sm w-full"
+            aria-label="Students CSV file"
+            class="file-input file-input-bordered file-input-sm w-full"
             accept=".csv"
             (change)="onStudentFileSelected($event)"
           />

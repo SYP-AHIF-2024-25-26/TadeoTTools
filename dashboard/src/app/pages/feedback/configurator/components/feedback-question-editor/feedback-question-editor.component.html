@@ -47,36 +47,33 @@
         id="questionEditorForm"
       >
         <div class="mb-4">
-          <label for="question" class="mb-1 block text-sm font-medium text-ink"
-            >Question Text</label
+          <label for="question" class="mb-1 block text-sm font-medium"
+            >Question Text <span aria-hidden="true">*</span></label
           >
           <input
             type="text"
             id="question"
             formControlName="question"
-            class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2"
+            required
+            class="input input-bordered w-full"
             placeholder="Enter your question"
           />
           @if (
             questionForm().get('question')?.invalid &&
             questionForm().get('question')?.touched
           ) {
-            <div class="mt-1 text-sm text-red-500">
-              Question text is required
-            </div>
+            <div class="mt-1 text-sm text-error">Question text is required</div>
           }
         </div>
 
         <div class="mb-4">
-          <label
-            for="type"
-            class="mb-1 block bg-background-100 text-sm font-medium text-ink"
+          <label for="type" class="mb-1 block text-sm font-medium"
             >Question Type</label
           >
           <select
             id="type"
             formControlName="type"
-            class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2"
+            class="select select-bordered w-full"
           >
             <option value="Text">Text Input</option>
             <option value="SingleChoice">Single Choice</option>
@@ -101,16 +98,17 @@
                   <input
                     [formControlName]="i"
                     type="text"
-                    class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2"
-                    [class.border-red-500]="hasDuplicateOption(i)"
-                    [class.bg-red-50]="hasDuplicateOption(i)"
+                    class="input input-bordered w-full"
+                    [class.input-error]="hasDuplicateOption(i)"
+                    [attr.aria-label]="'Option ' + (i + 1)"
                     placeholder="Option {{ i + 1 }}"
                   />
                   @if (optionsArray.controls.length > 1) {
                     <button
                       type="button"
                       (click)="removeOption(i); $event.stopPropagation()"
-                      class="ml-2 flex-shrink-0 text-ink-muted hover:text-red-500"
+                      class="btn btn-ghost btn-sm ml-1 text-error"
+                      [attr.aria-label]="'Remove option ' + (i + 1)"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -130,7 +128,7 @@
                   }
                 </div>
                 @if (hasDuplicateOption(i)) {
-                  <div class="mt-1 text-xs text-red-500">
+                  <div class="mt-1 text-xs text-error">
                     This option name already exists. Please use a unique name.
                   </div>
                 }
@@ -177,7 +175,7 @@
                   formControlName="minRating"
                   min="0"
                   max="10"
-                  class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2"
+                  class="input input-bordered w-full"
                 />
               </div>
               <div class="flex-1">
@@ -190,7 +188,7 @@
                   formControlName="maxRating"
                   min="1"
                   max="10"
-                  class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2"
+                  class="input input-bordered w-full"
                 />
               </div>
             </div>
@@ -203,7 +201,7 @@
                 type="text"
                 id="ratingLabels"
                 formControlName="ratingLabels"
-                class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2"
+                class="input input-bordered w-full"
                 placeholder="Poor, Average, Excellent"
               />
             </div>
@@ -220,7 +218,7 @@
               type="text"
               id="placeholder"
               formControlName="placeholder"
-              class="w-full rounded-md border border-background-200 bg-background-50 px-3 py-2"
+              class="input input-bordered w-full"
               placeholder="e.g., Enter your answer"
             />
           </div>
@@ -231,7 +229,7 @@
             <input
               type="checkbox"
               formControlName="required"
-              class="h-4 w-4 rounded border-gray-300"
+              class="checkbox-primary checkbox checkbox-sm"
             />
             <span class="ml-2 text-sm text-ink">Required question</span>
           </label>
@@ -247,7 +245,7 @@
               <button
                 type="button"
                 (click)="addDependency()"
-                class="flex items-center rounded-md bg-background-300 px-2 py-1 text-xs text-ink hover:bg-background-400"
+                class="btn btn-outline btn-sm"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -290,12 +288,15 @@
                   class="flex items-start gap-2 rounded-md bg-background-200 p-3"
                 >
                   <div class="flex-1">
-                    <label class="mb-1 block text-xs text-ink"
+                    <label
+                      [attr.for]="'dep-question-' + i"
+                      class="mb-1 block text-xs"
                       >Show when question:</label
                     >
                     <select
                       formControlName="dependsOnQuestionId"
-                      class="w-full rounded-md border border-background-300 bg-background-50 px-2 py-1 text-sm"
+                      [id]="'dep-question-' + i"
+                      class="select select-bordered select-sm w-full"
                     >
                       <option [value]="0">-- Select Question --</option>
                       @for (q of availableParentQuestions(); track q.id) {
@@ -304,7 +305,9 @@
                     </select>
                   </div>
                   <div class="flex-1">
-                    <label class="mb-1 block text-xs text-ink"
+                    <label
+                      [attr.for]="'dep-answer-' + i"
+                      class="mb-1 block text-xs"
                       >Has answer:</label
                     >
                     @if (
@@ -314,7 +317,8 @@
                     ) {
                       <select
                         formControlName="conditionValue"
-                        class="w-full rounded-md border border-background-300 bg-background-50 px-2 py-1 text-sm"
+                        [id]="'dep-answer-' + i"
+                        class="select select-bordered select-sm w-full"
                       >
                         <option value="">-- Select Answer --</option>
                         @for (
@@ -331,14 +335,16 @@
                         formControlName="conditionValue"
                         type="text"
                         placeholder="Enter condition value"
-                        class="w-full rounded-md border border-background-300 bg-background-50 px-2 py-1 text-sm"
+                        [id]="'dep-answer-' + i"
+                        class="input input-sm input-bordered w-full"
                       />
                     }
                   </div>
                   <button
                     type="button"
                     (click)="removeDependency(i)"
-                    class="mt-5 flex-shrink-0 text-ink-muted hover:text-red-500"
+                    class="btn btn-ghost btn-sm mt-5 text-error"
+                    aria-label="Remove condition"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

@@ -64,13 +64,17 @@
       <!-- Division Name -->
       <div class="form-control">
         <label class="label" for="name">
-          <span class="label-text text-ink">Division Name</span>
+          <span class="label-text"
+            >Division Name <span aria-hidden="true">*</span></span
+          >
         </label>
         <input
           type="text"
           id="name"
+          required
+          maxlength="50"
           placeholder="e.g. Informatik"
-          class="input input-bordered w-full bg-background-50 text-ink dark:bg-background-700"
+          class="input input-bordered w-full"
           [(ngModel)]="name"
           name="name"
         />
@@ -79,7 +83,9 @@
       <!-- Division Color -->
       <div class="form-control">
         <label class="label" for="color">
-          <span class="label-text text-ink">Color</span>
+          <span class="label-text"
+            >Color <span aria-hidden="true">*</span></span
+          >
         </label>
         <div class="flex items-center gap-4">
           <input
@@ -99,15 +105,13 @@
       <!-- File Upload -->
       <div class="form-control">
         <label class="label" for="file">
-          <span class="label-text text-ink"
-            >Division Image (SVG, PNG, JPG)</span
-          >
+          <span class="label-text">Division Image (SVG, PNG, JPG)</span>
         </label>
         <input
           type="file"
           id="file"
           (change)="onFileChange($event)"
-          class="file-input file-input-bordered w-full bg-background-50 text-ink dark:bg-background-700"
+          class="file-input file-input-bordered w-full"
           accept="image/jpeg,image/png,image/svg+xml"
         />
       </div>

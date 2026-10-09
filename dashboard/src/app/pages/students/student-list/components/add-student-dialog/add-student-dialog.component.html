@@ -57,42 +57,68 @@
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div class="form-control md:col-span-2">
-        <label class="label"
-          ><span class="label-text">EduFS Username</span></label
+        <label for="new-student-username" class="label"
+          ><span class="label-text"
+            >EduFS Username <span aria-hidden="true">*</span></span
+          ></label
         >
         <input
-          class="input input-bordered"
+          id="new-student-username"
+          required
+          class="input input-bordered w-full"
           [(ngModel)]="newStudent.edufsUsername"
           placeholder="e.g. if123456"
         />
       </div>
       <div class="form-control">
-        <label class="label"><span class="label-text">First Name</span></label>
+        <label for="new-student-first-name" class="label"
+          ><span class="label-text"
+            >First Name <span aria-hidden="true">*</span></span
+          ></label
+        >
         <input
-          class="input input-bordered"
+          id="new-student-first-name"
+          required
+          class="input input-bordered w-full"
           [(ngModel)]="newStudent.firstName"
-          placeholder="First name"
         />
       </div>
       <div class="form-control">
-        <label class="label"><span class="label-text">Last Name</span></label>
+        <label for="new-student-last-name" class="label"
+          ><span class="label-text"
+            >Last Name <span aria-hidden="true">*</span></span
+          ></label
+        >
         <input
-          class="input input-bordered"
+          id="new-student-last-name"
+          required
+          class="input input-bordered w-full"
           [(ngModel)]="newStudent.lastName"
-          placeholder="Last name"
         />
       </div>
       <div class="form-control">
-        <label class="label"><span class="label-text">Class</span></label>
+        <label for="new-student-class" class="label"
+          ><span class="label-text"
+            >Class <span aria-hidden="true">*</span></span
+          ></label
+        >
         <input
-          class="input input-bordered"
+          id="new-student-class"
+          required
+          class="input input-bordered w-full"
           [(ngModel)]="newStudent.studentClass"
           placeholder="e.g. 5AHIF"
         />
       </div>
       <div class="form-control">
-        <label class="label"><span class="label-text">Department</span></label>
+        <label for="new-student-department" class="label"
+          ><span class="label-text"
+            >Department <span aria-hidden="true">*</span></span
+          ></label
+        >
         <select
+          id="new-student-department"
+          required
           class="select select-bordered w-full"
           [(ngModel)]="newStudent.department"
         >

@@ -51,7 +51,7 @@
           id="stop-filter-stop-name"
           type="text"
           placeholder="Search stop names..."
-          class="input input-bordered w-full bg-primary-500 text-primary-content placeholder-white hover:bg-primary-600 dark:bg-primary-300 dark:placeholder-white dark:hover:bg-primary-400"
+          class="field-filter input input-bordered w-full"
           [(ngModel)]="stopNameSearchTerm"
         />
       </div>
@@ -63,7 +63,7 @@
         </label>
         <select
           id="stop-filter-stop-group"
-          class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+          class="field-filter select select-bordered w-full"
           [(ngModel)]="stopGroupFilter"
         >
           <option value="">All Stop Groups</option>
@@ -82,7 +82,7 @@
           id="stop-filter-stop-manager"
           type="text"
           placeholder="Search stop managers..."
-          class="input input-bordered w-full bg-primary-500 text-primary-content placeholder-white hover:bg-primary-600 dark:bg-primary-300 dark:placeholder-white dark:hover:bg-primary-400"
+          class="field-filter input input-bordered w-full"
           [(ngModel)]="stopManagerSearchTerm"
         />
       </div>
@@ -96,7 +96,7 @@
         <select
           id="stop-filter-division"
           [(ngModel)]="divisionFilter"
-          class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+          class="field-filter select select-bordered w-full"
           name="divisions-select"
         >
           <option value="0" selected>All Divisions</option>
@@ -133,6 +133,8 @@
                   Stop Name
                   @if (stopNameSearchTerm() != '') {
                     <svg
+                      role="img"
+                      aria-label="Filtered"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -156,6 +158,8 @@
                   Stop Groups
                   @if (stopGroupFilter() != '') {
                     <svg
+                      role="img"
+                      aria-label="Filtered"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -189,6 +193,8 @@
                   Stop Managers
                   @if (stopManagerSearchTerm()) {
                     <svg
+                      role="img"
+                      aria-label="Filtered"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -212,6 +218,8 @@
                   Divisions
                   @if (divisionFilter() != null && divisionFilter() != 0) {
                     <svg
+                      role="img"
+                      aria-label="Filtered"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"

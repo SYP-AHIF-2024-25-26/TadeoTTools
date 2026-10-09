@@ -152,6 +152,12 @@ body {
   @apply mx-auto w-11/12 max-w-6xl pb-10;
 }
 
+/* Filter fields above a list (#74): filled blue with white text and
+   placeholders, 4.5:1 in both themes. Form fields stay plain bordered. */
+.field-filter {
+  @apply bg-primary-500 text-white placeholder:text-white hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400;
+}
+
 /* One focus ring (#74): DaisyUI draws its own, weaker outlines on these. */
 .btn:focus-visible,
 .tab:focus-visible,

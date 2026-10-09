@@ -4,8 +4,8 @@
       Name <span aria-hidden="true">*</span>
     </label>
     <input
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-ink"
-      [class.border-error]="error('name')"
+      class="input input-bordered w-full"
+      [class.input-error]="error('name')"
       type="text"
       [(ngModel)]="stop().name"
       [name]="stop().id === -1 ? 'name-new' : 'name'"
@@ -27,8 +27,8 @@
       Description <span aria-hidden="true">*</span>
     </label>
     <textarea
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-ink"
-      [class.border-error]="error('description')"
+      class="textarea textarea-bordered w-full text-sm"
+      [class.textarea-error]="error('description')"
       [(ngModel)]="stop().description"
       name="description"
       id="description"
@@ -54,8 +54,8 @@
       Room Number <span aria-hidden="true">*</span>
     </label>
     <input
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-ink"
-      [class.border-error]="error('roomNr')"
+      class="input input-bordered w-full"
+      [class.input-error]="error('roomNr')"
       type="text"
       [(ngModel)]="stop().roomNr"
       name="roomNr"
@@ -77,7 +77,7 @@
       Requested Infrastructure
     </label>
     <textarea
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-ink"
+      class="textarea textarea-bordered w-full text-sm"
       [(ngModel)]="stop().infrastructure"
       name="infrastructure"
       id="infrastructure"
