@@ -25,8 +25,16 @@ var guideapp = builder.AddJavaScriptApp("frontend", "../../frontend")
     .WithBuildScript("start")
     .WithRunScript("start");
 
+var feedback = builder.AddJavaScriptApp("feedback", "../../feedback")
+    .WithReference(webapi)
+    .WithHttpEndpoint(env: "PORT")
+    .WithExternalHttpEndpoints()
+    .WithBuildScript("start")
+    .WithRunScript("start");
+
 webapi
     .WithEnvironment("AllowedOrigins__0", dashboard.GetEndpoint("http"))
-    .WithEnvironment("AllowedOrigins__1", guideapp.GetEndpoint("http"));
+    .WithEnvironment("AllowedOrigins__1", guideapp.GetEndpoint("http"))
+    .WithEnvironment("AllowedOrigins__2", feedback.GetEndpoint("http"));
 
 builder.Build().Run();

@@ -1,0 +1,37 @@
+{
+  "name": "tadeot-feedback",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "node update_base_url.js && ng serve --port $PORT",
+    "build": "ng build --configuration production",
+    "watch": "ng build --watch --configuration development",
+    "lint": "ng lint",
+    "format": "prettier --write \"src/**/*.{ts,html,css,scss}\""
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^19.1.4",
+    "@angular/compiler": "^19.1.4",
+    "@angular/core": "^19.1.4",
+    "@angular/forms": "^19.1.4",
+    "@angular/platform-browser": "^19.1.4",
+    "@angular/service-worker": "^19.1.4",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^19.1.5",
+    "@angular/cli": "^19.1.5",
+    "@angular/compiler-cli": "^19.1.4",
+    "angular-eslint": "^19.0.2",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.15.0",
+    "postcss": "^8.4.47",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.9",
+    "tailwindcss": "^3.4.13",
+    "typescript": "~5.5.2",
+    "typescript-eslint": "^8.16.0"
+  }
+}

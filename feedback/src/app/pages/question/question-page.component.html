@@ -1,0 +1,230 @@
+<header class="flex items-center gap-6 px-6 pt-6 md:px-10">
+  <div class="flex-1">
+    <p class="text-lg font-medium text-gray-500">
+      Frage {{ session.position() + 1 }} von {{ session.visible().length }}
+    </p>
+    <div
+      class="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200"
+      role="progressbar"
+      aria-label="Fortschritt"
+      [attr.aria-valuenow]="progress()"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <div
+        class="h-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-300"
+        [style.width.%]="progress()"
+      ></div>
+    </div>
+  </div>
+  <button
+    type="button"
+    class="h-12 rounded-2xl px-4 text-lg font-medium text-gray-500 hover:bg-gray-100"
+    (click)="confirmCancel.set(true)"
+  >
+    Abbrechen
+  </button>
+</header>
+
+<main class="flex flex-1 flex-col overflow-y-auto px-6 py-8 md:px-10">
+  <div class="m-auto w-full max-w-4xl">
+    <h1 class="text-3xl font-bold leading-tight text-gray-800 md:text-4xl">
+      {{ question().question }}
+      @if (question().required) {
+        <span class="text-orange-600" aria-hidden="true">*</span>
+        <span class="sr-only">(Pflichtfrage)</span>
+      }
+    </h1>
+
+    <div class="mt-10">
+      @switch (question().type) {
+        @case ('SingleChoice') {
+          <div class="grid gap-4 sm:grid-cols-2" role="radiogroup">
+            @for (option of question().options ?? []; track option) {
+              <button
+                type="button"
+                role="radio"
+                [attr.aria-checked]="answer() === option"
+                class="flex min-h-20 items-center gap-4 rounded-lg border-2 bg-white px-6 py-4 text-left text-xl shadow-lg transition-colors"
+                [class.border-orange-400]="answer() === option"
+                [class.bg-orange-50]="answer() === option"
+                [class.border-transparent]="answer() !== option"
+                (click)="choose(option)"
+              >
+                <span
+                  class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2"
+                  [class.border-orange-500]="answer() === option"
+                  [class.border-gray-400]="answer() !== option"
+                >
+                  @if (answer() === option) {
+                    <span class="h-4 w-4 rounded-full bg-orange-500"></span>
+                  }
+                </span>
+                {{ option }}
+              </button>
+            }
+          </div>
+        }
+
+        @case ('MultipleChoice') {
+          <p class="-mt-6 mb-6 text-lg text-gray-500">
+            Mehrfachauswahl möglich
+          </p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            @for (option of question().options ?? []; track option) {
+              <button
+                type="button"
+                role="checkbox"
+                [attr.aria-checked]="chosen().includes(option)"
+                class="flex min-h-20 items-center gap-4 rounded-lg border-2 bg-white px-6 py-4 text-left text-xl shadow-lg transition-colors"
+                [class.border-orange-400]="chosen().includes(option)"
+                [class.bg-orange-50]="chosen().includes(option)"
+                [class.border-transparent]="!chosen().includes(option)"
+                (click)="toggle(option)"
+              >
+                <span
+                  class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-2"
+                  [class.border-orange-500]="chosen().includes(option)"
+                  [class.bg-orange-500]="chosen().includes(option)"
+                  [class.border-gray-400]="!chosen().includes(option)"
+                >
+                  @if (chosen().includes(option)) {
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  }
+                </span>
+                {{ option }}
+              </button>
+            }
+          </div>
+        }
+
+        @case ('Rating') {
+          <div
+            class="flex flex-wrap justify-center gap-4 md:gap-6"
+            role="radiogroup"
+          >
+            @for (step of scale(); track step.value) {
+              <button
+                type="button"
+                role="radio"
+                [attr.aria-checked]="answer() === '' + step.value"
+                class="flex w-24 flex-col items-center gap-3 md:w-28"
+                (click)="choose('' + step.value)"
+              >
+                <span
+                  class="flex h-20 w-20 items-center justify-center rounded-full text-3xl font-bold shadow-lg transition-colors md:h-24 md:w-24"
+                  [class.bg-orange-600]="answer() === '' + step.value"
+                  [class.text-white]="answer() === '' + step.value"
+                  [class.bg-white]="answer() !== '' + step.value"
+                  [class.text-gray-700]="answer() !== '' + step.value"
+                >
+                  {{ step.value }}
+                </span>
+                @if (step.label) {
+                  <span
+                    class="text-center text-base leading-snug"
+                    [class.font-medium]="answer() === '' + step.value"
+                    [class.text-orange-700]="answer() === '' + step.value"
+                    [class.text-gray-600]="answer() !== '' + step.value"
+                  >
+                    {{ step.label }}
+                  </span>
+                }
+              </button>
+            }
+          </div>
+        }
+
+        @case ('Text') {
+          <textarea
+            #textarea
+            rows="4"
+            maxlength="1000"
+            class="w-full select-text rounded-lg border border-gray-200 bg-white px-5 py-4 text-xl shadow-lg focus:border-transparent focus:outline-none focus:ring-2 focus:ring-orange-500"
+            [attr.aria-label]="question().question"
+            [placeholder]="question().placeholder || 'Antwort eingeben'"
+            [value]="answer()"
+            (input)="write(textarea.value)"
+          ></textarea>
+        }
+      }
+    </div>
+  </div>
+</main>
+
+<footer class="flex items-center justify-between gap-4 px-6 pb-6 md:px-10">
+  <button
+    type="button"
+    class="flex h-16 items-center gap-2 rounded-2xl bg-gray-500 pl-5 pr-7 text-xl font-medium text-white shadow-md hover:bg-gray-600 disabled:invisible"
+    [disabled]="session.isFirst()"
+    (click)="back()"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2.5"
+      aria-hidden="true"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M15 19l-7-7 7-7"
+      />
+    </svg>
+    Zurück
+  </button>
+
+  @if (isSkip()) {
+    <button
+      type="button"
+      class="h-16 rounded-2xl bg-white px-8 text-xl font-medium text-gray-700 shadow-md hover:bg-gray-100"
+      (click)="next()"
+    >
+      Überspringen
+    </button>
+  } @else {
+    <button
+      type="button"
+      class="flex h-16 items-center gap-2 rounded-2xl bg-orange-600 pl-7 pr-5 text-xl font-bold text-white shadow-md hover:bg-orange-700 disabled:opacity-50"
+      [disabled]="!session.canContinue()"
+      (click)="next()"
+    >
+      Weiter
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2.5"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  }
+</footer>
+
+@if (confirmCancel()) {
+  <app-confirm-cancel-dialog
+    (keep)="confirmCancel.set(false)"
+    (discard)="discard()"
+  />
+}
