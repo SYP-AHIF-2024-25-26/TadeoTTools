@@ -44,9 +44,28 @@ Verwendete Endpunkte: `GET /v1/feedback-questions`, `POST /v1/add-feedbacks` (be
 ## Docker
 
 `BACKEND_URL` (ohne `/v1`) wird beim Containerstart in `env.js` geschrieben. Die `base href` ist
-relativ (`./`), daher läuft dasselbe Image unter `/` und hinter einem Pfad-Präfix (z. B.
-`/feedback/`, Präfix im Reverse Proxy entfernen). Der Aufruf muss dann mit `/` enden
-(`…/feedback/`, nicht `…/feedback`).
+relativ (`./`), daher läuft dasselbe Image unter `/` und hinter einem Pfad-Präfix (Präfix im
+Reverse Proxy entfernen). Auf den VMs ist das `/feedback-kiosk/`; nicht `/feedback`, denn das ist
+die Feedback-Seite der GuideApp. Der Aufruf muss mit `/` enden (`…/feedback-kiosk/`, nicht
+`…/feedback-kiosk`), sonst lädt der Browser `main.js` und `env.js` vom Root. Mit Traefik:
+
+```yaml
+labels:
+  - "traefik.enable=true"
+  - "traefik.http.routers.tadeot-feedback-201126.rule=Host(`${DOMAIN}`) && (Path(`/feedback-kiosk`) || PathPrefix(`/feedback-kiosk/`))"
+  - "traefik.http.routers.tadeot-feedback-201126.entrypoints=websecure"
+  - "traefik.http.routers.tadeot-feedback-201126.tls=true"
+  - "traefik.http.routers.tadeot-feedback-201126.tls.certresolver=tadeotresolver"
+  - "traefik.http.services.tadeot-feedback-201126.loadbalancer.server.port=80"
+  # …/feedback-kiosk -> …/feedback-kiosk/ ($$ ist in Compose-Dateien ein einzelnes $)
+  - "traefik.http.middlewares.tadeot-feedback-201126-slash.redirectregex.regex=^(https?://[^/]+/feedback-kiosk)$$"
+  - "traefik.http.middlewares.tadeot-feedback-201126-slash.redirectregex.replacement=$${1}/"
+  - "traefik.http.middlewares.tadeot-feedback-201126-stripprefix.stripprefix.prefixes=/feedback-kiosk"
+  - "traefik.http.routers.tadeot-feedback-201126.middlewares=tadeot-feedback-201126-slash,tadeot-feedback-201126-stripprefix"
+```
+
+Wer die GuideApp im selben Browser schon geöffnet hat, bekommt beim ersten Aufruf evtl. deren
+Service Worker zu sehen; zum Testen ein privates Fenster verwenden.
 
 ```bash
 docker build -t tadeot-feedback .
