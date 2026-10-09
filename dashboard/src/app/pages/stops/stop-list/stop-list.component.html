@@ -1,5 +1,8 @@
 <div class="page-shell">
   <app-page-header title="Stops">
+    <button class="btn btn-outline btn-sm" (click)="downloadStopsData()">
+      Export CSV
+    </button>
     <a [routerLink]="['/stop']" class="btn btn-primary btn-sm">Add Stop</a>
   </app-page-header>
 
@@ -267,7 +270,24 @@
                   {{ getStopManagerNames(stop.id) }}
                 </td>
                 <td class="break-words px-4 py-3">
-                  {{ getDivisionNames(stop.divisionIds) }}
+                  @if (stopDivisions(stop.divisionIds); as list) {
+                    @if (list.length === 0) {
+                      <span class="text-ink-muted">No divisions</span>
+                    } @else {
+                      <ul class="flex flex-wrap gap-x-3 gap-y-1">
+                        @for (division of list; track division.id) {
+                          <li class="inline-flex items-center gap-1.5">
+                            <span
+                              class="h-3 w-3 shrink-0 rounded-sm"
+                              [style.background-color]="division.color"
+                              aria-hidden="true"
+                            ></span>
+                            {{ division.name }}
+                          </li>
+                        }
+                      </ul>
+                    }
+                  }
                 </td>
                 <td class="px-4 py-3">
                   <div class="flex flex-col gap-1">
@@ -382,9 +402,26 @@
             </div>
             <div class="flex justify-between gap-2 py-2">
               <span class="font-semibold text-ink-muted">Divisions</span>
-              <span class="text-right text-ink">{{
-                getDivisionNames(stop.divisionIds)
-              }}</span>
+              <div class="text-right">
+                @if (stopDivisions(stop.divisionIds); as list) {
+                  @if (list.length === 0) {
+                    <span class="text-ink-muted">No divisions</span>
+                  } @else {
+                    <ul class="flex flex-wrap justify-end gap-x-3 gap-y-1">
+                      @for (division of list; track division.id) {
+                        <li class="inline-flex items-center gap-1.5">
+                          <span
+                            class="h-3 w-3 shrink-0 rounded-sm"
+                            [style.background-color]="division.color"
+                            aria-hidden="true"
+                          ></span>
+                          {{ division.name }}
+                        </li>
+                      }
+                    </ul>
+                  }
+                }
+              </div>
             </div>
 
             <div class="flex justify-between gap-2 py-2">

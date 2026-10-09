@@ -157,6 +157,8 @@ export class DivisionDetailsComponent implements OnInit {
   confirmAction = signal<'division' | 'image' | null>(null);
   deleting = signal<boolean>(false);
   imageDeleted = signal<boolean>(false);
+  // The image request fails when the division has none (or it cannot be shown).
+  imageMissing = signal<boolean>(false);
 
   deleteDivisionMessage = computed(
     () =>

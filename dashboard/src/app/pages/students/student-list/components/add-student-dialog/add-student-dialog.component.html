@@ -76,7 +76,7 @@
     <div class="form-control">
       <label for="new-student-department" class="label"
         ><span class="label-text"
-          >Department <span aria-hidden="true">*</span></span
+          >Division <span aria-hidden="true">*</span></span
         ></label
       >
       <select
@@ -85,7 +85,7 @@
         class="select select-bordered w-full"
         [(ngModel)]="newStudent.department"
       >
-        <option value="">Select department</option>
+        <option value="">Select division</option>
         @for (dep of uniqueDepartments(); track dep) {
           <option [value]="dep">{{ dep }}</option>
         }

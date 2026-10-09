@@ -7,17 +7,13 @@ import { DivisionDetailsComponent } from '@/pages/divisions/division-details/div
 import { DivisionService } from '@/core/services/division.service';
 import { Division } from '@/shared/models/types';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
-import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
+import { downloadFile } from '@/shared/utils/utils';
 import { ActionIconComponent } from '@/shared/components/action-icon/action-icon.component';
 
+// The Divisions tab of Users & Data.
 @Component({
   selector: 'app-divisions-list',
-  imports: [
-    RouterModule,
-    DivisionDetailsComponent,
-    PageHeaderComponent,
-    ActionIconComponent,
-  ],
+  imports: [RouterModule, DivisionDetailsComponent, ActionIconComponent],
   templateUrl: './division-list.component.html',
 })
 export class DivisionsListComponent {
@@ -67,6 +63,18 @@ export class DivisionsListComponent {
     this.showDivisionDetailPopUp.set(false);
     this.divisions.set(await this.divisionService.getDivisions());
     this.imageVersion.set(Date.now());
+  }
+
+  async downloadDivisionData() {
+    try {
+      const blob = await this.divisionService.getDivisionDataFile();
+      downloadFile(blob, 'division_data.csv');
+    } catch (error) {
+      console.error('Failed to download file:', error);
+      this.toast.error(
+        errorText(error, 'The division data could not be downloaded.')
+      );
+    }
   }
 
   hideImage(event: Event): void {

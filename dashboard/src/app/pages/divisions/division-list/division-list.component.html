@@ -1,9 +1,12 @@
-<div class="page-shell">
-  <app-page-header title="Divisions">
+<div>
+  <div class="mb-6 flex flex-wrap justify-end gap-2">
+    <button class="btn btn-outline btn-sm" (click)="downloadDivisionData()">
+      Export CSV
+    </button>
     <button class="btn btn-primary btn-sm" (click)="showDivisionPopUp(-1)">
       Add Division
     </button>
-  </app-page-header>
+  </div>
   <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
     @for (division of divisions(); track $index) {
       <div

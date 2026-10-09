@@ -1,7 +1,7 @@
 <div class="page-shell">
   <app-page-header title="Students">
     <button
-      class="btn btn-approve whitespace-nowrap"
+      class="btn-approve btn whitespace-nowrap"
       (click)="showApproveAllConfirm.set(true)"
       [disabled]="!hasRequested()"
     >
@@ -13,17 +13,14 @@
     >
       Add Student
     </button>
-    <button
+    <!-- Student files (import, export, delete all) live in Users & Data > Students. -->
+    <a
       class="btn btn-outline whitespace-nowrap"
-      (click)="toggleDataCollapsed()"
-      [attr.aria-expanded]="!dataCollapsed()"
+      routerLink="/data-management"
+      [queryParams]="{ tab: 'students' }"
     >
-      @if (dataCollapsed()) {
-        Show Import/Export
-      } @else {
-        Hide Import/Export
-      }
-    </button>
+      Import &amp; Export
+    </a>
   </app-page-header>
 
   @if (approveError()) {
@@ -34,10 +31,6 @@
 
   <!-- Filter and actions bar -->
   <div class="mb-4 flex flex-col gap-4">
-    @if (!dataCollapsed()) {
-      <app-student-import-export (imported)="refreshStudents()" />
-    }
-
     <!-- Filters and Search -->
     <app-student-filters
       [uniqueDepartments]="uniqueDepartments()"
@@ -119,7 +112,7 @@
           </th>
           <th>
             <div class="flex items-center gap-1">
-              Department
+              Division
               @if (departmentFilter()) {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -255,7 +248,7 @@
                   ) {
                     <div class="flex gap-1">
                       <button
-                        class="btn btn-approve btn-sm"
+                        class="btn-approve btn btn-sm"
                         [disabled]="isBusy(student)"
                         (click)="approveSingleAssignment(student)"
                       >
@@ -293,7 +286,7 @@
                   }
                 } @else {
                   <button
-                    class="btn btn-conflict btn-sm"
+                    class="btn-conflict btn btn-sm"
                     [disabled]="isBusy(student)"
                     (click)="showConflictDetails(student)"
                   >
@@ -368,7 +361,7 @@
                 Status.Pending
               ) {
                 <button
-                  class="btn btn-approve btn-sm flex-grow"
+                  class="btn-approve btn btn-sm flex-grow"
                   [disabled]="isBusy(student)"
                   (click)="approveSingleAssignment(student)"
                 >
@@ -392,7 +385,7 @@
               </button>
             } @else {
               <button
-                class="btn btn-conflict btn-sm flex-grow"
+                class="btn-conflict btn btn-sm flex-grow"
                 [disabled]="isBusy(student)"
                 (click)="showConflictDetails(student)"
               >

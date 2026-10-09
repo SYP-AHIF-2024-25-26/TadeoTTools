@@ -20,7 +20,7 @@
               >Question {{ previewQuestionIndex() + 1 }} of
               {{ visibleQuestions().length }}</span
             >
-            <span class="text-sm font-medium text-orange-500"
+            <span class="text-sm font-medium text-orange-700"
               >{{ previewProgressPercentage() }}%</span
             >
           </div>
@@ -137,7 +137,7 @@
                   >
                     <div
                       class="mb-1 flex h-10 w-10 items-center justify-center rounded-full transition-colors"
-                      [class.bg-orange-500]="
+                      [class.bg-orange-700]="
                         currentPreviewAnswer() === rating.toString()
                       "
                       [class.text-white]="
@@ -154,13 +154,13 @@
                     </div>
                     <span
                       class="text-center text-xs transition-colors"
-                      [class.text-orange-500]="
+                      [class.text-orange-700]="
                         currentPreviewAnswer() === rating.toString()
                       "
                       [class.text-gray-500]="
                         currentPreviewAnswer() !== rating.toString()
                       "
-                      [class.group-hover:text-orange-400]="
+                      [class.group-hover:text-orange-700]="
                         currentPreviewAnswer() !== rating.toString()
                       "
                     >
@@ -204,7 +204,7 @@
 
           <button
             (click)="nextPreviewQuestion()"
-            class="rounded-md bg-gradient-to-r from-orange-400 to-orange-500 px-4 py-2 text-white"
+            class="rounded-md bg-orange-700 px-4 py-2 text-white hover:bg-orange-800"
           >
             @if (previewQuestionIndex() === visibleQuestions().length - 1) {
               Submit

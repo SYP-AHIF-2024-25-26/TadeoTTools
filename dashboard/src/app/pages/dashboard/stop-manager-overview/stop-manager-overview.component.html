@@ -62,6 +62,17 @@
           Add Stop Manager
         </button>
       </div>
+      <div
+        class="mt-6 border-t border-background-200 pt-6 dark:border-background-700"
+      >
+        <app-csv-import
+          label="Or import several from a CSV file"
+          format="EdufsUsername;FirstName;LastName"
+          noun="stop manager"
+          [upload]="uploadStopManagers"
+          (imported)="loadStopManagers()"
+        />
+      </div>
     </div>
 
     <!-- Search -->

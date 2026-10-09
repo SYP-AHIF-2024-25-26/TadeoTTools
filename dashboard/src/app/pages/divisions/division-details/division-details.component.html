@@ -108,20 +108,25 @@
         <label class="label"
           ><span class="label-text">Current Image:</span></label
         >
-        <div class="flex items-center gap-4">
-          <img
-            [src]="baseUrl + '/divisions/' + id() + '/image'"
-            alt="Current Division Image"
-            class="h-20 w-20 rounded-lg border border-base-300 object-cover"
-          />
-          <button
-            type="button"
-            (click)="confirmAction.set('image')"
-            class="btn btn-outline btn-error btn-sm"
-          >
-            Delete Image
-          </button>
-        </div>
+        @if (imageMissing()) {
+          <p class="text-sm text-ink-muted">No image uploaded yet.</p>
+        } @else {
+          <div class="flex items-center gap-4">
+            <img
+              [src]="baseUrl + '/divisions/' + id() + '/image'"
+              alt="Current Division Image"
+              class="h-20 w-20 rounded-lg border border-base-300 object-cover"
+              (error)="imageMissing.set(true)"
+            />
+            <button
+              type="button"
+              (click)="confirmAction.set('image')"
+              class="btn btn-outline btn-error btn-sm"
+            >
+              Delete Image
+            </button>
+          </div>
+        }
       </div>
     }
   </form>

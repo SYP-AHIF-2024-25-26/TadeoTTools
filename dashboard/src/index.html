@@ -5,6 +5,24 @@
     <title>TadeoT Admin Dashboard</title>
     <base href="/admin/" />
     <script src="assets/env.js"></script>
+    <script>
+      // Apply the theme before the first paint (no light flash in dark mode).
+      // Without a stored choice the dashboard follows the system setting.
+      (function () {
+        var stored = null;
+        try {
+          stored = localStorage.getItem('color-theme');
+        } catch (e) {}
+        var dark =
+          stored === 'dark' ||
+          (stored === null &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.setAttribute('data-theme', 'darkCustom');
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>

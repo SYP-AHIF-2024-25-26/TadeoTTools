@@ -1,5 +1,6 @@
 <div class="page-shell">
-  <app-page-header title="Your Stops" />
+  <!-- A student works at one stop; several only while requests are open. -->
+  <app-page-header [title]="stops().length > 1 ? 'Your Stops' : 'Your Stop'" />
   @if (loading()) {
     <div class="skeleton h-48 rounded-lg" aria-hidden="true"></div>
     <span class="sr-only" role="status">Loading your stops…</span>
@@ -65,7 +66,7 @@
                     Class
                   </th>
                   <th class="px-4 py-3 text-left text-sm font-semibold">
-                    Department
+                    Division
                   </th>
                 </tr>
               </thead>

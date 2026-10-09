@@ -19,7 +19,8 @@ export class NavbarComponent {
   private readonly keycloak = inject(Keycloak);
   private readonly service = inject(LoginService);
   protected isAdmin = signal(false);
-  isWhiteMode = signal(true);
+  // index.html already applied the theme before the first paint.
+  isWhiteMode = signal(!document.documentElement.classList.contains('dark'));
   mobileMenuOpen = signal(false);
 
   navLinks = [
@@ -27,7 +28,6 @@ export class NavbarComponent {
     { label: 'Students', route: '/students' },
     { label: 'Stop Groups', route: '/stopgroups' },
     { label: 'Stops', route: '/stops' },
-    { label: 'Divisions', route: '/divisions' },
     { label: 'Feedback', route: '/feedback' },
     { label: 'Users & Data', route: '/data-management' },
   ];
@@ -41,12 +41,6 @@ export class NavbarComponent {
   async ngOnInit() {
     const response = await this.service.checkUserRole('is-admin', 'admin');
     this.isAdmin.set(response);
-    const colorTheme = localStorage.getItem('color-theme');
-    if (colorTheme === 'dark') {
-      this.isWhiteMode.set(false);
-      document.documentElement.classList.add('dark');
-      document.documentElement.setAttribute('data-theme', 'darkCustom');
-    }
   }
 
   changeDarkMode() {

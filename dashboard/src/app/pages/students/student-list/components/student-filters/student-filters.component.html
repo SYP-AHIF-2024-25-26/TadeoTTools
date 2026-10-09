@@ -33,14 +33,14 @@
 
     <div class="form-control">
       <label for="student-filter-department" class="label">
-        <span class="label-text">Department</span>
+        <span class="label-text">Division</span>
       </label>
       <select
         id="student-filter-department"
         class="field-filter select select-bordered w-full"
         [(ngModel)]="departmentFilter"
       >
-        <option value="">All Departments</option>
+        <option value="">All Divisions</option>
         @for (dep of uniqueDepartments(); track dep) {
           <option [value]="dep">{{ dep }}</option>
         }

@@ -1,7 +1,7 @@
 <div class="page-shell">
   <app-page-header title="Users & Data" />
 
-  <!-- The tab is in the URL so other pages can link to it (e.g. ?tab=data). -->
+  <!-- The tab is in the URL so other pages can link to it (e.g. ?tab=students). -->
   <div role="tablist" aria-label="Users & Data" class="page-tabs">
     <a
       role="tab"
@@ -26,23 +26,52 @@
     <a
       role="tab"
       class="page-tab"
-      [attr.aria-selected]="activeTab() === 'data'"
+      [attr.aria-selected]="activeTab() === 'students'"
       routerLink="."
-      [queryParams]="{ tab: 'data' }"
+      [queryParams]="{ tab: 'students' }"
       queryParamsHandling="merge"
       replaceUrl
-      >Import &amp; Export</a
+      >Students</a
+    >
+    <a
+      role="tab"
+      class="page-tab"
+      [attr.aria-selected]="activeTab() === 'divisions'"
+      routerLink="."
+      [queryParams]="{ tab: 'divisions' }"
+      queryParamsHandling="merge"
+      replaceUrl
+      >Divisions</a
+    >
+    <a
+      role="tab"
+      class="page-tab"
+      [attr.aria-selected]="activeTab() === 'visitor-app'"
+      routerLink="."
+      [queryParams]="{ tab: 'visitor-app' }"
+      queryParamsHandling="merge"
+      replaceUrl
+      >Visitor App</a
     >
   </div>
 
-  <!-- Tab Content -->
-  <div>
-    @if (activeTab() === 'stop-managers') {
-      <app-stop-manager-overview />
-    } @else if (activeTab() === 'admins') {
-      <app-admin-overview />
-    } @else if (activeTab() === 'data') {
-      <app-data-page />
+  <div role="tabpanel">
+    @switch (activeTab()) {
+      @case ('stop-managers') {
+        <app-stop-manager-overview />
+      }
+      @case ('admins') {
+        <app-admin-overview />
+      }
+      @case ('students') {
+        <app-students-data />
+      }
+      @case ('divisions') {
+        <app-divisions-list />
+      }
+      @case ('visitor-app') {
+        <app-visitor-app-settings />
+      }
     }
   </div>
 </div>
