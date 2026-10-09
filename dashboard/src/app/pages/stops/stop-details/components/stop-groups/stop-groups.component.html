@@ -1,15 +1,16 @@
 <div class="mb-4">
-  <h1 class="text-text-950">Stop Groups</h1>
+  <h2 class="font-semibold">Stop Groups</h2>
+
   @if (isAdmin()) {
     <div class="mb-6 mt-4">
       <form>
-        <label for="stopgroups" class="block text-sm font-medium text-text-950"
+        <label for="stopgroups" class="mb-1 block text-sm font-medium"
           >Add Stop Group</label
         >
         <select
           id="stopgroups"
           (change)="onStopGroupSelect($event)"
-          class="block w-full rounded-lg border border-primary-200 bg-background-50 p-2.5 text-sm text-text-950 focus:border-primary-300 focus:ring-primary-300"
+          class="select select-bordered w-full"
         >
           <option value="0" selected>Select Stop Group</option>
           @for (group of inactiveStopGroups(); track group.id) {
@@ -18,9 +19,7 @@
         </select>
       </form>
     </div>
-    <div class="mb-2 text-sm font-medium text-text-950">
-      Selected Stop Groups
-    </div>
+    <div class="mb-2 text-sm font-medium text-ink">Selected Stop Groups</div>
     <div
       class="w-full overflow-y-auto rounded-lg border border-primary-200 bg-background-50"
     >
@@ -29,7 +28,7 @@
           <li>
             <button
               type="button"
-              class="w-full cursor-pointer px-4 py-2 text-left text-sm text-text-950 hover:bg-primary-100"
+              class="w-full cursor-pointer px-4 py-2 text-left text-sm text-ink hover:bg-primary-100"
               [attr.aria-label]="'Remove ' + getStopGroupById(id)!.name"
               (click)="onStopGroupRemove(id.toString())"
             >
@@ -38,9 +37,7 @@
           </li>
         }
         @if (stop().stopGroupIds.length === 0) {
-          <li class="px-4 py-2 text-sm text-text-900">
-            No stop groups assigned
-          </li>
+          <li class="px-4 py-2 text-sm text-ink">No stop groups assigned</li>
         }
       </ul>
     </div>
@@ -57,7 +54,7 @@
           }
         </div>
       } @else {
-        <p class="ml-4 text-sm text-text-900">No stop groups assigned</p>
+        <p class="ml-4 text-sm text-ink">No stop groups assigned</p>
       }
     </div>
   }

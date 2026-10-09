@@ -6,7 +6,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { CdkTrapFocus } from '@angular/cdk/a11y';
+import { DialogComponent } from '@/shared/components/dialog/dialog.component';
 import { Student } from '@/shared/models/types';
 import { plural } from '@/shared/utils/utils';
 import { statusBadgeClass, statusText } from '@/shared/utils/assignment-status';
@@ -17,10 +17,9 @@ import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirm
 // which owns the busy state, error toasts and Undo.
 @Component({
   selector: 'app-conflict-details-modal',
-  imports: [CdkTrapFocus, DeletePopupComponent],
+  imports: [DialogComponent, DeletePopupComponent],
   templateUrl: './conflict-details-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(document:keydown.escape)': 'onEscape()' },
 })
 export class ConflictDetailsModalComponent {
   readonly student = input.required<Student>();

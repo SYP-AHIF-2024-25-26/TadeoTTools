@@ -10,7 +10,7 @@
         id="student-filter-search"
         type="text"
         placeholder="Search by (user)name"
-        class="input input-bordered w-full bg-primary-500 text-primary-content placeholder-white hover:bg-primary-600 dark:bg-primary-300 dark:placeholder-white dark:hover:bg-primary-400"
+        class="field-filter input input-bordered w-full"
         [(ngModel)]="searchTerm"
       />
     </div>
@@ -21,7 +21,7 @@
       </label>
       <select
         id="student-filter-class"
-        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+        class="field-filter select select-bordered w-full"
         [(ngModel)]="classFilter"
       >
         <option value="">All Classes</option>
@@ -33,14 +33,14 @@
 
     <div class="form-control">
       <label for="student-filter-department" class="label">
-        <span class="label-text">Department</span>
+        <span class="label-text">Division</span>
       </label>
       <select
         id="student-filter-department"
-        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+        class="field-filter select select-bordered w-full"
         [(ngModel)]="departmentFilter"
       >
-        <option value="">All Departments</option>
+        <option value="">All Divisions</option>
         @for (dep of uniqueDepartments(); track dep) {
           <option [value]="dep">{{ dep }}</option>
         }
@@ -53,7 +53,7 @@
       </label>
       <select
         id="student-filter-stop"
-        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+        class="field-filter select select-bordered w-full"
         [(ngModel)]="stopFilter"
       >
         <option value="">All Stops</option>
@@ -69,7 +69,7 @@
       </label>
       <select
         id="student-filter-status"
-        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+        class="field-filter select select-bordered w-full"
         [(ngModel)]="statusFilter"
       >
         <option value="all">All</option>

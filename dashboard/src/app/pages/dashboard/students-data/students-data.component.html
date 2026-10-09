@@ -1,0 +1,80 @@
+<div class="flex flex-col gap-6">
+  <section
+    class="rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+    aria-labelledby="students-import-heading"
+  >
+    <h2 id="students-import-heading" class="mb-4 text-lg font-bold">Import</h2>
+    <div class="flex flex-col gap-6">
+      <app-csv-import
+        label="Students"
+        format="EdufsUsername;FirstName;LastName;StudentClass;Department"
+        noun="student"
+        [upload]="uploadStudents"
+      />
+      <app-csv-import
+        label="Student assignments"
+        format="Stop;Klasse;Nachname;Vorname;Abteilung"
+        hint="Imported assignments start as Pending."
+        noun="assignment"
+        [upload]="uploadAssignments"
+      />
+    </div>
+  </section>
+
+  <section
+    class="rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+    aria-labelledby="students-export-heading"
+  >
+    <h2 id="students-export-heading" class="mb-2 text-lg font-bold">Export</h2>
+    <p class="mb-4 text-sm text-ink-muted">
+      All students with their stops and assignment status, for Excel.
+    </p>
+    <button class="btn btn-outline btn-sm" (click)="downloadStudentsData()">
+      Export Students CSV
+    </button>
+  </section>
+
+  <section
+    class="rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+    aria-labelledby="students-delete-heading"
+  >
+    <h2 id="students-delete-heading" class="mb-2 text-lg font-bold">
+      Delete all students
+    </h2>
+    <p class="mb-4 text-sm text-ink-muted">
+      Clears the students and their stop assignments, e.g. before importing next
+      year's classes.
+    </p>
+    @if (deleteStudentsResult(); as result) {
+      <div
+        class="alert mb-4 max-w-md"
+        [class.alert-success]="result.ok"
+        [class.alert-error]="!result.ok"
+        [attr.role]="result.ok ? 'status' : 'alert'"
+      >
+        {{ result.message }}
+      </div>
+    }
+    <button
+      class="btn btn-outline btn-error btn-sm"
+      [disabled]="countingStudents()"
+      (click)="openDeleteStudents()"
+    >
+      Delete All Students
+    </button>
+  </section>
+</div>
+
+@if (showDeleteStudentsPopup()) {
+  <app-delete-popup
+    title="Delete All Students"
+    [message]="deleteStudentsMessage()"
+    [confirmText]="deleteStudentsConfirmText()"
+    confirmLabel="Delete All Students"
+    secondaryLabel="Download Students"
+    [busy]="deletingStudents()"
+    (secondary)="downloadStudentsData()"
+    (cancel)="showDeleteStudentsPopup.set(false)"
+    (removeConfirmed)="deleteAllStudents()"
+  />
+}

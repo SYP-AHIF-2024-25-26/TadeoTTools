@@ -1,56 +1,45 @@
 <div class="mb-4">
   <div class="mb-4 mt-2">
-    <label for="name" class="mb-1 block text-sm font-medium text-text-950"
-      >Name</label
+    <label for="group-name" class="mb-1 block text-sm font-medium"
+      >Name <span aria-hidden="true">*</span></label
     >
-    @if (stopGroup().id == -1) {
-      <input
-        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
-        type="text"
-        [value]="stopGroup().name"
-        (input)="updateName($any($event.target).value)"
-        name="name-new"
-        id="name-new"
-      />
-    } @else {
-      <input
-        class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
-        type="text"
-        [value]="stopGroup().name"
-        (input)="updateName($any($event.target).value)"
-        name="name"
-        id="name"
-      />
-    }
+    <input
+      class="input input-bordered w-full"
+      type="text"
+      [value]="stopGroup().name"
+      (input)="updateName($any($event.target).value)"
+      name="group-name"
+      id="group-name"
+      required
+    />
   </div>
 
   <div class="mb-4">
-    <label
-      for="description"
-      class="mb-1 block text-sm font-medium text-text-950"
-      >Description</label
+    <label for="group-description" class="mb-1 block text-sm font-medium"
+      >Description <span aria-hidden="true">*</span></label
     >
     <textarea
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      class="textarea textarea-bordered w-full text-sm"
       [value]="stopGroup().description"
       (input)="updateDescription($any($event.target).value)"
-      name="description"
-      id="description"
+      name="group-description"
+      id="group-description"
       rows="4"
+      required
     ></textarea>
   </div>
 
   <div class="mb-2 flex items-center gap-2">
-    <label for="isPublic" class="block text-sm font-medium text-text-950"
-      >Public (shown in the visitor app)</label
-    >
     <input
-      class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+      class="checkbox-primary checkbox checkbox-sm"
       type="checkbox"
       [checked]="stopGroup().isPublic"
       (change)="updateIsPublic($any($event.target).checked)"
       name="isPublic"
       id="isPublic"
     />
+    <label for="isPublic" class="text-sm font-medium"
+      >Public (shown in the visitor app)</label
+    >
   </div>
 </div>

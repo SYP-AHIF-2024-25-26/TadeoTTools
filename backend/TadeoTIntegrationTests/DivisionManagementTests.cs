@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using API.Endpoints.DivisionManagement;
 using Database.Entities;
+using Database.Repository.Functions;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -22,6 +23,29 @@ public class DivisionManagementTests(IntegrationTestWebAppFactory factory) : Bas
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var divisions = await response.Content.ReadFromJsonAsync<List<object>>();
         divisions.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetDivisions_ShouldReturnDivisionsSortedByName_WhenOneWasUpdated()
+    {
+        // Arrange
+        var hif = new Division { Name = "HIF", Color = "#004f9f" };
+        var all = new Division { Name = "ALL", Color = "#7ebf74" };
+        var hel = new Division { Name = "HEL", Color = "#e00013" };
+        DbContext.Divisions.AddRange(hif, all, hel);
+        await DbContext.SaveChangesAsync();
+        // An update (e.g. an image upload) moves the row in Postgres' natural order.
+        all.Color = "#7ebf75";
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var response = await Client.GetAsync("/v1/divisions");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var divisions = await response.Content
+            .ReadFromJsonAsync<List<DivisionFunctions.DivisionWithoutImageDto>>();
+        divisions!.Select(d => d.Name).Should().Equal("ALL", "HEL", "HIF");
     }
 
     [Fact]

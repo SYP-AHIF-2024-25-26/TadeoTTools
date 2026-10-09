@@ -1,11 +1,11 @@
 <div class="mb-4">
   <div class="mb-4 mt-2">
-    <label for="name" class="mb-1 block text-sm font-medium text-text-950">
+    <label for="name" class="mb-1 block text-sm font-medium text-ink">
       Name <span aria-hidden="true">*</span>
     </label>
     <input
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
-      [class.border-error]="error('name')"
+      class="input input-bordered w-full"
+      [class.input-error]="error('name')"
       type="text"
       [(ngModel)]="stop().name"
       [name]="stop().id === -1 ? 'name-new' : 'name'"
@@ -23,15 +23,12 @@
   </div>
 
   <div class="mb-4">
-    <label
-      for="description"
-      class="mb-1 block text-sm font-medium text-text-950"
-    >
+    <label for="description" class="mb-1 block text-sm font-medium text-ink">
       Description <span aria-hidden="true">*</span>
     </label>
     <textarea
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
-      [class.border-error]="error('description')"
+      class="textarea textarea-bordered w-full text-sm"
+      [class.textarea-error]="error('description')"
       [(ngModel)]="stop().description"
       name="description"
       id="description"
@@ -53,12 +50,12 @@
   </div>
 
   <div class="mb-4">
-    <label for="roomNr" class="mb-1 block text-sm font-medium text-text-950">
+    <label for="roomNr" class="mb-1 block text-sm font-medium text-ink">
       Room Number <span aria-hidden="true">*</span>
     </label>
     <input
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
-      [class.border-error]="error('roomNr')"
+      class="input input-bordered w-full"
+      [class.input-error]="error('roomNr')"
       type="text"
       [(ngModel)]="stop().roomNr"
       name="roomNr"
@@ -76,14 +73,11 @@
   </div>
 
   <div class="mb-2">
-    <label
-      for="infrastructure"
-      class="mb-1 block text-sm font-medium text-text-950"
-    >
+    <label for="infrastructure" class="mb-1 block text-sm font-medium text-ink">
       Requested Infrastructure
     </label>
     <textarea
-      class="w-full rounded-lg border bg-background-50 px-4 py-2 text-text-950"
+      class="textarea textarea-bordered w-full text-sm"
       [(ngModel)]="stop().infrastructure"
       name="infrastructure"
       id="infrastructure"

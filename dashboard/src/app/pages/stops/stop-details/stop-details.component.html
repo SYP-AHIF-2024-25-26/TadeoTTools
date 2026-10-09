@@ -1,160 +1,160 @@
-<div
-  class="mx-auto mt-4 w-full max-w-5xl rounded-lg bg-background-100 p-4 shadow-lg sm:p-6 md:mt-10"
->
-  @if (isLoading()) {
-    <div class="flex h-32 items-center justify-center">
-      <app-loader></app-loader>
-    </div>
-  } @else if (notFound()) {
-    <p role="alert" class="text-sm font-medium text-error">
-      {{ errorMessage() }}
-    </p>
-    <button
-      type="button"
-      class="btn btn-ghost btn-sm mt-4"
-      (click)="goBack(true)"
-    >
-      Back
-    </button>
-  } @else {
-    @if (isNew()) {
-      <h1 class="text-xl text-text-950">New Stop</h1>
-    } @else {
-      <!-- Stop details: read-only summary, or the edit section in its place -->
-      <section
-        class="mb-6 border-b border-background-200 pb-5 dark:border-background-600"
-        aria-labelledby="stop-title"
+<div class="page-shell pt-8">
+  <div class="rounded-lg bg-background-100 p-4 shadow-lg sm:p-6">
+    @if (isLoading()) {
+      <div class="flex h-32 items-center justify-center">
+        <app-loader></app-loader>
+      </div>
+    } @else if (notFound()) {
+      <p role="alert" class="text-sm font-medium text-error">
+        {{ errorMessage() }}
+      </p>
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm mt-4"
+        (click)="goBack(true)"
       >
-        @if (detailsDraft(); as draft) {
-          <form (submit)="$event.preventDefault(); saveDetails()">
-            <h1 id="stop-title" class="text-xl font-semibold text-text-950">
-              Edit Stop Details
-            </h1>
-            <app-stop-general-info
-              [stop]="draft"
-              [showErrors]="showDetailErrors()"
-            />
-            <app-stop-division-picker
-              [divisionIds]="draft.divisionIds"
-              (divisionIdsChange)="setDraftDivisions($event)"
-              [divisions]="divisions()"
-              [editable]="isAdmin()"
-            />
-            @if (detailsError() != null) {
-              <p role="alert" class="mt-4 text-sm font-medium text-error">
-                {{ detailsError() }}
-              </p>
-            }
-            <div class="mt-4 flex flex-wrap items-center gap-2">
-              <button
-                type="submit"
-                class="btn btn-primary btn-sm gap-2"
-                [disabled]="savingDetails() || !hasDetailChanges()"
-              >
-                @if (savingDetails()) {
-                  <span class="loading loading-spinner loading-xs"></span>
-                  Saving…
-                } @else {
-                  Save Details
-                }
-              </button>
-              <button
-                type="button"
-                class="btn btn-ghost btn-sm"
-                [disabled]="savingDetails()"
-                (click)="cancelDetails()"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        } @else {
-          <app-stop-header
-            [stop]="stop()"
-            [divisions]="divisions()"
-            [stopManagers]="stopManagers()"
-            (edit)="editDetails()"
-          />
-        }
-      </section>
-    }
-
-    <form (submit)="$event.preventDefault(); submitStopDetail()">
+        Back
+      </button>
+    } @else {
       @if (isNew()) {
-        <div class="mt-4">
-          <app-stop-general-info
-            [(stop)]="stop"
-            [showErrors]="showFieldErrors()"
-          />
-          <div class="mb-6">
-            <app-stop-division-picker
-              [divisionIds]="stop().divisionIds"
-              (divisionIdsChange)="setNewStopDivisions($event)"
+        <h1 class="text-2xl font-bold">New Stop</h1>
+      } @else {
+        <!-- Stop details: read-only summary, or the edit section in its place -->
+        <section
+          class="mb-6 border-b border-background-200 pb-5 dark:border-background-600"
+          aria-labelledby="stop-title"
+        >
+          @if (detailsDraft(); as draft) {
+            <form (submit)="$event.preventDefault(); saveDetails()">
+              <h1 id="stop-title" class="text-2xl font-bold">
+                Edit Stop Details
+              </h1>
+              <app-stop-general-info
+                [stop]="draft"
+                [showErrors]="showDetailErrors()"
+              />
+              <app-stop-division-picker
+                [divisionIds]="draft.divisionIds"
+                (divisionIdsChange)="setDraftDivisions($event)"
+                [divisions]="divisions()"
+                [editable]="isAdmin()"
+              />
+              @if (detailsError() != null) {
+                <p role="alert" class="mt-4 text-sm font-medium text-error">
+                  {{ detailsError() }}
+                </p>
+              }
+              <div class="mt-4 flex flex-wrap items-center gap-2">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-sm gap-2"
+                  [disabled]="savingDetails() || !hasDetailChanges()"
+                >
+                  @if (savingDetails()) {
+                    <span class="loading loading-spinner loading-xs"></span>
+                    Saving…
+                  } @else {
+                    Save Details
+                  }
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-ghost btn-sm"
+                  [disabled]="savingDetails()"
+                  (click)="cancelDetails()"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          } @else {
+            <app-stop-header
+              [stop]="stop()"
               [divisions]="divisions()"
-              [editable]="isAdmin()"
+              [stopManagers]="stopManagers()"
+              (edit)="editDetails()"
             />
-          </div>
-        </div>
+          }
+        </section>
       }
 
-      <app-stop-students [(stop)]="stop" [students]="students()" />
-
-      <app-stop-managers
-        [(stop)]="stop"
-        [stopManagers]="stopManagers()"
-        [isAdmin]="isAdmin()"
-      />
-
-      <div
-        class="sticky bottom-0 z-10 -mx-4 mt-6 border-t border-background-200 bg-background-100 px-4 py-3 dark:border-background-600 sm:-mx-6 sm:px-6"
-      >
-        @if (errorMessage() != null) {
-          <p role="alert" class="mb-2 text-sm font-medium text-error">
-            {{ errorMessage() }}
-          </p>
+      <form (submit)="$event.preventDefault(); submitStopDetail()">
+        @if (isNew()) {
+          <div class="mt-4">
+            <app-stop-general-info
+              [(stop)]="stop"
+              [showErrors]="showFieldErrors()"
+            />
+            <div class="mb-6">
+              <app-stop-division-picker
+                [divisionIds]="stop().divisionIds"
+                (divisionIdsChange)="setNewStopDivisions($event)"
+                [divisions]="divisions()"
+                [editable]="isAdmin()"
+              />
+            </div>
+          </div>
         }
-        <div class="flex flex-wrap items-center gap-2">
-          <button
-            type="submit"
-            class="btn btn-primary btn-sm gap-2"
-            [disabled]="saving() || !hasPageChanges()"
-          >
-            @if (saving()) {
-              <span class="loading loading-spinner loading-xs"></span>
-              Saving…
-            } @else if (isNew()) {
-              Create Stop
-            } @else {
-              Save Changes
-            }
-          </button>
-          <button
-            (click)="goBack(isNew())"
-            type="button"
-            class="btn btn-ghost btn-sm"
-            [disabled]="saving()"
-          >
-            {{ isNew() ? 'Cancel' : 'Back' }}
-          </button>
-          @if (hasPageChanges() && !saving()) {
-            <span class="text-sm font-medium text-text-700 dark:text-text-300">
-              Unsaved changes
-            </span>
+
+        <app-stop-students [(stop)]="stop" [students]="students()" />
+
+        <app-stop-managers
+          [(stop)]="stop"
+          [stopManagers]="stopManagers()"
+          [isAdmin]="isAdmin()"
+        />
+
+        <div
+          class="sticky bottom-0 z-10 -mx-4 mt-6 border-t border-background-200 bg-background-100 px-4 py-3 dark:border-background-600 sm:-mx-6 sm:px-6"
+        >
+          @if (errorMessage() != null) {
+            <p role="alert" class="mb-2 text-sm font-medium text-error">
+              {{ errorMessage() }}
+            </p>
           }
-          @if (isAdmin() && !isNew()) {
+          <div class="flex flex-wrap items-center gap-2">
             <button
-              (click)="showDeleteConfirm.set(true)"
+              type="submit"
+              class="btn btn-primary btn-sm gap-2"
+              [disabled]="saving() || !hasPageChanges()"
+            >
+              @if (saving()) {
+                <span class="loading loading-spinner loading-xs"></span>
+                Saving…
+              } @else if (isNew()) {
+                Create Stop
+              } @else {
+                Save Changes
+              }
+            </button>
+            <button
+              (click)="goBack(isNew())"
               type="button"
-              class="btn btn-error btn-sm ml-auto gap-2"
+              class="btn btn-ghost btn-sm"
               [disabled]="saving()"
             >
-              Delete
+              {{ isNew() ? 'Cancel' : 'Back' }}
             </button>
-          }
+            @if (hasPageChanges() && !saving()) {
+              <span class="text-sm font-medium text-ink">
+                Unsaved changes
+              </span>
+            }
+            @if (isAdmin() && !isNew()) {
+              <button
+                (click)="showDeleteConfirm.set(true)"
+                type="button"
+                class="btn btn-outline btn-error btn-sm ml-auto gap-2"
+                [disabled]="saving()"
+              >
+                Delete
+              </button>
+            }
+          </div>
         </div>
-      </div>
-    </form>
-  }
+      </form>
+    }
+  </div>
 </div>
 
 @if (showDeleteConfirm()) {

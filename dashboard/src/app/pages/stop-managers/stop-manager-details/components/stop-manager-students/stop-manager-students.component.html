@@ -1,10 +1,7 @@
-<section
-  class="mx-auto w-11/12 max-w-6xl text-text-950"
-  aria-labelledby="stop-manager-students-title"
->
+<section aria-labelledby="stop-manager-students-title">
   <div class="mb-4 flex flex-wrap items-end justify-between gap-4">
     <div class="max-w-prose">
-      <h2 id="stop-manager-students-title" class="text-2xl font-bold">
+      <h2 id="stop-manager-students-title" class="text-lg font-bold">
         Students at your stops
       </h2>
       <p class="mt-1 text-sm">
@@ -16,7 +13,7 @@
     </div>
     <button
       type="button"
-      class="btn btn-primary"
+      class="btn btn-outline btn-sm"
       [disabled]="loading() || visibleRows().length === 0"
       (click)="exportCsv()"
     >
@@ -33,7 +30,7 @@
         id="sms-search"
         type="search"
         placeholder="Name, username, class, stop…"
-        class="input input-bordered w-full bg-primary-500 text-primary-content placeholder-white/80 hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+        class="field-filter input input-bordered w-full"
         [ngModel]="searchTerm()"
         (ngModelChange)="searchTerm.set($event)"
       />
@@ -46,7 +43,7 @@
         </label>
         <select
           id="sms-stop"
-          class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+          class="field-filter select select-bordered w-full"
           [ngModel]="stopFilter()"
           (ngModelChange)="stopFilter.set($event)"
         >
@@ -64,7 +61,7 @@
       </label>
       <select
         id="sms-class"
-        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+        class="field-filter select select-bordered w-full"
         [ngModel]="classFilter()"
         (ngModelChange)="classFilter.set($event)"
       >
@@ -81,7 +78,7 @@
       </label>
       <select
         id="sms-status"
-        class="select select-bordered w-full bg-primary-500 text-primary-content hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400"
+        class="field-filter select select-bordered w-full"
         [ngModel]="statusFilter()"
         (ngModelChange)="statusFilter.set($event)"
       >
@@ -285,7 +282,7 @@
         An admin decides between:
       </p>
     }
-    <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+    <ul class="space-y-1 text-ink-muted">
       @for (other of row.others; track other.stopId) {
         <li>
           {{ other.stopName }}

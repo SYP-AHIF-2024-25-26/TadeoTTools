@@ -8,18 +8,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        text: {
-          50: 'var(--text-50)',
-          100: 'var(--text-100)',
-          200: 'var(--text-200)',
-          300: 'var(--text-300)',
-          400: 'var(--text-400)',
-          500: 'var(--text-500)',
-          600: 'var(--text-600)',
-          700: 'var(--text-700)',
-          800: 'var(--text-800)',
-          900: 'var(--text-900)',
-          950: 'var(--text-950)',
+        ink: {
+          strong: 'var(--ink-strong)',
+          DEFAULT: 'var(--ink)',
+          muted: 'var(--ink-muted)',
         },
         background: {
           50: 'var(--background-50)',

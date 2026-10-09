@@ -8,6 +8,8 @@ public class DivisionFunctions
     {
         return await
             context.Divisions
+                // A fixed order; without it Postgres returns updated rows last.
+                .OrderBy(d => d.Name)
                 .Select(d => new DivisionWithoutImageDto(d.Id, d.Name, d.Color))
                 .ToListAsync();
     }

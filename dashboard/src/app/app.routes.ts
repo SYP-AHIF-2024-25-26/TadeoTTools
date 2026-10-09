@@ -1,7 +1,7 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, Routes } from '@angular/router';
 import { LoginComponent } from './pages/auth/login/login.component';
 import { StopGroupsComponent } from './pages/stop-groups/stop-group-list/stop-group-list.component';
-import { DivisionsListComponent } from './pages/divisions/division-list/division-list.component';
 import { DivisionDetailsComponent } from './pages/divisions/division-details/division-details.component';
 import { StopgroupDetailsComponent } from './pages/stop-groups/stop-group-details/stop-group-details.component';
 import { StopDetailsComponent } from './pages/stops/stop-details/stop-details.component';
@@ -39,10 +39,9 @@ export const routes: Routes = [
     canActivate: [adminGuard],
   },
   {
+    // Divisions are a tab of Users & Data now.
     path: 'divisions',
-    component: DivisionsListComponent,
-    canMatch: [authGuard],
-    canActivate: [adminGuard],
+    redirectTo: () => inject(Router).parseUrl('/data-management?tab=divisions'),
   },
   {
     path: 'division',

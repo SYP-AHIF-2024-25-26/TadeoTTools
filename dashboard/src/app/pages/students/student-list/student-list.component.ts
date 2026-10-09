@@ -7,7 +7,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
   Status,
   Stop,
@@ -27,7 +27,6 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import { StopsPopupComponent } from '@/shared/modals/stop-selection-modal/stop-selection-modal.component';
 import { StudentService } from '@/core/services/student.service';
 import { StudentFiltersComponent } from './components/student-filters/student-filters.component';
-import { StudentImportExportComponent } from './components/student-import-export/student-import-export.component';
 import { AddStudentDialogComponent } from './components/add-student-dialog/add-student-dialog.component';
 import { ConflictDetailsModalComponent } from './components/conflict-details-modal/conflict-details-modal.component';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
@@ -41,6 +40,7 @@ import {
   statusTextClass,
   UNASSIGNED_TEXT_CLASS,
 } from '@/shared/utils/assignment-status';
+import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 
 const STATUS_FILTERS = [
   'unassigned',
@@ -61,10 +61,11 @@ export interface StudentWithUI extends Student {
     FormsModule,
     CommonModule,
     StudentFiltersComponent,
-    StudentImportExportComponent,
+    RouterLink,
     AddStudentDialogComponent,
     ConflictDetailsModalComponent,
     DeletePopupComponent,
+    PageHeaderComponent,
   ],
   templateUrl: './student-list.component.html',
 })
@@ -89,7 +90,6 @@ export class ListStudentsComponent implements OnInit {
   students = signal<Student[]>([]);
 
   showAddStudent = signal<boolean>(false);
-  dataCollapsed = signal<boolean>(true);
 
   private overlayRef: OverlayRef | null = null;
   popupStudent: StudentWithUI | null = null;
@@ -112,10 +112,6 @@ export class ListStudentsComponent implements OnInit {
     this.stops.set(await this.stopService.getStops());
     await this.refreshStudents();
     this.scrollService.restoreScroll();
-  }
-
-  toggleDataCollapsed(): void {
-    this.dataCollapsed.set(!this.dataCollapsed());
   }
 
   clearFilters(): void {

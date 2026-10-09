@@ -1,21 +1,27 @@
-<app-stop-group-header
-  [hasChanged]="hasChanged()"
-  [onlyPublicGroups]="onlyPublicGroups()"
-  [saving]="saving()"
-  (addGroup)="navigateToNewGroup()"
-  (togglePublicGroups)="onlyPublicGroups.set(!onlyPublicGroups())"
-  (save)="saveChanges()"
-  (cancel)="initialiseData()"
-/>
+<div class="page-shell">
+  <app-page-header title="Stop Groups">
+    <a [routerLink]="['/stop']" class="btn btn-outline btn-sm">Add Stop</a>
+    <button (click)="navigateToNewGroup()" class="btn btn-primary btn-sm">
+      Add Group
+    </button>
+  </app-page-header>
 
-<div class="container mx-auto px-4 py-8">
+  <app-stop-group-header
+    [hasChanged]="hasChanged()"
+    [onlyPublicGroups]="onlyPublicGroups()"
+    [saving]="saving()"
+    (togglePublicGroups)="onlyPublicGroups.set(!onlyPublicGroups())"
+    (save)="saveChanges()"
+    (cancel)="initialiseData()"
+  />
+
   @if (loading()) {
     <div class="flex justify-center py-16">
       <app-loader text="Loading the tour…" />
     </div>
   } @else if (loadFailed()) {
     <div
-      class="mx-auto flex max-w-md flex-col items-center gap-4 rounded-lg bg-background-100 p-6 text-center text-text-950 shadow-lg dark:bg-background-800 dark:text-text-100"
+      class="mx-auto flex max-w-md flex-col items-center gap-4 rounded-lg bg-background-100 p-6 text-center text-ink shadow-lg dark:bg-background-800"
       role="alert"
     >
       <p>The tour could not be loaded. Check your connection and try again.</p>

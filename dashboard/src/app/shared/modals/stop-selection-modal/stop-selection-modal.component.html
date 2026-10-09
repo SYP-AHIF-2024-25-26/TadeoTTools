@@ -6,6 +6,7 @@
       <input
         type="text"
         placeholder="Search stops..."
+        aria-label="Search stops"
         class="input input-sm input-bordered w-full"
         [(ngModel)]="searchTerm"
       />
@@ -31,7 +32,7 @@
         </div>
       }
       @if (filteredStops().length === 0) {
-        <div class="py-4 text-center text-gray-500">No stops found</div>
+        <div class="py-4 text-center text-ink-muted">No stops found</div>
       }
     </div>
     <div class="flex justify-end gap-2 border-t border-base-300 pt-2">

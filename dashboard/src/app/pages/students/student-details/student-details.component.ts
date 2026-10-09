@@ -3,10 +3,11 @@ import { StopOfStudent } from '@/shared/models/types';
 import { StopService } from '@/core/services/stop.service';
 import { Status } from '@/shared/models/types';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
+import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-student',
-  imports: [],
+  imports: [PageHeaderComponent],
   templateUrl: './student-details.component.html',
 })
 export class StudentComponent implements OnInit {

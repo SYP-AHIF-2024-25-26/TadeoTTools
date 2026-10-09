@@ -25,10 +25,19 @@ import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StudentService } from '@/core/services/student.service';
 import { FilterStateService } from '@/core/services/filter-state.service';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
+import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
+import { ActionIconComponent } from '@/shared/components/action-icon/action-icon.component';
+import { errorText, ToastService } from '@/core/services/toast.service';
+import { downloadFile } from '@/shared/utils/utils';
 
 @Component({
   selector: 'app-stops',
-  imports: [RouterModule, FormsModule],
+  imports: [
+    RouterModule,
+    FormsModule,
+    PageHeaderComponent,
+    ActionIconComponent,
+  ],
   templateUrl: './stop-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -42,6 +51,7 @@ export class StopsComponent {
 
   // use shared filter state service so filters persist across navigation
   private filterState = inject(FilterStateService);
+  private toast = inject(ToastService);
   readonly divisionFilter = this.filterState.divisionFilter;
   readonly stopNameSearchTerm = this.filterState.stopNameSearchTerm;
   readonly stopGroupFilter = this.filterState.stopGroupFilter;
@@ -156,12 +166,23 @@ export class StopsComponent {
     );
   }
 
-  getDivisionNames(divisionIds: number[]): string {
-    const names = divisionIds
-      .map((id) => this.divisions().find((d) => d.id === id)?.name)
-      .filter((name) => name)
-      .join(', ');
-    return names || 'No departments';
+  // The stop's divisions with their colours, for the swatches in the table.
+  stopDivisions(divisionIds: number[]): Division[] {
+    return divisionIds
+      .map((id) => this.divisions().find((d) => d.id === id))
+      .filter((division): division is Division => !!division);
+  }
+
+  async downloadStopsData() {
+    try {
+      const blob = await this.stopService.getStopsDataFile();
+      downloadFile(blob, 'stops_data.csv');
+    } catch (error) {
+      console.error('Failed to download file:', error);
+      this.toast.error(
+        errorText(error, 'The stops data could not be downloaded.')
+      );
+    }
   }
 
   // Reset filters

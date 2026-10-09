@@ -1,6 +1,6 @@
-<div class="sticky top-0 z-50 bg-background-400 shadow">
+<div class="nav-surface sticky top-0 z-50 bg-background-400 shadow">
   <nav
-    class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-text-900"
+    class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-ink"
   >
     <!-- Logo -->
     <a [routerLink]="['/']" class="flex items-center">
@@ -57,7 +57,7 @@
     <div class="relative md:hidden">
       <!-- Hamburger (mobile only) -->
       <button
-        class="inline-flex items-center justify-center rounded p-2 text-text-900 hover:bg-background-300 focus:outline-none"
+        class="inline-flex items-center justify-center rounded p-2 text-ink hover:bg-background-300"
         type="button"
         aria-label="Menu"
         [attr.aria-expanded]="mobileMenuOpen()"
@@ -85,13 +85,13 @@
       <!-- Mobile Menu Dropdown -->
       @if (mobileMenuOpen()) {
         <div
-          class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-background-100 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-background-800"
+          class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-background-100 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-background-800"
         >
           <div class="py-1">
             @if (isAdmin()) {
               @for (link of navLinks; track link.route) {
                 <a
-                  class="block px-4 py-2 text-sm text-secondary-content"
+                  class="block px-4 py-2 text-sm text-ink"
                   (click)="mobileMenuOpen.set(false)"
                   [routerLink]="[link.route]"
                   routerLinkActive="bg-primary text-primary-content font-medium"

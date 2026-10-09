@@ -5,21 +5,18 @@
 
 body {
   @apply bg-background-50;
+  color: var(--ink);
 }
 
 @layer base {
   :root {
-    --text-50: #130710;
-    --text-100: #130710;
-    --text-200: #130710;
-    --text-300: #130710;
-    --text-400: #130710;
-    --text-500: #130710;
-    --text-600: #130710;
-    --text-700: #130710;
-    --text-800: #130710;
-    --text-900: #130710;
-    --text-950: #130710;
+    /* Text roles (#74): strong for headings, ink for body text, muted for
+       hints and metadata. Muted passes 4.5:1 on every light surface. */
+    --ink-strong: #130710;
+    --ink: #2a2430;
+    --ink-muted: #57525c;
+    /* Focus ring for fields, buttons and links: 3:1 against the page. */
+    --focus-ring: #1f6fd1;
 
     --background-50: #f1f1f1;
     --background-100: #f1f1f1;
@@ -70,19 +67,31 @@ body {
     --accent-950: #060a0b;
   }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--ink-strong);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* The sky-blue nav bar is too light for the blue ring. */
+  :root:not(.dark) .nav-surface {
+    --focus-ring: var(--ink-strong);
+  }
+
   .dark {
-    /* Mostly white text across the board for strong contrast */
-    --text-50: #ffffff;
-    --text-100: #ffffff;
-    --text-200: #ffffff;
-    --text-300: #ffffff;
-    --text-400: #ffffff;
-    --text-500: #ffffff;
-    --text-600: #ffffff;
-    --text-700: #ffffff;
-    --text-800: #ffffff;
-    --text-900: #ffffff;
-    --text-950: #ffffff;
+    /* Muted also passes 4.5:1 on the lighter dark surfaces (background-800/900). */
+    --ink-strong: #ffffff;
+    --ink: #f3f4f6;
+    --ink-muted: #d8dee6;
+    --focus-ring: #60a5fa;
 
     /* Dark blue-toned backgrounds for contrast */
     --background-50: #0b0f19;
@@ -136,6 +145,72 @@ body {
     --accent-900: #dbeafe;
     --accent-950: #eff6ff;
   }
+}
+
+/* The content area of every dashboard page (#74), list or detail. */
+.page-shell {
+  @apply mx-auto w-11/12 max-w-6xl pb-10;
+}
+
+/* Filter fields above a list (#74): filled blue with white text and
+   placeholders, 4.5:1 in both themes. Form fields stay plain bordered. */
+.field-filter {
+  @apply bg-primary-500 text-white placeholder:text-white hover:bg-primary-600 dark:bg-primary-300 dark:hover:bg-primary-400;
+}
+
+/* Page tabs (#74): a full-width line under the page header; the active tab
+   sits on it with a pale blue fill, a 3px Dashboard Blue underline and
+   strong text. Use
+   role="tablist" / role="tab" with aria-selected; the style follows it. */
+.page-tabs {
+  @apply mb-6 flex gap-2 overflow-x-auto;
+  /* The full-width line, drawn inside so the active underline covers it. */
+  box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.15);
+}
+
+.dark .page-tabs {
+  box-shadow: inset 0 -2px 0 rgb(255 255 255 / 0.2);
+}
+
+.page-tab {
+  @apply inline-flex items-center gap-2 whitespace-nowrap rounded-t-lg border-b-[3px] border-transparent px-5 py-3 text-base font-semibold text-ink-muted transition-colors hover:border-black/20 hover:text-ink dark:hover:border-white/30;
+}
+
+/* Inside the scrolling tab bar an outer outline would be clipped. */
+.page-tab:focus-visible {
+  outline-offset: -2px;
+}
+
+.page-tab[aria-selected='true'] {
+  @apply bg-primary-100 text-ink-strong;
+  border-bottom-color: var(--focus-ring);
+}
+
+/* Conflict actions (#74) use the Conflict orange of the assignment states,
+   not DaisyUI's yellow btn-warning; white text at 5.2:1 in both themes. */
+.btn-conflict {
+  @apply border-orange-700 bg-orange-700 text-white hover:border-orange-800 hover:bg-orange-800;
+}
+
+/* Approve actions (#74) use the Approved green of the assignment states;
+   green-700 in both themes keeps white text at 5:1. */
+.btn-approve {
+  @apply border-green-700 bg-green-700 text-white hover:border-green-800 hover:bg-green-800;
+}
+
+/* One focus ring (#74): DaisyUI draws its own, weaker outlines on these. */
+.btn:focus-visible,
+.tab:focus-visible,
+.checkbox:focus-visible,
+.toggle:focus-visible,
+.radio:focus-visible,
+.input:focus,
+.input:focus-within,
+.select:focus,
+.textarea:focus,
+.file-input:focus {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /* Limit DaisyUI collapse checkbox click area to the arrow only on stopgroups */

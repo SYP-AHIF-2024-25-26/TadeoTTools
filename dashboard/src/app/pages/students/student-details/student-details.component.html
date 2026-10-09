@@ -1,14 +1,12 @@
-<div class="m-6 text-text-950">
-  <h2 class="my-8 text-center text-3xl font-bold">Your Stops</h2>
+<div class="page-shell">
+  <!-- A student works at one stop; several only while requests are open. -->
+  <app-page-header [title]="stops().length > 1 ? 'Your Stops' : 'Your Stop'" />
   @if (loading()) {
-    <div
-      class="skeleton mx-auto mt-10 h-48 rounded-lg md:w-2/3"
-      aria-hidden="true"
-    ></div>
+    <div class="skeleton h-48 rounded-lg" aria-hidden="true"></div>
     <span class="sr-only" role="status">Loading your stops…</span>
   } @else if (loadFailed()) {
     <div
-      class="mx-auto mt-10 flex flex-col items-center gap-3 rounded-lg bg-background-100 p-6 text-center shadow-lg md:w-2/3"
+      class="flex flex-col items-center gap-3 rounded-lg bg-background-100 p-6 text-center shadow-lg"
       role="alert"
     >
       <p>
@@ -19,12 +17,12 @@
       </button>
     </div>
   } @else if (!stops() || stops().length === 0) {
-    <div class="text-center text-xl font-semibold">
+    <div class="text-lg font-semibold">
       You haven't been assigned to a stop yet.
     </div>
   } @else {
     @if (openRequests() > 1) {
-      <p class="text-center text-lg">
+      <p class="text-lg">
         You have been requested for {{ openRequests() }} stops. An admin will
         decide which one you work at.
       </p>
@@ -33,9 +31,9 @@
 
   @for (stop of stops(); track $index) {
     <div
-      class="rounded-2xls ml-auto mr-auto mt-10 flex flex-col gap-4 bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 md:w-2/3"
+      class="mt-6 flex flex-col gap-4 rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
     >
-      <h3 class="text-center text-2xl font-semibold">{{ stop.name }}</h3>
+      <h2 class="text-lg font-bold">{{ stop.name }}</h2>
       <p class="text-lg">
         <span class="font-medium">Description</span><br />
         {{ stop.description }}
@@ -51,9 +49,7 @@
 
       @if (stop.otherStudents && stop.otherStudents.length > 0) {
         <div class="mt-4">
-          <h4 class="mb-3 text-xl font-semibold">
-            Other Students at This Stop
-          </h4>
+          <h3 class="mb-3 font-semibold">Other Students at This Stop</h3>
           <div class="overflow-x-auto">
             <table
               class="min-w-full overflow-hidden rounded-lg bg-background-50 dark:bg-background-200"
@@ -70,7 +66,7 @@
                     Class
                   </th>
                   <th class="px-4 py-3 text-left text-sm font-semibold">
-                    Department
+                    Division
                   </th>
                 </tr>
               </thead>
@@ -92,7 +88,7 @@
           </div>
         </div>
       } @else {
-        <p class="mt-4 text-center text-sm text-gray-500">
+        <p class="mt-4 text-sm text-ink-muted">
           No other students registered for this stop yet.
         </p>
       }

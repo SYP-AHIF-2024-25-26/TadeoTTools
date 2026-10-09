@@ -5,13 +5,13 @@
     type="button"
     aria-haspopup="menu"
     [attr.aria-expanded]="isOpen()"
-    class="inline-flex items-center justify-center gap-x-2 rounded-md px-4 py-2 text-sm font-medium text-text-950 focus:outline-none"
+    class="inline-flex items-center justify-center gap-x-2 rounded-md px-4 py-2 text-sm font-medium text-ink"
   >
     Admin
     <!-- Chevron Icon -->
     <svg
       [class.rotate-180]="isOpen()"
-      class="h-4 w-4 text-text-900 transition-transform duration-200"
+      class="h-4 w-4 text-ink transition-transform duration-200"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"
       fill="currentColor"
@@ -28,7 +28,7 @@
   <!-- Dropdown Menu -->
   @if (isOpen()) {
     <div
-      class="absolute right-0 z-[9999] mt-2 w-40 origin-top-right rounded-md bg-background-50 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+      class="absolute right-0 z-[9999] mt-2 w-40 origin-top-right rounded-md bg-background-50 shadow-lg ring-1 ring-black ring-opacity-5"
     >
       <div class="py-1" role="menu">
         @for (item of items; track $index) {
@@ -36,7 +36,7 @@
             type="button"
             role="menuitem"
             (click)="selectItem(item)"
-            class="block w-full cursor-pointer px-4 py-2 text-left text-sm text-text-700 hover:bg-background-100 focus-visible:bg-background-100"
+            class="block w-full cursor-pointer px-4 py-2 text-left text-sm text-ink hover:bg-background-100 focus-visible:bg-background-100"
           >
             {{ item }}
           </button>

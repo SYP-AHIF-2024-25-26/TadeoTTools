@@ -1,0 +1,46 @@
+<section
+  class="max-w-2xl rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+  aria-labelledby="countdown-heading"
+>
+  <h2 id="countdown-heading" class="mb-2 text-lg font-bold">Countdown</h2>
+  <p class="mb-4 text-sm text-ink-muted">
+    Between open days the visitor app can show a countdown to the next one
+    instead of the tour.
+  </p>
+
+  <label class="mb-6 flex cursor-pointer items-center gap-3">
+    <input
+      type="checkbox"
+      class="toggle toggle-primary"
+      [checked]="showCountdown()"
+      [disabled]="loading() || (!showCountdown() && !savedValue())"
+      (change)="toggleCountdown($event)"
+    />
+    <span class="font-medium">Show the countdown instead of the tour</span>
+  </label>
+  @if (!loading() && !showCountdown() && !savedValue()) {
+    <p class="-mt-4 mb-6 text-sm text-ink-muted">
+      Save a date first, then the countdown can be turned on.
+    </p>
+  }
+
+  <label for="countdown-date" class="mb-1 block text-sm font-medium"
+    >Date of the next open day</label
+  >
+  <div class="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
+    <input
+      id="countdown-date"
+      type="datetime-local"
+      class="input input-sm input-bordered [color-scheme:light] dark:[color-scheme:dark]"
+      [disabled]="loading()"
+      [(ngModel)]="countdownValue"
+    />
+    <button
+      class="btn btn-primary btn-sm"
+      [disabled]="loading() || countdownValue() === savedValue()"
+      (click)="saveCountdownDate()"
+    >
+      Save Date
+    </button>
+  </div>
+</section>

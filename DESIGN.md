@@ -27,7 +27,10 @@ colors:
   dash-tint: "#cce5ff"
   dash-canvas: "#f1f1f1"
   dash-surface: "#ffffff"
-  dash-ink: "#130710"
+  dash-ink-strong: "#130710"
+  dash-ink: "#2a2430"
+  dash-ink-muted: "#57525c"
+  dash-focus: "#1f6fd1"
   dash-error: "#dc2626"
   dash-success: "#22c55e"
   dash-warning: "#facc15"
@@ -163,7 +166,7 @@ components:
     textColor: "{colors.dash-ink}"
     rounded: "{rounded.lg}"
     padding: "24px"
-    width: "384px"
+    width: "448px"
 ---
 
 # Design System: TadeoTTools
@@ -176,12 +179,12 @@ TadeoTTools works like an open-day programme you carry on your phone. The visito
 
 The surfaces are soft, chunky and touch-first. Cards are white or division-filled and lifted on clear shadows. Buttons are rounded pills (16px corners). Rows are tall (80px) because visitors tap them while walking. Type is Roboto throughout the GuideApp, set large (18px body) for reading at arm's length in a corridor.
 
-The organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, a sky-blue palette instead of orange, and a full dark mode. Its distinctive habit is **filled blue fields**: filters and selects sit in solid steel blue (`dash-field`) with white text and placeholders rather than white inputs with outlines. The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.
+The organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, a sky-blue palette instead of orange, and a full dark mode. Its distinctive habit is **filled blue filter fields**: the search and filter fields above a list sit in solid steel blue (`dash-field`) with white text and placeholders, while form inputs are plain bordered fields. The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.
 
 **Key Characteristics:**
 - Division colors are the identity and the wayfinding signal; they come from the school, not from the design.
 - GuideApp: one orange accent, white cards lifted on `bg-gray-50`, pill buttons, a fixed bottom tab bar.
-- Dashboard: DaisyUI `light` / `darkCustom` themes, blue primary, filled blue form fields, a sticky sky-blue top nav.
+- Dashboard: DaisyUI `light` / `darkCustom` themes, blue primary, filled blue filter fields, a sticky sky-blue top nav, one left-aligned page header on every page.
 - Tall touch targets and a 16px side gutter on mobile; the GuideApp is designed only for phone width.
 - Copy: German with du-form in the GuideApp, English in the dashboard (today's state, not a rule).
 
@@ -213,8 +216,8 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 - **Header Gray** (`guide-header`): the logo header block.
 - **Ink** (`guide-ink-strong` for titles, `guide-ink` for card labels, `guide-ink-muted` for body text): the gray-800/700/600 steps.
 - **Stone** (`guide-stone`): the neutral "Zurück" button. **Hairline** (`guide-hairline`): borders on inputs and unselected options.
-- **Office Gray** (`dash-canvas`): dashboard page background (also used for modals and cards, which are then separated only by shadow). **Dashboard Ink** (`dash-ink`): near-black with a slight plum tint, used for all dashboard text.
-- **Dark mode:** `dash-dark-canvas` / `dash-dark-surface` with `dash-dark-primary`. The dark theme collapses primary, secondary and accent to the same blue range and uses white text.
+- **Office Gray** (`dash-canvas`): dashboard page background (also used for modals and cards, which are then separated only by shadow). **Dashboard text** has three roles, as CSS variables and Tailwind colours: **Ink Strong** (`--ink-strong`, `text-ink-strong`, near-black with a slight plum tint) for headings, which get it from the base layer; **Ink** (`--ink`, `text-ink`) for body text, table cells and labels, also the `body` colour; **Ink Muted** (`--ink-muted`, `text-ink-muted`) for hints, metadata, empty states and table headers. Muted passes 4.5:1 on every surface it sits on. There are no other text greys: no `text-gray-*`, no `text-secondary-content`, no numbered `text-text-*` steps.
+- **Dark mode:** `dash-dark-canvas` / `dash-dark-surface` with `dash-dark-primary`. The dark theme collapses primary, secondary and accent to the same blue range. Text is white (strong), `#f3f4f6` (ink) and `#d8dee6` (muted, still 4.5:1 on the lighter `background-800/900` surfaces).
 
 ### Status (Dashboard)
 - `dash-error` for destructive buttons and error alerts, `dash-success`, `dash-warning`.
@@ -244,8 +247,9 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 - **Label** (bold, 16px, white): stop names on division-colored cards, clamped to two lines.
 
 ### Hierarchy (Dashboard)
-- **Headline** (bold, 24px): page titles such as "Stops" or "Students", centered above the page actions.
-- **Title** (semibold, 18px): section and modal headings.
+- **Headline** (bold, 24px, `h1`): the page title such as "Stops" or "Students", left-aligned in the page header. Exactly one per routed page; tabs inside a page do not get their own `h1`.
+- **Title** (bold, 18px, `h2`): section, card and dialog headings.
+- **Item** (semibold, 16px, `h3`): headings inside a section, such as one question or one stop card.
 - **Body** (regular, 14px): tables, forms, lists, the default for almost all dashboard text.
 - **Label** (medium, 12px): field labels, chips, table meta.
 
@@ -256,7 +260,14 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 
 **GuideApp:** a single column at phone width. Content sits in a 16px side gutter (`mx-4`), and cards stack with 24px between them (`mt-6`). The header (logo plus optional welcome) is a gray block at the top. A white tab bar with four icon buttons (Leitfaden, Karte, Feedback, Über uns) is fixed to the bottom with an 8px inset, and pages reserve 112–128px of bottom padding so the last card clears it. Detail pages add a breadcrumb and a back pill above one large content card. Pages scroll vertically only (`touch-pan-y`) and allow swipe gestures. There is no desktop layout; the feedback form caps at `max-w-md` (448px).
 
-**Dashboard:** content is centered with a `max-w-screen-xl` (1280px) top nav and `max-w-6xl`/`max-w-7xl` content areas. Pages follow one pattern: centered bold title, a row of outline/primary buttons, a collapsible filter row of filled blue fields (full width on mobile, `max-w-xs` from `sm`), then a table or card list. The spacing rhythm is 8px / 16px / 24px (`gap-2`, `gap-4`, `p-6`). Below `md`, nav links move into a hamburger dropdown.
+**Dashboard:** the top nav is `max-w-screen-xl` (1280px). Every page, list or detail, uses one content shell: the `.page-shell` class in `styles.css` (`mx-auto w-11/12 max-w-6xl pb-10`, 1152px). Pages follow one pattern:
+
+1. **Page header** (`app-page-header`, `title` and optional `subtitle` inputs, actions projected): the `h1` on the left, an optional one-line subtitle under it, and the page's actions on the right. Below `sm` the actions wrap under the title.
+2. **Tabs**, if the page has several views (see Tabs).
+3. **Filter bar** of filled blue fields (full width on mobile, `max-w-xs` from `sm`), with Clear Filters shown only while a filter is set.
+4. The table, card list or form.
+
+Detail editors (stop, stop group) sit in a card inside the same shell, not in a narrower one. The spacing rhythm is 8px / 16px / 24px (`gap-2`, `gap-4`, `p-6`). Below `md`, nav links move into a hamburger dropdown.
 
 ## Elevation & Depth
 
@@ -280,24 +291,35 @@ Gently rounded throughout. Cards and containers use 8px corners (`rounded-lg`). 
 ### Buttons
 - **GuideApp primary:** orange pill (16px corners, 40px tall, 8px × 16px padding), white medium text, `shadow-md`, with an optional leading 20px stroke icon. Disabled state is 50% opacity.
 - **GuideApp back ("Zurück"):** the same pill in stone gray, darkening to gray-500 on hover, with a left-arrow icon.
-- **Dashboard primary:** DaisyUI `btn btn-primary` in Dashboard Blue. Most actions use `btn-sm` (32px). Secondary actions are `btn-outline` and turn primary on hover. Destructive actions use `btn-error`. Icon-only actions use `btn-ghost` / `btn-circle`.
+- **Dashboard primary:** DaisyUI `btn btn-primary` in Dashboard Blue, **one per toolbar, form or dialog**: the action the page exists for (Add Stop, Save Changes, Create Group). Every dashboard button is `btn-sm` (32px); the larger default size is not used.
+- **Dashboard secondary:** `btn-outline` for further actions in the same toolbar (Import/Export, Approve N pending next to Add Student). Low-weight actions such as Clear Filters, Cancel and Back are `btn-ghost`.
+- **Dashboard Delete / Remove:** Delete (destroys data) is `btn-outline btn-error` and opens a confirmation, whose confirm button is the only solid `btn-error`. Remove (unlinks, data stays) is `btn-ghost`. Conflict actions use `.btn-conflict` (Conflict orange `orange-700`, white text) from `styles.css`, not DaisyUI `btn-warning` yellow; Approve actions use `.btn-approve` (Approved green `green-700`, white text). Both keep the 700 shade in dark mode so white text stays at 4.5:1 or more.
+- **Dashboard row actions:** icon buttons at the end of a table row or card: `btn btn-ghost btn-sm` with the shared `app-action-icon` (`edit`, `view`, `delete`; 16px stroke icon), a `title` and an `aria-label` that names the record ("Edit Robotics Lab"). Pencil = edit, eye = view only (read-only pages), trash = delete (in `text-error`). No gear icons and no text "Edit" buttons on cards. Exception, decided 2026-10-09: the Students page keeps its own button weights. The header toolbar is default size with Approve N pending in `.btn-approve`, Add Student `btn-primary` and Import/Export `btn-outline`; the row buttons are Assign Stop `btn-primary btn-sm`, Approve `.btn-approve btn-sm`, Back to Pending is `btn-outline btn-sm`, Remove is `btn-outline btn-error btn-sm`, and Manage Conflict is `.btn-conflict`.
 
 ### Cards / Containers
 - **Stop group card (GuideApp):** white, 8px corners, `shadow-lg`, 80px tall. Group name in 18px medium gray-700, an optional "3 / 7" progress count, and a checkbox on the right. Tapping the card opens the group; tapping the checkbox ticks the whole group.
 - **Stop card (GuideApp, signature):** the same shape, filled with the stop's division color (or a gradient across several divisions), with the stop name in bold white. When ticked it collapses to 48px and 50% opacity, so finished stops visibly step back in the list.
 - **Content card (GuideApp):** white, 24px padding, `shadow-md`. Holds the stop title, "Raum: …", the description (HTML from the admin), an "Auf der Karte" pill, and a column of division thumbnails on the right.
-- **Dashboard modal:** a black/50 scrim, a 384px panel in `dash-canvas` with 8px corners and 24px padding, a title over a hairline rule, and right-aligned actions.
 
 ### Inputs / Fields
 - **GuideApp text field:** white, gray-200 border, 8px corners, 12px × 16px padding. On focus the border disappears and a 2px orange ring appears.
 - **GuideApp choice option:** a full-width bordered row (12px padding) with a round radio or square check. When selected, the row turns Orange Wash with an Orange Edge border and an orange dot or fill.
 - **GuideApp checkbox (signature):** a 24px rounded square with a 2px gray-500 border. Ticking it pops in a thick orange checkmark (`animate-jump-in`, 600ms).
-- **Dashboard filled field:** DaisyUI `input input-bordered` / `select select-bordered` filled with Filled Field Blue, white text and placeholders, darkening on hover. Plain bordered inputs on `bg-background-100` appear in detail forms. Focus uses a 2px `primary-300` ring.
+- **Dashboard filter field:** DaisyUI `input input-bordered` / `select select-bordered` plus the `.field-filter` class from `styles.css`: filled with Filled Field Blue, white text and placeholders (placeholders at 4.5:1 too), darkening on hover. Used only in filter bars above lists.
+- **Dashboard form field:** DaisyUI `input` / `select` / `textarea` / `file-input` with `-bordered` on the surface color, `w-full`, never hand-written border classes. Inside dense sub-forms (stop students, stop managers, question conditions) the `-sm` sizes are used. Every field has a visible label above it (`label for` matching the field `id`); a field inside a table row or a list gets an `aria-label` instead. Placeholders only show an example. Required fields get `<span aria-hidden="true">*</span>` after the label and `required` on the field, nothing else.
+- **Focus (all controls):** one 2px outline in `--focus-ring` with a 2px offset on every field, button, tab and link (Dashboard Blue `dash-focus` in light mode, `#60a5fa` in dark mode, Ink Strong on the sky-blue nav bar). It is set globally in `styles.css`; templates don't add `focus:ring-*` or `focus:outline-none`.
 
 ### Navigation
 - **GuideApp bottom tab bar:** a white 56px bar fixed to the bottom, four evenly spaced 20–24px icons, black at rest and Programme Orange when active. Icons only, no labels.
 - **GuideApp breadcrumb:** Home icon › group name, 16–20px gray-700 semibold.
 - **Dashboard top nav:** sticky Sky Nav bar with the HTL Leonding logo (32px tall) on the left, then text links (the active link gets a primary fill and underline), a theme toggle switch and the user menu on the right. Below `md` the links collapse into a hamburger with a dropdown.
+- **Users & Data:** the admin's home for people, master data and visitor-app settings, as tabs: Stop Managers (list, add, CSV import), Admins, Students (student and assignment CSV imports, students export, delete all students), Divisions (cards, Add Division, CSV export) and Visitor App (countdown on/off and date). File actions sit with their data: there is no separate Import & Export tab, the Stops export is in the Stops page header, the feedback answers export is on Feedback > Responses. `/divisions` redirects to `?tab=divisions`; the Students page and the Overview link into the Students and Visitor App tabs. CSV imports use the shared `app-csv-import` (label, expected columns, result).
+
+- **Dashboard tabs:** `.page-tabs` / `.page-tab` from `styles.css` under the page header: a full-width 2px line, tabs in 16px semibold muted text with 20px side padding, and the active tab in strong text on a Pale Blue Tint (`primary-100`) fill with rounded top corners and a 3px Dashboard Blue underline sitting on the line. `role="tablist"` with `role="tab"` and `aria-selected` on each tab (the style keys off `aria-selected`), and the active tab in the URL (`?tab=…`) so other pages can link to it. Used on Feedback and Users & Data.
+
+### Dialogs (Dashboard)
+- **Shell:** one shared dialog component (`app-dialog`, `title`, `size` md/lg, `role`, `busy`, `(close)`; actions go in `<div dialog-actions class="contents">`, a form's submit button uses `form="…"`): a `black/50` scrim, a `background-100` panel (`background-800` in dark mode) with 8px corners, 24px padding and `shadow-lg`, the `h2` title with a close button in the header, actions right-aligned at the bottom (primary last). `role="dialog"`, `aria-modal`, labelled by its title, focus trapped (`cdkFocusInitial` picks the first focus, e.g. Cancel in confirmations), Escape closes only the topmost dialog. Widths: `max-w-md` (448px) for confirmations, `max-w-2xl` for forms.
+- **Confirmations:** every confirmation goes through `ConfirmDialogService`, never the browser `confirm()`. The text says concretely what happens (which records are deleted or moved, what stays). The inline `app-delete-popup` is replaced with the service whenever a page is reworked.
 
 ### Progress Bar (GuideApp feedback)
 An 8px rounded track in gray-100, filled with an orange-400 → orange-500 gradient that animates width over 300ms.
@@ -310,7 +332,8 @@ An 8px rounded track in gray-100, filled with an orange-400 → orange-500 gradi
 - **Do** use Programme Orange for the single primary action and the active state on a GuideApp screen.
 - **Do** reserve bottom padding (at least 112px) on every GuideApp page so the fixed tab bar never covers the last card.
 - **Do** keep the HTL Leonding logo at the top of both apps (header block in the GuideApp, nav bar in the dashboard).
-- **Do** use DaisyUI component classes (`btn`, `input`, `select`, `table`, `toggle`) in the dashboard and define new colors as theme variables, so dark mode keeps working.
+- **Do** use DaisyUI component classes (`btn`, `input`, `select`, `table`, `toggle`, `tabs`) in the dashboard and define new colors as theme variables, so dark mode keeps working.
+- **Do** start every dashboard page with the shared page header and the `max-w-6xl` shell.
 
 ### Don't:
 - **Don't** re-tint, desaturate or replace division colors for aesthetic reasons; they are the school's identity.
@@ -318,3 +341,5 @@ An 8px rounded track in gray-100, filled with an orange-400 → orange-500 gradi
 - **Don't** use orange in the dashboard or dashboard blue in the GuideApp; each app keeps its own accent.
 - **Don't** set GuideApp body text below 16px.
 - **Don't** add raw hex colors in dashboard templates; extend the `--primary-*` / `--background-*` variables so both themes stay in sync.
+- **Don't** put two `btn-primary` buttons in one dashboard toolbar, form or dialog.
+- **Don't** use the filled blue field style for form inputs, or a placeholder in place of a label.

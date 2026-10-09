@@ -11,13 +11,13 @@ import { DivisionService } from '@/core/services/division.service';
 import { StopService } from '@/core/services/stop.service';
 import { StopGroupHeaderComponent } from './components/stop-group-header/stop-group-header.component';
 import { StopGroupListComponent } from './components/stop-group-list/stop-group-list.component';
-import { StopSidebarComponent } from './components/stop-sidebar/stop-sidebar.component';
 import { AddStopDialogComponent } from './components/add-stop-dialog/add-stop-dialog.component';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ToastService } from '@/core/services/toast.service';
 import { HasUnsavedChanges } from '@/core/guards/unsaved-changes.guard';
 import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spinner.component';
+import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-stopgroups',
@@ -27,7 +27,10 @@ import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spi
     StopGroupListComponent,
     AddStopDialogComponent,
     LoaderComponent,
+    PageHeaderComponent,
+    RouterLink,
   ],
+
   templateUrl: './stop-group-list.component.html',
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
 })

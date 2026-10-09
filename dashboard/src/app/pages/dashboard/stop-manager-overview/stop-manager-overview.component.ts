@@ -5,14 +5,26 @@ import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StopManager } from '@/shared/models/types';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { plural } from '@/shared/utils/utils';
+import { ActionIconComponent } from '@/shared/components/action-icon/action-icon.component';
+import { CsvImportComponent } from '@/shared/components/csv-import/csv-import.component';
+import { ImportResult } from '@/shared/models/types';
 
 @Component({
   selector: 'app-stop-manager-overview',
-  imports: [CommonModule, FormsModule, DeletePopupComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DeletePopupComponent,
+    ActionIconComponent,
+    CsvImportComponent,
+  ],
   templateUrl: './stop-manager-overview.component.html',
 })
 export class StopManagerOverviewComponent {
   private stopManagerService = inject(StopManagerService);
+
+  readonly uploadStopManagers = (file: File): Promise<ImportResult> =>
+    this.stopManagerService.uploadStopManagersCsv(file);
 
   stopManagers = signal<StopManager[]>([]);
   editingStopManager = signal<StopManager | null>(null);

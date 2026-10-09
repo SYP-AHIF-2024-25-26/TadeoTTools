@@ -1,16 +1,18 @@
 import {
   Component,
   computed,
+  ElementRef,
   inject,
   input,
   OnInit,
   output,
   signal,
+  viewChild,
 } from '@angular/core';
 import { errorText } from '@/core/services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { CdkTrapFocus } from '@angular/cdk/a11y';
+import { DialogComponent } from '@/shared/components/dialog/dialog.component';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { BASE_URL } from '@/app.config';
 import { isValidString } from '@/shared/utils/utils';
@@ -19,9 +21,8 @@ import { ScrollPersistenceService } from '@/core/services/scroll-persistence.ser
 
 @Component({
   selector: 'app-division-details',
-  imports: [FormsModule, RouterModule, DeletePopupComponent, CdkTrapFocus],
+  imports: [FormsModule, RouterModule, DeletePopupComponent, DialogComponent],
   templateUrl: './division-details.component.html',
-  host: { '(document:keydown.escape)': 'onEscape()' },
 })
 export class DivisionDetailsComponent implements OnInit {
   private divisionService = inject(DivisionService);
@@ -43,7 +44,7 @@ export class DivisionDetailsComponent implements OnInit {
     this.cancel.emit();
   }
 
-  // Esc closes the confirmation first when one is open on top.
+  // The dialog closes on Esc; a confirmation open on top closes first.
   onEscape() {
     if (this.confirmAction() === null) {
       this.cancelPopup();
@@ -77,12 +78,7 @@ export class DivisionDetailsComponent implements OnInit {
     const file = input.files[0];
     this.errorMessage.set(null);
 
-    const validFileTypes = [
-      'image/jpeg',
-      'image/png',
-      'image/jpg',
-      'image/svg+xml',
-    ];
+    const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
     if (!validFileTypes.includes(file.type)) {
       this.errorMessage.set(
@@ -158,6 +154,17 @@ export class DivisionDetailsComponent implements OnInit {
   confirmAction = signal<'division' | 'image' | null>(null);
   deleting = signal<boolean>(false);
   imageDeleted = signal<boolean>(false);
+  // The image request fails when the division has none (or it cannot be shown).
+  imageMissing = signal<boolean>(false);
+  // Opening time as a cache buster, so a just-replaced image is not served from cache.
+  private readonly openedAt = Date.now();
+  readonly currentImageUrl = computed(
+    () => `${this.baseUrl}/divisions/${this.id()}/image?v=${this.openedAt}`
+  );
+  readonly hasCurrentImage = computed(
+    () => this.id() !== -1 && !this.imageDeleted() && !this.imageMissing()
+  );
+  private fileInput = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
   deleteDivisionMessage = computed(
     () =>
@@ -189,6 +196,9 @@ export class DivisionDetailsComponent implements OnInit {
   clearPreview() {
     this.selectedFile = null;
     this.filePreview.set(null);
+    // Reset the field too, so picking the same file again fires (change).
+    const input = this.fileInput()?.nativeElement;
+    if (input) input.value = '';
   }
 
   async deleteImage() {

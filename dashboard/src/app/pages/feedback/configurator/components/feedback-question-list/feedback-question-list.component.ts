@@ -6,10 +6,11 @@ import {
   CdkDropList,
 } from '@angular/cdk/drag-drop';
 import { FeedbackQuestion } from '@/shared/models/types';
+import { ActionIconComponent } from '@/shared/components/action-icon/action-icon.component';
 
 @Component({
   selector: 'app-feedback-question-list',
-  imports: [CdkDropList, CdkDrag, CdkDragHandle],
+  imports: [CdkDropList, CdkDrag, CdkDragHandle, ActionIconComponent],
   templateUrl: './feedback-question-list.component.html',
 })
 export class FeedbackQuestionListComponent {

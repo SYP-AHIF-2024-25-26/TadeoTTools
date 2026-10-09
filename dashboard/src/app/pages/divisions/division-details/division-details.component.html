@@ -1,200 +1,163 @@
-<div
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+<app-dialog
+  [title]="id() === -1 ? 'New Division' : 'Edit Division'"
+  [busy]="saving()"
+  (close)="onEscape()"
 >
-  <div
-    class="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-background-100"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="division-dialog-title"
-    cdkTrapFocus
-    [cdkTrapFocusAutoCapture]="true"
+  <!-- Error Message -->
+  @if (errorMessage()) {
+    <div role="alert" class="alert alert-error mb-4">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6 shrink-0 stroke-current"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+
+  <!-- Form -->
+  <form
+    id="division-form"
+    (ngSubmit)="submitDivisionDetail()"
+    class="space-y-4"
   >
-    <!-- Form Header -->
-    <div
-      class="mb-6 flex items-center justify-between border-b border-background-200 pb-4 dark:border-background-700"
-    >
-      <h2
-        id="division-dialog-title"
-        class="text-2xl font-bold text-secondary-content"
-      >
-        {{ id() === -1 ? 'New Division' : 'Edit Division' }}
-      </h2>
-      <button
-        type="button"
-        (click)="cancelPopup()"
-        class="btn btn-circle btn-ghost btn-sm text-secondary-content"
-        aria-label="Close"
-      >
-        <svg
-          class="h-4 w-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
+    <!-- Division Name -->
+    <div class="form-control">
+      <label class="label" for="name">
+        <span class="label-text"
+          >Division Name <span aria-hidden="true">*</span></span
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2.5"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
+      </label>
+      <input
+        type="text"
+        id="name"
+        required
+        maxlength="50"
+        placeholder="e.g. Informatik"
+        class="input input-bordered w-full"
+        [(ngModel)]="name"
+        name="name"
+      />
     </div>
 
-    <!-- Error Message -->
-    @if (errorMessage()) {
-      <div role="alert" class="alert alert-error mb-4">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6 shrink-0 stroke-current"
-          fill="none"
-          viewBox="0 0 24 24"
+    <!-- Division Color -->
+    <div class="form-control">
+      <label class="label" for="color">
+        <span class="label-text">Color <span aria-hidden="true">*</span></span>
+      </label>
+      <div class="flex items-center gap-4">
+        <input
+          type="color"
+          id="color"
+          class="input input-bordered h-12 w-24 p-1"
+          [(ngModel)]="color"
+          name="color"
+        />
+        <div
+          class="h-12 w-24 rounded-lg border border-base-300"
+          [style.backgroundColor]="color()"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Image: the new file's preview, else the current image, else a placeholder. -->
+    <div class="form-control">
+      <label class="label" for="file">
+        <span class="label-text">Division Image (PNG or JPG)</span>
+      </label>
+      <div class="flex flex-wrap items-center gap-4">
+        <div
+          class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-black/10 bg-white dark:border-white/15"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <span>{{ errorMessage() }}</span>
-      </div>
-    }
-
-    <!-- Form -->
-    <form (ngSubmit)="submitDivisionDetail()" class="space-y-4">
-      <!-- Division Name -->
-      <div class="form-control">
-        <label class="label" for="name">
-          <span class="label-text text-text-700 dark:text-text-300"
-            >Division Name</span
-          >
-        </label>
-        <input
-          type="text"
-          id="name"
-          placeholder="e.g. Informatik"
-          class="input input-bordered w-full bg-background-50 text-text-700 dark:bg-background-700 dark:text-text-300"
-          [(ngModel)]="name"
-          name="name"
-        />
-      </div>
-
-      <!-- Division Color -->
-      <div class="form-control">
-        <label class="label" for="color">
-          <span class="label-text text-text-700 dark:text-text-300">Color</span>
-        </label>
-        <div class="flex items-center gap-4">
-          <input
-            type="color"
-            id="color"
-            class="input input-bordered h-12 w-24 p-1"
-            [(ngModel)]="color"
-            name="color"
-          />
-          <div
-            class="h-12 w-24 rounded-lg border border-base-300"
-            [style.backgroundColor]="color()"
-          ></div>
-        </div>
-      </div>
-
-      <!-- File Upload -->
-      <div class="form-control">
-        <label class="label" for="file">
-          <span class="label-text text-text-700 dark:text-text-300"
-            >Division Image (SVG, PNG, JPG)</span
-          >
-        </label>
-        <input
-          type="file"
-          id="file"
-          (change)="onFileChange($event)"
-          class="file-input file-input-bordered w-full bg-background-50 text-text-700 dark:bg-background-700 dark:text-text-300"
-          accept="image/jpeg,image/png,image/svg+xml"
-        />
-      </div>
-
-      <!-- Image Preview -->
-      @if (filePreview()) {
-        <div class="mt-4">
-          <label class="label"
-            ><span class="label-text">New Image Preview:</span></label
-          >
-          <div class="flex items-center gap-4">
+          @if (filePreview()) {
             <img
               [src]="filePreview()"
-              alt="Image Preview"
-              class="h-20 w-20 rounded-lg border border-base-300 object-cover"
+              alt="Preview of the new image"
+              class="h-full w-full object-contain"
             />
-            <button
-              type="button"
-              (click)="clearPreview()"
-              class="btn btn-ghost btn-sm"
-            >
-              Discard
-            </button>
-          </div>
-        </div>
-      } @else if (id() !== -1 && !imageDeleted()) {
-        <div class="mt-4">
-          <label class="label"
-            ><span class="label-text">Current Image:</span></label
-          >
-          <div class="flex items-center gap-4">
+          } @else if (hasCurrentImage()) {
             <img
-              [src]="baseUrl + '/divisions/' + id() + '/image'"
-              alt="Current Division Image"
-              class="h-20 w-20 rounded-lg border border-base-300 object-cover"
+              [src]="currentImageUrl()"
+              [alt]="'Current image of ' + name()"
+              class="h-full w-full object-contain"
+              (error)="imageMissing.set(true)"
             />
-            <button
-              type="button"
-              (click)="confirmAction.set('image')"
-              class="btn btn-outline btn-error btn-sm"
+          } @else {
+            <span class="px-2 text-center text-xs text-ink-muted"
+              >No image</span
             >
-              Delete Image
-            </button>
-          </div>
-        </div>
-      }
-
-      <!-- Action Buttons -->
-      <div
-        class="flex flex-col-reverse gap-4 pt-6 sm:flex-row sm:justify-between"
-      >
-        <div>
-          @if (id() !== -1) {
-            <button
-              type="button"
-              (click)="confirmAction.set('division')"
-              class="btn btn-error w-full sm:w-auto"
-            >
-              Delete Division
-            </button>
           }
         </div>
-        <div class="flex flex-col-reverse gap-4 sm:flex-row">
-          <button
-            type="button"
-            (click)="cancelPopup()"
-            class="btn btn-ghost w-full text-text-700 dark:text-text-300 sm:w-auto"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="btn btn-primary w-full sm:w-auto"
-            [disabled]="saving()"
-          >
-            {{ id() === -1 ? 'Create Division' : 'Save Changes' }}
-          </button>
+        <div class="flex min-w-0 flex-1 flex-col gap-2">
+          <input
+            #fileInput
+            type="file"
+            id="file"
+            (change)="onFileChange($event)"
+            class="file-input file-input-bordered file-input-sm w-full"
+            accept="image/jpeg,image/png"
+          />
+          @if (filePreview()) {
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs text-ink-muted"
+                >Saved with
+                {{ id() === -1 ? 'Create Division' : 'Save Changes' }}.</span
+              >
+              <button
+                type="button"
+                (click)="clearPreview()"
+                class="btn btn-ghost btn-sm"
+              >
+                Discard
+              </button>
+            </div>
+          } @else if (hasCurrentImage()) {
+            <div>
+              <button
+                type="button"
+                (click)="confirmAction.set('image')"
+                class="btn btn-outline btn-error btn-sm"
+              >
+                Delete Image
+              </button>
+            </div>
+          }
         </div>
       </div>
-    </form>
+    </div>
+  </form>
+
+  <div dialog-actions class="contents">
+    @if (id() !== -1) {
+      <button
+        type="button"
+        (click)="confirmAction.set('division')"
+        class="btn btn-outline btn-error btn-sm mr-auto"
+      >
+        Delete Division
+      </button>
+    }
+    <button type="button" (click)="cancelPopup()" class="btn btn-ghost btn-sm">
+      Cancel
+    </button>
+    <button
+      type="submit"
+      form="division-form"
+      class="btn btn-primary btn-sm"
+      [disabled]="saving()"
+    >
+      {{ id() === -1 ? 'Create Division' : 'Save Changes' }}
+    </button>
   </div>
-</div>
+</app-dialog>
 
 @if (confirmAction() === 'division') {
   <app-delete-popup
