@@ -364,7 +364,7 @@ The kiosk (`kiosk/registration/`) runs on tablets at the entrance. As with the f
 - `.btn-primary` (accent-600, `text-xl font-bold`, never wraps) and `.btn-secondary` (white pill) for footers, 56/64/48px tall.
 
 ### Screens
-- **Status strip** (always shown): a scoreboard from `Visitors/count`, refreshed every 30s: the registered count in 36px bold gray-900 ("352 angemeldet"), the count including adults in 24px bold gray-700 ("834 mit Begleitung"), one size smaller on `short`; "Keine Verbindung zum Server – Anmelden geht gerade nicht" when that refresh fails.
+- **Status strip** (always shown): a scoreboard from `Visitors/count`, refreshed every 30s: the registered count in 36px bold gray-900 ("352 angemeldet"), the count including adults in 24px bold gray-700 ("834 mit Begleitung"), one size smaller on `short`; "Keine Verbindung zum Server – Anmelden geht gerade nicht" when that refresh fails. The HTL Leonding logo is pinned on the right (32px tall, 24px below `sm`), except on the start screen, which shows the large logo.
 - **Start:** logo, "Willkommen zum Tag der offenen Tür", one "Anmeldung starten"; loading and error states as in the feedback kiosk.
 - **Step bar:** five named steps (Wohnort · Über dich · Erfahren · Interessen · Foto) as 8px bars with labels; current accent-500 and bold, done accent-300, upcoming gray-200. Below `sm` the labels collapse to "Schritt x von 5: Name".
 - **Wohnort:** built-in number pad (64px keys) next to four 80px digit boxes, the next box outlined in accent-600, all red when the postcode is unknown. Towns appear as `.choice` radios once four digits are in; a single town is selected automatically, and a tap on a town moves on after 500ms.
@@ -375,6 +375,23 @@ The kiosk (`kiosk/registration/`) runs on tablets at the entrance. As with the f
 - **Footer:** "Zurück" left, "Weiter" (or "Zur Übersicht") right; on an incomplete step "Weiter" stays tappable (`aria-disabled`) and the accent-800 hint names what is missing ("Noch offen: Schulstufe, Schultyp"). Below `sm` the hint gets its own line above the buttons.
 - **Review ("Alles richtig?"):** one white row per field in two columns from `md`, the photo as a tappable thumbnail beside them; a save error appears as a red-bordered panel above the footer and "Anmelden" becomes "Erneut versuchen".
 - **Done with photo:** "Du bist angemeldet!", the photo, and the licence number in bold gray-900 at `clamp(6rem, 22dvh, 11rem)`; it waits for "Nächste Anmeldung". **Done without photo:** the feedback kiosk's thank-you screen (whole screen is the button, 5s countdown bar).
+
+## Cashier Kiosk
+
+The kiosk (`kiosk/cashier/`) runs on a tablet at the buffet counter. Unlike the other two kiosks, the screen speaks to the **student** selling, not to the visitor: short imperatives ("Kassieren", "Gegeben", "Rückgeld"), no du-form. It is a till, not a wizard: the product grid is the home screen and a sale takes three to five taps. It keeps the kiosk world unchanged (same `tailwind.config.js` roles, focus ring, dialog shell, `.choice`, `.chip`, `.btn-primary` / `.btn-secondary`) and talks to the legacy TadeoT backend, so there are no division colours. There is no "Noch da?": an open cart is the student's work in progress.
+
+### Shared classes (`styles.css`)
+- `.tile`: a product, 144px tall at least (112px on `short`), white with `shadow-lg`; `data-selected` gives it the `.choice` selected state (accent-600 edge on accent-50). `data-voucher` makes an unselected tile dashed gray-400, because a voucher is not a product.
+- `.key`: a number-pad key, 64px (56px on `short`), the registration pad's key as a class.
+
+### Screens
+- **Till:** the grid fills the screen (`auto-fill`, tiles at least 152px wide on phones, 176px from `sm`). The whole tile adds one; the count sits in an accent-600 badge pinned over the top-right corner (ringed in the canvas colour) so the name keeps its full width; "−" is a separate 56px button in the bottom-right corner, so a hurried tap can only ever add. A voucher tile toggles (`aria-pressed`) and shows a check instead of a count, its price in red-700 with "max. 1 pro Einkauf". Names break after "/" before they break mid-word.
+- **Cart:** from `lg` a white panel on the right (22rem): line items ("2×", name, line total), "Summe" at 48px bold, "Kassieren" 80px tall, "Leeren" as a text button. Below `lg` a white bottom bar with the sum at 36px and the buttons; on phones the buttons get their own row so the sum never wraps. A cart that cannot be paid keeps "Kassieren" tappable (`aria-disabled`, 60% opacity) and names the reason in accent-800 ("Gutschein nur zusammen mit einem Einkauf", "Der Gutschein ist mehr wert als der Einkauf"). "Leeren" asks first when more than one item is in the cart.
+- **After a sale:** back to an empty till at once. The cart area shows an orange check, "Verkauf gespeichert", "Summe · gegeben" and the change at 48px until the next product is tapped.
+- **Kassieren:** a receipt card (items, "Summe" 48px, "Gegeben", and a change box: accent-50 with "Rückgeld" at 60px, a red-700 "Es fehlen noch …", or a gray hint that the amount is optional) beside the input: quick amounts as one row of `.chip` radios ("Passend" wider, then the notes above the sum) and the number pad with comma and backspace. Side by side from `md`, stacked on phones, receipt first so the change stays in view. Footer: "Zurück" and "Verkauf abschließen". A hardware keyboard works (digits, comma, Backspace, Enter, Escape).
+- **Status strip:** `gray-100`, always shown: "Buffet OG" in 20px bold (only the location; the legacy `description` is free text left from earlier events and is not shown), "Wechseln" when there are several buffets, and the HTL Leonding logo (32px tall) pinned on the right; everything else wraps beside it. Only after a send failed: "N Verkäufe warten auf Übertragung – Browserdaten nicht löschen" with "Jetzt senden"; refused sales in red-700 bold with "Ansehen" (a wide dialog listing them, "Erneut senden" and "Entfernen …" per sale with a confirmation).
+- **Kassastand:** a quiet gray text button below the product grid ("Kassastand dieses Tablets 7,40 €") opens the till-total dialog (sum at 60px, count, "Auf 0 setzen …" with a confirmation). It is for closing time, so it stays out of the way.
+- **Start:** only before the first load (logo, "Buffet-Kassa", loading and error states as in the other kiosks) and for choosing the buffet when there are several ("Für welches Buffet kassiert dieses Tablet?", `.choice` radios).
 
 ## Do's and Don'ts
 

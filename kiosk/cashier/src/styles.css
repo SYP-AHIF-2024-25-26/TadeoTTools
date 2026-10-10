@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+    @apply bg-canvas;
+    /* Kiosk: no pull-to-refresh, no rubber-band scrolling, no long-press callouts */
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  /* No double-tap zoom on a tap target; pinch zoom stays available */
+  html {
+    touch-action: manipulation;
+  }
+
+  :focus-visible {
+    @apply outline outline-[3px] outline-offset-[3px] outline-accent-600;
+  }
+
+  /* The product grid and the cart scroll; a thin neutral bar instead of the browser default */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.300') transparent;
+  }
+
+  ::selection {
+    @apply bg-accent-200 text-gray-900;
+  }
+}
+
+@layer components {
+  /*
+   * A tappable answer (the buffet choice): white card, lifted; selected =
+   * orange edge on a light orange fill. Used with role="radio" and aria-checked.
+   */
+  .choice {
+    @apply flex items-center gap-3 rounded-lg border-[3px] border-transparent bg-white text-left text-gray-800 shadow-lg transition-colors hover:bg-gray-50;
+  }
+  .choice[aria-checked='true'] {
+    @apply border-accent-600 bg-accent-50;
+  }
+
+  /*
+   * A product on the till: white card, lifted; with something in the cart it
+   * gets the selected edge of a .choice. The whole card is the "+1" button.
+   */
+  .tile {
+    @apply relative flex min-h-36 flex-col rounded-2xl border-[3px] border-transparent bg-white text-left text-gray-800 shadow-lg transition-colors hover:bg-gray-50 active:bg-accent-50 short:min-h-28;
+  }
+  .tile[data-selected] {
+    @apply border-accent-600 bg-accent-50;
+  }
+  /* A voucher is not a product: dashed until it is in the cart */
+  .tile[data-voucher]:not([data-selected]) {
+    @apply border-dashed border-gray-400 shadow-md;
+  }
+
+  /* A key of the number pad */
+  .key {
+    @apply flex h-16 items-center justify-center rounded-2xl bg-white text-3xl font-medium tabular-nums text-gray-800 shadow-md hover:bg-gray-100 active:bg-accent-50 disabled:opacity-40 short:h-14;
+  }
+
+  /* A short answer in a row of answers (quick amounts) */
+  .chip {
+    @apply flex h-16 min-w-16 items-center justify-center rounded-2xl border-[3px] border-transparent bg-white px-5 text-xl font-medium text-gray-800 shadow-md transition-colors hover:bg-gray-50 short:h-14 short:text-lg;
+  }
+  .chip[aria-checked='true'] {
+    @apply border-accent-600 bg-accent-50 text-gray-900;
+  }
+
+  /* Radio dot inside a .choice */
+  .mark-radio {
+    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-gray-500;
+  }
+  [aria-checked='true'] > .mark-radio {
+    @apply border-accent-600;
+  }
+  [aria-checked='true'] > .mark-radio::after {
+    content: '';
+    @apply h-3.5 w-3.5 rounded-full bg-accent-600;
+  }
+
+  /* Footer buttons. White on accent-600 needs large bold text (3.56:1). */
+  .btn-primary {
+    @apply flex h-14 items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-accent-600 px-7 text-xl font-bold text-white shadow-md hover:bg-accent-700 active:scale-[0.98] disabled:opacity-70 sm:h-16 short:h-12;
+  }
+  .btn-secondary {
+    @apply flex h-14 items-center justify-center gap-2 rounded-2xl bg-white px-6 text-lg font-medium text-gray-700 shadow-md hover:bg-gray-100 sm:h-16 sm:text-xl short:h-12;
+  }
+}
