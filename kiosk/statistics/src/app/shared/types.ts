@@ -33,7 +33,17 @@ export interface Bar {
 
 export type Slide =
   | { kind: 'total'; registered: number; withCompany: number }
-  | { kind: 'time'; date: string; hours: Bar[]; peak: number }
+  | {
+      kind: 'time';
+      /** "21.–22. November 2025" */
+      dates: string;
+      /** Column labels of the shared hour axis, e.g. "14–15". */
+      hours: string[];
+      /** One row per day, oldest first; counts line up with `hours`. */
+      days: { label: string; counts: number[] }[];
+      /** Largest count of all days: the rows share one scale. */
+      max: number;
+    }
   | {
       kind: 'bars';
       id: 'departments' | 'reasons' | 'schoolTypes' | 'districts';

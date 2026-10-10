@@ -15,6 +15,14 @@ export const DEFAULT_DELAY_S = 10;
 export const MIN_DELAY_S = 3;
 export const MAX_DELAY_S = 120;
 
+/**
+ * The hours slide shows the latest day plus the days with registrations in
+ * the week before it (a two-day open day), at most this many rows. Older
+ * days (last year, test registrations) stay off the wall.
+ */
+export const TIME_WINDOW_DAYS = 7;
+export const MAX_TIME_DAYS = 3;
+
 /** A bar chart shows at most this many bars; the rest are summed up as "n weitere". */
 export const MAX_BARS = 12;
 

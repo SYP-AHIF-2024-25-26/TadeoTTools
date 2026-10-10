@@ -15,8 +15,12 @@ Immer in dieser Reihenfolge; eine Folie ohne Daten wird übersprungen.
 
 1. **Angemeldet:** Zahl der Anmeldungen und „mit Begleitung“ (Anmeldungen + Begleitpersonen), wie
    in der Statusleiste der Anmelde-Tablets.
-2. **Anmeldungen pro Stunde:** nur der **letzte Tag** in den Daten (frühere Tage der offenen Tür und
-   Testanmeldungen an anderen Tagen bleiben weg). Die Stunde mit den meisten Anmeldungen ist dunkler.
+2. **Anmeldungen pro Stunde:** eine Zeile pro Tag mit gemeinsamer Stundenachse und gemeinsamem
+   Maßstab, das Datum am Zeilenanfang („Fr., 21. Nov.“). Gezeigt werden der letzte Tag in den Daten
+   und die Tage mit Anmeldungen in der Woche davor (z. B. Freitag und Samstag), höchstens 3;
+   ältere Tage (voriges Jahr) bleiben weg. Die Stunde mit den meisten Anmeldungen ist je Tag dunkler.
+   Testanmeldungen in der Woche vor dem Tag der offenen Tür erscheinen als eigene Zeile, daher vorher
+   die Besucher im alten Admin löschen.
 3. **Das interessiert unsere Gäste:** Interesse an den Abteilungen (Mehrfachnennungen), die vier
    Abteilungen in ihren Farben (aus `DESIGN.md`, in `src/app/shared/constants.ts`).
 4. **So haben unsere Gäste von uns erfahren**
@@ -34,6 +38,9 @@ Anmeldungen.“
 
 - `…/statistics/` – 10 Sekunden pro Folie.
 - `…/statistics/?delay=15` – Sekunden pro Folie (3 bis 120).
+- `…/statistics/?days=all` – „Anmeldungen pro Stunde“ zeigt alle Tage in den Daten (auch frühere
+  Jahre, höchstens die letzten 3), z. B. zum Ausprobieren der Tageszeilen mit alten Daten. Lässt sich
+  mit `delay` kombinieren (`?delay=5&days=all`).
 - Alte Lesezeichen `…/statistics/slideshow/15` (auch mit `/` am Ende) leitet der nginx im Image auf
   `…/statistics/?delay=15` um; `…/statistics/slideshow/` auf `…/statistics/`.
 - Am Beamer-PC den Browser im Vollbild öffnen (F11 oder `chrome --kiosk <URL>`); der Mauszeiger ist

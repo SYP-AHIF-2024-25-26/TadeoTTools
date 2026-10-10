@@ -2,6 +2,8 @@ import {
   DEPARTMENT_LABELS,
   DIVISION_COLORS,
   MAX_BARS,
+  MAX_TIME_DAYS,
+  TIME_WINDOW_DAYS,
 } from '@shared/constants';
 import { Bar, Slide, Statistics, VisitorResult } from '@shared/types';
 
@@ -68,9 +70,12 @@ export function slideId(slide: Slide): string {
 }
 
 /**
- * Registrations per hour of the latest day in the data. Earlier open days
- * (and test registrations) are left out. The legacy backend already shifts
- * the hour to local winter time: "21.11.2025-14:00" is 14–15 Uhr.
+ * Registrations per hour of the latest open day: the latest day in the data
+ * and the days with registrations in the week before it (at most
+ * MAX_TIME_DAYS), one row per day on a shared hour axis. Older days stay out,
+ * unless the URL says `?days=all` (for trying the rows with older data).
+ * The legacy backend already shifts the hour to local winter time:
+ * "21.11.2025-14:00" is 14–15 Uhr.
  */
 function timeSlide(results: VisitorResult[]): Slide | null {
   const parsed = results
@@ -92,29 +97,61 @@ function timeSlide(results: VisitorResult[]): Slide | null {
   if (parsed.length === 0) return null;
 
   const latest = Math.max(...parsed.map((r) => r.day));
-  const day = parsed.filter((r) => r.day === latest);
-  const from = Math.min(...day.map((r) => r.hour));
-  const to = Math.max(...day.map((r) => r.hour));
-  const hours: Bar[] = [];
-  // Hours without registrations in between stay visible as empty columns.
-  for (let h = from; h <= to; h++) {
-    hours.push({
-      label: `${h % 24}–${(h + 1) % 24}`,
-      count: day.filter((r) => r.hour === h).reduce((s, r) => s + r.count, 0),
-    });
-  }
+  const recent = ALL_DAYS
+    ? parsed
+    : parsed.filter((r) => latest - r.day < TIME_WINDOW_DAYS * DAY_MS);
+  const days = [...new Set(recent.map((r) => r.day))]
+    .sort((a, b) => a - b)
+    .slice(-MAX_TIME_DAYS);
+  const shown = recent.filter((r) => days.includes(r.day));
+
+  // One axis for all days; hours without registrations stay as empty columns.
+  const from = Math.min(...shown.map((r) => r.hour));
+  const to = Math.max(...shown.map((r) => r.hour));
+  const hours: number[] = [];
+  for (let h = from; h <= to; h++) hours.push(h);
+
+  // Days from different years carry the year, so the rows stay unambiguous.
+  const years = new Set(days.map((d) => new Date(d).getUTCFullYear()));
+  const label = years.size > 1 ? dayYearLabel : dayLabel;
+  const rows = days.map((day) => ({
+    label: label.format(day),
+    counts: hours.map((h) =>
+      shown
+        .filter((r) => r.day === day && r.hour === h)
+        .reduce((s, r) => s + r.count, 0)
+    ),
+  }));
   return {
     kind: 'time',
-    date: new Intl.DateTimeFormat('de-AT', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      timeZone: 'UTC',
-    }).format(latest),
-    hours,
-    peak: Math.max(...hours.map((h) => h.count)),
+    dates: dateRange.formatRange(days[0], days[days.length - 1]),
+    hours: hours.map((h) => `${h % 24}–${(h + 1) % 24}`),
+    days: rows,
+    max: Math.max(...rows.flatMap((r) => r.counts)),
   };
 }
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+const ALL_DAYS = new URLSearchParams(location.search).get('days') === 'all';
+const dayLabel = new Intl.DateTimeFormat('de-AT', {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+});
+const dayYearLabel = new Intl.DateTimeFormat('de-AT', {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+const dateRange = new Intl.DateTimeFormat('de-AT', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
 
 function genderSlide(results: VisitorResult[]): Slide | null {
   const parts = results
