@@ -49,6 +49,15 @@ services:
     networks:
       - tadeotnet-201126
 
+  # Visitor statistics slideshow for the projector; reads the legacy TadeoT backend
+  tadeot-statistics-201126:
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/statistics:latest
+    container_name: tadeot-statistics-201126
+    environment:
+      - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-api
+    networks:
+      - tadeotnet-201126
+
   tadeot-backend-201126:
     container_name: tadeot-backend-201126
     image: ghcr.io/syp-ahif-2024-25-26/tadeottools/backend:latest

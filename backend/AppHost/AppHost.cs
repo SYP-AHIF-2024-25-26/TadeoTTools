@@ -48,6 +48,14 @@ builder.AddJavaScriptApp("kiosk-cashier", "../../kiosk/cashier")
     .WithBuildScript("start")
     .WithRunScript("start");
 
+// Reads the visitor statistics of the legacy TadeoT backend (GET only).
+builder.AddJavaScriptApp("kiosk-statistics", "../../kiosk/statistics")
+    .WithEnvironment("STATISTICS_API_URL", "https://tadeot.htl-leonding.ac.at/tadeot-api")
+    .WithHttpEndpoint(env: "PORT")
+    .WithExternalHttpEndpoints()
+    .WithBuildScript("start")
+    .WithRunScript("start");
+
 webapi
     .WithEnvironment("AllowedOrigins__0", dashboard.GetEndpoint("http"))
     .WithEnvironment("AllowedOrigins__1", guideapp.GetEndpoint("http"))

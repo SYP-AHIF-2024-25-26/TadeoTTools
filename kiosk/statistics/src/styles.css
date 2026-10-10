@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    @apply bg-canvas text-gray-800 antialiased;
+    /* Nobody operates the projector: no pointer over the slides */
+    cursor: none;
+    user-select: none;
+  }
+
+  :root {
+    /* Fill of a single-series bar or column */
+    --bar: theme('colors.accent.500');
+  }
+
+  ::selection {
+    @apply bg-accent-200 text-gray-900;
+  }
+}
+
+@layer components {
+  /* Slide headline, sized for reading from several metres */
+  .slide-title {
+    @apply font-bold leading-[1.1] tracking-[-0.02em] text-gray-900;
+    font-size: 6.4vmin;
+    text-wrap: balance;
+  }
+  .slide-note {
+    @apply mt-[1.2vmin] text-gray-600;
+    font-size: 3.2vmin;
+  }
+}
+
+@layer utilities {
+  /* The one authored moment: marks grow from their baseline when a slide comes up */
+  .grow-x {
+    transform-origin: left center;
+    animation: grow-x 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i, 0) * 60ms + 150ms);
+  }
+  .grow-y {
+    transform-origin: center bottom;
+    animation: grow-y 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i, 0) * 50ms + 150ms);
+  }
+  .fade-in {
+    animation: fade-in 600ms ease-out both;
+    animation-delay: calc(var(--i, 0) * 60ms + 450ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grow-x,
+    .grow-y,
+    .fade-in {
+      animation: none;
+    }
+  }
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes grow-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}

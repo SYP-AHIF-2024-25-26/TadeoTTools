@@ -29,7 +29,7 @@ TadeoTTools umfasst ein umfangreiches Admin-Dashboard, mit dem man Stationen, Sc
 - `backend/`: REST-API (.NET, EF Core, PostgreSQL)
 - `dashboard/`: Admin-Dashboard (Login über Keycloak)
 - `guide/`: GuideApp, die öffentliche App für Besucher und Guides
-- `kiosk/`: Kiosk-Apps für fest aufgestellte Geräte, z. B. `kiosk/feedback/` für die Feedback-Tablets am Ausgang und `kiosk/registration/` für die Anmeldung am Eingang und `kiosk/cashier/` für die Buffet-Kassa
+- `kiosk/`: Kiosk-Apps für fest aufgestellte Geräte, z. B. `kiosk/feedback/` für die Feedback-Tablets am Ausgang `kiosk/registration/` für die Anmeldung am Eingang, `kiosk/cashier/` für die Buffet-Kassa und `kiosk/statistics/` für die Besucherstatistik am Beamer
 
 ## Datenmodell
 <img src="./assets/datamodel.png" alt="Datenmodell">
