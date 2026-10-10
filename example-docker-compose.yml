@@ -31,6 +31,15 @@ services:
     depends_on:
       - tadeot-backend-201126
 
+  # Talks to the legacy TadeoT backend, not to tadeot-backend-201126
+  tadeot-registration-201126:
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/registration:latest
+    container_name: tadeot-registration-201126
+    environment:
+      - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-api
+    networks:
+      - tadeotnet-201126
+
   tadeot-backend-201126:
     container_name: tadeot-backend-201126
     image: ghcr.io/syp-ahif-2024-25-26/tadeottools/backend:latest

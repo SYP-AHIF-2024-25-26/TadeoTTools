@@ -10,7 +10,7 @@ web
 
 TadeoTTools serves one event, the HTL Leonding open day ("Tag der offenen Tür", TdoT), from two sides. Both sides carry equal weight in design trade-offs.
 
-**Visitors (public GuideApp, `frontend/`)**
+**Visitors (public GuideApp, `guide/`)**
 - Prospective pupils (about 14, finishing lower secondary school) and their parents. They use their own phones while walking through the school building on the open day.
 - Student guides lead groups through the same app and tick off the stops their group has seen.
 - Job: know where to go next, what each stop is about and where its room is, keep track of what they have already seen, and give feedback at the end. No login, no account.
@@ -47,14 +47,14 @@ It is built for this one school's open day, by HTL Leonding students (5AHIF SYP 
 
 ## Brand Commitments
 
-- **HTL Leonding identity is binding:** keep the school's name and logo (`dashboard/src/assets/Leonding_Logo.svg`, `frontend/src/assets/logo.png`), and respect the per-division colors and images that admins configure in the dashboard.
+- **HTL Leonding identity is binding:** keep the school's name and logo (`dashboard/src/assets/Leonding_Logo.svg`, `guide/src/assets/logo.png`), and respect the per-division colors and images that admins configure in the dashboard.
 - Product name in the visitor app: "Tadeot GuideApp". The repository and system are called TadeoTTools.
 - The Impressum links to https://www.htl-leonding.at/impressum.
 
 ## Evidence on Hand
 
-- Real floor plans: `frontend/src/assets/stockwerk-U.png`, `stockwerk-E.png`, `stockwerk-1.png`.
-- Team photo: `frontend/src/assets/team.png` / `team.jpg`, used on the About page.
+- Real floor plans: `guide/src/assets/stockwerk-U.png`, `stockwerk-E.png`, `stockwerk-1.png`.
+- Team photo: `guide/src/assets/team.png` / `team.jpg`, used on the About page.
 - Real station planning data is imported from CSV at startup in Development.
 - There are no testimonials, usage statistics or feedback results in the repo. Future work must not invent visitor numbers, quotes or ratings.
 

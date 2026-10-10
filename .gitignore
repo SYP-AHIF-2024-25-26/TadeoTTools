@@ -1,6 +1,6 @@
 /.idea
 .DS_Store
-/frontend/.vscode
+/guide/.vscode
 /backend/TadeoT/.idea
 /backend/TadeoT/appsettings.json
 dashboard/package-lock.json

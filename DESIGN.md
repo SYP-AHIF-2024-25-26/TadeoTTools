@@ -187,7 +187,7 @@ The organizer dashboard is the programme's back office. It uses the same rounded
 - Dashboard: DaisyUI `light` / `darkCustom` themes, blue primary, filled blue filter fields, a sticky sky-blue top nav, one left-aligned page header on every page.
 - Tall touch targets and a 16px side gutter on mobile; the GuideApp is designed only for phone width.
 - Copy: German with du-form in the GuideApp, English in the dashboard (today's state, not a rule).
-- Feedback kiosk (`feedback/`): the GuideApp's visual language at tablet size, for the exit tablets; see the Feedback Kiosk section.
+- Feedback kiosk (`kiosk/feedback/`): the GuideApp's visual language at tablet size, for the exit tablets; see the Feedback Kiosk section.
 
 ## Colors
 
@@ -327,7 +327,7 @@ An 8px rounded track in gray-100, filled with an orange-400 → orange-500 gradi
 
 ## Feedback Kiosk
 
-The kiosk (`feedback/`) runs on tablets at the building exit. A student holds or sets up the tablet, talks with the visitor and types in their feedback, so the screen speaks to the visitor (du-form) while a slim status strip speaks to the student. It inherits the GuideApp's world (Roboto, Programme Orange as the only accent, white cards lifted on `gray-50`, 16px pill corners) at tablet scale: question text 30–36px, answers at least 80px tall, footer buttons 64px. There is no dark mode; the hall is lit.
+The kiosk (`kiosk/feedback/`) runs on tablets at the building exit. A student holds or sets up the tablet, talks with the visitor and types in their feedback, so the screen speaks to the visitor (du-form) while a slim status strip speaks to the student. It inherits the GuideApp's world (Roboto, Programme Orange as the only accent, white cards lifted on `gray-50`, 16px pill corners) at tablet scale: question text 30–36px, answers at least 80px tall, footer buttons 64px. There is no dark mode; the hall is lit.
 
 ### Colors and tokens
 - `tailwind.config.js` names the roles: `accent` (the Tailwind orange scale) and `canvas` (`gray-50`). Templates use `accent-*`, never `orange-*`.
@@ -353,6 +353,28 @@ The kiosk (`feedback/`) runs on tablets at the building exit. A student holds or
 - Every screen's `h1` takes the focus when it appears and on every new question (`appFocusOnShow`), so screen readers announce the step.
 - Focus ring everywhere: a 3px `accent-600` outline with a 3px offset (`styles.css`). Zoom is allowed; `touch-action: manipulation` only stops double-tap zoom.
 - Single choice and rating groups are `radiogroup`s labelled by the question; arrow keys move between answers without choosing.
+
+## Registration Kiosk
+
+The kiosk (`kiosk/registration/`) runs on tablets at the entrance. As with the feedback kiosk, a student holds the tablet and talks with the arriving family; the screen speaks to the visitor (du-form), the status strip to the student. It uses the feedback kiosk's world unchanged: same `tailwind.config.js` roles (`accent`, `canvas`, `short`), same focus ring, dialog shell, "Noch da?" guard and countdown bar. It talks to the legacy TadeoT backend, so there are no division colours here.
+
+### Shared classes (`styles.css`)
+- `.choice`: the white answer card (3px transparent border, `shadow-lg`); `aria-checked="true"` turns it accent-600 edge on accent-50. Carries `.mark-radio` (dot) or `.mark-check` (box) as its first child.
+- `.chip`: a short answer in a row (Schulstufe, Begleitpersonen, Schultyp), 64px tall (56px on `short`), same selected state.
+- `.btn-primary` (accent-600, `text-xl font-bold`, never wraps) and `.btn-secondary` (white pill) for footers, 56/64/48px tall.
+
+### Screens
+- **Status strip** (always shown): a scoreboard from `Visitors/count`, refreshed every 30s: the registered count in 36px bold gray-900 ("352 angemeldet"), the count including adults in 24px bold gray-700 ("834 mit Begleitung"), one size smaller on `short`; "Keine Verbindung zum Server – Anmelden geht gerade nicht" when that refresh fails.
+- **Start:** logo, "Willkommen zum Tag der offenen Tür", one "Anmeldung starten"; loading and error states as in the feedback kiosk.
+- **Step bar:** five named steps (Wohnort · Über dich · Erfahren · Interessen · Foto) as 8px bars with labels; current accent-500 and bold, done accent-300, upcoming gray-200. Below `sm` the labels collapse to "Schritt x von 5: Name".
+- **Wohnort:** built-in number pad (64px keys) next to four 80px digit boxes, the next box outlined in accent-600, all red when the postcode is unknown. Towns appear as `.choice` radios once four digits are in; a single town is selected automatically, and a tap on a town moves on after 500ms.
+- **Über dich:** four chip groups on one screen, two columns from `lg`.
+- **Erfahren:** reasons as a `.choice` grid (1–4 columns); a tap moves on after 500ms, "Anderes" opens a text field instead.
+- **Interessen:** `.choice` checkboxes in the two legacy groups ("Tagesschulzweige", "Praxisspezifische Ausbildungen").
+- **Foto:** "Ja, Foto machen" / "Nein, ohne Foto"; the camera frame is the saved 3:4 crop, on gray-800, beside the choices from `lg`, below them otherwise. "Aufnehmen" is the primary, "Kamera wechseln" and "Neu aufnehmen" secondary; with several cameras the active one is named below the frame ("Kamera: HP HD Camera"). Camera errors sit on the dark frame in white, with "Andere Kamera" and "Erneut versuchen".
+- **Footer:** "Zurück" left, "Weiter" (or "Zur Übersicht") right; on an incomplete step "Weiter" stays tappable (`aria-disabled`) and the accent-800 hint names what is missing ("Noch offen: Schulstufe, Schultyp"). Below `sm` the hint gets its own line above the buttons.
+- **Review ("Alles richtig?"):** one white row per field in two columns from `md`, the photo as a tappable thumbnail beside them; a save error appears as a red-bordered panel above the footer and "Anmelden" becomes "Erneut versuchen".
+- **Done with photo:** "Du bist angemeldet!", the photo, and the licence number in bold gray-900 at `clamp(6rem, 22dvh, 11rem)`; it waits for "Nächste Anmeldung". **Done without photo:** the feedback kiosk's thank-you screen (whole screen is the button, 5s countdown bar).
 
 ## Do's and Don'ts
 
