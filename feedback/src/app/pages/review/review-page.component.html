@@ -1,13 +1,15 @@
 <header class="flex items-start gap-6 px-6 pt-6 md:px-10">
   <div class="flex-1">
-    <h1 class="text-3xl font-bold text-gray-800 md:text-4xl">Alles richtig?</h1>
+    <h1 class="text-3xl font-bold text-gray-800 md:text-4xl" appFocusOnShow>
+      Alles richtig?
+    </h1>
     <p class="mt-2 text-xl text-gray-600">
       Zum Ändern einfach auf eine Antwort tippen.
     </p>
   </div>
   <button
     type="button"
-    class="h-12 rounded-2xl px-4 text-lg font-medium text-gray-500 hover:bg-gray-100"
+    class="h-12 rounded-2xl px-4 text-lg font-medium text-gray-600 hover:bg-gray-100"
     (click)="confirmCancel.set(true)"
   >
     Abbrechen
@@ -65,7 +67,7 @@
 <footer class="flex items-center justify-between gap-4 px-6 pb-6 md:px-10">
   <button
     type="button"
-    class="flex h-16 items-center gap-2 rounded-2xl bg-gray-500 pl-5 pr-7 text-xl font-medium text-white shadow-md hover:bg-gray-600"
+    class="flex h-16 items-center gap-2 rounded-2xl bg-white pl-5 pr-7 text-xl font-medium text-gray-700 shadow-md hover:bg-gray-100"
     (click)="session.back()"
   >
     <svg
@@ -92,7 +94,7 @@
     }
     <button
       type="button"
-      class="flex h-16 items-center gap-2 rounded-2xl bg-orange-600 pl-7 pr-6 text-xl font-bold text-white shadow-md hover:bg-orange-700 disabled:opacity-50"
+      class="flex h-16 items-center gap-2 rounded-2xl bg-accent-600 pl-7 pr-6 text-xl font-bold text-white shadow-md hover:bg-accent-700 disabled:opacity-50"
       [disabled]="!canSubmit()"
       (click)="session.submit()"
     >

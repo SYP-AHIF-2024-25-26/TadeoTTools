@@ -11,4 +11,16 @@ export const THANKS_SCREEN_MS = 5000;
 export const OUTBOX_RETRY_MS = 30000;
 
 /** Pause after tapping a single choice or rating so the selection is visible. */
-export const AUTO_ADVANCE_MS = 250;
+export const AUTO_ADVANCE_MS = 500;
+
+/** Retry interval while the tablet has no questions at all (first start without Wi-Fi). */
+export const QUESTIONS_RETRY_MS = 30000;
+
+/** Time without any input on a question or the overview before "Noch da?" appears. */
+export const IDLE_WARNING_MS = 75000;
+
+/** Seconds the "Noch da?" overlay counts down before the feedback is discarded. */
+export const IDLE_COUNTDOWN_S = 15;
+
+/** localStorage key of the divisions (name and colour) last loaded from the backend. */
+export const DIVISIONS_CACHE_KEY = 'tadeot-feedback-divisions';

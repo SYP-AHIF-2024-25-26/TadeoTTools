@@ -4,19 +4,41 @@ import { AnswerMap, FeedbackQuestion } from './types';
 // (see FeedbackManagementEndpoints.GetFeedbackResponses), like the GuideApp sends them.
 const MULTIPLE_SEPARATOR = ', ';
 
-export function splitMultiple(answer: string | undefined): string[] {
-  return (answer ?? '')
+/**
+ * The chosen options of a multiple choice answer. With the question's options
+ * given, an option that itself contains ", " is still recognised as one.
+ */
+export function splitMultiple(
+  answer: string | undefined,
+  options?: string[] | null
+): string[] {
+  const raw = answer ?? '';
+  if (options?.length) {
+    const padded = MULTIPLE_SEPARATOR + raw + MULTIPLE_SEPARATOR;
+    return options.filter((o) =>
+      padded.includes(MULTIPLE_SEPARATOR + o + MULTIPLE_SEPARATOR)
+    );
+  }
+  return raw
     .split(MULTIPLE_SEPARATOR)
     .map((s) => s.trim())
     .filter((s) => s);
 }
 
-export function toggleMultiple(answer: string | undefined, option: string) {
-  const chosen = splitMultiple(answer);
-  const next = chosen.includes(option)
-    ? chosen.filter((o) => o !== option)
-    : [...chosen, option];
-  return next.join(MULTIPLE_SEPARATOR);
+/** Adds or removes one option; the result keeps the order of the options. */
+export function toggleMultiple(
+  answer: string | undefined,
+  option: string,
+  options?: string[] | null
+): string {
+  const chosen = new Set(splitMultiple(answer, options));
+  if (chosen.has(option)) {
+    chosen.delete(option);
+  } else {
+    chosen.add(option);
+  }
+  const order = options ?? [...chosen];
+  return order.filter((o) => chosen.has(o)).join(MULTIPLE_SEPARATOR);
 }
 
 export function isAnswered(answer: string | undefined): boolean {
@@ -40,14 +62,50 @@ export function visibleQuestions(
       const parent = byId.get(dep.dependsOnQuestionId);
       if (!parent || !visibleIds.has(parent.id)) return false;
       const answer = answers[parent.id];
-      return parent.type === 'MultipleChoice'
-        ? splitMultiple(answer).includes(dep.conditionValue)
-        : answer === dep.conditionValue;
+      return meetsCondition(parent, answer, dep.conditionValue);
     });
     if (shown) visibleIds.add(question.id);
   }
 
   return questions.filter((q) => visibleIds.has(q.id));
+}
+
+/**
+ * Questions shown now plus those that may still be shown because the answer
+ * they depend on is not given yet. Counting these for "Frage x von N" means N
+ * can only get smaller while the visitor answers, never jump up.
+ */
+export function possibleQuestions(
+  questions: FeedbackQuestion[],
+  answers: AnswerMap
+): FeedbackQuestion[] {
+  const possibleIds = new Set<number>();
+  const byId = new Map(questions.map((q) => [q.id, q]));
+
+  for (const question of questions) {
+    const possible = question.dependencies.every((dep) => {
+      const parent = byId.get(dep.dependsOnQuestionId);
+      if (!parent || !possibleIds.has(parent.id)) return false;
+      const answer = answers[parent.id];
+      return (
+        !isAnswered(answer) ||
+        meetsCondition(parent, answer, dep.conditionValue)
+      );
+    });
+    if (possible) possibleIds.add(question.id);
+  }
+
+  return questions.filter((q) => possibleIds.has(q.id));
+}
+
+function meetsCondition(
+  parent: FeedbackQuestion,
+  answer: string | undefined,
+  conditionValue: string
+): boolean {
+  return parent.type === 'MultipleChoice'
+    ? splitMultiple(answer, parent.options).includes(conditionValue)
+    : answer === conditionValue;
 }
 
 /** Rating values from min to max, each with its label if the admin set one. */

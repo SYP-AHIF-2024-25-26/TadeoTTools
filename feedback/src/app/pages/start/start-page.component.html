@@ -11,8 +11,8 @@
   />
 
   <div>
-    <h1 class="text-4xl font-bold text-gray-800 md:text-5xl">
-      Wie hat dir der Tag der offenen Tür gefallen?
+    <h1 class="text-4xl font-bold text-gray-800 md:text-5xl" appFocusOnShow>
+      Feedback zum Tag der offenen Tür
     </h1>
     <p class="mt-4 text-xl text-gray-600">
       Ein paar kurze Fragen, ganz anonym.
@@ -22,7 +22,7 @@
   @if (hasQuestions()) {
     <button
       type="button"
-      class="flex h-20 items-center gap-3 rounded-2xl bg-orange-600 px-12 text-2xl font-bold text-white shadow-md hover:bg-orange-700 active:scale-[0.98]"
+      class="flex h-20 items-center gap-3 rounded-2xl bg-accent-600 px-12 text-2xl font-bold text-white shadow-md hover:bg-accent-700 active:scale-[0.98]"
       (click)="session.start()"
     >
       Feedback starten
@@ -38,36 +38,60 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
       </svg>
     </button>
+  } @else if (failure() === null) {
+    <!-- First start: no cached questions yet and the first request is still running -->
+    <p class="flex h-20 items-center gap-3 text-xl text-gray-600" role="status">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-7 w-7 motion-safe:animate-spin"
+        fill="none"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="9"
+          stroke="currentColor"
+          stroke-width="3"
+          class="opacity-25"
+        />
+        <path
+          d="M21 12a9 9 0 0 0-9-9"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
+        />
+      </svg>
+      Fragen werden geladen …
+    </p>
   } @else {
-    <div class="max-w-md">
-      <p class="text-xl text-gray-700">
-        Die Fragen konnten nicht geladen werden. Bitte die WLAN-Verbindung
-        prüfen.
+    <div class="max-w-lg" role="alert">
+      <p class="text-xl font-medium text-gray-800">
+        Die Fragen konnten nicht geladen werden.
+      </p>
+      <p class="mt-2 text-lg text-gray-600">
+        @if (failure() === 'no-network') {
+          Keine Verbindung zum Server. Bitte das WLAN des Tablets prüfen.
+        } @else {
+          Der Server meldet einen Fehler. Bitte kurz warten und erneut
+          versuchen.
+        }
       </p>
       <button
         type="button"
-        class="mt-6 h-14 rounded-2xl bg-gray-500 px-8 text-lg font-medium text-white shadow-md hover:bg-gray-600"
+        class="mt-8 inline-flex h-16 items-center gap-3 rounded-2xl bg-accent-600 px-10 text-xl font-bold text-white shadow-md hover:bg-accent-700 disabled:opacity-70"
+        [disabled]="loading()"
         (click)="retry()"
       >
-        Erneut versuchen
+        {{ loading() ? 'Verbinde …' : 'Erneut versuchen' }}
       </button>
+      @if (lastAttempt(); as at) {
+        <p class="mt-4 text-base text-gray-600">
+          Zuletzt versucht um {{ at }} Uhr. Das Tablet versucht es alle 30
+          Sekunden von selbst.
+        </p>
+      }
     </div>
   }
 </main>
-
-<!-- Status for the students running the tablet; stays out of the way otherwise -->
-@if (pendingCount() > 0 || (hasQuestions() && isOffline())) {
-  <footer
-    class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 px-6 pb-6 text-base text-gray-500"
-    aria-live="polite"
-  >
-    @if (isOffline() && hasQuestions()) {
-      <span>Offline: Fragen aus dem Zwischenspeicher</span>
-    }
-    @if (pendingCount() > 0) {
-      <button type="button" class="underline" (click)="retry()">
-        {{ pendingCount() }} noch nicht übertragen
-      </button>
-    }
-  </footer>
-}
