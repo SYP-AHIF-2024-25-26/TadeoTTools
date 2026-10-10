@@ -49,6 +49,9 @@ jobs:
             registration:
               - 'kiosk/registration/**'
               - '.github/workflows/docker-build-push-images.yml'
+            cashier:
+              - 'kiosk/cashier/**'
+              - '.github/workflows/docker-build-push-images.yml'
 
   build-and-push:
     needs: changes
@@ -77,6 +80,7 @@ jobs:
             frontend) echo "path=guide" >> "$GITHUB_OUTPUT" ;;
             feedback) echo "path=kiosk/feedback" >> "$GITHUB_OUTPUT" ;;
             registration) echo "path=kiosk/registration" >> "$GITHUB_OUTPUT" ;;
+            cashier) echo "path=kiosk/cashier" >> "$GITHUB_OUTPUT" ;;
             *)        echo "path=${{ matrix.service }}" >> "$GITHUB_OUTPUT" ;;
           esac
 
