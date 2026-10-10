@@ -36,3 +36,10 @@ export interface PendingFeedback {
 
 /** Answers of the running feedback, keyed by question id. */
 export type AnswerMap = Record<number, string>;
+
+/** Shape of `GET /v1/divisions`; `name` is the short code, e.g. "HIF". */
+export interface Division {
+  id: number;
+  name: string;
+  color: string;
+}

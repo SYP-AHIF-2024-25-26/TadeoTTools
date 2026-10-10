@@ -14,9 +14,9 @@ import { OUTBOX_KEY, OUTBOX_RETRY_MS } from '@shared/constants';
 })
 export class OutboxService {
   private api = inject(FeedbackApiService);
-  private sending = false;
-
   readonly pending = signal<PendingFeedback[]>(this.read());
+  /** True while pending feedback is being sent. */
+  readonly sending = signal(false);
 
   constructor() {
     window.addEventListener('online', () => this.flush());
@@ -38,8 +38,8 @@ export class OutboxService {
 
   /** Sends the pending feedback oldest first; stops at the first network failure. */
   async flush(): Promise<void> {
-    if (this.sending) return;
-    this.sending = true;
+    if (this.sending()) return;
+    this.sending.set(true);
     try {
       for (const entry of this.pending()) {
         try {
@@ -57,7 +57,7 @@ export class OutboxService {
         this.write(this.pending().filter((e) => e.id !== entry.id));
       }
     } finally {
-      this.sending = false;
+      this.sending.set(false);
     }
   }
 
@@ -72,7 +72,13 @@ export class OutboxService {
 
   private write(entries: PendingFeedback[]): void {
     this.pending.set(entries);
-    localStorage.setItem(OUTBOX_KEY, JSON.stringify(entries));
+    try {
+      localStorage.setItem(OUTBOX_KEY, JSON.stringify(entries));
+    } catch (err) {
+      // Storage full or blocked: the entries stay in memory and are still sent,
+      // they only would not survive a reload.
+      console.error('Feedback outbox could not be stored', err);
+    }
   }
 }
 

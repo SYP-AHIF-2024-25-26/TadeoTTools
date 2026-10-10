@@ -10,19 +10,26 @@ Start → eine Frage pro Bildschirm → Übersicht (Antwort antippen zum Ändern
 Danke-Bildschirm, nach 5 Sekunden (oder Antippen) wieder Start.
 
 - Einfachauswahl und Bewertung springen nach dem Antippen automatisch weiter.
-- Optionale Fragen können übersprungen werden, Pflichtfragen (`*`) nicht.
+- Optionale Fragen können übersprungen werden, Pflichtfragen (`*`) nicht: „Weiter“ zeigt dann
+  „Pflichtfrage – bitte eine Antwort wählen“.
+- Nach dem Ändern einer Antwort in der Übersicht führt „Zur Übersicht“ direkt zurück. Nur wenn
+  die Änderung eine neue Frage einblendet, kommt zuerst diese.
 - „Abbrechen“ verwirft die laufenden Antworten (mit Rückfrage).
+- Nach 75 s ohne Eingabe fragt das Tablet „Noch da?“ und verwirft das Feedback nach weiteren
+  15 s, damit die nächste Person nicht die Antworten der vorigen sieht.
 
 ## Offline-Betrieb
 
 - PWA mit Service Worker: auf dem Tablet über „Zum Startbildschirm hinzufügen“ installieren.
   Die App startet im Vollbild und hält den Bildschirm wach (Screen Wake Lock).
-- Die Fragen werden in `localStorage` zwischengespeichert. Ohne WLAN zeigt der Startbildschirm
-  „Offline: Fragen aus dem Zwischenspeicher“.
+- Die Fragen werden in `localStorage` zwischengespeichert. Ist der Server nicht erreichbar, zeigt
+  die Statusleiste oben „Offline – zuletzt geladene Fragen“. Hat das Tablet noch gar keine
+  Fragen, versucht es alle 30 s selbst, sie zu laden.
 - Abgeschickte Feedbacks landen zuerst in einer Warteschlange in `localStorage` und werden
-  gesendet, sobald das Backend erreichbar ist (alle 30 s und beim `online`-Event). Der
-  Startbildschirm zeigt „N noch nicht übertragen“, solange etwas offen ist. **Tablet-Browserdaten
-  nicht löschen, solange diese Anzeige sichtbar ist.**
+  gesendet, sobald das Backend erreichbar ist (alle 30 s und beim `online`-Event). Solange etwas
+  offen ist, zeigt die Statusleiste auf jedem Bildschirm „N Feedbacks warten auf die
+  Übertragung“ mit „Jetzt senden“. **Tablet-Browserdaten nicht löschen, solange diese Anzeige
+  sichtbar ist.**
 - Der Zeitstempel eines Feedbacks ist der Zeitpunkt, zu dem es beim Backend ankommt.
 - Eine neue App-Version wird erst auf dem Startbildschirm geladen, nie mitten im Ausfüllen.
 
@@ -39,7 +46,7 @@ npm run format
 Unter Aspire (`backend/AppHost`) startet die App mit `npm start`; wie bei den anderen Apps
 überschreibt `update_base_url.js` dabei `environment.development.ts` (nicht committen).
 
-Verwendete Endpunkte: `GET /v1/feedback-questions`, `POST /v1/add-feedbacks` (beide ohne Login).
+Verwendete Endpunkte: `GET /v1/feedback-questions`, `GET /v1/divisions` (Farben der Abteilungen), `POST /v1/add-feedbacks` (alle ohne Login).
 
 ## Docker
 

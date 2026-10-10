@@ -187,6 +187,7 @@ The organizer dashboard is the programme's back office. It uses the same rounded
 - Dashboard: DaisyUI `light` / `darkCustom` themes, blue primary, filled blue filter fields, a sticky sky-blue top nav, one left-aligned page header on every page.
 - Tall touch targets and a 16px side gutter on mobile; the GuideApp is designed only for phone width.
 - Copy: German with du-form in the GuideApp, English in the dashboard (today's state, not a rule).
+- Feedback kiosk (`feedback/`): the GuideApp's visual language at tablet size, for the exit tablets; see the Feedback Kiosk section.
 
 ## Colors
 
@@ -323,6 +324,35 @@ Gently rounded throughout. Cards and containers use 8px corners (`rounded-lg`). 
 
 ### Progress Bar (GuideApp feedback)
 An 8px rounded track in gray-100, filled with an orange-400 → orange-500 gradient that animates width over 300ms.
+
+## Feedback Kiosk
+
+The kiosk (`feedback/`) runs on tablets at the building exit. A student holds or sets up the tablet, talks with the visitor and types in their feedback, so the screen speaks to the visitor (du-form) while a slim status strip speaks to the student. It inherits the GuideApp's world (Roboto, Programme Orange as the only accent, white cards lifted on `gray-50`, 16px pill corners) at tablet scale: question text 30–36px, answers at least 80px tall, footer buttons 64px. There is no dark mode; the hall is lit.
+
+### Colors and tokens
+- `tailwind.config.js` names the roles: `accent` (the Tailwind orange scale) and `canvas` (`gray-50`). Templates use `accent-*`, never `orange-*`.
+- **accent-600** fills primary buttons, the selected rating, the selected radio dot and checkbox, the selected card border (3px), the focus ring and `theme-color`. White text on accent-600 is 3.56:1, so it is only used at 20px bold or larger (`text-xl font-bold`).
+- **accent-700** is the hover fill and the selected rating label; **accent-800** the inline required hint; **accent-50** the selected card background; **accent-400 → 500** the progress gradient and the countdown bar.
+- Unselected radio rings and checkboxes are `gray-500` (3:1 or more on white). Secondary text is `gray-600`.
+- **Division colors** come at runtime from `GET /v1/divisions` (`DivisionService`, cached in `localStorage`) and are used as-is. Answers that name a division ("Informatik", "Medientechnik", "Elektronik", "Medizintechnik") show a 40px swatch of that division's color at the end of the card; the backend names divisions by code, so the long names are mapped to `HIF`, `HITM`, `HEL`, `HBG` in `division.service.ts`. The thanks screen closes with a band of the four colors. No green: success is the orange check.
+
+### Screens
+- **Start:** logo, "Feedback zum Tag der offenen Tür", one orange "Feedback starten". Before the first questions arrive it shows "Fragen werden geladen …"; on failure the cause, an orange "Erneut versuchen" (busy: "Verbinde …") and the last attempt time.
+- **Question:** "Frage x von N" with a progress bar that reaches 100% on the last question. N counts the questions that may still appear, so it only shrinks. One question as `h1` with `*` for required; single choice and rating move on 500ms after the tap. "Zurück" and "Überspringen" are white secondary pills, "Weiter" the orange primary; on an unanswered required question "Weiter" stays tappable (`aria-disabled`) and shows "* Pflichtfrage – bitte eine Antwort wählen". After an edit from the overview it reads "Zur Übersicht".
+- **Answer density:** choice answers are set by how many there are, so a whole list fits on one screen (`question-page.component.ts`). Up to 6: 1 column on phones, 2 from `sm`, rows 64–80px, 18–20px text. 7–8: 2–3 columns, rows 56–64px. 9 or more: 2 columns on phones, 3 from `md`, 4 from `lg`, rows 44–56px, 16–18px text, 20px heading on phones. Long words may break (`hyphens: auto`, and a break opportunity after "/"). Rows never go below 44px, text never below 16px.
+- **Small and low screens:** below `sm` the page chrome tightens (16px gutters, 56px footer buttons). The `short` variant (`max-height: 700px`, in `tailwind.config.js`) does the same for landscape tablets and phones (48px footer buttons, less vertical padding). "Weiter" keeps `text-xl font-bold` at every size, because white on accent-600 needs large text.
+- **Review ("Alles richtig?"):** one row per question, tap to edit; ratings read "3 – Sehr gut".
+- **Thanks:** orange check, heading, the division band, and a countdown bar; the whole screen is one button ("Nächstes Feedback starten").
+
+### Operator surfaces
+- **Status strip** (`app-status-bar`): a `gray-100` strip at the top of every screen, only while there is news: "Offline – zuletzt geladene Fragen" and "N Feedbacks warten auf die Übertragung – Browserdaten nicht löschen" with "Jetzt senden".
+- **"Noch da?"**: after 75s without input on a question or the overview, a dialog counts down 15s (text and bar) before discarding. "Weiter ausfüllen" is the primary and gets the focus.
+
+### Dialogs and focus
+- One shell, `app-dialog`: `black/50` scrim, white panel with 8px corners, 32px padding and `shadow-2xl`, `role="alertdialog"`. Focus moves to the `data-initial-focus` element, Tab stays inside, Escape and the scrim dismiss, focus returns on close. Used by the cancel confirmation and "Noch da?".
+- Every screen's `h1` takes the focus when it appears and on every new question (`appFocusOnShow`), so screen readers announce the step.
+- Focus ring everywhere: a 3px `accent-600` outline with a 3px offset (`styles.css`). Zoom is allowed; `touch-action: manipulation` only stops double-tap zoom.
+- Single choice and rating groups are `radiogroup`s labelled by the question; arrow keys move between answers without choosing.
 
 ## Do's and Don'ts
 

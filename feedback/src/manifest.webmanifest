@@ -3,7 +3,7 @@
   "short_name": "Feedback",
   "description": "Besucher-Feedback am Ausgang beim Tag der offenen Tür der HTL Leonding",
   "lang": "de",
-  "theme_color": "#f97316",
+  "theme_color": "#ea580c",
   "background_color": "#f9fafb",
   "display": "fullscreen",
   "orientation": "any",
