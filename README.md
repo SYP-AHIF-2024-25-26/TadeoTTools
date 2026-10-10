@@ -25,5 +25,11 @@ TadeoTTools umfasst ein umfangreiches Admin-Dashboard, mit dem man Stationen, Sc
 - Frontend: Angular mit Tailwind und DaisyUI
 - Backend: .NET mit MySQL
 
+## Projektstruktur
+- `backend/`: REST-API (.NET, EF Core, PostgreSQL)
+- `dashboard/`: Admin-Dashboard (Login über Keycloak)
+- `guide/`: GuideApp, die öffentliche App für Besucher und Guides
+- `kiosk/`: Kiosk-Apps für fest aufgestellte Geräte, z. B. `kiosk/feedback/` für die Feedback-Tablets am Ausgang und `kiosk/registration/` für die Anmeldung am Eingang
+
 ## Datenmodell
 <img src="./assets/datamodel.png" alt="Datenmodell">

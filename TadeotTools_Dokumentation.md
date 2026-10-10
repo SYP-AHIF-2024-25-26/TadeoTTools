@@ -8,8 +8,9 @@
 ## 1. Projektstruktur
 Das Projekt gliedert sich physisch in folgende Hauptverzeichnisse:
 - **`backend/`**: Beinhaltet die REST-API, geschrieben in C# mit .NET und Entity Framework Core.
-- **`frontend/`**: Die webbasierte App für Besucher und Guides, entwickelt mit Angular und TailwindCSS.
+- **`guide/`**: Die GuideApp, die öffentliche Web-App (PWA) für Besucher und Guides, entwickelt mit Angular und TailwindCSS.
 - **`dashboard/`**: Das Admin-Dashboard zur Datenverwaltung, ebenfalls entwickelt mit Angular.
+- **`kiosk/`**: Kiosk-Apps für fest aufgestellte Geräte, je App ein Unterordner. Derzeit `kiosk/feedback/` (Feedback-App für die Tablets am Ausgang) und `kiosk/registration/` (Anmelde-App für die Tablets am Eingang; sie verwendet weiterhin das Backend des alten TadeoT-Systems).
 - **`deployment/`** & **`docker-compose.yml`**: Beschreibt die Bereitstellung der Applikationen und der zugehörigen PostgreSQL-Datenbank als Docker-Container.
 
 ---
@@ -169,10 +170,12 @@ Das in Entity-Framework Core hinterlegte PostgreSQL Datenmodell umfasst folgende
 ## 6. How-To-Run / Deployment
 
 ### Lokale Entwicklung (Aspire)
-Für die lokale Entwicklung und Orchestrierung des Backends wird .NET Aspire verwendet. Zuerst müssen in `frontend` und `dashboard` die Node-Abhängigkeiten installiert werden:
+Für die lokale Entwicklung und Orchestrierung des Backends wird .NET Aspire verwendet. Zuerst müssen in `guide`, `dashboard`, `kiosk/feedback` und `kiosk/registration` die Node-Abhängigkeiten installiert werden:
 ```bash
-cd frontend && npm i
+cd guide && npm i
 cd ../dashboard && npm i
+cd ../kiosk/feedback && npm i
+cd ../registration && npm i
 ```
 Anschließend das Backend über das `AppHost` Projekt starten:
 ```bash
@@ -184,8 +187,10 @@ dotnet run
 Das Projekt nutzt eine automatisierte Build-Pipeline (GitHub Actions). Bei jedem Push auf den Hauptzweig (`main`) werden automatisch neue Docker-Images für alle drei Services gebaut und in der **GitHub Container Registry (GHCR)** unter dem Owner `syp-ahif-2024-25-26` veröffentlicht:
 
 - `ghcr.io/syp-ahif-2024-25-26/tadeottools/backend`
-- `ghcr.io/syp-ahif-2024-25-26/tadeottools/frontend`
+- `ghcr.io/syp-ahif-2024-25-26/tadeottools/frontend` (aus `guide/`)
 - `ghcr.io/syp-ahif-2024-25-26/tadeottools/dashboard`
+- `ghcr.io/syp-ahif-2024-25-26/tadeottools/feedback` (aus `kiosk/feedback/`)
+- `ghcr.io/syp-ahif-2024-25-26/tadeottools/registration` (aus `kiosk/registration/`)
 
 #### Staging-Umgebung (automatisch)
 Nach jedem Push auf `main` wird die neue Version automatisch auf die **Staging-Umgebung** deployed:
