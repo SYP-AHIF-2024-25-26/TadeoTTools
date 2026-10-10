@@ -10,7 +10,7 @@ Das Projekt gliedert sich physisch in folgende Hauptverzeichnisse:
 - **`backend/`**: Beinhaltet die REST-API, geschrieben in C# mit .NET und Entity Framework Core.
 - **`guide/`**: Die GuideApp, die öffentliche Web-App (PWA) für Besucher und Guides, entwickelt mit Angular und TailwindCSS.
 - **`dashboard/`**: Das Admin-Dashboard zur Datenverwaltung, ebenfalls entwickelt mit Angular.
-- **`kiosk/`**: Kiosk-Apps für fest aufgestellte Geräte, je App ein Unterordner. Derzeit `kiosk/feedback/` (Feedback-App für die Tablets am Ausgang) und `kiosk/registration/` (Anmelde-App für die Tablets am Eingang) und `kiosk/cashier/` (Kassa für das Buffet). Anmeldung und Kassa verwenden weiterhin das Backend des alten TadeoT-Systems.
+- **`kiosk/`**: Kiosk-Apps für fest aufgestellte Geräte, je App ein Unterordner. Derzeit `kiosk/feedback/` (Feedback-App für die Tablets am Ausgang), `kiosk/registration/` (Anmelde-App für die Tablets am Eingang), `kiosk/cashier/` (Kassa für das Buffet) und `kiosk/statistics/` (Diashow mit der Besucherstatistik für den Beamer). Anmeldung, Kassa und Statistik verwenden weiterhin das Backend des alten TadeoT-Systems.
 - **`deployment/`** & **`docker-compose.yml`**: Beschreibt die Bereitstellung der Applikationen und der zugehörigen PostgreSQL-Datenbank als Docker-Container.
 
 ---
@@ -170,13 +170,14 @@ Das in Entity-Framework Core hinterlegte PostgreSQL Datenmodell umfasst folgende
 ## 6. How-To-Run / Deployment
 
 ### Lokale Entwicklung (Aspire)
-Für die lokale Entwicklung und Orchestrierung des Backends wird .NET Aspire verwendet. Zuerst müssen in `guide`, `dashboard`, `kiosk/feedback`, `kiosk/registration` und `kiosk/cashier` die Node-Abhängigkeiten installiert werden:
+Für die lokale Entwicklung und Orchestrierung des Backends wird .NET Aspire verwendet. Zuerst müssen in `guide`, `dashboard`, `kiosk/feedback`, `kiosk/registration`, `kiosk/cashier` und `kiosk/statistics` die Node-Abhängigkeiten installiert werden:
 ```bash
 cd guide && npm i
 cd ../dashboard && npm i
 cd ../kiosk/feedback && npm i
 cd ../registration && npm i
 cd ../cashier && npm i
+cd ../statistics && npm i
 ```
 Anschließend das Backend über das `AppHost` Projekt starten:
 ```bash
@@ -193,6 +194,7 @@ Das Projekt nutzt eine automatisierte Build-Pipeline (GitHub Actions). Bei jedem
 - `ghcr.io/syp-ahif-2024-25-26/tadeottools/feedback` (aus `kiosk/feedback/`)
 - `ghcr.io/syp-ahif-2024-25-26/tadeottools/registration` (aus `kiosk/registration/`)
 - `ghcr.io/syp-ahif-2024-25-26/tadeottools/cashier` (aus `kiosk/cashier/`)
+- `ghcr.io/syp-ahif-2024-25-26/tadeottools/statistics` (aus `kiosk/statistics/`)
 
 #### Staging-Umgebung (automatisch)
 Nach jedem Push auf `main` wird die neue Version automatisch auf die **Staging-Umgebung** deployed:

@@ -188,6 +188,7 @@ The organizer dashboard is the programme's back office. It uses the same rounded
 - Tall touch targets and a 16px side gutter on mobile; the GuideApp is designed only for phone width.
 - Copy: German with du-form in the GuideApp, English in the dashboard (today's state, not a rule).
 - Feedback kiosk (`kiosk/feedback/`): the GuideApp's visual language at tablet size, for the exit tablets; see the Feedback Kiosk section.
+- Statistics kiosk (`kiosk/statistics/`): the same world scaled up for a wall projection, an unattended slideshow; see the Statistics Kiosk section.
 
 ## Colors
 
@@ -392,6 +393,22 @@ The kiosk (`kiosk/cashier/`) runs on a tablet at the buffet counter. Unlike the 
 - **Status strip:** `gray-100`, always shown: "Buffet OG" in 20px bold (only the location; the legacy `description` is free text left from earlier events and is not shown), "Wechseln" when there are several buffets, and the HTL Leonding logo (32px tall) pinned on the right; everything else wraps beside it. Only after a send failed: "N Verkäufe warten auf Übertragung – Browserdaten nicht löschen" with "Jetzt senden"; refused sales in red-700 bold with "Ansehen" (a wide dialog listing them, "Erneut senden" and "Entfernen …" per sale with a confirmation).
 - **Kassastand:** a quiet gray text button below the product grid ("Kassastand dieses Tablets 7,40 €") opens the till-total dialog (sum at 60px, count, "Auf 0 setzen …" with a confirmation). It is for closing time, so it stays out of the way.
 - **Start:** only before the first load (logo, "Buffet-Kassa", loading and error states as in the other kiosks) and for choosing the buffet when there are several ("Für welches Buffet kassiert dieses Tablet?", `.choice` radios).
+
+## Statistics Kiosk
+
+The kiosk (`kiosk/statistics/`) is a slideshow projected onto a wall in the lit hall. Nobody operates it and nobody touches it: visitors walk past, 3–10 m away, and look for a few seconds. So each slide makes one statement, readable in about two seconds, and there are no buttons, dialogs or error screens. It keeps the kiosk world (Roboto, `accent` orange, `canvas`, the HTL Leonding logo) scaled up for projection: every size is in `vmin`, so a 1920×1080 beamer, a 1280×720 one and a 4:3 screen show the same slide. Light, not dark: in a lit hall the projector's black is the grey wall, so dark type on the light canvas keeps the most contrast. It reads the legacy TadeoT backend only.
+
+### Slides
+- **Headline** (`.slide-title`): a statement in 6.4vmin bold gray-900 ("Das interessiert unsere Gäste"), an optional gray-600 note below in 3.2vmin ("Mehrfachnennungen möglich"). No eyebrow, no axis titles.
+- **Total:** the count at 40vmin bold, a short accent-500 bar under it, then "haben sich schon angemeldet." (9vmin) and "Mit Begleitung sind das 854 Gäste." (5.6vmin).
+- **Bars** (interests, sources, schools, districts): horizontal, sorted, right-aligned labels beside the bars, the value in bold at every bar tip (the wall has no tooltip), optionally followed by a gray-600 unit or share ("17 Gemeinden", "213 · 59 %", "< 1 %" for a real count that rounds to 0). Type steps down with the number of bars (4.6 / 3.9 / 3.4vmin); at most 12 bars, the rest summed as gray "n weitere". Bars are accent-500 (`--bar`) with a rounded data end; on the interests slide the four divisions wear their division colours as-is, the other schools gray-400.
+- **Hours:** one row of columns per day (the latest day plus the days with registrations in the week before it, at most 3), on a shared hour axis and one shared scale, the date in bold at the start of each row ("Fr., 21. Nov."), the note names the range ("am 21.–22. November 2025"). Each day's busiest hour is accent-600, the others accent-400, the value on each cap, "14–15 Uhr" below the last row (just "14–15" when more than eight hours).
+- **Gender:** the two figures (17vmin) above the ends of one split bar, each named beside a square swatch; two neutral grays (gray-700, gray-400), never blue and pink.
+- **Welcome** (no data yet, or no registration yet): the large logo and "Tag der offenen Tür"; only with data and zero registrations also "Hier erscheinen gleich die ersten Anmeldungen."
+
+### Motion and status
+- The one authored moment: when a slide comes up, its bars grow from their baseline (1.1s exponential ease-out, 60ms stagger) and the values fade in after them. The outgoing slide fades out in 350ms, the new one fades in. Nothing moves while a slide stands, except the current slide marker filling up. `prefers-reduced-motion` turns all of it off.
+- **Status strip** (top, `gray-100`, 9vmin): one 5vmin marker per slide (done gray-500, upcoming gray-300, the current one fills with accent-500 over the slide time), "Stand 14:32" in small gray-600 (with the date once the data is from another day), and the logo pinned on the right. Failures are never shown; "Stand" simply stops moving. The mouse cursor is hidden.
 
 ## Do's and Don'ts
 

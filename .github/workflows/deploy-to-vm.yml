@@ -51,6 +51,7 @@ jobs:
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/feedback:latest
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/registration:latest
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/cashier:latest
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/statistics:latest
             
             # Stop and remove existing containers
             docker compose down
