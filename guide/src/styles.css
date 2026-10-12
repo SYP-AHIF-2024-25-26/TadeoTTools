@@ -1,24 +1,35 @@
+@import '@fontsource-variable/manrope';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@keyframes gradientMove {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradientMove 8s infinite linear;
-}
-
 html {
-  background-color: white;
+  background-color: theme('colors.canvas');
+  color: theme('colors.gray.900');
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background-color: theme('colors.accent.200');
+  color: theme('colors.gray.900');
+}
+
+/* One focus ring everywhere: 3px selection orange; one step lighter on the night frame. */
+:focus-visible {
+  outline: 3px solid theme('colors.accent.600');
+  outline-offset: 3px;
+}
+
+.on-night :focus-visible {
+  outline-color: theme('colors.accent.400');
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

@@ -1,34 +1,42 @@
 <div
-  class="flex w-full content-center justify-center"
-  (click)="openStopPage.emit()"
+  class="relative flex min-h-20 items-center gap-1 rounded-2xl bg-white py-3 pl-5 pr-1.5 shadow-md ring-1 ring-gray-900/5"
 >
-  <div
-    class="mx-4 flex w-full cursor-auto items-center justify-between rounded-lg shadow-lg duration-[250ms] ease-in-out"
-    [ngClass]="['bg-white', checked() ? 'h-12 opacity-50' : 'h-20']"
-  >
-    <div
-      class="flex w-full flex-row content-center justify-between space-x-4 px-6 py-4"
+  <div class="min-w-0 flex-1">
+    <button
+      type="button"
+      class="block w-full text-left after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none focus-visible:after:outline focus-visible:after:outline-[3px] focus-visible:after:outline-offset-2 focus-visible:after:outline-accent-600"
+      (click)="open.emit()"
     >
-      <div class="flex-1">
-        <p
-          class="ml-2 line-clamp-2 cursor-default self-center justify-self-start text-lg font-medium text-gray-700"
-        >
-          {{ stopGroup().name }}
-        </p>
+      <span
+        class="line-clamp-2 text-lg font-bold leading-snug"
+        [class]="checked() ? 'text-gray-500' : 'text-gray-900'"
+      >
+        {{ stopGroup().name }}
+      </span>
+    </button>
+    <!-- The group's own progress: visitors pick a tour, so progress lives per group. -->
+    @if (segments().length > 1) {
+      <div class="mt-2.5 flex items-center gap-3 pr-1">
+        <app-tour-band
+          class="block min-w-0 flex-1"
+          tone="light"
+          [segments]="segments()"
+        />
+        @if (!checked() && progress() > 0) {
+          <span
+            class="shrink-0 text-base font-semibold tabular-nums text-gray-600"
+            [attr.aria-label]="progress() + ' von ' + totalStops() + ' gesehen'"
+          >
+            {{ progress() }}/{{ totalStops() }}
+          </span>
+        }
       </div>
-      @if (progress() !== 0 && totalStops() !== 0) {
-        <p
-          class="ml-2 line-clamp-2 cursor-default self-center justify-self-start text-base font-medium text-gray-700"
-        >
-          {{ progress() }} / {{ totalStops() }}
-        </p>
-      }
-      <div (click)="$event.stopPropagation()" class="self-center">
-        <app-checkbox
-          [(checked)]="checked"
-          (click)="onToggle.emit()"
-        ></app-checkbox>
-      </div>
-    </div>
+    }
   </div>
+  <app-checkbox
+    class="relative z-10 shrink-0"
+    [checked]="checked()"
+    [label]="stopGroup().name + ' gesehen'"
+    (checkedChange)="toggled.emit()"
+  />
 </div>

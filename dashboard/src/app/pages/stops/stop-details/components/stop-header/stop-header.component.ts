@@ -7,10 +7,12 @@ import {
 } from '@angular/core';
 import { Division, Status, Stop, StopManager } from '@/shared/models/types';
 import { statusBadgeClass } from '@/shared/utils/assignment-status';
+import { MarkdownComponent } from '@/shared/components/markdown/markdown.component';
 
 /** Read-only summary of a stop, so the students below get the attention. */
 @Component({
   selector: 'app-stop-header',
+  imports: [MarkdownComponent],
   templateUrl: './stop-header.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

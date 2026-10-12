@@ -1,33 +1,29 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  inject,
   input,
-  model,
-  Output,
-  ViewChild,
+  output,
 } from '@angular/core';
 import { CheckboxComponent } from '@pages/main/checkbox/checkbox.component';
-import { CommonModule } from '@angular/common';
 import { StopGroup } from '@shared/models/types';
-import { Router } from '@angular/router';
+import {
+  TourBandComponent,
+  TourSegment,
+} from '@shared/components/tour-band/tour-band.component';
 
 @Component({
   selector: 'app-guide-card',
-  imports: [CheckboxComponent, CommonModule],
+  imports: [CheckboxComponent, TourBandComponent],
   templateUrl: './guide-card.component.html',
   styleUrl: './guide-card.component.css',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuideCardComponent {
   stopGroup = input.required<StopGroup>();
-  checked = model<boolean>(false);
+  checked = input<boolean>(false);
   progress = input<number>(0);
   totalStops = input<number>(0);
-  @Output() openStopPage = new EventEmitter<void>();
-  @Output() onToggle = new EventEmitter<void>();
-
-  protected router = inject(Router);
+  segments = input<TourSegment[]>([]);
+  open = output<void>();
+  toggled = output<void>();
 }

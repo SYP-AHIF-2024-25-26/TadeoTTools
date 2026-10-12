@@ -1,32 +1,36 @@
-<label class="flex cursor-pointer items-center rounded-md bg-white">
-  <!-- Checkbox input -->
+<label
+  class="relative flex h-11 w-11 cursor-pointer items-center justify-center"
+>
   <input
     type="checkbox"
-    class="hidden"
+    class="peer sr-only"
     [checked]="checked()"
-    (click)="$event.stopPropagation(); toggleCheckbox()"
+    [attr.aria-label]="label()"
+    (change)="checked.set(!checked())"
   />
-
-  <!-- Custom checkbox design -->
+  <!-- Seen is a status, so it is neutral: ink box with a white tick, never orange. -->
   <span
-    class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-gray-500 transition-shadow ease-in-out checked:shadow-orange-500"
-    [ngClass]="{ 'bg-gray-100': checked() }"
+    class="flex h-7 w-7 items-center justify-center rounded-lg ring-2 ring-inset transition-colors duration-150 peer-focus-visible:outline peer-focus-visible:outline-[3px] peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent-600"
+    [class]="
+      checked()
+        ? 'bg-gray-900 text-white ring-gray-900'
+        : 'bg-white text-transparent ring-gray-400'
+    "
+    aria-hidden="true"
   >
-    <!-- Orange checkmark -->
     <svg
-      *ngIf="checked()"
-      class="h-full w-full animate-jump-in text-3xl text-orange-500 animate-duration-[600ms] animate-once animate-ease-in-out"
+      class="h-5 w-5"
       fill="none"
       stroke="currentColor"
+      stroke-width="3"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         stroke-linecap="round"
         stroke-linejoin="round"
-        stroke-width="5"
-        d="M5 13l4 4L19 7"
-      ></path>
+        d="m4.5 12.75 6 6 9-13.5"
+      />
     </svg>
   </span>
 </label>

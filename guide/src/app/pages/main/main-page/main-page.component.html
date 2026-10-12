@@ -1,27 +1,37 @@
 <div
-  class="flex w-full touch-pan-y select-none flex-col justify-start overflow-y-scroll bg-gray-50"
+  class="flex min-h-screen w-full touch-pan-y touch-pinch-zoom select-none flex-col bg-canvas"
 >
-  <div>
-    <app-header />
-  </div>
-  <div class="mb-28 flex h-full flex-col justify-center">
-    @if (showResetButton()) {
-      @for (group of groups(); track group.id) {
-        <app-guide-card
-          class="mt-6"
-          [stopGroup]="group"
-          [checked]="isGroupFinished(group)"
-          [progress]="getGroupProgress(group)"
-          [totalStops]="getGroupTotal(group)"
-          (onToggle)="onToggleGroup(group)"
-          (openStopPage)="openStopPage(group)"
-        >
-        </app-guide-card>
-      }
+  <app-header size="start" title="Tag der offenen Tür">
+    @if (dateLine()) {
+      <p class="mt-2 text-lg font-semibold leading-snug text-night-100">
+        {{ dateLine() }}
+      </p>
     }
-  </div>
+  </app-header>
 
-  <div class="fixed bottom-0 left-0 right-0 mx-2">
+  <main class="flex flex-col gap-3 px-4 pb-28 pt-5">
+    @if (loadState() === 'loading') {
+      <app-card-skeleton [count]="5" />
+    } @else if (loadState() === 'error') {
+      <app-load-error
+        heading="Der Rundgang konnte nicht geladen werden"
+        (retry)="onLoad()"
+      />
+    }
+    @for (group of groups(); track group.id) {
+      <app-guide-card
+        [stopGroup]="group"
+        [checked]="progress.isGroupSeen(group)"
+        [progress]="progress.groupProgress(group)"
+        [totalStops]="group.stopIds.length"
+        [segments]="groupSegments().get(group.id) ?? []"
+        (toggled)="progress.toggleGroup(group)"
+        (open)="openStopPage(group)"
+      />
+    }
+  </main>
+
+  <div class="fixed bottom-0 left-0 right-0 z-20 mx-2">
     <app-navbar [mode]="'station'" />
   </div>
 </div>

@@ -1,8 +1,8 @@
 {
   "name": "Tadeot GuideApp",
   "short_name": "GuideApp",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "theme_color": "#021422",
+  "background_color": "#f9fafb",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

@@ -1,5 +1,28 @@
 :host {
-  touch-action: pan-y;
+  touch-action: pan-y pinch-zoom;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* Focus is drawn around the whole answer row, like the cards. */
+.answer:has(input:focus-visible) {
+  outline: 3px solid theme('colors.accent.600');
+  outline-offset: 3px;
+}
+
+/* Words stay whole; only a word wider than the row may break. */
+.answer-label {
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+/* The visitor types here, so this one field is selectable; it grows with the text. */
+.answer-text {
+  user-select: text;
+  -webkit-user-select: text;
+  field-sizing: content;
+  min-height: 7.5rem;
+  max-height: 50vh;
+  resize: none;
+  caret-color: theme('colors.accent.600');
 }

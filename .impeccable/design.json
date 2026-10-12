@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-07T11:22:46.351535+00:00",
+  "generatedAt": "2026-10-12T16:38:15.117516+00:00",
   "title": "Design System: TadeoTTools",
   "extensions": {
     "colorMeta": {
@@ -74,9 +74,79 @@
           "oklch(95% 0.043 141.1)"
         ]
       },
-      "guide-orange": {
+      "guide-night": {
+        "role": "secondary",
+        "displayName": "Night",
+        "tonalRamp": [
+          "#021422",
+          "#04243d",
+          "#0a3556",
+          "#2b5578",
+          "#5d7f9d",
+          "#b9cadb",
+          "#dde7f0",
+          "#f2f6fa"
+        ]
+      },
+      "guide-night-deep": {
+        "role": "secondary",
+        "displayName": "Deep Night",
+        "tonalRamp": [
+          "#021422",
+          "#04243d",
+          "#0a3556",
+          "#2b5578",
+          "#5d7f9d",
+          "#b9cadb",
+          "#dde7f0",
+          "#f2f6fa"
+        ]
+      },
+      "guide-night-track": {
+        "role": "secondary",
+        "displayName": "Track Night",
+        "tonalRamp": [
+          "#021422",
+          "#04243d",
+          "#0a3556",
+          "#2b5578",
+          "#5d7f9d",
+          "#b9cadb",
+          "#dde7f0",
+          "#f2f6fa"
+        ]
+      },
+      "guide-night-gray": {
+        "role": "secondary",
+        "displayName": "Night Gray",
+        "tonalRamp": [
+          "#021422",
+          "#04243d",
+          "#0a3556",
+          "#2b5578",
+          "#5d7f9d",
+          "#b9cadb",
+          "#dde7f0",
+          "#f2f6fa"
+        ]
+      },
+      "guide-night-white": {
+        "role": "secondary",
+        "displayName": "Night White",
+        "tonalRamp": [
+          "#021422",
+          "#04243d",
+          "#0a3556",
+          "#2b5578",
+          "#5d7f9d",
+          "#b9cadb",
+          "#dde7f0",
+          "#f2f6fa"
+        ]
+      },
+      "guide-act": {
         "role": "primary",
-        "displayName": "Programme Orange",
+        "displayName": "Action Orange",
         "tonalRamp": [
           "#431407",
           "#7c2d12",
@@ -88,9 +158,9 @@
           "#fff7ed"
         ]
       },
-      "guide-orange-light": {
+      "guide-act-deep": {
         "role": "primary",
-        "displayName": "Light Orange",
+        "displayName": "Deep Orange",
         "tonalRamp": [
           "#431407",
           "#7c2d12",
@@ -102,9 +172,9 @@
           "#fff7ed"
         ]
       },
-      "guide-orange-wash": {
+      "guide-select": {
         "role": "primary",
-        "displayName": "Orange Wash",
+        "displayName": "Selection Orange",
         "tonalRamp": [
           "#431407",
           "#7c2d12",
@@ -116,9 +186,23 @@
           "#fff7ed"
         ]
       },
-      "guide-orange-edge": {
+      "guide-select-on-night": {
         "role": "primary",
-        "displayName": "Orange Edge",
+        "displayName": "Orange On Night",
+        "tonalRamp": [
+          "#431407",
+          "#7c2d12",
+          "#9a3412",
+          "#c2410c",
+          "#ea580c",
+          "#f97316",
+          "#fdba74",
+          "#fff7ed"
+        ]
+      },
+      "guide-mark": {
+        "role": "primary",
+        "displayName": "Mark",
         "tonalRamp": [
           "#431407",
           "#7c2d12",
@@ -158,23 +242,9 @@
           "#f9fafb"
         ]
       },
-      "guide-header": {
+      "guide-no-division": {
         "role": "neutral",
-        "displayName": "Header Gray",
-        "tonalRamp": [
-          "#030712",
-          "#111827",
-          "#1f2937",
-          "#374151",
-          "#4b5563",
-          "#9ca3af",
-          "#e5e7eb",
-          "#f9fafb"
-        ]
-      },
-      "guide-ink-strong": {
-        "role": "neutral",
-        "displayName": "Strong Ink",
+        "displayName": "No-Division Gray",
         "tonalRamp": [
           "#030712",
           "#111827",
@@ -200,6 +270,20 @@
           "#f9fafb"
         ]
       },
+      "guide-ink-secondary": {
+        "role": "neutral",
+        "displayName": "Secondary Ink",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1f2937",
+          "#374151",
+          "#4b5563",
+          "#9ca3af",
+          "#e5e7eb",
+          "#f9fafb"
+        ]
+      },
       "guide-ink-muted": {
         "role": "neutral",
         "displayName": "Muted Ink",
@@ -214,9 +298,9 @@
           "#f9fafb"
         ]
       },
-      "guide-stone": {
+      "guide-ink-seen": {
         "role": "neutral",
-        "displayName": "Stone",
+        "displayName": "Seen Ink",
         "tonalRamp": [
           "#030712",
           "#111827",
@@ -228,9 +312,23 @@
           "#f9fafb"
         ]
       },
-      "guide-hairline": {
+      "guide-box-ring": {
         "role": "neutral",
-        "displayName": "Hairline",
+        "displayName": "Box Ring",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#1f2937",
+          "#374151",
+          "#4b5563",
+          "#9ca3af",
+          "#e5e7eb",
+          "#f9fafb"
+        ]
+      },
+      "guide-tab-rest": {
+        "role": "neutral",
+        "displayName": "Tab Rest",
         "tonalRamp": [
           "#030712",
           "#111827",
@@ -456,27 +554,31 @@
     "typographyMeta": {
       "guide-display": {
         "displayName": "GuideApp Display",
-        "purpose": "Welcome heading with the animated division gradient; once per app."
+        "purpose": "Start page title in the night band; once per app."
       },
       "guide-headline": {
         "displayName": "GuideApp Headline",
-        "purpose": "Stop titles, About headings."
+        "purpose": "Page title in the band on every other page, max three lines."
+      },
+      "guide-panel-title": {
+        "displayName": "GuideApp Panel Title",
+        "purpose": "Heading of a panel inside the content, such as the load error."
       },
       "guide-title": {
         "displayName": "GuideApp Title",
-        "purpose": "Group card names, room line, breadcrumb."
+        "purpose": "Stop group and stop names on cards; also \"Station gesehen\" on the seen toggle."
       },
       "guide-body": {
         "displayName": "GuideApp Body",
         "purpose": "Descriptions; never below 16px."
       },
-      "guide-label": {
-        "displayName": "GuideApp Card Label",
-        "purpose": "Bold white stop names on division cards."
+      "guide-meta": {
+        "displayName": "GuideApp Meta",
+        "purpose": "Back link, \"Weiter\" line, room in the band, group counts (\"5 von 16 gesehen\"), \"3/7\" on group cards."
       },
       "dash-headline": {
         "displayName": "Dashboard Headline",
-        "purpose": "Centered page titles."
+        "purpose": "Left-aligned page titles, one h1 per page."
       },
       "dash-title": {
         "displayName": "Dashboard Title",
@@ -495,17 +597,27 @@
       {
         "name": "card-lift",
         "value": "0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1)",
-        "purpose": "Resting elevation of cards and modals (shadow-lg)."
+        "purpose": "Resting elevation of dashboard cards and modals (shadow-lg)."
       },
       {
-        "name": "content-lift",
+        "name": "panel-lift",
         "value": "0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1)",
-        "purpose": "GuideApp detail card and pill buttons (shadow-md)."
+        "purpose": "GuideApp cards, panels and action buttons (shadow-md), with a 1px gray-900/5 ring on white."
+      },
+      {
+        "name": "night-frame",
+        "value": "0 6px 16px rgba(2,20,34,0.35)",
+        "purpose": "Under the sticky GuideApp top bar."
+      },
+      {
+        "name": "stop-name",
+        "value": "0 1px 2px rgb(0 0 0 / 0.45)",
+        "purpose": "Text shadow carrying white stop names on light division fills (user decision)."
       },
       {
         "name": "tabbar-float",
         "value": "0 25px 50px -12px rgba(0,0,0,.25)",
-        "purpose": "GuideApp bottom tab bar (shadow-2xl)."
+        "purpose": "GuideApp bottom tab bar (shadow-2xl); casts downward, a leftover."
       },
       {
         "name": "drag-preview",
@@ -515,19 +627,19 @@
     ],
     "motion": [
       {
-        "name": "card-collapse",
-        "value": "250ms ease-in-out",
-        "purpose": "Ticked GuideApp cards shrink from 80px to 48px and fade to 50%."
+        "name": "tour-band-grow",
+        "value": "grow-x 900ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The GuideApp's one motion moment: the group page's tour band grows in once per group and visit; the bands on the cards don't grow."
       },
       {
-        "name": "check-pop",
-        "value": "jump-in 600ms ease-in-out",
-        "purpose": "Orange checkmark entrance (tailwindcss-animated)."
+        "name": "segment-rise",
+        "value": "transform 300ms ease-out",
+        "purpose": "A tour band segment scales from 4px to 12px (scaleY, no layout) when its stop is ticked."
       },
       {
-        "name": "gradient-drift",
-        "value": "gradientMove 8s linear infinite",
-        "purpose": "Welcome heading division gradient."
+        "name": "check-fill",
+        "value": "colors 150ms",
+        "purpose": "GuideApp checkbox fills gray-900."
       },
       {
         "name": "drag-settle",
@@ -537,7 +649,7 @@
       {
         "name": "progress-fill",
         "value": "300ms",
-        "purpose": "Feedback progress bar width."
+        "purpose": "Feedback progress bar width (frame-only leftover)."
       }
     ],
     "breakpoints": [
@@ -564,49 +676,57 @@
       "name": "GuideApp Primary Button",
       "kind": "button",
       "refersTo": "guide-button-primary",
-      "description": "Orange pill for the one main action on a GuideApp screen.",
-      "html": "<button class=\"ds-g-btn\">Auf der Karte</button>",
-      "css": ".ds-g-btn { font-family: Roboto, sans-serif; background: #f97316; color: #fff; border: none; border-radius: 16px; height: 40px; padding: 0 16px; font-size: 16px; font-weight: 500; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); cursor: pointer; transition: background .15s, opacity .15s; } .ds-g-btn:hover { background: #ea580c; } .ds-g-btn:focus-visible { outline: 2px solid #f97316; outline-offset: 2px; } .ds-g-btn:disabled { opacity: .5; }"
+      "description": "Action Orange button for the one action on a GuideApp screen.",
+      "html": "<button class=\"ds-g-btn\">Erneut versuchen</button>",
+      "css": ".ds-g-btn { font-family: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif; display: inline-flex; align-items: center; gap: 8px; background: #c2410c; color: #fff; border: none; border-radius: 12px; height: 44px; padding: 0 20px 0 16px; font-size: 16px; font-weight: 700; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); cursor: pointer; transition: background .15s, transform .15s; } .ds-g-btn:hover { background: #9a3412; } .ds-g-btn:active { transform: scale(.98); } .ds-g-btn:focus-visible { outline: 3px solid #ea580c; outline-offset: 3px; }"
     },
     {
-      "name": "GuideApp Back Button",
-      "kind": "button",
-      "refersTo": "guide-button-back",
-      "description": "Neutral stone pill with arrow, above detail content.",
-      "html": "<button class=\"ds-g-back\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M19 12H5M12 19l-7-7 7-7\"/></svg>Zurück</button>",
-      "css": ".ds-g-back { font-family: Roboto, sans-serif; display: inline-flex; align-items: center; gap: 8px; background: #9ca3af; color: #fff; border: none; border-radius: 16px; padding: 8px 16px; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1); cursor: pointer; transition: background .15s; } .ds-g-back:hover { background: #6b7280; } .ds-g-back:focus-visible { outline: 2px solid #374151; outline-offset: 2px; }"
+      "name": "GuideApp Night Frame",
+      "kind": "nav",
+      "refersTo": "guide-title-band",
+      "description": "Sticky night top bar with the logo, then the title band: back link, title, division icons, group count and the group's tour band; on the start page the \"Weiter\" line.",
+      "html": "<div class=\"ds-g-frame\"><div class=\"ds-g-top\">HTL Leonding</div><div class=\"ds-g-band\"><a class=\"ds-g-back\" href=\"#\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15.75 19.5 8.25 12l7.5-7.5\"/></svg>Rundgang</a><h1 class=\"ds-g-title\">Guide-Tour Informatik &amp; Medientechnik</h1><div class=\"ds-g-meta\"><span class=\"ds-g-icon\" style=\"background:#0059A7\"></span><span class=\"ds-g-icon\" style=\"background:#70B4D9\"></span><span>5 von 16 gesehen</span></div><div class=\"ds-g-tour\"><i class=\"seen\" style=\"background:#70B4D9\"></i><i class=\"seen\" style=\"background:#0059A7\"></i><i class=\"seen\" style=\"background:#80c076\"></i><i style=\"background:#70B4D9\"></i><i style=\"background:#0059A7\"></i><i style=\"background:linear-gradient(to right,#70B4D9,#0059A7)\"></i><i style=\"background:#0059A7\"></i></div><p class=\"ds-g-date\">Freitag, 20. November 2026, 13–19 Uhr</p></div></div>",
+      "css": ".ds-g-frame { font-family: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif; color: #fff; } .ds-g-top { background: #021422; height: 56px; display: flex; align-items: center; padding: 0 16px; font-weight: 800; box-shadow: 0 6px 16px rgba(2,20,34,0.35); } .ds-g-band { background: linear-gradient(to bottom, #021422, #04243d); padding: 8px 16px 24px; } .ds-g-back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: #b9cadb; font-weight: 600; font-size: 16px; text-decoration: none; border-radius: 8px; transition: color .15s; } .ds-g-back:hover { color: #fff; } .ds-g-back:focus-visible { outline: 3px solid #fb923c; outline-offset: 3px; } .ds-g-title { margin: 0; font-size: 28px; line-height: 34px; font-weight: 800; letter-spacing: -0.025em; text-wrap: balance; } .ds-g-meta { margin-top: 12px; display: flex; gap: 12px; align-items: center; color: #dde7f0; font-weight: 600; font-variant-numeric: tabular-nums; } .ds-g-icon { width: 40px; height: 40px; display: block; } .ds-g-tour { margin-top: 16px; display: flex; align-items: center; gap: 2px; height: 12px; border-radius: 9999px; overflow: hidden; background: #0a3556; } .ds-g-tour i { flex: 1; height: 12px; transform: scaleY(.3333); transition: transform .3s ease-out; } .ds-g-tour i.seen { transform: none; } .ds-g-date { margin: 12px 0 0; color: #dde7f0; font-size: 18px; font-weight: 600; }"
+    },
+    {
+      "name": "Tour Band",
+      "kind": "custom",
+      "refersTo": "guide-tour-band",
+      "description": "A stop group's progress, never the whole day: one segment per stop, seen 12px, unseen scaled to a 4px line, exact division fills; night track in the band, gray-200 track on a group card.",
+      "html": "<div class=\"ds-g-tourwrap\"><div class=\"ds-g-tour2\"><i style=\"background:#0059A7\" class=\"seen\"></i><i style=\"background:#70B4D9\" class=\"seen\"></i><i style=\"background:linear-gradient(to right,#70B4D9,#0059A7)\" class=\"seen\"></i><i style=\"background:#CE1223\"></i><i style=\"background:#f1a102\"></i><i style=\"background:#d1d5db\"></i><i style=\"background:#0059A7\"></i></div></div><div class=\"ds-g-tourwrap light\"><div class=\"ds-g-tour2\"><i style=\"background:#CE1223\" class=\"seen\"></i><i style=\"background:#f1a102\"></i><i style=\"background:#CE1223\"></i><i style=\"background:#80c076\"></i></div></div>",
+      "css": ".ds-g-tourwrap { background: #04243d; padding: 16px; } .ds-g-tourwrap.light { background: #fff; } .ds-g-tour2 { display: flex; align-items: center; gap: 2px; height: 12px; border-radius: 9999px; overflow: hidden; background: #0a3556; } .ds-g-tourwrap.light .ds-g-tour2 { background: #e5e7eb; } .ds-g-tour2 i { flex: 1; height: 12px; transform: scaleY(.3333); transition: transform .3s ease-out; } .ds-g-tour2 i.seen { transform: none; }"
     },
     {
       "name": "Stop Card",
       "kind": "card",
       "refersTo": "guide-stop-card",
-      "description": "Signature GuideApp card filled with the stop's division color(s); collapses and fades when ticked.",
-      "html": "<div class=\"ds-g-stops\"><div class=\"ds-g-stop\" style=\"background: linear-gradient(to right, #0059A7, #70B4D9)\"><span>Robotik-Labor</span><span class=\"ds-g-check\"></span></div><div class=\"ds-g-stop ds-g-stop--done\" style=\"background:#CE1223\"><span>Elektronik-Werkstätte</span><span class=\"ds-g-check ds-g-check--on\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#f97316\" stroke-width=\"5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 13l4 4L19 7\"/></svg></span></div></div>",
-      "css": ".ds-g-stops { display: grid; gap: 24px; width: 340px; } .ds-g-stop { font-family: Roboto, sans-serif; display: flex; align-items: center; justify-content: space-between; height: 80px; padding: 0 24px 0 32px; border-radius: 8px; color: #fff; font-weight: 700; font-size: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1); transition: height .25s ease-in-out, opacity .25s ease-in-out; cursor: pointer; } .ds-g-stop--done { height: 48px; opacity: .5; } .ds-g-check { width: 24px; height: 24px; border: 2px solid #6b7280; border-radius: 6px; background: #fff; display: flex; } .ds-g-check--on { background: #f3f4f6; } .ds-g-check svg { width: 100%; height: 100%; }"
+      "description": "Signature: exact division fill (gradient for several), white name with soft shadow on every fill, the room number alone as a quiet 14px second line, neutral checkbox.",
+      "html": "<div class=\"ds-g-stop\" style=\"background:linear-gradient(to right,#70B4D9,#0059A7)\"><span class=\"ds-g-stoptext\"><span class=\"ds-g-stopname\">Ton-Studio / Video-Studio</span><span class=\"ds-g-room\">U34, U36, U38</span></span><span class=\"ds-g-boxwrap\"><span class=\"ds-g-box on\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m4.5 12.75 6 6 9-13.5\"/></svg></span></span></div>",
+      "css": ".ds-g-stop { font-family: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 80px; padding: 8px 8px 8px 20px; border-radius: 16px; color: #fff; text-shadow: 0 1px 2px rgb(0 0 0 / 0.45); box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); cursor: pointer; } .ds-g-stop:focus-visible { outline: 3px solid #ea580c; outline-offset: 2px; } .ds-g-stopname { display: block; font-size: 18px; font-weight: 700; line-height: 1.375; } .ds-g-room { display: block; margin-top: 4px; font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; } .ds-g-boxwrap { background: #fff; border-radius: 12px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-shadow: none; flex-shrink: 0; } .ds-g-box { width: 28px; height: 28px; border-radius: 8px; box-shadow: inset 0 0 0 2px #9ca3af; color: transparent; display: flex; align-items: center; justify-content: center; transition: background .15s; } .ds-g-box.on { background: #111827; box-shadow: inset 0 0 0 2px #111827; color: #fff; }"
     },
     {
       "name": "Stop Group Card",
       "kind": "card",
       "refersTo": "guide-group-card",
-      "description": "White lifted card for a tour section with progress count and checkbox.",
-      "html": "<div class=\"ds-g-group\"><span class=\"ds-g-group-name\">Kurzpräsentationen</span><span class=\"ds-g-group-count\">3 / 7</span><span class=\"ds-g-box\"></span></div>",
-      "css": ".ds-g-group { font-family: Roboto, sans-serif; width: 340px; display: flex; align-items: center; gap: 16px; height: 80px; padding: 0 24px 0 32px; background: #fff; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1); color: #374151; cursor: pointer; } .ds-g-group-name { flex: 1; font-size: 18px; font-weight: 500; } .ds-g-group-count { font-size: 16px; font-weight: 500; } .ds-g-box { width: 24px; height: 24px; border: 2px solid #6b7280; border-radius: 6px; }"
+      "description": "White group card: name, the group's own tour band on a gray-200 track with a \"2/6\" count while partly seen, neutral checkbox; seen (all stops) turns the name gray-500.",
+      "html": "<div class=\"ds-g-group\"><span class=\"ds-g-gmain\"><span class=\"ds-g-gname\">Guide-Tour Informatik &amp; Medientechnik</span><span class=\"ds-g-grow\"><span class=\"ds-g-gband\"><i class=\"seen\" style=\"background:#70B4D9\"></i><i class=\"seen\" style=\"background:#0059A7\"></i><i style=\"background:#80c076\"></i><i style=\"background:#0059A7\"></i><i style=\"background:#70B4D9\"></i><i style=\"background:#0059A7\"></i></span><span class=\"ds-g-count\">2/6</span></span></span><span class=\"ds-g-box2\"></span></div>",
+      "css": ".ds-g-group { font-family: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif; display: flex; align-items: center; gap: 4px; min-height: 80px; padding: 12px 6px 12px 20px; background: #fff; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1), 0 0 0 1px rgba(17,24,39,.05); cursor: pointer; } .ds-g-group:focus-visible { outline: 3px solid #ea580c; outline-offset: 2px; } .ds-g-gmain { flex: 1; min-width: 0; } .ds-g-gname { display: block; font-size: 18px; font-weight: 700; line-height: 1.375; color: #111827; } .ds-g-grow { margin-top: 10px; display: flex; align-items: center; gap: 12px; padding-right: 4px; } .ds-g-gband { flex: 1; display: flex; align-items: center; gap: 2px; height: 12px; border-radius: 9999px; overflow: hidden; background: #e5e7eb; } .ds-g-gband i { flex: 1; height: 12px; transform: scaleY(.3333); } .ds-g-gband i.seen { transform: none; } .ds-g-count { font-size: 16px; font-weight: 600; color: #4b5563; font-variant-numeric: tabular-nums; } .ds-g-box2 { width: 28px; height: 28px; margin: 8px; border-radius: 8px; box-shadow: inset 0 0 0 2px #9ca3af; }"
     },
     {
-      "name": "GuideApp Choice Option",
-      "kind": "input",
-      "refersTo": "guide-option",
-      "description": "Feedback answer row; selected state uses orange wash and edge.",
-      "html": "<div class=\"ds-g-opts\"><label class=\"ds-g-opt ds-g-opt--on\"><span class=\"ds-g-radio\"><span></span></span>Sehr gut</label><label class=\"ds-g-opt\"><span class=\"ds-g-radio\"></span>Gut</label></div>",
-      "css": ".ds-g-opts { display: grid; gap: 8px; width: 320px; } .ds-g-opt { font-family: Roboto, sans-serif; display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; color: #374151; cursor: pointer; transition: background .15s, border-color .15s; } .ds-g-opt:hover { border-color: #fdba74; } .ds-g-opt--on { background: #fff7ed; border-color: #fdba74; } .ds-g-radio { width: 20px; height: 20px; border: 2px solid #d1d5db; border-radius: 9999px; display: flex; align-items: center; justify-content: center; } .ds-g-opt--on .ds-g-radio { border-color: #f97316; } .ds-g-radio span { width: 12px; height: 12px; border-radius: 9999px; background: #f97316; }"
+      "name": "Seen Toggle",
+      "kind": "custom",
+      "refersTo": "guide-seen-toggle",
+      "description": "Full-width row under a stop's content to tick it where the visitor reads about it; neutral like every seen state.",
+      "html": "<label class=\"ds-g-seen\"><input type=\"checkbox\" class=\"ds-g-seeninput\"><span class=\"ds-g-seentext\">Station gesehen</span><span class=\"ds-g-seenbox\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m4.5 12.75 6 6 9-13.5\"/></svg></span></label>",
+      "css": ".ds-g-seen { font-family: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif; position: relative; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 14px 6px 20px; background: #fff; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1), 0 0 0 1px rgba(17,24,39,.05); cursor: pointer; } .ds-g-seen:has(.ds-g-seeninput:focus-visible) { outline: 3px solid #ea580c; outline-offset: 2px; } .ds-g-seeninput { position: absolute; opacity: 0; width: 1px; height: 1px; } .ds-g-seentext { flex: 1; font-size: 18px; font-weight: 700; color: #111827; } .ds-g-seenbox { width: 28px; height: 28px; border-radius: 8px; box-shadow: inset 0 0 0 2px #9ca3af; color: transparent; display: flex; align-items: center; justify-content: center; transition: background .15s; } .ds-g-seen:has(.ds-g-seeninput:checked) .ds-g-seentext { color: #6b7280; } .ds-g-seen:has(.ds-g-seeninput:checked) .ds-g-seenbox { background: #111827; box-shadow: inset 0 0 0 2px #111827; color: #fff; }"
     },
     {
       "name": "GuideApp Bottom Tab Bar",
       "kind": "nav",
       "refersTo": "guide-bottom-nav",
-      "description": "Fixed white icon bar; active tab in orange.",
-      "html": "<nav class=\"ds-g-nav\"><button class=\"ds-g-tab ds-g-tab--on\" aria-label=\"Leitfaden\"><svg viewBox=\"0 0 20 20\" fill=\"currentColor\"><path d=\"m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z\"/></svg></button><button class=\"ds-g-tab\" aria-label=\"Karte\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"><polygon points=\"1 6 10 2 14 6 23 2 23 22 14 18 10 22 1 18 1 6\"/><line x1=\"10\" y1=\"22\" x2=\"10\" y2=\"6\"/><line x1=\"14\" y1=\"18\" x2=\"14\" y2=\"6\"/></svg></button><button class=\"ds-g-tab\" aria-label=\"Über uns\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" y1=\"16\" x2=\"12\" y2=\"12\"/><line x1=\"12\" y1=\"8\" x2=\"12.01\" y2=\"8\"/></svg></button></nav>",
-      "css": ".ds-g-nav { width: 340px; height: 56px; display: flex; align-items: center; justify-content: space-evenly; background: #fff; border-radius: 8px 8px 0 0; box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); } .ds-g-tab { background: none; border: none; color: #000; padding: 8px; cursor: pointer; } .ds-g-tab svg { width: 24px; height: 24px; display: block; } .ds-g-tab--on { color: #f97316; } .ds-g-tab:focus-visible { outline: 2px solid #f97316; border-radius: 6px; }"
+      "description": "Fixed white icon bar; black at rest, accent-600 when active.",
+      "html": "<nav class=\"ds-g-nav\"><button class=\"active\" aria-label=\"Rundgang\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\" fill=\"currentColor\"><path d=\"m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z\"/></svg></button><button aria-label=\"Karte\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"1 6 10 2 14 6 23 2 23 22 14 18 10 22 1 18 1 6\"/><line x1=\"10\" y1=\"22\" x2=\"10\" y2=\"6\"/><line x1=\"14\" y1=\"18\" x2=\"14\" y2=\"6\"/></svg></button><button aria-label=\"Über die App\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" y1=\"16\" x2=\"12\" y2=\"12\"/><line x1=\"12\" y1=\"8\" x2=\"12.01\" y2=\"8\"/></svg></button></nav>",
+      "css": ".ds-g-nav { display: flex; justify-content: space-evenly; align-items: center; height: 56px; background: #fff; border-radius: 8px 8px 0 0; box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); } .ds-g-nav button { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: none; background: none; color: #000; border-radius: 8px; cursor: pointer; } .ds-g-nav button.active { color: #ea580c; } .ds-g-nav button:focus-visible { outline: 3px solid #ea580c; outline-offset: 3px; }"
     },
     {
       "name": "Dashboard Primary Button",
@@ -635,13 +755,15 @@
   ],
   "narrative": {
     "northStar": "The Open-Day Programme",
-    "overview": "**Creative North Star: \"The Open-Day Programme\"**\n\nTadeoTTools works like an open-day programme you carry on your phone. The visitor GuideApp lists the day as a sequence of stop groups and stops, each one a card to open and tick off. It is colored by the school's own divisions (Informatik blue, Medientechnik sky blue, Elektronik red, Medizintechnik amber), so a glance at a card's color tells you which part of the school you are in. One warm orange is the programme's highlighter: it marks the current tab, the main button on a screen and every tick. The welcome heading carries the whole division palette as a slow moving gradient, the one festive gesture on an otherwise quiet gray-and-white page.\n\nThe surfaces are soft, chunky and touch-first. Cards are white or division-filled and lifted on clear shadows. Buttons are rounded pills (16px corners). Rows are tall (80px) because visitors tap them while walking. Type is Roboto throughout the GuideApp, set large (18px body) for reading at arm's length in a corridor.\n\nThe organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, a sky-blue palette instead of orange, and a full dark mode. Its distinctive habit is **filled blue fields**: filters and selects sit in solid steel blue (`dash-field`) with white text and placeholders rather than white inputs with outlines. The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.",
+    "overview": "TadeoTTools works like an open-day programme you carry on your phone. The visitor GuideApp follows the Nachtband world of leo-projects, adapted to the phone: a night-blue frame taken from htl-leonding.at carries the logo, the page title and the way on. Each stop group carries its own progress as a bar of stops in their division colours, on its card and in its page's band, because visitors pick one guide tour rather than the whole day. Below the frame the canvas is light, and the day is a list of stop groups and stops, each a white or division-filled panel to open and tick off. The school's own division colours (Informatik blue, Medientechnik sky blue, Elektronik red, Medizintechnik amber, plus whatever the admins set) are the wayfinding signal; a glance at a card's fill tells you which part of the school you are in.\n\nColour is strictly distributed. Night blue is the frame and never content. Orange only marks what you can do (the \"Auf der Karte\" link next to the room, \"Erneut versuchen\"), the active tab and the focus. Status is neutral: a seen stop gets a gray-900 tick, not an orange one. Type is Manrope, the school's typeface, with one extra-bold title per page in the band. Rows are tall (at least 80px) and every tap target is at least 44px, because visitors tap while walking; body text never drops below 16px. There is one motion moment: the tour band grows in once per visit.\n\nThe organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, a sky-blue palette instead of orange, and a full dark mode. Its distinctive habit is **filled blue filter fields**: the search and filter fields above a list sit in solid steel blue (`dash-field`) with white text and placeholders, while form inputs are plain bordered fields. The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.",
     "keyCharacteristics": [
       "Division colors are the identity and the wayfinding signal; they come from the school, not from the design.",
-      "GuideApp: one orange accent, white cards lifted on `bg-gray-50`, pill buttons, a fixed bottom tab bar.",
-      "Dashboard: DaisyUI `light` / `darkCustom` themes, blue primary, filled blue form fields, a sticky sky-blue top nav.",
-      "Tall touch targets and a 16px side gutter on mobile; the GuideApp is designed only for phone width.",
-      "Copy: German with du-form in the GuideApp, English in the dashboard (today's state, not a rule)."
+      "GuideApp: Nachtband on the phone: a sticky night top bar and title band, a tour band per stop group, white 16px-radius panels on a light canvas, orange only for action, selection and focus, a fixed bottom tab bar.",
+      "Dashboard: DaisyUI `light` / `darkCustom` themes, blue primary, filled blue filter fields, a sticky sky-blue top nav, one left-aligned page header on every page.",
+      "Tall touch targets (44px or more in the GuideApp) and a 16px side gutter on mobile; the GuideApp is designed only for phone width.",
+      "Copy: German with du-form in the GuideApp, English in the dashboard (today's state, not a rule).",
+      "Feedback kiosk (`kiosk/feedback/`): the earlier GuideApp visual language (Roboto, Programme Orange) at tablet size, for the exit tablets; see the Feedback Kiosk section.",
+      "Statistics kiosk (`kiosk/statistics/`): the same world scaled up for a wall projection, an unattended slideshow; see the Statistics Kiosk section."
     ],
     "rules": [
       {
@@ -650,8 +772,33 @@
         "section": "colors"
       },
       {
-        "name": "The One Highlighter Rule",
-        "body": "In the GuideApp, orange is the only accent: active tab, primary action, ticks, selections. A second accent color competes with the division colors.",
+        "name": "The Untinted Identity Rule",
+        "body": "(GuideApp, from Nachtband) Division colours appear exactly as the admin set them, on stop cards and tour band segments. They are never tinted, darkened, faded or overlaid, not even for seen stops. One deliberate exception to Nachtband's no-gradient rule, decided by the user (\"the cut is too hard\"): a stop in several divisions gets a smooth left-to-right gradient through its exact colours.",
+        "section": "colors"
+      },
+      {
+        "name": "The Orange Means Act Rule",
+        "body": "(GuideApp, from Nachtband) Orange is only action (accent-700 buttons), selection and focus (accent-600, accent-400 on night). Never status, counts or decoration: orange sits next to Medizintechnik amber, and any other orange surface reads as a division.",
+        "section": "colors"
+      },
+      {
+        "name": "The Neutral Status Rule",
+        "body": "(GuideApp, from Nachtband) \"Seen\" is a status, so it is neutral: a gray-900 box with a white tick, a gray-500 group name, a taller tour band segment. Never orange, never a division colour, never night blue.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Seen Rule",
+        "body": "(GuideApp) A stop is the unit of progress (`ProgressService`, `localStorage` key `finishedStops`). A group is seen when all its stops are seen; ticking a group ticks or unticks all its stops. Only a group without stops is stored as a group (`finishedStopGroups`). Cards, the \"3/7\" count, the tour band and the count line all read the same state, so they never disagree.",
+        "section": "colors"
+      },
+      {
+        "name": "The Night Is The Frame Rule",
+        "body": "(GuideApp, from Nachtband) Night blue is the top bar, the title band and the tour band track. Never a text, link or surface colour on the canvas.",
+        "section": "colors"
+      },
+      {
+        "name": "The Same White Text Rule",
+        "body": "(GuideApp, user decision) Stop names are white on every fill, with a soft text shadow (`0 1px 2px rgb(0 0 0 / 0.45)`). The user chose this knowingly over a white chip or a per-fill text colour. Its known cost: white fails WCAG contrast on light fills such as HITM, HBG, ALL and ORG.",
         "section": "colors"
       },
       {
@@ -666,29 +813,58 @@
       },
       {
         "name": "The Arm's-Length Rule",
-        "body": "GuideApp text is read while walking: body 18px, card labels at least 16px. The only 12px text today is the caption under the feedback rating scale.",
+        "body": "GuideApp text is read while walking: body 18px, meta and card text at least 16px (the phone adaptation of Nachtband's 14px desktop body). The one exception is the room number on stop cards (14px medium, user decision 2026-10-12): it must sit clearly below the 18px bold name.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Big Title Rule",
+        "body": "(GuideApp, from Nachtband) Size happens once per page: the extra-bold title in the band. Below it, emphasis is bold and gray-900, not larger.",
         "section": "typography"
       },
       {
         "name": "The Lifted Card Rule",
-        "body": "Anything tappable in the GuideApp is a card on a shadow. Ticked cards do not lose their shadow; they shrink (80px → 48px) and fade to 50% opacity.",
+        "body": "Anything tappable in the GuideApp is a 16px-radius panel on a soft neutral shadow. Ticking changes nothing about the card itself: it keeps its height (at least 80px), shadow, fill and full opacity, so the next row never moves (user decision).",
         "section": "elevation"
+      },
+      {
+        "name": "The Per Group Rule",
+        "body": "(GuideApp, user decision 2026-10-12) Most visitors pick one guide tour, so progress is never shown across the whole day: a bar over all 37 stops would tell them they never finish. Each group shows its own progress.",
+        "section": "components"
+      },
+      {
+        "name": "The One Motion Rule",
+        "body": "(GuideApp, from Nachtband) The group page's tour band growing in from the left is the GuideApp's one motion moment (900ms, `cubic-bezier(0.16, 1, 0.3, 1)`, once per group and visit, remembered in `sessionStorage`); the bands on the cards don't grow. Everything else is a short state transition. `prefers-reduced-motion` turns it and all transitions off. The band is `aria-hidden`; the count next to it carries the same information.",
+        "section": "components"
+      },
+      {
+        "name": "The No Short Names Rule",
+        "body": "(GuideApp, user decision 2026-10-12) Division short names are organizer vocabulary. The GuideApp shows a division only by its colour and its icon.",
+        "section": "components"
       }
     ],
     "dos": [
-      "Do fill stop cards with the stop's runtime division color and fall back to Neutral Meadow Green (`division-fallback`) only when the stop has no division.",
-      "Do keep GuideApp tap targets at least 40px tall, and list cards at 80px.",
-      "Do use Programme Orange for the single primary action and the active state on a GuideApp screen.",
-      "Do reserve bottom padding (at least 112px) on every GuideApp page so the fixed tab bar never covers the last card.",
-      "Do keep the HTL Leonding logo at the top of both apps (header block in the GuideApp, nav bar in the dashboard).",
-      "Do use DaisyUI component classes (`btn`, `input`, `select`, `table`, `toggle`) in the dashboard and define new colors as theme variables, so dark mode keeps working."
+      "**Do** fill GuideApp stop cards and tour band segments with the stop's exact runtime division colour, a left-to-right gradient through the exact colours for several divisions, and No-Division Gray (`guide-no-division`) only when the stop has no division.",
+      "**Do** keep GuideApp tap targets at least 44px, list cards at least 80px, and body text at least 16px.",
+      "**Do** use Action Orange (accent-700) for the one action button on a GuideApp screen, and Selection Orange (accent-600) for the active tab and focus.",
+      "**Do** start every GuideApp page with the night frame: the 56px top bar and a title band with one extra-bold title; subpages get a back link to their parent in the band.",
+      "**Do** show \"seen\" neutrally in the GuideApp: the gray-900 checkbox, the gray-500 group name, the 12px tour band segment.",
+      "**Do** reserve bottom padding (at least 112px) on every GuideApp page so the fixed tab bar never covers the last card.",
+      "**Do** keep the HTL Leonding logo at the top of both apps (white logo in the night top bar in the GuideApp, nav bar in the dashboard).",
+      "**Do** use DaisyUI component classes (`btn`, `input`, `select`, `table`, `toggle`, `tabs`) in the dashboard and define new colors as theme variables, so dark mode keeps working.",
+      "**Do** start every dashboard page with the shared page header and the `max-w-6xl` shell."
     ],
     "donts": [
-      "Don't re-tint, desaturate or replace division colors for aesthetic reasons; they are the school's identity.",
-      "Don't introduce a second accent color in the GuideApp alongside orange.",
-      "Don't use orange in the dashboard or dashboard blue in the GuideApp; each app keeps its own accent.",
-      "Don't set GuideApp body text below 16px.",
-      "Don't add raw hex colors in dashboard templates; extend the `--primary-*` / `--background-*` variables so both themes stay in sync."
+      "**Don't** re-tint, desaturate or replace division colors for aesthetic reasons; they are the school's identity.",
+      "**Don't** introduce a second accent color in the GuideApp alongside orange, or use orange for status, counts or decoration.",
+      "**Don't** tint, darken, fade or overlay division fills in the GuideApp, also not for seen stops.",
+      "**Don't** shrink, fade or move GuideApp rows when they are ticked.",
+      "**Don't** use night blue on the GuideApp canvas (text, links, badges); it is the frame only.",
+      "**Don't** add a second motion moment to the GuideApp beyond the tour band growing in.",
+      "**Don't** use orange in the dashboard or dashboard blue in the GuideApp; each app keeps its own accent.",
+      "**Don't** set GuideApp body text below 16px.",
+      "**Don't** add raw hex colors in dashboard templates; extend the `--primary-*` / `--background-*` variables so both themes stay in sync.",
+      "**Don't** put two `btn-primary` buttons in one dashboard toolbar, form or dialog.",
+      "**Don't** use the filled blue field style for form inputs, or a placeholder in place of a label."
     ]
   }
 }

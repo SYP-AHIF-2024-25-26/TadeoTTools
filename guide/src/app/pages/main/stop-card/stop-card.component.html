@@ -1,34 +1,30 @@
 <div
-  class="flex w-full content-center justify-center"
-  (click)="openStopDescriptionPage.emit()"
+  class="relative flex min-h-20 items-center gap-2 rounded-2xl py-2 pl-5 pr-2 shadow-md"
+  [style.background]="fill()"
 >
-  <div
-    class="mx-4 flex w-full cursor-auto items-center justify-between rounded-lg shadow-lg duration-[250ms] ease-in-out"
-    [ngClass]="[checked() ? 'h-12 opacity-50' : 'h-20']"
-    [ngStyle]="
-      colors().length > 1
-        ? { background: generateGradient(colors()) }
-        : colors().length === 1
-          ? { background: colors()[0] }
-          : { background: '#80c076' }
-    "
+  <button
+    type="button"
+    class="min-w-0 flex-1 text-left after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none focus-visible:after:outline focus-visible:after:outline-[3px] focus-visible:after:outline-offset-2 focus-visible:after:outline-accent-600"
+    (click)="open.emit()"
   >
-    <div
-      class="flex w-full flex-row content-center justify-between space-x-4 px-6 py-4"
-    >
-      <div class="flex-1">
-        <p
-          class="ml-2 line-clamp-2 cursor-default self-center justify-self-start text-base font-bold text-white"
-        >
-          {{ stop().name }}
-        </p>
-      </div>
-      <div (click)="$event.stopPropagation()" class="self-center">
-        <app-checkbox
-          (click)="onChange.emit()"
-          [(checked)]="checked"
-        ></app-checkbox>
-      </div>
-    </div>
+    <!-- Same white text on every fill; the soft shadow carries it on light divisions. -->
+    <span class="block text-white [text-shadow:0_1px_2px_rgb(0_0_0/0.45)]">
+      <span class="line-clamp-2 text-lg font-bold leading-snug">
+        {{ stop().name }}
+      </span>
+      @if (stop().roomNr) {
+        <!-- Quiet second line: no "Raum" label, smaller and lighter than the name. -->
+        <span class="mt-1 block text-sm font-medium tabular-nums">{{
+          stop().roomNr
+        }}</span>
+      }
+    </span>
+  </button>
+  <div class="relative z-10 shrink-0 rounded-xl bg-white">
+    <app-checkbox
+      [checked]="checked()"
+      [label]="stop().name + ' gesehen'"
+      (checkedChange)="toggled.emit()"
+    />
   </div>
 </div>

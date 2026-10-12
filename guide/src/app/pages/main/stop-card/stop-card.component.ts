@@ -1,32 +1,27 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
+  computed,
   input,
-  model,
-  Output,
-  ViewChild,
+  output,
 } from '@angular/core';
 import { CheckboxComponent } from '@pages/main/checkbox/checkbox.component';
-import { NgClass, NgStyle } from '@angular/common';
 import { Stop } from '@shared/models/types';
+import { divisionFill } from '@shared/division-colors';
 
 @Component({
   selector: 'app-stop-card',
-  imports: [CheckboxComponent, NgClass, NgStyle],
+  imports: [CheckboxComponent],
   templateUrl: './stop-card.component.html',
   styleUrl: './stop-card.component.css',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StopCardComponent {
   stop = input.required<Stop>();
   colors = input.required<string[]>();
-  checked = model<boolean>(false);
-  @Output() openStopDescriptionPage = new EventEmitter<void>();
-  @Output() onChange = new EventEmitter<void>();
+  checked = input<boolean>(false);
+  open = output<void>();
+  toggled = output<void>();
 
-  protected generateGradient(colors: string[]): string {
-    return `linear-gradient(to right, ${colors.join(', ')})`;
-  }
+  protected fill = computed(() => divisionFill(this.colors()));
 }

@@ -4,8 +4,10 @@
   <div>
     <button
       (click)="router.navigate(['main'])"
-      class="text-xl"
-      [ngClass]="mode() == 'station' ? 'text-orange-500' : 'text-black'"
+      class="flex h-11 w-11 items-center justify-center rounded-lg text-xl"
+      [class]="mode() === 'station' ? 'text-accent-600' : 'text-black'"
+      aria-label="Rundgang"
+      [attr.aria-current]="mode() === 'station' ? 'page' : null"
     >
       <svg
         class="h-5 w-5"
@@ -23,8 +25,10 @@
   <div>
     <button
       (click)="router.navigate(['map'])"
-      class="text-xl font-bold"
-      [ngClass]="[mode() == 'map' ? 'text-orange-500' : 'text-black']"
+      class="flex h-11 w-11 items-center justify-center rounded-lg text-xl font-bold"
+      [class]="mode() === 'map' ? 'text-accent-600' : 'text-black'"
+      aria-label="Karte"
+      [attr.aria-current]="mode() === 'map' ? 'page' : null"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -47,8 +51,10 @@
   <div>
     <button
       (click)="router.navigate(['feedback'])"
-      class="text-xl"
-      [ngClass]="[mode() == 'feedback' ? 'text-orange-500' : 'text-black']"
+      class="flex h-11 w-11 items-center justify-center rounded-lg text-xl"
+      [class]="mode() === 'feedback' ? 'text-accent-600' : 'text-black'"
+      aria-label="Feedback"
+      [attr.aria-current]="mode() === 'feedback' ? 'page' : null"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -69,8 +75,10 @@
   <div>
     <button
       (click)="router.navigate(['about'])"
-      class="text-xl"
-      [ngClass]="[mode() == 'about' ? 'text-orange-500' : 'text-black']"
+      class="flex h-11 w-11 items-center justify-center rounded-lg text-xl"
+      [class]="mode() === 'about' ? 'text-accent-600' : 'text-black'"
+      aria-label="Über die App"
+      [attr.aria-current]="mode() === 'about' ? 'page' : null"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -1,24 +1,31 @@
 ---
 name: TadeoTTools
-description: Open-day guide for HTL Leonding. The visitor GuideApp reads like a printed event programme on the phone, and the organizer dashboard behind it is built on DaisyUI.
+description: Open-day guide for HTL Leonding. The visitor GuideApp carries the tour in a night-blue band like htl-leonding.at, and the organizer dashboard behind it is built on DaisyUI.
 colors:
   division-informatics: "#0059A7"
   division-media: "#70B4D9"
   division-electronics: "#CE1223"
   division-medtech: "#f1a102"
   division-fallback: "#80c076"
-  guide-orange: "#f97316"
-  guide-orange-light: "#fb923c"
-  guide-orange-wash: "#fff7ed"
-  guide-orange-edge: "#fdba74"
+  guide-night: "#021422"
+  guide-night-deep: "#04243d"
+  guide-night-track: "#0a3556"
+  guide-night-gray: "#b9cadb"
+  guide-night-white: "#dde7f0"
+  guide-act: "#c2410c"
+  guide-act-deep: "#9a3412"
+  guide-select: "#ea580c"
+  guide-select-on-night: "#fb923c"
+  guide-mark: "#fed7aa"
   guide-canvas: "#f9fafb"
   guide-surface: "#ffffff"
-  guide-header: "#f3f4f6"
-  guide-ink-strong: "#1f2937"
-  guide-ink: "#374151"
+  guide-no-division: "#d1d5db"
+  guide-ink: "#111827"
+  guide-ink-secondary: "#374151"
   guide-ink-muted: "#4b5563"
-  guide-stone: "#9ca3af"
-  guide-hairline: "#e5e7eb"
+  guide-ink-seen: "#6b7280"
+  guide-box-ring: "#9ca3af"
+  guide-tab-rest: "#000000"
   dash-primary: "#1f6fd1"
   dash-primary-deep: "#1a5bb5"
   dash-field: "#4a7aa3"
@@ -39,30 +46,38 @@ colors:
   dash-dark-primary: "#2563eb"
 typography:
   guide-display:
-    fontFamily: "Roboto, sans-serif"
-    fontSize: "1.875rem"
-    fontWeight: 700
-    lineHeight: 1.2
+    fontFamily: "Manrope Variable, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontSize: "2rem"
+    fontWeight: 800
+    lineHeight: "2.375rem"
+    letterSpacing: "-0.025em"
   guide-headline:
-    fontFamily: "Roboto, sans-serif"
-    fontSize: "1.5rem"
-    fontWeight: 500
-    lineHeight: 1.33
+    fontFamily: "Manrope Variable, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontSize: "1.75rem"
+    fontWeight: 800
+    lineHeight: "2.125rem"
+    letterSpacing: "-0.025em"
+  guide-panel-title:
+    fontFamily: "Manrope Variable, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontSize: "1.25rem"
+    fontWeight: 700
+    lineHeight: "1.75rem"
   guide-title:
-    fontFamily: "Roboto, sans-serif"
+    fontFamily: "Manrope Variable, system-ui, -apple-system, Segoe UI, sans-serif"
     fontSize: "1.125rem"
-    fontWeight: 500
-    lineHeight: 1.55
+    fontWeight: 700
+    lineHeight: 1.375
   guide-body:
-    fontFamily: "Roboto, sans-serif"
+    fontFamily: "Manrope Variable, system-ui, -apple-system, Segoe UI, sans-serif"
     fontSize: "1.125rem"
     fontWeight: 400
-    lineHeight: 1.55
-  guide-label:
-    fontFamily: "Roboto, sans-serif"
+    lineHeight: 1.625
+  guide-meta:
+    fontFamily: "Manrope Variable, system-ui, -apple-system, Segoe UI, sans-serif"
     fontSize: "1rem"
-    fontWeight: 700
-    lineHeight: 1.5
+    fontWeight: 600
+    lineHeight: "1.5rem"
+    fontFeature: "tnum"
   dash-headline:
     fontFamily: "ui-sans-serif, system-ui, sans-serif"
     fontSize: "1.5rem"
@@ -86,55 +101,90 @@ typography:
 rounded:
   md: "6px"
   lg: "8px"
-  pill: "16px"
+  control: "12px"
+  panel: "16px"
   full: "9999px"
 spacing:
   xs: "4px"
   sm: "8px"
+  row-gap: "12px"
   md: "16px"
+  panel-pad: "20px"
   lg: "24px"
   xl: "32px"
 components:
+  guide-top-bar:
+    backgroundColor: "{colors.guide-night}"
+    height: "56px"
+    padding: "0 16px"
+  guide-title-band:
+    backgroundColor: "{colors.guide-night}"
+    textColor: "{colors.guide-surface}"
+    typography: "{typography.guide-display}"
+    padding: "8px 16px 24px"
+  guide-back-link:
+    textColor: "{colors.guide-night-gray}"
+    typography: "{typography.guide-meta}"
+    rounded: "{rounded.lg}"
+    height: "44px"
+    padding: "0 8px 0 4px"
+  guide-tour-band:
+    backgroundColor: "{colors.guide-night-track}"
+    rounded: "{rounded.full}"
+    height: "12px"
+  guide-division-icon:
+    size: "40px"
   guide-button-primary:
-    backgroundColor: "{colors.guide-orange}"
+    backgroundColor: "{colors.guide-act}"
     textColor: "{colors.guide-surface}"
-    rounded: "{rounded.pill}"
-    padding: "8px 16px"
-    height: "40px"
-  guide-button-back:
-    backgroundColor: "{colors.guide-stone}"
-    textColor: "{colors.guide-surface}"
-    rounded: "{rounded.pill}"
-    padding: "8px 16px"
+    rounded: "{rounded.control}"
+    height: "44px"
+    padding: "0 20px 0 16px"
+  guide-button-primary-hover:
+    backgroundColor: "{colors.guide-act-deep}"
   guide-group-card:
     backgroundColor: "{colors.guide-surface}"
     textColor: "{colors.guide-ink}"
     typography: "{typography.guide-title}"
-    rounded: "{rounded.lg}"
-    padding: "16px 24px"
+    rounded: "{rounded.panel}"
+    padding: "8px 6px 8px 20px"
     height: "80px"
+  guide-seen-toggle:
+    backgroundColor: "{colors.guide-surface}"
+    textColor: "{colors.guide-ink}"
+    typography: "{typography.guide-title}"
+    rounded: "{rounded.panel}"
+    padding: "6px 6px 6px 20px"
+    height: "56px"
+  guide-group-card-seen:
+    textColor: "{colors.guide-ink-seen}"
   guide-stop-card:
-    backgroundColor: "{colors.division-fallback}"
+    backgroundColor: "{colors.guide-no-division}"
     textColor: "{colors.guide-surface}"
-    typography: "{typography.guide-label}"
-    rounded: "{rounded.lg}"
-    padding: "16px 24px"
+    typography: "{typography.guide-title}"
+    rounded: "{rounded.panel}"
+    padding: "8px 8px 8px 20px"
     height: "80px"
-  guide-content-card:
-    backgroundColor: "{colors.guide-surface}"
-    textColor: "{colors.guide-ink-strong}"
-    rounded: "{rounded.lg}"
-    padding: "24px"
-  guide-option:
+  guide-checkbox:
     backgroundColor: "{colors.guide-surface}"
     rounded: "{rounded.lg}"
-    padding: "12px"
-  guide-option-selected:
-    backgroundColor: "{colors.guide-orange-wash}"
+    size: "28px"
+  guide-checkbox-checked:
+    backgroundColor: "{colors.guide-ink}"
+    textColor: "{colors.guide-surface}"
+  guide-content-panel:
+    backgroundColor: "{colors.guide-surface}"
+    textColor: "{colors.guide-ink-secondary}"
+    typography: "{typography.guide-body}"
+    rounded: "{rounded.panel}"
+    padding: "20px"
   guide-bottom-nav:
     backgroundColor: "{colors.guide-surface}"
+    textColor: "{colors.guide-tab-rest}"
     rounded: "{rounded.lg}"
     height: "56px"
+  guide-bottom-nav-active:
+    textColor: "{colors.guide-select}"
   dash-button-primary:
     backgroundColor: "{colors.dash-primary}"
     textColor: "{colors.dash-surface}"
@@ -175,36 +225,48 @@ components:
 
 **Creative North Star: "The Open-Day Programme"**
 
-TadeoTTools works like an open-day programme you carry on your phone. The visitor GuideApp lists the day as a sequence of stop groups and stops, each one a card to open and tick off. It is colored by the school's own divisions (Informatik blue, Medientechnik sky blue, Elektronik red, Medizintechnik amber), so a glance at a card's color tells you which part of the school you are in. One warm orange is the programme's highlighter: it marks the current tab, the main button on a screen and every tick. The welcome heading carries the whole division palette as a slow moving gradient, the one festive gesture on an otherwise quiet gray-and-white page.
+TadeoTTools works like an open-day programme you carry on your phone. The visitor GuideApp follows the Nachtband world of leo-projects, adapted to the phone: a night-blue frame taken from htl-leonding.at carries the logo, the page title and the way on. Each stop group carries its own progress as a bar of stops in their division colours, on its card and in its page's band, because visitors pick one guide tour rather than the whole day. Below the frame the canvas is light, and the day is a list of stop groups and stops, each a white or division-filled panel to open and tick off. The school's own division colours (Informatik blue, Medientechnik sky blue, Elektronik red, Medizintechnik amber, plus whatever the admins set) are the wayfinding signal; a glance at a card's fill tells you which part of the school you are in.
 
-The surfaces are soft, chunky and touch-first. Cards are white or division-filled and lifted on clear shadows. Buttons are rounded pills (16px corners). Rows are tall (80px) because visitors tap them while walking. Type is Roboto throughout the GuideApp, set large (18px body) for reading at arm's length in a corridor.
+Colour is strictly distributed. Night blue is the frame and never content. Orange only marks what you can do (the "Auf der Karte" link next to the room, "Erneut versuchen"), the active tab and the focus. Status is neutral: a seen stop gets a gray-900 tick, not an orange one. Type is Manrope, the school's typeface, with one extra-bold title per page in the band. Rows are tall (at least 80px) and every tap target is at least 44px, because visitors tap while walking; body text never drops below 16px. There is one motion moment: the tour band grows in once per visit.
 
 The organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, a sky-blue palette instead of orange, and a full dark mode. Its distinctive habit is **filled blue filter fields**: the search and filter fields above a list sit in solid steel blue (`dash-field`) with white text and placeholders, while form inputs are plain bordered fields. The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.
 
 **Key Characteristics:**
 - Division colors are the identity and the wayfinding signal; they come from the school, not from the design.
-- GuideApp: one orange accent, white cards lifted on `bg-gray-50`, pill buttons, a fixed bottom tab bar.
+- GuideApp: Nachtband on the phone: a sticky night top bar and title band, a tour band per stop group, white 16px-radius panels on a light canvas, orange only for action, selection and focus, a fixed bottom tab bar.
 - Dashboard: DaisyUI `light` / `darkCustom` themes, blue primary, filled blue filter fields, a sticky sky-blue top nav, one left-aligned page header on every page.
-- Tall touch targets and a 16px side gutter on mobile; the GuideApp is designed only for phone width.
+- Tall touch targets (44px or more in the GuideApp) and a 16px side gutter on mobile; the GuideApp is designed only for phone width.
 - Copy: German with du-form in the GuideApp, English in the dashboard (today's state, not a rule).
-- Feedback kiosk (`kiosk/feedback/`): the GuideApp's visual language at tablet size, for the exit tablets; see the Feedback Kiosk section.
+- Feedback kiosk (`kiosk/feedback/`): the earlier GuideApp visual language (Roboto, Programme Orange) at tablet size, for the exit tablets; see the Feedback Kiosk section.
 - Statistics kiosk (`kiosk/statistics/`): the same world scaled up for a wall projection, an unattended slideshow; see the Statistics Kiosk section.
 
 ## Colors
 
-Two palettes share one set of school colors. The GuideApp is gray-white with an orange highlighter. The dashboard is sky blue at several depths.
+Two palettes share one set of school colors. The GuideApp is a night-blue frame over a light canvas, with orange only for action, selection and focus. The dashboard is sky blue at several depths.
 
 ### Shared: Division Colors
-- **Informatik Blue** (`division-informatics`): Informatik. First stop of the welcome gradient and the division's card fill.
-- **Medientechnik Sky** (`division-media`): Medientechnik card fill and countdown accent.
-- **Elektronik Red** (`division-electronics`): Elektronik card fill and the middle of the welcome gradient.
-- **Medizintechnik Amber** (`division-medtech`): Medizintechnik card fill and the end of the welcome gradient.
-- **Neutral Meadow Green** (`division-fallback`): the stop card fill when a stop has no division.
+- **Informatik Blue** (`division-informatics`): Informatik. The division's card fill and its segment in the countdown band.
+- **Medientechnik Sky** (`division-media`): Medientechnik card fill and its segment in the countdown band.
+- **Elektronik Red** (`division-electronics`): Elektronik card fill and its segment in the countdown band.
+- **Medizintechnik Amber** (`division-medtech`): Medizintechnik card fill and its segment in the countdown band.
+- **Neutral Meadow Green** (`division-fallback`): the dashboard overview's fill for a stop without a division. The GuideApp no longer uses it; it fills such stops with No-Division Gray (`guide-no-division`).
 
-Admins set the real division colors in the dashboard (`Division.Color`), and stop cards render that runtime value. A stop in several divisions gets a left-to-right gradient of all its colors. The Tailwind names above are the build-time copies used for the gradient heading and the countdown.
+Admins set the real division colors in the dashboard (`Division.Color`), and stop cards and tour band segments render that runtime value exactly (`shared/division-colors.ts`). A stop in several divisions gets a smooth left-to-right linear gradient through all its colors, in a fixed order whatever the stop's `divisionIds` say: HIF, HITM, HEL, HBG, then the rest (user decision 2026-10-12: a HIF & HITM stop starts in HIF blue and ends in HITM light blue). The Tailwind names above are the build-time copies used for the countdown digits.
 
 ### Primary (GuideApp)
-- **Programme Orange** (`guide-orange`): active bottom-nav icon, primary buttons ("Auf der Karte", "Weiter"), the checkmark in ticked cards, selected radio dots. **Light Orange** (`guide-orange-light`) is the start of the feedback progress gradient. **Orange Wash** (`guide-orange-wash`) and **Orange Edge** (`guide-orange-edge`) fill and outline the selected answer option.
+- **Action Orange** (`guide-act`, accent-700): the fill of the one action button on a screen ("Zur Station", "Erneut versuchen", "Löschen" in the reset confirmation) with white bold text (5.2:1). Hover deepens to **Deep Orange** (`guide-act-deep`, accent-800).
+- **Selection Orange** (`guide-select`, accent-600): the active tab icon, the global 3px focus ring and the focus outline of cards and checkboxes.
+- **Orange On Night** (`guide-select-on-night`, accent-400): the focus ring inside the night frame (`.on-night`) and the "Auf der Karte" link in the title band, one step lighter so it carries on dark blue (7.3:1 on night-900).
+- **Mark** (`guide-mark`, accent-200): text selection, with gray-900 text.
+
+### Secondary: Night Frame (GuideApp)
+- **Night** (`guide-night`, night-950): the sticky top bar, the start of the title band gradient, `theme-color` in `index.html` and the manifest.
+- **Deep Night** (`guide-night-deep`, night-900): the end of the title band gradient (top to bottom).
+- **Track Night** (`guide-night-track`, night-800): the track behind the tour band in the night band. On a white group card the track is gray-200.
+- **Night Gray** (`guide-night-gray`, night-200): the back link.
+- **Night White** (`guide-night-white`, night-100): meta text in the band (room, "16 Stationen").
+
+White text on night is the default. The palette comes from Nachtband (leo-projects), which took it from htl-leonding.at.
 
 ### Primary (Dashboard)
 - **Dashboard Blue** (`dash-primary`): DaisyUI `btn-primary` and the active nav link. **Deep Dashboard Blue** (`dash-primary-deep`) is its hover/focus state.
@@ -213,11 +275,11 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 - **Pale Blue Tint** (`dash-tint`): hover backgrounds on list rows and secondary actions.
 
 ### Neutral
-- **Programme Paper** (`guide-canvas`): GuideApp page background.
-- **Card White** (`guide-surface`): cards, bottom nav, button text.
-- **Header Gray** (`guide-header`): the logo header block.
-- **Ink** (`guide-ink-strong` for titles, `guide-ink` for card labels, `guide-ink-muted` for body text): the gray-800/700/600 steps.
-- **Stone** (`guide-stone`): the neutral "Zurück" button. **Hairline** (`guide-hairline`): borders on inputs and unselected options.
+- **Programme Paper** (`guide-canvas`): GuideApp page background and the manifest `background_color`.
+- **Card White** (`guide-surface`): group cards, content panels, the white box behind the checkbox on stop cards, the tab bar.
+- **No-Division Gray** (`guide-no-division`, gray-300): the stop card fill and tour band segment for a stop without a division, neutral so it never reads as a fifth division.
+- **Ink** (`guide-ink`, gray-900): page text, group names, the checked checkbox. **Secondary Ink** (`guide-ink-secondary`, gray-700): body text in panels and "Raum …". **Muted Ink** (`guide-ink-muted`, gray-600): the "3/7" count on group cards. **Seen Ink** (`guide-ink-seen`, gray-500): the name of a seen stop group.
+- **Box Ring** (`guide-box-ring`, gray-400): the 2px ring of an unchecked checkbox. **Tab Rest** (`guide-tab-rest`): inactive tab icons are black.
 - **Office Gray** (`dash-canvas`): dashboard page background (also used for modals and cards, which are then separated only by shadow). **Dashboard text** has three roles, as CSS variables and Tailwind colours: **Ink Strong** (`--ink-strong`, `text-ink-strong`, near-black with a slight plum tint) for headings, which get it from the base layer; **Ink** (`--ink`, `text-ink`) for body text, table cells and labels, also the `body` colour; **Ink Muted** (`--ink-muted`, `text-ink-muted`) for hints, metadata, empty states and table headers. Muted passes 4.5:1 on every surface it sits on. There are no other text greys: no `text-gray-*`, no `text-secondary-content`, no numbered `text-text-*` steps.
 - **Dark mode:** `dash-dark-canvas` / `dash-dark-surface` with `dash-dark-primary`. The dark theme collapses primary, secondary and accent to the same blue range. Text is white (strong), `#f3f4f6` (ink) and `#d8dee6` (muted, still 4.5:1 on the lighter `background-800/900` surfaces).
 
@@ -228,7 +290,17 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 ### Named Rules
 **The Division Owns Its Color Rule.** Division colors come from the school and the dashboard data. Never re-tint them, and never reuse a division hue for UI states like errors or links.
 
-**The One Highlighter Rule.** In the GuideApp, orange is the only accent: active tab, primary action, ticks, selections. A second accent color competes with the division colors.
+**The Untinted Identity Rule.** (GuideApp, from Nachtband) Division colours appear exactly as the admin set them, on stop cards and tour band segments. They are never tinted, darkened, faded or overlaid, not even for seen stops. One deliberate exception to Nachtband's no-gradient rule, decided by the user ("the cut is too hard"): a stop in several divisions gets a smooth left-to-right gradient through its exact colours.
+
+**The Orange Means Act Rule.** (GuideApp, from Nachtband) Orange is only action (accent-700 buttons), selection and focus (accent-600, accent-400 on night). Never status, counts or decoration: orange sits next to Medizintechnik amber, and any other orange surface reads as a division.
+
+**The Neutral Status Rule.** (GuideApp, from Nachtband) "Seen" is a status, so it is neutral: a gray-900 box with a white tick, a gray-500 group name, a taller tour band segment. Never orange, never a division colour, never night blue.
+
+**The One Seen Rule.** (GuideApp) A stop is the unit of progress (`ProgressService`, `localStorage` key `finishedStops`). A group is seen when all its stops are seen; ticking a group ticks or unticks all its stops. Only a group without stops is stored as a group (`finishedStopGroups`). Cards, the "3/7" count, the tour band and the count line all read the same state, so they never disagree.
+
+**The Night Is The Frame Rule.** (GuideApp, from Nachtband) Night blue is the top bar, the title band and the tour band track. Never a text, link or surface colour on the canvas.
+
+**The Same White Text Rule.** (GuideApp, user decision) Stop names are white on every fill, with a soft text shadow (`0 1px 2px rgb(0 0 0 / 0.45)`). The user chose this knowingly over a white chip or a per-fill text colour. Its known cost: white fails WCAG contrast on light fills such as HITM, HBG, ALL and ORG.
 
 **The White Text Needs 4.5 Rule.** Any fill that carries white text in the dashboard (primary buttons, filled fields, toasts) must reach 4.5:1. That is why the primary is `#1f6fd1`, not the lighter `#4590e6`, and why status text uses the 700 shades in light mode and the 400 shades in dark mode.
 
@@ -236,17 +308,18 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 
 ## Typography
 
-**GuideApp font:** Roboto (300/400/500/700, Google Fonts), fallback `sans-serif`.
+**GuideApp font:** Manrope Variable (`@fontsource-variable/manrope`, self-hosted), fallback `system-ui, -apple-system, Segoe UI, sans-serif`.
 **Dashboard font:** the Tailwind default system stack (`ui-sans-serif, system-ui, sans-serif`). The dashboard does not load a webfont.
 
-**Character:** Roboto at generous sizes gives the GuideApp a plain, friendly voice that stays legible on small screens. The dashboard's system font keeps it native and dense.
+**Character:** Manrope is the typeface of htl-leonding.at and so the school's own; in the GuideApp one extra-bold title per page sets the tone in the band, and below it hierarchy comes from weight and gray value at sizes legible on a phone. The dashboard's system font keeps it native and dense.
 
 ### Hierarchy (GuideApp)
-- **Display** (bold, 30px): the "Willkommen am Tag der offenen Tür!" heading, centered and filled with the animated division gradient. Used once, on the start page. The countdown page scales up to 72px on large screens.
-- **Headline** (medium, 24px): stop titles and About section headings.
-- **Title** (medium, 18–20px): stop group names on cards, "Raum: …", breadcrumb.
-- **Body** (regular, 18px, gray-600): stop descriptions and About text. Body text in the GuideApp is never smaller than 16px.
-- **Label** (bold, 16px, white): stop names on division-colored cards, clamped to two lines.
+- **Display** (extra-bold 800, 32px, 38px line, -0.025em): the title "Tag der offenen Tür" on the start page and the countdown (always, there is no evening event), white in the band, balanced on two lines. Used once.
+- **Headline** (extra-bold 800, 28px, 34px line, -0.025em): the page title in the band on every other page (stop group, stop, Karte, Feedback, Über die App), at most three lines. Words are never hyphenated: titles, headings and names break only between words (user decision 2026-10-12, after "Informa-tik"); only a word wider than the line may break (`break-words`).
+- **Panel Title** (bold, 20px): the heading of a panel inside the content, such as the load error.
+- **Title** (bold, 18px, snug): stop group and stop names on cards, clamped to two lines. Also "Station gesehen" on the seen toggle.
+- **Body** (regular, 18px, relaxed, gray-700): stop and group descriptions (HTML from the admin).
+- **Meta** (semibold, 16px, tabular figures): the back link, "Raum …" in the band, the group count ("16 Stationen", "5 von 16 gesehen"), the "3/7" count on group cards.
 
 ### Hierarchy (Dashboard)
 - **Headline** (bold, 24px, `h1`): the page title such as "Stops" or "Students", left-aligned in the page header. Exactly one per routed page; tabs inside a page do not get their own `h1`.
@@ -256,11 +329,13 @@ Admins set the real division colors in the dashboard (`Division.Color`), and sto
 - **Label** (medium, 12px): field labels, chips, table meta.
 
 ### Named Rules
-**The Arm's-Length Rule.** GuideApp text is read while walking: body 18px, card labels at least 16px. The only 12px text today is the caption under the feedback rating scale.
+**The Arm's-Length Rule.** GuideApp text is read while walking: body 18px, meta and card text at least 16px (the phone adaptation of Nachtband's 14px desktop body). The one exception is the room number on stop cards (14px medium, user decision 2026-10-12): it must sit clearly below the 18px bold name.
+
+**The One Big Title Rule.** (GuideApp, from Nachtband) Size happens once per page: the extra-bold title in the band. Below it, emphasis is bold and gray-900, not larger.
 
 ## Layout
 
-**GuideApp:** a single column at phone width. Content sits in a 16px side gutter (`mx-4`), and cards stack with 24px between them (`mt-6`). The header (logo plus optional welcome) is a gray block at the top. A white tab bar with four icon buttons (Leitfaden, Karte, Feedback, Über uns) is fixed to the bottom with an 8px inset, and pages reserve 112–128px of bottom padding so the last card clears it. Detail pages add a breadcrumb and a back pill above one large content card. Pages scroll vertically only (`touch-pan-y`) and allow swipe gestures. There is no desktop layout; the feedback form caps at `max-w-md` (448px).
+**GuideApp:** a single column at phone width, in two zones. The **night frame** on top: a sticky 56px top bar (with safe-area padding, `viewport-fit=cover`) holding only the white logo, flowing into the title band (8px top, 24px bottom padding). On the start page the band holds the title and the date line (about 175px), so several stop groups fit in the first viewport; on subpages it holds the back link, the title, then the division icons and the room or the group count on one wrapping line, and on a group page with several stops the group's tour band below. The **canvas** below: content in a 16px side gutter (`px-4`), 20px below the band, cards stacked with 12px gaps. A white tab bar is fixed to the bottom with an 8px side inset, and pages reserve 112–128px of bottom padding so the last card clears it. Pages scroll vertically and allow pinch zoom (`touch-pan-y touch-pinch-zoom`; Hammer's `touchAction` is set to `pan-y pinch-zoom` so it does not block zoom) plus horizontal swipe gestures. The viewport never disables zoom. There is no desktop layout.
 
 **Dashboard:** the top nav is `max-w-screen-xl` (1280px). Every page, list or detail, uses one content shell: the `.page-shell` class in `styles.css` (`mx-auto w-11/12 max-w-6xl pb-10`, 1152px). Pages follow one pattern:
 
@@ -276,44 +351,52 @@ Detail editors (stop, stop group) sit in a card inside the same shell, not in a 
 Both apps are lifted rather than flat: depth comes from Tailwind shadows on white or tinted surfaces, not from borders or tonal layers.
 
 ### Shadow Vocabulary
-- **Card lift** (`shadow-lg`): GuideApp group and stop cards, dashboard cards and modals. The default resting elevation.
-- **Content lift** (`shadow-md`): GuideApp stop detail card and pill buttons.
-- **Tab bar float** (`shadow-2xl`): the GuideApp bottom navigation, the strongest shadow, so the bar visibly floats above the scrolling list.
+- **Card lift** (`shadow-lg`): dashboard cards and modals. The default resting elevation.
+- **Panel lift** (`shadow-md`, on white panels with a 1px `gray-900/5` ring): every GuideApp card and panel (group cards, stop cards, content panels, the map panel) and the orange action buttons.
+- **Night frame shadow** (`0 6px 16px rgba(2,20,34,0.35)`): under the sticky GuideApp top bar, so content scrolling under it stays separated.
+- **Tab bar float** (`shadow-2xl`): the GuideApp bottom navigation. Its shadow casts downward, below the bar, so it barely separates the bar from the list above (an unchanged leftover, not a rule).
 - **Drag preview** (`0 5px 15px rgba(0,0,0,0.1)`): dashboard drag-and-drop of stops and groups (CDK), at 80% opacity.
 
 ### Named Rules
-**The Lifted Card Rule.** Anything tappable in the GuideApp is a card on a shadow. Ticked cards do not lose their shadow; they shrink (80px → 48px) and fade to 50% opacity.
+**The Lifted Card Rule.** Anything tappable in the GuideApp is a 16px-radius panel on a soft neutral shadow. Ticking changes nothing about the card itself: it keeps its height (at least 80px), shadow, fill and full opacity, so the next row never moves (user decision).
 
 ## Shapes
 
-Gently rounded throughout. Cards and containers use 8px corners (`rounded-lg`). GuideApp buttons are fat pills with 16px corners (`rounded-2xl`) at 40px height. Checkboxes use 6px corners and a 2px gray border. Dots, toggles and avatars are fully round. The GuideApp tab bar is rounded only on top (`rounded-t-lg`). The dashboard inherits DaisyUI v4 defaults (8px buttons and inputs, 16px cards). Division images in stop detail are square, 48px thumbnails with no rounding.
+Gently rounded throughout. GuideApp panels and cards use generous 16px corners (`rounded-2xl`), buttons 12px (`rounded-xl`) at 44px height, the checkbox box 8px with a 2px inset ring. The tour band is a fully round 12px bar that clips its segments. Dots, toggles and avatars are fully round. The GuideApp tab bar is rounded only on top (`rounded-t-lg`). The dashboard inherits DaisyUI v4 defaults (8px buttons and inputs, 16px cards). Division icons are square, 40px, with no rounding.
 
 ## Components
 
 ### Buttons
-- **GuideApp primary:** orange pill (16px corners, 40px tall, 8px × 16px padding), white medium text, `shadow-md`, with an optional leading 20px stroke icon. Disabled state is 50% opacity.
-- **GuideApp back ("Zurück"):** the same pill in stone gray, darkening to gray-500 on hover, with a left-arrow icon.
+- **GuideApp primary:** Action Orange (accent-700), 12px corners, 44px tall, 16px left / 20px right padding, 16px bold white text, `shadow-md`, an optional leading 20px stroke icon. Hover deepens to accent-800; press scales to 98%. One per screen at most.
+- **GuideApp map link:** "Auf der Karte" is not a button. On the stop page and on a single-stop group page it follows "Raum 101" in the title band (`app-room-line`) as a bold 16px Orange On Night text link with a leading 20px map pin, 44px tall, no fill or shadow; accent-300 on hover. It only shows when the room text names a room on the floor plans. Decided 2026-10-12: a filled button inside the content panel was the loudest thing on the page, although reading and ticking are what the page is for.
+- **GuideApp back:** there is no back button. Every subpage starts its band with a 44px back link to the parent ("‹ Rundgang" from a group, "‹ <group name>" from a stop) in Night Gray, semibold 16px, white on hover.
 - **Dashboard primary:** DaisyUI `btn btn-primary` in Dashboard Blue, **one per toolbar, form or dialog**: the action the page exists for (Add Stop, Save Changes, Create Group). Every dashboard button is `btn-sm` (32px); the larger default size is not used.
 - **Dashboard secondary:** `btn-outline` for further actions in the same toolbar (Import/Export, Approve N pending next to Add Student). Low-weight actions such as Clear Filters, Cancel and Back are `btn-ghost`.
 - **Dashboard Delete / Remove:** Delete (destroys data) is `btn-outline btn-error` and opens a confirmation, whose confirm button is the only solid `btn-error`. Remove (unlinks, data stays) is `btn-ghost`. Conflict actions use `.btn-conflict` (Conflict orange `orange-700`, white text) from `styles.css`, not DaisyUI `btn-warning` yellow; Approve actions use `.btn-approve` (Approved green `green-700`, white text). Both keep the 700 shade in dark mode so white text stays at 4.5:1 or more.
 - **Dashboard row actions:** icon buttons at the end of a table row or card: `btn btn-ghost btn-sm` with the shared `app-action-icon` (`edit`, `view`, `delete`; 16px stroke icon), a `title` and an `aria-label` that names the record ("Edit Robotics Lab"). Pencil = edit, eye = view only (read-only pages), trash = delete (in `text-error`). No gear icons and no text "Edit" buttons on cards. Exception, decided 2026-10-09: the Students page keeps its own button weights. The header toolbar is default size with Approve N pending in `.btn-approve`, Add Student `btn-primary` and Import/Export `btn-outline`; the row buttons are Assign Stop `btn-primary btn-sm`, Approve `.btn-approve btn-sm`, Back to Pending is `btn-outline btn-sm`, Remove is `btn-outline btn-error btn-sm`, and Manage Conflict is `.btn-conflict`.
 
 ### Cards / Containers
-- **Stop group card (GuideApp):** white, 8px corners, `shadow-lg`, 80px tall. Group name in 18px medium gray-700, an optional "3 / 7" progress count, and a checkbox on the right. Tapping the card opens the group; tapping the checkbox ticks the whole group.
-- **Stop card (GuideApp, signature):** the same shape, filled with the stop's division color (or a gradient across several divisions), with the stop name in bold white. When ticked it collapses to 48px and 50% opacity, so finished stops visibly step back in the list.
-- **Content card (GuideApp):** white, 24px padding, `shadow-md`. Holds the stop title, "Raum: …", the description (HTML from the admin), an "Auf der Karte" pill, and a column of division thumbnails on the right.
+- **Stop group card (GuideApp):** white, 16px corners, `shadow-md`, gray-900/5 ring, at least 80px tall. Group name in 18px bold gray-900 (two lines max); below it, for a group with several stops, the group's tour band on a gray-200 track and, while partly seen, a "5/16" count in semibold gray-600 next to it; the checkbox on the right. The whole card opens the group; the checkbox ticks or unticks all its stops. Seen (all stops seen, The One Seen Rule): the name turns gray-500 and the count disappears.
+- **Stop card (GuideApp, signature):** the same shape, filled with the stop's exact division colour, a smooth gradient through several, or No-Division Gray. The name is bold white with the soft text shadow on every fill (The Same White Text Rule), and below it the room number alone ("E24", "U34, U36, U38", no "Raum" label) in 14px medium white with the same shadow: a quiet second line, clearly below the name, so a visitor sees where to go without opening the stop. The checkbox sits on a white 12px-radius box at the right end. Seen: only the checkbox changes; height, fill and opacity stay.
+- **Content panel (GuideApp):** white, 16px corners, 20px padding, `shadow-md`, gray-900/5 ring. Holds only the description; room and map link sit in the title band, and without a description there is no panel. When a group has one stop, the panel shows that stop's text without a title: the band already names it.
+- **Seen toggle (GuideApp):** a full-width white row under the content panel on the stop page and on a single-stop group page: "Station gesehen" in 18px bold (gray-500 once ticked) and the checkbox box at the right end, at least 56px tall, the whole row is the `label`. Focus draws the 3px accent-600 outline around the row. It lets the visitor tick a stop where they read about it.
+- **Countdown page (GuideApp):** the only page while the `showCountdown` flag is on, without tab bar, so the night frame fills the whole screen like a poster. The event is the headline: "Tag der offenen Tür" as Display, below it the date line (The Date Line). The tone is friendly, not formal: "Bald geht’s los!" (from the start time "Heute geht’s los!") in 20px bold white above a 2×2 grid of night-800 tiles (Tage, Stunden, Minuten, Sekunden) with large extra-bold white tabular digits (between 48px and 88px, sized by width and height so the page fills a tall phone and still fits a 667px one) that tick every second and 18px night-200 labels. The countdown block takes the free space and sits in its middle; the closing line and link stay at the bottom. Then a 12px band of four equal segments in the exact Informatik, Medientechnik, Elektronik and Medizintechnik colours (the tour band's form, no progress), "Wir freuen uns auf dich!" and a night-200 link "Mehr auf htl-leonding.at" with an external-link icon. From the start time the tiles disappear; without a date only the title, the closing line and the link show.
+- **Über die App (GuideApp):** kept as short as possible, help first and credit last, all in content panels. "So funktioniert's" lists four one-line items (Rundgang, Abhaken, Karte, Feedback), each led by the icon the visitor sees in the app (the tab bar icons and the checked box), then one muted line on privacy. Below it a quiet white row "Häkchen zurücksetzen": the first tap turns the panel into an in-place question ("Alle Häkchen auf diesem Handy löschen?" with Abbrechen and an Action Orange "Löschen"); it clears only the ticks and the last opened group and stop (`ProgressService.reset()`), keeps the offline data and the "feedback sent" mark, and confirms with "Alle Häkchen sind gelöscht." in a status line. Then the team panel (photo, names, class, one neutral sentence about the project) and an "Impressum" link row with an external-link icon.
+- **Stop pager (GuideApp):** under the seen toggle on the stop page, two white panels side by side (16px corners, `shadow-md`, gray-900/5 ring, at least 56px tall): left "‹ Zurück" with the previous stop's name, right "Weiter ›" with the next one's, in the group's order; the direction in 16px semibold gray-600, the name in 16px bold gray-900, at most three lines. The first stop has no left panel (the band's back link leads to the group); on the last stop the right panel reads "Fertig mit <group name>" and opens the group. A group with one stop has no pager. Neutral on purpose: orange is for actions, not for moving through the group. Paging keeps the page and follows the route, scrolling back to the top.
+- **Loading and error (GuideApp):** while a list loads, static white card outlines with a gray-200 bar (`app-card-skeleton`, no shimmer: The One Motion Rule) and a hidden "Wird geladen …" status. When loading fails and nothing is stored, a content panel (`app-load-error`, `role="alert"`) names the problem ("Der Rundgang konnte nicht geladen werden"), says what to do and that the ticks stay on the phone, with "Erneut versuchen" as the screen's one Action Orange button. Reads of groups, stops, divisions and feedback questions keep their last answer in `localStorage` (`lastKnown:<path>`) and fall back to it offline, so the error only shows before the first successful load. A group with no stops and no text says "Zu dieser Gruppe gibt es keine eigenen Stationen."
 
 ### Inputs / Fields
-- **GuideApp text field:** white, gray-200 border, 8px corners, 12px × 16px padding. On focus the border disappears and a 2px orange ring appears.
-- **GuideApp choice option:** a full-width bordered row (12px padding) with a round radio or square check. When selected, the row turns Orange Wash with an Orange Edge border and an orange dot or fill.
-- **GuideApp checkbox (signature):** a 24px rounded square with a 2px gray-500 border. Ticking it pops in a thick orange checkmark (`animate-jump-in`, 600ms).
+- **GuideApp feedback answers:** choice answers are full-width white rows (16px corners, `shadow-md`, gray-900/5 ring, at least 56px tall, 18px text) holding a native radio or checkbox; the mark sits at the right end in a 44px area, a 28px circle (single choice) or 8px-radius box (multiple choice, with "Mehrere Antworten möglich" above). Selected: a 2px accent-600 ring on the row, an accent-600 dot or filled box with a white tick, the text bold; never an orange wash. An answer that names a division ("Informatik", "Medientechnik", "Elektronik", "Medizintechnik", or its short code; `divisionColorFor` in `shared/division-colors.ts`) is filled with that division's exact colour like a stop card: bold white text with the soft shadow, no ring at rest, the mark on a white 12px-radius box, and when selected the accent-600 ring with a 2px canvas offset so it never touches the fill. Without loaded divisions the answers stay white. Ratings are one row of equal 56px tiles with bold tabular numbers (two rows above 7 values), the first and last label under the ends and the chosen one written out ("4 – Gut"). Text answers are a white 16px-radius textarea that grows with the text (`field-sizing: content`), with the admin's placeholder or none. Focus draws the 3px accent-600 outline around the whole row.
+- **GuideApp checkbox (signature):** a 44px tap target holding a 28px box with 8px corners. Unchecked: white with a 2px gray-400 ring. Checked: gray-900 fill and ring with a white 3px-stroke tick, a 150ms colour transition. The label names the item ("Gaming Garden gesehen"). Focus is a 3px accent-600 outline on the box.
+- **GuideApp focus:** one 3px accent-600 outline with a 3px offset everywhere (`styles.css`), accent-400 inside the night frame. Cards draw it around the whole card (an `::after` over the card), not around the inner button.
 - **Dashboard filter field:** DaisyUI `input input-bordered` / `select select-bordered` plus the `.field-filter` class from `styles.css`: filled with Filled Field Blue, white text and placeholders (placeholders at 4.5:1 too), darkening on hover. Used only in filter bars above lists.
 - **Dashboard form field:** DaisyUI `input` / `select` / `textarea` / `file-input` with `-bordered` on the surface color, `w-full`, never hand-written border classes. Inside dense sub-forms (stop students, stop managers, question conditions) the `-sm` sizes are used. Every field has a visible label above it (`label for` matching the field `id`); a field inside a table row or a list gets an `aria-label` instead. Placeholders only show an example. Required fields get `<span aria-hidden="true">*</span>` after the label and `required` on the field, nothing else.
 - **Focus (all controls):** one 2px outline in `--focus-ring` with a 2px offset on every field, button, tab and link (Dashboard Blue `dash-focus` in light mode, `#60a5fa` in dark mode, Ink Strong on the sky-blue nav bar). It is set globally in `styles.css`; templates don't add `focus:ring-*` or `focus:outline-none`.
 
 ### Navigation
-- **GuideApp bottom tab bar:** a white 56px bar fixed to the bottom, four evenly spaced 20–24px icons, black at rest and Programme Orange when active. Icons only, no labels.
-- **GuideApp breadcrumb:** Home icon › group name, 16–20px gray-700 semibold.
+- **GuideApp top bar:** night-950, sticky, 56px plus the safe area, the white HTL Leonding logo (32px tall) linking to the start page. Nothing else: no menu, no login.
+- **GuideApp title band:** night-950 → night-900 top to bottom, white title, then per page: on the start page and the countdown the date line ("Freitag, 20. November 2026, 13–19 Uhr", 18px semibold night-100); on subpages the back link above the title and the division icons plus room or group count below it, and the group's tour band on a group page. It replaces the earlier breadcrumb and "Zurück" pill. Karte, Feedback (with its step line and step band), Über die App and the countdown get the band without a back link.
+- **GuideApp bottom tab bar:** a white 56px bar fixed to the bottom with an 8px side inset, four evenly spaced 20–24px icons in 44px buttons (Rundgang, Karte, Feedback, Über die App), black at rest and Selection Orange (accent-600) when active, `aria-current="page"`. Icons only, with `aria-label`s. Position and icons are unchanged by the redesign (user decision).
 - **Dashboard top nav:** sticky Sky Nav bar with the HTL Leonding logo (32px tall) on the left, then text links (the active link gets a primary fill and underline), a theme toggle switch and the user menu on the right. Below `md` the links collapse into a hamburger with a dropdown.
 - **Users & Data:** the admin's home for people, master data and visitor-app settings, as tabs: Stop Managers (list, add, CSV import), Admins, Students (student and assignment CSV imports, students export, delete all students), Divisions (cards, Add Division, CSV export) and Visitor App (countdown on/off and date). File actions sit with their data: there is no separate Import & Export tab, the Stops export is in the Stops page header, the feedback answers export is on Feedback > Responses. `/divisions` redirects to `?tab=divisions`; the Students page and the Overview link into the Students and Visitor App tabs. CSV imports use the shared `app-csv-import` (label, expected columns, result).
 
@@ -323,8 +406,26 @@ Gently rounded throughout. Cards and containers use 8px corners (`rounded-lg`). 
 - **Shell:** one shared dialog component (`app-dialog`, `title`, `size` md/lg, `role`, `busy`, `(close)`; actions go in `<div dialog-actions class="contents">`, a form's submit button uses `form="…"`): a `black/50` scrim, a `background-100` panel (`background-800` in dark mode) with 8px corners, 24px padding and `shadow-lg`, the `h2` title with a close button in the header, actions right-aligned at the bottom (primary last). `role="dialog"`, `aria-modal`, labelled by its title, focus trapped (`cdkFocusInitial` picks the first focus, e.g. Cancel in confirmations), Escape closes only the topmost dialog. Widths: `max-w-md` (448px) for confirmations, `max-w-2xl` for forms.
 - **Confirmations:** every confirmation goes through `ConfirmDialogService`, never the browser `confirm()`. The text says concretely what happens (which records are deleted or moved, what stays). The inline `app-delete-popup` is replaced with the service whenever a page is reworked.
 
-### Progress Bar (GuideApp feedback)
-An 8px rounded track in gray-100, filled with an orange-400 → orange-500 gradient that animates width over 300ms.
+### Tour Band (GuideApp, signature)
+A stop group's progress as one bar: a 12px fully rounded track with one segment per stop in the group's order, each in its exact division fill. Seen segments stand 12px tall, unseen ones are 4px lines in full colour, never transparent (every segment is 12px, unseen ones `scale-y` to a third, so ticking animates a transform, not the layout). Gaps are 2px, 1px above 30 stops. Ticking raises a segment in 300ms. It appears in two places, only for groups with several stops: on the group card (gray-200 track, under the name) and in the band of the group page (night-800 track, under the icons and "5 von 16 gesehen").
+
+**The Per Group Rule.** (GuideApp, user decision 2026-10-12) Most visitors pick one guide tour, so progress is never shown across the whole day: a bar over all 37 stops would tell them they never finish. Each group shows its own progress.
+
+**The Date Line.** Under the title of the start page and the countdown page: weekday, date and year, then the opening hours from the start time of the countdown setting to the fixed end at 19:00 ("Freitag, 20. November 2026, 13–19 Uhr", `shared/open-day.ts`); "Uhr" never wraps alone. The start page shows it only for today or a later date, so last year's date never appears; without a date the band holds only the title. The start page has no "next stop" line: progress lives on the group cards, and the stop pager leads on.
+
+**The One Motion Rule.** (GuideApp, from Nachtband) The group page's tour band growing in from the left is the GuideApp's one motion moment (900ms, `cubic-bezier(0.16, 1, 0.3, 1)`, once per group and visit, remembered in `sessionStorage`); the bands on the cards don't grow. Everything else is a short state transition. `prefers-reduced-motion` turns it and all transitions off. The band is `aria-hidden`; the count next to it carries the same information.
+
+### Division Icon (GuideApp)
+The division's own icon as uploaded in the dashboard (`/v1/divisions/{id}/image`), 40px square, no rounding, no frame, in the band of stop group and stop pages (a group shows every division of its stops once). Visitors don't know the short names ("HIF", "HITM", "ALL"), so the GuideApp never shows them. A division without an icon (today ALL and ORG) shows nothing: the image hides itself on a 404. The icon is decorative (`alt=""`); the stop's colours and text carry the meaning.
+
+**The No Short Names Rule.** (GuideApp, user decision 2026-10-12) Division short names are organizer vocabulary. The GuideApp shows a division only by its colour and its icon.
+
+### Feedback Page (GuideApp)
+One question per screen, inside the night frame. The band holds "Feedback", the meta line "Frage 2 von 6" and a **step band**: the tour band's form, neutral (night-800 track, white tall segments up to the current question, thin night-200 ones after it; no orange, no division colour, no grow-in). N counts the questions that may still appear, so it only shrinks (`shared/feedback-answers.ts`, shared logic with the kiosk). Below: on question 1 one muted line ("Anonym – hilft uns, den nächsten Tag der offenen Tür besser zu machen."), the question as a 20px bold `h2` with `*` when required, the answers, then "‹ Zurück" (white secondary, not on question 1) and the screen's one Action Orange button: "Weiter", "Überspringen" for an unanswered optional question, "Absenden" on the last. A single choice or rating tap moves on after 500ms, never past the last question. An unanswered required question keeps the button tappable (`aria-disabled`) and says "* Pflichtfrage – bitte wähl eine Antwort". Each step scrolls to the top and focuses the question. Answers in progress stay in `sessionStorage` (`feedbackDraft`), so switching tabs keeps them.
+
+Sending goes through `FeedbackOutboxService` (`localStorage` `feedbackOutbox`, only non-empty answers, retried on app start, on `online` and every 30s; 400/409 are dropped). The thanks screen is a white panel with the gray-900 check box, "Danke für dein Feedback!", one sentence and a status line ("Gesendet." or "Noch nicht gesendet – wir senden es, sobald du wieder Netz hast."), then a quiet white row "Noch ein Feedback geben". It shows whenever the page is reopened after sending (`feedbackSubmitted`), unless a new feedback is in progress.
+
+The map's disabled floor arrows (accent-700 at 50% opacity) are an unchanged leftover, recorded, not canonized.
 
 ## Feedback Kiosk
 
@@ -413,17 +514,23 @@ The kiosk (`kiosk/statistics/`) is a slideshow projected onto a wall in the lit 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** fill stop cards with the stop's runtime division color and fall back to Neutral Meadow Green (`division-fallback`) only when the stop has no division.
-- **Do** keep GuideApp tap targets at least 40px tall, and list cards at 80px.
-- **Do** use Programme Orange for the single primary action and the active state on a GuideApp screen.
+- **Do** fill GuideApp stop cards and tour band segments with the stop's exact runtime division colour, a left-to-right gradient through the exact colours for several divisions, and No-Division Gray (`guide-no-division`) only when the stop has no division.
+- **Do** keep GuideApp tap targets at least 44px, list cards at least 80px, and body text at least 16px.
+- **Do** use Action Orange (accent-700) for the one action button on a GuideApp screen, and Selection Orange (accent-600) for the active tab and focus.
+- **Do** start every GuideApp page with the night frame: the 56px top bar and a title band with one extra-bold title; subpages get a back link to their parent in the band.
+- **Do** show "seen" neutrally in the GuideApp: the gray-900 checkbox, the gray-500 group name, the 12px tour band segment.
 - **Do** reserve bottom padding (at least 112px) on every GuideApp page so the fixed tab bar never covers the last card.
-- **Do** keep the HTL Leonding logo at the top of both apps (header block in the GuideApp, nav bar in the dashboard).
+- **Do** keep the HTL Leonding logo at the top of both apps (white logo in the night top bar in the GuideApp, nav bar in the dashboard).
 - **Do** use DaisyUI component classes (`btn`, `input`, `select`, `table`, `toggle`, `tabs`) in the dashboard and define new colors as theme variables, so dark mode keeps working.
 - **Do** start every dashboard page with the shared page header and the `max-w-6xl` shell.
 
 ### Don't:
 - **Don't** re-tint, desaturate or replace division colors for aesthetic reasons; they are the school's identity.
-- **Don't** introduce a second accent color in the GuideApp alongside orange.
+- **Don't** introduce a second accent color in the GuideApp alongside orange, or use orange for status, counts or decoration.
+- **Don't** tint, darken, fade or overlay division fills in the GuideApp, also not for seen stops.
+- **Don't** shrink, fade or move GuideApp rows when they are ticked.
+- **Don't** use night blue on the GuideApp canvas (text, links, badges); it is the frame only.
+- **Don't** add a second motion moment to the GuideApp beyond the tour band growing in.
 - **Don't** use orange in the dashboard or dashboard blue in the GuideApp; each app keeps its own accent.
 - **Don't** set GuideApp body text below 16px.
 - **Don't** add raw hex colors in dashboard templates; extend the `--primary-*` / `--background-*` variables so both themes stay in sync.
