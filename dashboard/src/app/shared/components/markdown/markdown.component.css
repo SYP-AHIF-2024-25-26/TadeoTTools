@@ -1,0 +1,98 @@
+/* The rendered text is innerHTML, so it carries no _ngcontent attribute. */
+
+:host ::ng-deep .markdown > * + * {
+  margin-top: 0.5rem;
+}
+
+:host ::ng-deep .markdown h1,
+:host ::ng-deep .markdown h2 {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 700;
+  color: var(--ink-strong);
+}
+
+:host ::ng-deep .markdown h3,
+:host ::ng-deep .markdown h4,
+:host ::ng-deep .markdown h5,
+:host ::ng-deep .markdown h6,
+:host ::ng-deep .markdown strong,
+:host ::ng-deep .markdown b,
+:host ::ng-deep .markdown th {
+  font-weight: 700;
+  color: var(--ink-strong);
+}
+
+:host ::ng-deep .markdown em,
+:host ::ng-deep .markdown i {
+  font-style: italic;
+}
+
+:host ::ng-deep .markdown ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+
+:host ::ng-deep .markdown ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+
+:host ::ng-deep .markdown li + li {
+  margin-top: 0.125rem;
+}
+
+:host ::ng-deep .markdown a {
+  color: var(--primary-700);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+:host ::ng-deep .markdown blockquote {
+  border-left: 3px solid color-mix(in srgb, currentColor 25%, transparent);
+  padding-left: 0.75rem;
+  color: var(--ink-muted);
+}
+
+:host ::ng-deep .markdown code {
+  border-radius: 0.25rem;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  padding: 0.0625rem 0.25rem;
+  font-size: 0.9em;
+}
+
+:host ::ng-deep .markdown pre {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  padding: 0.5rem 0.75rem;
+}
+
+:host ::ng-deep .markdown pre code {
+  padding: 0;
+  background: none;
+}
+
+:host ::ng-deep .markdown hr {
+  border-color: color-mix(in srgb, currentColor 25%, transparent);
+}
+
+:host ::ng-deep .markdown img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+:host ::ng-deep .markdown table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+:host ::ng-deep .markdown th,
+:host ::ng-deep .markdown td {
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  padding: 0.25rem 0.5rem;
+  text-align: left;
+}

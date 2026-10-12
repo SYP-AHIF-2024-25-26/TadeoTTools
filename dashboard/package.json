@@ -23,6 +23,7 @@
     "jwt-decode": "^4.0.0",
     "keycloak-angular": "^19.0.2",
     "keycloak-js": "^26.1.0",
+    "marked": "^15.0.12",
     "rxjs": "~7.8.0",
     "tinycolor": "^0.0.1",
     "tinycolor2": "^1.6.0",
