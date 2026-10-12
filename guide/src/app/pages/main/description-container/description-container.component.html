@@ -8,10 +8,12 @@
       }
       @if (description()) {
         <div
-          class="break-words text-lg leading-relaxed text-gray-700"
-          [innerHTML]="description()"
+          class="description break-words text-lg leading-relaxed text-gray-700"
+          [innerHTML]="html()"
         ></div>
       }
     </div>
+    <!-- Optional side column on the right, e.g. a stop's division icons. -->
+    <ng-content />
   </div>
 </section>

@@ -77,6 +77,10 @@ export class StopDescriptionPageComponent implements OnInit {
       .map((id) => this.divisions().find((division) => division.id === id))
       .filter((division): division is Division => !!division)
   );
+  /** The icons stay in the header only when there is no description card to hold them. */
+  protected headerDivisions = computed(() =>
+    this.stop().description ? [] : this.stopDivisions()
+  );
 
   async ngOnInit() {
     if (
