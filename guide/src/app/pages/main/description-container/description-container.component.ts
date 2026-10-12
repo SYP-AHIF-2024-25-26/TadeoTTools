@@ -1,36 +1,25 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  inject,
+  computed,
   input,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { BASE_URL } from '@app/app.config';
+import { RouterLink } from '@angular/router';
+import { mapRoomOf } from '@shared/room';
 
 @Component({
   selector: 'app-description-container',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './description-container.component.html',
   styleUrl: './description-container.component.css',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DescriptionContainerComponent {
-  title = input.required<string>();
-  description = input.required<string>();
+  title = input<string>();
+  description = input<string>();
   roomNr = input<string>();
-  divisionIds = input<number[]>();
+  /** Off when the title band already names the room. */
+  showRoom = input<boolean>(true);
 
-  protected baseUrl = inject(BASE_URL);
-
-  protected router = inject(Router);
-
-  hideImage(event: Event): void {
-    const imgElement = event.target as HTMLImageElement;
-    imgElement.style.display = 'none';
-  }
-
-  matchRoomNr(roomNr: string): string | null {
-    return roomNr.match('\\b\\d{1,3}\\b|U\\d{2}|E\\d{2}|EG|UG')?.[0] ?? null;
-  }
+  protected mapRoom = computed(() => mapRoomOf(this.roomNr()));
 }

@@ -1,71 +1,99 @@
 import {
   ChangeDetectionStrategy,
+  OnInit,
   Component,
   computed,
-  HostListener,
   inject,
   input,
-  Signal,
   signal,
-  ViewChildren,
-  WritableSignal,
 } from '@angular/core';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { NavbarComponent } from '@shared/components/navbar/navbar.component';
-import { BreadcrumbComponent } from '@pages/main/breadcrumb/breadcrumb.component';
+import { DivisionIconComponent } from '@shared/components/division-icon/division-icon.component';
 import { ApiFetchService } from '@core/services/api-fetch.service';
 import { Division, Stop, StopGroup } from '@shared/models/types';
 import { StopCardComponent } from '@pages/main/stop-card/stop-card.component';
 import { Router } from '@angular/router';
-import { NgClass } from '@angular/common';
 import { DescriptionContainerComponent } from '@pages/main/description-container/description-container.component';
+import { SeenToggleComponent } from '@pages/main/seen-toggle/seen-toggle.component';
+import { CardSkeletonComponent } from '@shared/components/load-state/card-skeleton.component';
+import { LoadErrorComponent } from '@shared/components/load-state/load-error.component';
+import { ProgressService } from '@core/services/progress.service';
 import {
   CURRENT_STOP_GROUP_PREFIX,
   CURRENT_STOP_PREFIX,
-  FINISHED_STOP_GROUPS,
-  FINISHED_STOPS,
 } from '@shared/constants/constants';
+import { colorsOfStop } from '@shared/division-colors';
+import { groupCountLine } from '@shared/tour';
+import {
+  TourBandComponent,
+  TourSegment,
+} from '@shared/components/tour-band/tour-band.component';
 
 @Component({
   selector: 'app-stop-page',
   imports: [
     HeaderComponent,
     NavbarComponent,
-    BreadcrumbComponent,
+    DivisionIconComponent,
     StopCardComponent,
-    NgClass,
     DescriptionContainerComponent,
+    SeenToggleComponent,
+    CardSkeletonComponent,
+    LoadErrorComponent,
+    TourBandComponent,
   ],
   templateUrl: './stop-page.component.html',
   styleUrl: './stop-page.component.css',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(swiperight)': 'goBack()' },
 })
-export class StopPageComponent {
+export class StopPageComponent implements OnInit {
   protected apiFetchService = inject(ApiFetchService);
   protected router = inject(Router);
+  protected progress = inject(ProgressService);
   stopGroupId = input.required<string>();
-  @ViewChildren(StopCardComponent) stopCards!: StopCardComponent[];
   parentStopGroup = signal<StopGroup>({} as StopGroup);
+  protected loadState = signal<'loading' | 'ready' | 'error'>('loading');
   stops = signal<Stop[]>([]);
   divisions = signal<Division[]>([]);
-  divisionIds: Signal<number[]> = computed(() =>
-    Array.from(
-      new Set(
-        this.stops()
-          .flatMap((stop) => stop.divisionIds)
-          .sort((a, b) => a - b)
-      )
-    )
+
+  protected sortedStops = computed(() => {
+    const groupId = this.parentStopGroup().id;
+    return [...this.stops()].sort(
+      (a, b) =>
+        a.orders[a.stopGroupIds.indexOf(groupId)]! -
+        b.orders[b.stopGroupIds.indexOf(groupId)]!
+    );
+  });
+
+  /** Every division of the group's stops, once, in the divisions' own order. */
+  protected groupDivisions = computed(() => {
+    const ids = new Set(this.stops().flatMap((stop) => stop.divisionIds));
+    return this.divisions().filter((division) => ids.has(division.id));
+  });
+
+  protected metaLine = computed(() => {
+    const stops = this.stops();
+    if (stops.length === 1) {
+      return stops[0].roomNr ? `Raum ${stops[0].roomNr}` : '';
+    }
+    return stops.length > 1
+      ? groupCountLine(
+          stops.filter((stop) => this.progress.isStopSeen(stop.id)).length,
+          stops.length
+        )
+      : '';
+  });
+
+  /** The group's progress band in the title band, in the cards' order. */
+  protected segments = computed<TourSegment[]>(() =>
+    this.sortedStops().map((stop) => ({
+      id: stop.id,
+      colors: colorsOfStop(stop, this.divisions()),
+      seen: this.progress.isStopSeen(stop.id),
+    }))
   );
-
-  finishedStops = signal<number[]>([]);
-  finishedStopGroups = signal<number[]>([]);
-
-  @HostListener('swiperight')
-  onSwipeRight() {
-    this.goBack();
-  }
 
   async ngOnInit() {
     if (this.stopGroupId() === undefined) {
@@ -83,29 +111,35 @@ export class StopPageComponent {
         ) as StopGroup
       );
     }
-    this.stops.set(
-      await this.apiFetchService.getStopsOfGroup(Number(this.stopGroupId())!)
-    );
-    this.divisions.set(await this.apiFetchService.getDivisions());
-
-    this.loadProgress();
-  }
-
-  loadProgress() {
-    const fs = localStorage.getItem(FINISHED_STOPS);
-    if (fs) {
-      this.finishedStops.set(JSON.parse(fs));
+    const groupId = Number(this.stopGroupId());
+    this.loadState.set('loading');
+    let groups: StopGroup[];
+    let stops: Stop[];
+    try {
+      [groups, stops] = await Promise.all([
+        this.apiFetchService.getStopGroups(),
+        this.apiFetchService.getStopsOfGroup(groupId),
+      ]);
+    } catch {
+      this.loadState.set('error');
+      return;
     }
-    const fsg = localStorage.getItem(FINISHED_STOP_GROUPS);
-    if (fsg) {
-      this.finishedStopGroups.set(JSON.parse(fsg));
+    // Without divisions the tags and colours are left out; the stops still show.
+    const divisions = await this.apiFetchService.getDivisions().catch(() => []);
+    // The URL decides the group, not whatever was opened last.
+    const group = groups.find((g) => g.id === groupId);
+    this.progress.adoptLegacyGroupTicks(groups);
+    if (group) {
+      this.parentStopGroup.set(group);
+      localStorage.setItem(CURRENT_STOP_GROUP_PREFIX, JSON.stringify(group));
     }
+    this.divisions.set(divisions);
+    this.stops.set(stops);
+    this.loadState.set('ready');
   }
 
   getColorsOfStop(stop: Stop) {
-    return this.divisions()
-      .filter((division) => stop.divisionIds.includes(division.id))
-      .map((d) => d.color);
+    return colorsOfStop(stop, this.divisions());
   }
 
   async openStopDescriptionPage(stop: Stop) {
@@ -116,55 +150,6 @@ export class StopPageComponent {
       'stop',
       stop.id,
     ]);
-  }
-
-  isStopFinished(id: number): boolean {
-    return this.finishedStops().includes(id);
-  }
-
-  onToggleStop(stopId: number) {
-    let currentFinished = this.finishedStops();
-    if (currentFinished.includes(stopId)) {
-      currentFinished = currentFinished.filter((id) => id !== stopId);
-    } else {
-      currentFinished = [...currentFinished, stopId];
-    }
-    this.finishedStops.set(currentFinished);
-    localStorage.setItem(FINISHED_STOPS, JSON.stringify(currentFinished));
-
-    // Check function documentation for info about why it is not used
-    //this.checkGroupStatus();
-  }
-
-  // checkGroupStatus is used to check wether all stops are finished per stopGroup and if so the stopGroupIds get safed to localStorage
-  // This is not used at the moment, because we want the user to check the stopGroup itsself and we just display how many stops of each stopGroup are finished.
-  /*checkGroupStatus() {
-    const group = this.parentStopGroup();
-    // Assuming we have to verify if all stops in THIS group are finished.
-    // Ideally we should use group.stopIds but stops() contains the stops that were fetched.
-    // Let's rely on this.stops() as the source of truth for "stops in this group".
-    const allFinished = this.stops().every((stop) =>
-      this.finishedStops().includes(stop.id)
-    );
-
-    let currentGroups = this.finishedStopGroups();
-    if (allFinished) {
-      if (!currentGroups.includes(group.id)) {
-        currentGroups = [...currentGroups, group.id];
-      }
-    } else {
-      currentGroups = currentGroups.filter((id) => id !== group.id);
-    }
-    this.finishedStopGroups.set(currentGroups);
-    localStorage.setItem(FINISHED_STOP_GROUPS, JSON.stringify(currentGroups));
-  }*/
-
-  getSortedStops() {
-    return this.stops().sort(
-      (a, b) =>
-        a.orders[a.stopGroupIds.indexOf(this.parentStopGroup().id)]! -
-        b.orders[b.stopGroupIds.indexOf(this.parentStopGroup().id)]!
-    );
   }
 
   async goBack() {

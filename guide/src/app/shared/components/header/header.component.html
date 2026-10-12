@@ -1,30 +1,61 @@
-<header class="rounded-md bg-gray-100 p-4 shadow-lg">
-  <div class="w-full">
-    <!-- Logo and Title Section -->
-    <div class="flex w-full flex-col">
-      <!-- HTL Leonding Image - Left aligned -->
+<header
+  class="on-night sticky top-0 z-30 bg-night-950 pt-[env(safe-area-inset-top)] shadow-[0_6px_16px_rgba(2,20,34,0.35)]"
+>
+  <div class="flex h-14 items-center px-4">
+    <a
+      routerLink="/main"
+      class="-mx-1 flex h-11 items-center rounded-lg px-1"
+      aria-label="HTL Leonding, zur Startseite"
+    >
       <img
-        src="assets/logo.png"
-        alt="HTL Leonding"
-        class="mb-8 h-12 cursor-pointer self-center"
-        (click)="router.navigate(['main'])"
+        ngSrc="assets/htl-leonding-logo-white.png"
+        width="283"
+        height="64"
+        alt=""
+        priority
+        class="h-8 w-auto"
       />
-
-      <!-- Text below the image - Center aligned -->
-      @if (showWelcomeText()) {
-        <div class="flex items-center justify-center">
-          <h1
-            class="animate-gradient bg-gradient-to-r from-informatic-blue via-electronics-red to-medicin-technology-yellow bg-clip-text text-center text-3xl font-bold text-transparent"
-          >
-            Willkommen am <br />
-            @if (currentHour < 17) {
-              Tag der offenen Tür!
-            } @else {
-              Abend der offenen Tür!
-            }
-          </h1>
-        </div>
-      }
-    </div>
+    </a>
   </div>
 </header>
+
+<div
+  class="on-night bg-gradient-to-b from-night-950 to-night-900 px-4 pb-6 pt-2 text-white"
+>
+  @if (backLabel()) {
+    <a
+      [routerLink]="backLink()"
+      class="-ml-2 mb-1 inline-flex min-h-11 max-w-full items-center gap-1 rounded-lg pl-1 pr-2 text-base font-semibold text-night-200 transition-colors hover:text-white"
+    >
+      <svg
+        class="h-5 w-5 shrink-0"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2.25"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 19.5 8.25 12l7.5-7.5"
+        />
+      </svg>
+      <span class="truncate">{{ backLabel() }}</span>
+    </a>
+  }
+
+  <h1
+    class="text-balance break-words font-extrabold tracking-[-0.025em]"
+    [class]="
+      size() === 'start'
+        ? 'pt-4 text-[2rem] leading-[2.375rem]'
+        : 'line-clamp-3 text-[1.75rem] leading-[2.125rem]'
+    "
+  >
+    {{ title() }}
+  </h1>
+
+  <ng-content />
+</div>

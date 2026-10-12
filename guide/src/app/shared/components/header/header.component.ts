@@ -1,21 +1,19 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  input,
-} from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
+/** The night frame: sticky top bar with the school logo, then the title band. */
 @Component({
   selector: 'app-header',
-  imports: [],
+  imports: [NgOptimizedImage, RouterLink],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
-  showWelcomeText = input(true);
-  protected router = inject(Router);
-  protected readonly currentHour = new Date().getHours();
+  title = input.required<string>();
+  /** 'start' sets the larger title of the start page. */
+  size = input<'start' | 'page'>('page');
+  backLabel = input<string>();
+  backLink = input<string | unknown[]>('/main');
 }

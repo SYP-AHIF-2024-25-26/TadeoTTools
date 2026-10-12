@@ -1,18 +1,24 @@
 <div
-  class="flex h-screen w-full touch-pan-y select-none flex-col justify-start overflow-y-scroll bg-gray-50"
+  class="flex h-screen w-full touch-pan-y touch-pinch-zoom select-none flex-col justify-start overflow-y-scroll bg-canvas"
 >
-  <app-header [showWelcomeText]="true" />
+  <app-header title="Karte">
+    @if (roomNr()) {
+      <p class="mt-2 text-base font-semibold text-night-100">
+        Raum {{ roomNr() }}
+      </p>
+    }
+  </app-header>
 
   @if (roomNr() !== undefined) {
     <button
-      class="my-3 ml-4 flex w-fit items-center rounded-2xl bg-orange-500 px-4 py-2 text-white shadow-md disabled:opacity-50"
+      class="mx-4 mt-5 flex h-11 w-fit items-center rounded-xl bg-accent-700 px-5 text-base font-bold text-white shadow-md transition hover:bg-accent-800 disabled:opacity-50"
       (click)="onGoBack()"
     >
       Zur Station
     </button>
   }
   <div
-    class="mx-4 mt-2 flex h-max flex-grow flex-col items-center justify-center rounded-lg bg-white p-4 shadow-lg"
+    class="mx-4 mt-5 flex h-max flex-grow flex-col items-center justify-center rounded-2xl bg-white p-4 shadow-md ring-1 ring-gray-900/5"
   >
     <h2 class="self-start text-xl font-medium">
       {{ currentFloorSymbol() }}
@@ -35,7 +41,7 @@
     <button
       (click)="navigate(1)"
       [disabled]="currentFloor() === images.length - 1"
-      class="flex items-center rounded-2xl bg-orange-500 px-4 py-2 text-white shadow-md disabled:opacity-50"
+      class="flex h-11 items-center rounded-xl bg-accent-700 px-4 text-white shadow-md transition hover:bg-accent-800 disabled:opacity-50"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +61,7 @@
     <button
       (click)="navigate(-1)"
       [disabled]="currentFloor() === 0"
-      class="flex items-center rounded-2xl bg-orange-500 px-4 py-2 text-white shadow-md disabled:opacity-50"
+      class="flex h-11 items-center rounded-xl bg-accent-700 px-4 text-white shadow-md transition hover:bg-accent-800 disabled:opacity-50"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

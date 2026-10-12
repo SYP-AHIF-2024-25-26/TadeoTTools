@@ -1,259 +1,322 @@
 import {
+  afterNextRender,
+  ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
+  ElementRef,
   inject,
+  Injector,
+  type OnDestroy,
   type OnInit,
   signal,
-  ChangeDetectionStrategy,
-  HostListener,
+  viewChild,
 } from '@angular/core';
-import { FeedbackQuestion, FeedbackSubmission } from '@shared/models/types';
+import { Router } from '@angular/router';
+import {
+  Division,
+  FeedbackQuestion,
+  FeedbackSubmission,
+} from '@shared/models/types';
+import { divisionColorFor } from '@shared/division-colors';
 import { ApiFetchService } from '@core/services/api-fetch.service';
+import { FeedbackOutboxService } from '@core/services/feedback-outbox.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { NavbarComponent } from '@shared/components/navbar/navbar.component';
-import { Router } from '@angular/router';
+import { LoadErrorComponent } from '@shared/components/load-state/load-error.component';
+import { CardSkeletonComponent } from '@shared/components/load-state/card-skeleton.component';
+import {
+  AnswerMap,
+  isAnswered,
+  possibleQuestions,
+  ratingScale,
+  splitMultiple,
+  toggleMultiple,
+  visibleQuestions,
+} from '@shared/feedback-answers';
+import {
+  FEEDBACK_DRAFT,
+  FEEDBACK_SUBMITTED,
+} from '@shared/constants/constants';
 
+interface Draft {
+  position: number;
+  answers: AnswerMap;
+}
+
+/** Pause after tapping a single choice or rating so the selection is visible. */
+const AUTO_ADVANCE_MS = 500;
+
+/**
+ * The visitor's feedback, one question per screen. The band says where they are
+ * ("Frage 2 von 6" and a step band); a tap on a single choice or rating moves on by
+ * itself. Finished feedback goes through the outbox, so it survives a Wi-Fi gap.
+ */
 @Component({
   selector: 'app-feedback',
-  imports: [HeaderComponent, NavbarComponent],
+  imports: [
+    HeaderComponent,
+    NavbarComponent,
+    LoadErrorComponent,
+    CardSkeletonComponent,
+  ],
   templateUrl: './feedback.component.html',
   styleUrl: './feedback.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(swipeleft)': 'router.navigate(["/about"])',
+    '(swiperight)': 'router.navigate(["/map"])',
+  },
 })
-export class FeedbackComponent implements OnInit {
-  // State signals
-  currentVisibleIndex = signal<number>(0);
-  isSubmitted = signal<boolean>(false);
-  answers = signal<Record<number, string>>({});
-  showError = signal<boolean>(false);
-  showAnswerSummary = signal<boolean>(false);
-  questions = signal<FeedbackQuestion[]>([]);
-  currentAnswer = signal<string>('');
+export class FeedbackComponent implements OnInit, OnDestroy {
+  protected router = inject(Router);
+  private api = inject(ApiFetchService);
+  private outbox = inject(FeedbackOutboxService);
+  private injector = inject(Injector);
 
-  // Computed: which questions are visible based on dependencies
-  visibleQuestions = computed<FeedbackQuestion[]>(() => {
-    const allQuestions = this.questions();
-    const answersMap = this.answers();
+  protected questions = signal<FeedbackQuestion[]>([]);
+  private divisions = signal<Division[]>([]);
+  protected loadState = signal<'loading' | 'ready' | 'error'>('loading');
+  protected view = signal<'questions' | 'thanks'>('questions');
+  protected answers = signal<AnswerMap>({});
+  protected position = signal(0);
+  protected showRequired = signal(false);
 
-    return allQuestions.filter((q) => {
-      if (!q.dependencies || q.dependencies.length === 0) {
-        return true;
+  private heading = viewChild<ElementRef<HTMLElement>>('heading');
+  private advanceTimer?: ReturnType<typeof setTimeout>;
+
+  protected visible = computed(() =>
+    visibleQuestions(this.questions(), this.answers())
+  );
+  protected total = computed(
+    () => possibleQuestions(this.questions(), this.answers()).length
+  );
+  protected index = computed(() =>
+    Math.min(this.position(), Math.max(this.visible().length - 1, 0))
+  );
+  protected current = computed<FeedbackQuestion | undefined>(
+    () => this.visible()[this.index()]
+  );
+  protected isLast = computed(() => this.index() === this.visible().length - 1);
+  protected answer = computed(() => {
+    const question = this.current();
+    return question ? (this.answers()[question.id!] ?? '') : '';
+  });
+  protected answered = computed(() => isAnswered(this.answer()));
+
+  protected primaryLabel = computed(() => {
+    if (this.isLast()) return 'Absenden';
+    return this.answered() || this.current()?.required
+      ? 'Weiter'
+      : 'Überspringen';
+  });
+
+  /** One segment per question that may still come; the ones up to here stand tall. */
+  protected steps = computed(() =>
+    Array.from({ length: this.total() }, (_, i) => i <= this.index())
+  );
+
+  protected scale = computed(() => {
+    const question = this.current();
+    return question?.type === 'Rating' ? ratingScale(question) : [];
+  });
+  /** Up to 7 values in one row, more in two. */
+  protected scaleColumns = computed(() => {
+    const count = this.scale().length;
+    return count <= 7 ? count : Math.ceil(count / 2);
+  });
+  protected chosenRating = computed(() =>
+    this.scale().find((s) => String(s.value) === this.answer())
+  );
+  protected scaleEnds = computed(() => {
+    const scale = this.scale();
+    const first = scale[0]?.label;
+    const last = scale[scale.length - 1]?.label;
+    return first || last ? { first, last } : null;
+  });
+
+  /** The thanks line reads the outbox, so it changes once queued feedback goes out. */
+  protected sent = computed(() => this.outbox.pending().length === 0);
+
+  constructor() {
+    effect(() => {
+      if (this.view() !== 'questions' || this.loadState() !== 'ready') return;
+      const draft: Draft = {
+        position: this.position(),
+        answers: this.answers(),
+      };
+      try {
+        sessionStorage.setItem(FEEDBACK_DRAFT, JSON.stringify(draft));
+      } catch {
+        // Storage blocked: the answers only would not survive a tab switch.
       }
-
-      return q.dependencies.every((dep) => {
-        const parentQuestion = allQuestions.find(
-          (pq) => pq.id === dep.dependsOnQuestionId
-        );
-        if (!parentQuestion) return false;
-
-        const parentIndex = allQuestions.indexOf(parentQuestion);
-        const parentAnswer = answersMap[parentIndex] || '';
-
-        if (parentQuestion.type === 'MultipleChoice') {
-          const selectedOptions = parentAnswer
-            .split(',')
-            .map((s) => s.trim())
-            .filter((s) => s);
-          return selectedOptions.includes(dep.conditionValue);
-        }
-
-        return parentAnswer === dep.conditionValue;
-      });
     });
-  });
-
-  feedbackAlreadySubmitted = computed(
-    () => localStorage.getItem('feedbackSubmitted') === 'true'
-  );
-
-  currentQuestion = computed<FeedbackQuestion>(() => {
-    const visible = this.visibleQuestions();
-    const index = this.currentVisibleIndex();
-    return visible[index];
-  });
-
-  progressPercentage = computed<number>(() =>
-    Math.round(
-      (this.currentVisibleIndex() / this.visibleQuestions().length) * 100
-    )
-  );
-
-  isAnswerValid = computed<boolean>(() => {
-    const question = this.currentQuestion();
-    const answer = this.currentAnswer();
-    return (
-      !question?.required ||
-      (answer !== null && answer !== undefined && answer.trim() !== '')
-    );
-  });
-
-  private apiFetchService = inject(ApiFetchService);
-  private router = inject(Router);
-
-  @HostListener('swipeleft')
-  onSwipeLeft() {
-    this.router.navigate(['/about']);
-  }
-
-  @HostListener('swiperight')
-  onSwipeRight() {
-    this.router.navigate(['/map']);
   }
 
   async ngOnInit(): Promise<void> {
+    const draft = readDraft();
+    if (draft) {
+      this.answers.set(draft.answers);
+      this.position.set(draft.position);
+    } else if (localStorage.getItem(FEEDBACK_SUBMITTED) === 'true') {
+      this.view.set('thanks');
+    }
+    this.loadDivisions();
     await this.loadQuestions();
-    this.loadCurrentAnswer();
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.advanceTimer);
   }
 
   async loadQuestions(): Promise<void> {
-    const fetchedQuestions =
-      await this.apiFetchService.getAllFeedbackQuestions();
-    this.questions.set(fetchedQuestions);
-  }
-
-  private loadCurrentAnswer(): void {
-    const question = this.currentQuestion();
-    if (!question) return;
-
-    const allQuestions = this.questions();
-    const actualIndex = allQuestions.indexOf(question);
-    const answersValue = this.answers();
-
-    if (answersValue[actualIndex]) {
-      this.currentAnswer.set(answersValue[actualIndex]);
-    } else {
-      this.currentAnswer.set('');
-    }
-  }
-
-  private saveCurrentAnswer(): void {
-    const question = this.currentQuestion();
-    if (!question) return;
-
-    const allQuestions = this.questions();
-    const actualIndex = allQuestions.indexOf(question);
-
-    this.answers.update((prev) => ({
-      ...prev,
-      [actualIndex]: this.currentAnswer(),
-    }));
-  }
-
-  async onSubmit(): Promise<void> {
-    this.showError.set(false);
-
-    if (!this.isAnswerValid()) {
-      this.showError.set(true);
+    this.loadState.set('loading');
+    try {
+      this.questions.set(await this.api.getAllFeedbackQuestions());
+    } catch {
+      // A network error is not "no questions": say so and offer a retry.
+      this.loadState.set('error');
       return;
     }
-
-    this.saveCurrentAnswer();
-
-    const visible = this.visibleQuestions();
-    const currentIndex = this.currentVisibleIndex();
-
-    if (currentIndex < visible.length - 1) {
-      this.currentVisibleIndex.set(currentIndex + 1);
-      this.loadCurrentAnswer();
-    } else {
-      this.isSubmitted.set(true);
-      const answersValue = this.answers();
-      const allQuestions = this.questions();
-
-      // Only submit answers for visible questions
-      const submissions = visible
-        .map((question) => {
-          const actualIndex = allQuestions.indexOf(question);
-          return {
-            questionId: question.id,
-            answer: answersValue[actualIndex] || '',
-          } as FeedbackSubmission;
-        })
-        .filter((s) => s.questionId !== undefined);
-
-      await this.apiFetchService.submitFeedback(submissions);
-      localStorage.setItem('feedbackSubmitted', 'true');
-    }
+    this.loadState.set('ready');
   }
 
-  goToPrevious(): void {
-    const currentIndex = this.currentVisibleIndex();
-    if (currentIndex > 0) {
-      this.saveCurrentAnswer();
-      this.currentVisibleIndex.set(currentIndex - 1);
-      this.loadCurrentAnswer();
-      this.showError.set(false);
-    }
+  /** An answer naming a division ("Informatik") wears its exact colour, like a stop card. */
+  protected divisionColor(option: string): string | null {
+    return divisionColorFor(option, this.divisions());
   }
 
-  selectOption(option: string): void {
-    const question = this.currentQuestion();
-    if (!question) return;
-
-    if (question.type === 'MultipleChoice') {
-      const currentAnswer = this.currentAnswer();
-      const selectedOptions = currentAnswer
-        .split(',')
-        .map((s) => s.trim())
-        .filter((s) => s);
-
-      if (selectedOptions.includes(option)) {
-        const newOptions = selectedOptions.filter((o) => o !== option);
-        this.currentAnswer.set(newOptions.join(', '));
-      } else {
-        selectedOptions.push(option);
-        this.currentAnswer.set(selectedOptions.join(', '));
-      }
-    } else {
-      this.currentAnswer.set(option);
-    }
-  }
-
-  isOptionSelected(option: string): boolean {
-    const question = this.currentQuestion();
+  protected isChosen(option: string): boolean {
+    const question = this.current();
     if (!question) return false;
+    return question.type === 'MultipleChoice'
+      ? splitMultiple(this.answer(), question.options).includes(option)
+      : this.answer() === option;
+  }
 
+  protected choose(option: string): void {
+    const question = this.current();
+    if (!question) return;
     if (question.type === 'MultipleChoice') {
-      const currentAnswer = this.currentAnswer();
-      const selectedOptions = currentAnswer
-        .split(',')
-        .map((s) => s.trim())
-        .filter((s) => s);
-      return selectedOptions.includes(option);
+      this.setAnswer(toggleMultiple(this.answer(), option, question.options));
+      return;
     }
-
-    return this.currentAnswer() === option;
+    this.setAnswer(option);
+    this.advanceSoon();
   }
 
-  selectRating(rating: number): void {
-    this.currentAnswer.set(rating.toString());
+  protected rate(value: number): void {
+    this.setAnswer(String(value));
+    this.advanceSoon();
   }
 
-  updateTextAnswer(value: string): void {
-    this.currentAnswer.set(value);
+  protected write(text: string): void {
+    this.setAnswer(text);
   }
 
-  getRatingRange(): number[] {
-    const currentQuestionValue = this.currentQuestion();
-    const min = currentQuestionValue.minRating || 1;
-    const max = currentQuestionValue.maxRating || 5;
-    return Array.from({ length: max - min + 1 }, (_, i) => min + i);
-  }
-
-  getRatingLabel(rating: number): string {
-    const currentQuestionValue = this.currentQuestion();
-    if (!currentQuestionValue.ratingLabels) return rating.toString();
-
-    const labels = currentQuestionValue.ratingLabels
-      .split(',')
-      .map((label) => label.trim());
-    const min = currentQuestionValue.minRating || 1;
-    const index = rating - min;
-
-    if (index >= 0 && index < labels.length) {
-      return labels[index];
+  protected next(): void {
+    clearTimeout(this.advanceTimer);
+    if (this.current()?.required && !this.answered()) {
+      this.showRequired.set(true);
+      return;
     }
-
-    return rating.toString();
+    if (this.isLast()) {
+      this.submit();
+    } else {
+      this.goTo(this.index() + 1);
+    }
   }
+
+  protected previous(): void {
+    clearTimeout(this.advanceTimer);
+    this.goTo(this.index() - 1);
+  }
+
+  /** Starts a new feedback on the same phone, e.g. a parent after their child. */
+  protected startNew(): void {
+    this.answers.set({});
+    this.position.set(0);
+    this.showRequired.set(false);
+    this.view.set('questions');
+    this.focusHeading();
+  }
+
+  private async loadDivisions(): Promise<void> {
+    try {
+      this.divisions.set(await this.api.getDivisions());
+    } catch {
+      // Colours are a visual aid only: without them the answers stay white.
+    }
+  }
+
+  private setAnswer(value: string): void {
+    const id = this.current()?.id;
+    if (id === undefined) return;
+    this.answers.update((all) => ({ ...all, [id]: value }));
+    if (isAnswered(value)) this.showRequired.set(false);
+  }
+
+  /** Single choice and rating move on by themselves, but never send the feedback. */
+  private advanceSoon(): void {
+    clearTimeout(this.advanceTimer);
+    if (this.isLast()) return;
+    const question = this.current();
+    this.advanceTimer = setTimeout(() => {
+      if (this.current() === question) this.next();
+    }, AUTO_ADVANCE_MS);
+  }
+
+  private goTo(position: number): void {
+    this.position.set(Math.max(position, 0));
+    this.showRequired.set(false);
+    this.focusHeading();
+  }
+
+  private submit(): void {
+    // Only answered, still visible questions: the backend rejects empty answers.
+    const answers = this.answers();
+    const submissions: FeedbackSubmission[] = this.visible()
+      .filter((q) => isAnswered(answers[q.id!]))
+      .map((q) => ({ questionId: q.id!, answer: answers[q.id!].trim() }));
+    if (submissions.length > 0) {
+      this.outbox.add(submissions);
+    }
+    try {
+      localStorage.setItem(FEEDBACK_SUBMITTED, 'true');
+      sessionStorage.removeItem(FEEDBACK_DRAFT);
+    } catch {
+      // Storage blocked: the page just opens on the questions next time.
+    }
+    this.view.set('thanks');
+    this.focusHeading();
+  }
+
+  /** Each step starts at the top, with the screen reader on the new heading. */
+  private focusHeading(): void {
+    afterNextRender(
+      () => {
+        window.scrollTo({ top: 0 });
+        this.heading()?.nativeElement.focus({ preventScroll: true });
+      },
+      { injector: this.injector }
+    );
+  }
+}
+
+function readDraft(): Draft | null {
+  try {
+    const stored = sessionStorage.getItem(FEEDBACK_DRAFT);
+    const draft: unknown = stored ? JSON.parse(stored) : null;
+    if (
+      draft &&
+      typeof draft === 'object' &&
+      'position' in draft &&
+      'answers' in draft
+    ) {
+      return draft as Draft;
+    }
+  } catch {
+    // Unreadable draft: start fresh.
+  }
+  return null;
 }

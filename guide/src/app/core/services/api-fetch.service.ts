@@ -10,6 +10,7 @@ import {
   StopGroup,
 } from '@shared/models/types';
 import { BASE_URL } from '@app/app.config';
+import { LAST_KNOWN_PREFIX } from '@shared/constants/constants';
 
 @Injectable({
   providedIn: 'root',
@@ -20,32 +21,32 @@ export class ApiFetchService {
 
   public async getShowCountdown(): Promise<FeatureFlag> {
     return firstValueFrom(
-      this.http.get<FeatureFlag>(this.baseURL + '/v1/featureflags/showCountdown')
+      this.http.get<FeatureFlag>(
+        this.baseURL + '/v1/featureflags/showCountdown'
+      )
     );
   }
 
   public async getDivisions(): Promise<Division[]> {
-    return firstValueFrom(
-      this.http.get<Division[]>(this.baseURL + '/v1/divisions')
-    );
+    return this.getWithLastKnown<Division[]>('/v1/divisions');
   }
 
   public async getStopGroups(): Promise<StopGroup[]> {
-    return firstValueFrom(
-      this.http.get<StopGroup[]>(this.baseURL + '/v1/groups')
-    );
+    return this.getWithLastKnown<StopGroup[]>('/v1/groups');
+  }
+
+  public async getStops(): Promise<Stop[]> {
+    return this.getWithLastKnown<Stop[]>('/v1/stops');
   }
 
   public async getStopsOfGroup(groupID: number): Promise<Stop[]> {
-    return (
-      await firstValueFrom(this.http.get<Stop[]>(this.baseURL + `/v1/stops`))
-    ).filter((stop) => stop.stopGroupIds.includes(groupID));
+    return (await this.getStops()).filter((stop) =>
+      stop.stopGroupIds.includes(groupID)
+    );
   }
 
   public async getAllFeedbackQuestions(): Promise<FeedbackQuestion[]> {
-    return firstValueFrom(
-      this.http.get<FeedbackQuestion[]>(this.baseURL + '/v1/feedback-questions')
-    );
+    return this.getWithLastKnown<FeedbackQuestion[]>('/v1/feedback-questions');
   }
 
   public async submitFeedback(feedbackSubmissions: FeedbackSubmission[]) {
@@ -56,5 +57,28 @@ export class ApiFetchService {
         },
       })
     );
+  }
+
+  /**
+   * The school Wi-Fi is crowded on the open day: keep the last answer of each read in this
+   * browser and fall back to it when the request fails. Only throws when there is none yet.
+   */
+  private async getWithLastKnown<T>(path: string): Promise<T> {
+    const key = LAST_KNOWN_PREFIX + path;
+    try {
+      const value = await firstValueFrom(this.http.get<T>(this.baseURL + path));
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch {
+        // Storage full or blocked: the fresh answer is still good.
+      }
+      return value;
+    } catch (error) {
+      const stored = localStorage.getItem(key);
+      if (stored === null) {
+        throw error;
+      }
+      return JSON.parse(stored) as T;
+    }
   }
 }
