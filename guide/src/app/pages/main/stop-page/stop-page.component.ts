@@ -25,6 +25,7 @@ import {
 } from '@shared/constants/constants';
 import { colorsOfStop } from '@shared/division-colors';
 import { groupCountLine } from '@shared/tour';
+import { RoomLineComponent } from '@shared/components/room-line/room-line.component';
 import {
   TourBandComponent,
   TourSegment,
@@ -38,6 +39,7 @@ import {
     DivisionIconComponent,
     StopCardComponent,
     DescriptionContainerComponent,
+    RoomLineComponent,
     SeenToggleComponent,
     CardSkeletonComponent,
     LoadErrorComponent,
@@ -73,11 +75,14 @@ export class StopPageComponent implements OnInit {
     return this.divisions().filter((division) => ids.has(division.id));
   });
 
+  /** A group with one stop stands for it, so the band shows that stop's room. */
+  protected singleRoomNr = computed(() => {
+    const stops = this.stops();
+    return stops.length === 1 ? stops[0].roomNr : undefined;
+  });
+
   protected metaLine = computed(() => {
     const stops = this.stops();
-    if (stops.length === 1) {
-      return stops[0].roomNr ? `Raum ${stops[0].roomNr}` : '';
-    }
     return stops.length > 1
       ? groupCountLine(
           stops.filter((stop) => this.progress.isStopSeen(stop.id)).length,

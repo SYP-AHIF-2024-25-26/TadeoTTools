@@ -11,22 +11,16 @@
         @for (division of stopDivisions(); track division.id) {
           <app-division-icon [divisionId]="division.id" />
         }
-        @if (stop().roomNr) {
-          <span class="text-base font-semibold tabular-nums text-night-100"
-            >Raum {{ stop().roomNr }}</span
-          >
+        @if (stop().roomNr; as roomNr) {
+          <app-room-line [roomNr]="roomNr" />
         }
       </div>
     }
   </app-header>
 
   <main class="flex flex-col gap-3 px-4 pb-28 pt-5">
-    @if (stop().description || stop().roomNr) {
-      <app-description-container
-        [description]="stop().description"
-        [roomNr]="stop().roomNr"
-        [showRoom]="false"
-      />
+    @if (stop().description) {
+      <app-description-container [description]="stop().description" />
     }
     @if (stop().id !== undefined) {
       <app-seen-toggle
@@ -35,7 +29,7 @@
       />
     }
     @if (showPager()) {
-      <!-- Back and on within the group, in its order. Neutral: orange stays for "Auf der Karte". -->
+      <!-- Back and on within the group, in its order. Neutral: orange is for actions. -->
       <nav class="grid grid-cols-2 gap-3" aria-label="Stationen dieser Gruppe">
         @if (previousStop(); as previous) {
           <a

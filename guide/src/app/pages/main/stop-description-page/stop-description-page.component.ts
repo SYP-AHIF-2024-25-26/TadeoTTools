@@ -16,6 +16,7 @@ import { NavbarComponent } from '@shared/components/navbar/navbar.component';
 import { ApiFetchService } from '@core/services/api-fetch.service';
 import { ProgressService } from '@core/services/progress.service';
 import { SeenToggleComponent } from '@pages/main/seen-toggle/seen-toggle.component';
+import { RoomLineComponent } from '@shared/components/room-line/room-line.component';
 import {
   CURRENT_STOP_GROUP_PREFIX,
   CURRENT_STOP_PREFIX,
@@ -30,6 +31,7 @@ import { stopsInGroupOrder } from '@shared/tour';
     DivisionIconComponent,
     NavbarComponent,
     SeenToggleComponent,
+    RoomLineComponent,
     RouterLink,
   ],
   templateUrl: './stop-description-page.component.html',

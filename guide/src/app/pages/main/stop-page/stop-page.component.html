@@ -6,12 +6,14 @@
     backLabel="Rundgang"
     backLink="/main"
   >
-    @if (groupDivisions().length > 0 || metaLine()) {
+    @if (groupDivisions().length > 0 || singleRoomNr() || metaLine()) {
       <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
         @for (division of groupDivisions(); track division.id) {
           <app-division-icon [divisionId]="division.id" />
         }
-        @if (metaLine()) {
+        @if (singleRoomNr(); as roomNr) {
+          <app-room-line [roomNr]="roomNr" />
+        } @else if (metaLine()) {
           <span class="text-base font-semibold tabular-nums text-night-100">{{
             metaLine()
           }}</span>
@@ -54,12 +56,8 @@
     } @else if (sortedStops().length === 1) {
       @let stop = sortedStops()[0];
       <!-- The group stands for its one stop: the band names it, so the panel doesn't again. -->
-      @if (stop.description || stop.roomNr) {
-        <app-description-container
-          [description]="stop.description"
-          [roomNr]="stop.roomNr"
-          [showRoom]="false"
-        />
+      @if (stop.description) {
+        <app-description-container [description]="stop.description" />
       }
       <app-seen-toggle
         [checked]="progress.isStopSeen(stop.id)"
