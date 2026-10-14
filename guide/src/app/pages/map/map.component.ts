@@ -2,65 +2,61 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  HostListener,
   inject,
   input,
-  signal,
+  linkedSignal,
 } from '@angular/core';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { NavbarComponent } from '@shared/components/navbar/navbar.component';
 import { Router } from '@angular/router';
+import { FLOORS, floorOf, isFloorCode } from '@shared/room';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrl: './map.component.css',
   imports: [HeaderComponent, NavbarComponent],
-  standalone: true,
+  host: {
+    '(swipeleft)': 'onSwipeLeft()',
+    '(swiperight)': 'onSwipeRight()',
+  },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent {
   roomNr = input<string>();
   private router = inject(Router);
-  images = [
-    'assets/stockwerk-U.png',
-    'assets/stockwerk-E.png',
-    'assets/stockwerk-1.png',
-  ];
+  protected floors = FLOORS;
 
-  currentFloor = signal(1);
-  currentFloorSymbol = computed(() => {
-    return ['Untergeschoss', 'Erdgeschoss', '1. Stock'][this.currentFloor()];
+  /** Opens on the room's floor (the entrance floor if it can't be placed); the arrows change it. */
+  currentFloor = linkedSignal(() => floorOf(this.roomNr()));
+  currentFloorName = computed(() => FLOORS[this.currentFloor()].name);
+  /** "Raum E24" in the band; a floor code like "EG" is no room, the panel heading names the floor. */
+  roomLabel = computed(() => {
+    const room = this.roomNr();
+    return room && !isFloorCode(room) ? room : null;
   });
 
-  @HostListener('swipeleft')
   onSwipeLeft() {
     this.router.navigate(['/feedback']);
   }
 
-  @HostListener('swiperight')
   onSwipeRight() {
     this.router.navigate(['/main']);
   }
 
-  ngOnInit() {
-    if (this.roomNr()) {
-      this.currentFloor.set(
-        this.images.findIndex((image) =>
-          image.includes(this.roomNr()!.charAt(0))
-        )
-      );
-    }
-  }
-
   navigate(direction: number) {
     const newFloor = this.currentFloor() + direction;
-    if (newFloor >= 0 && newFloor < this.images.length) {
+    if (newFloor >= 0 && newFloor < FLOORS.length) {
       this.currentFloor.set(newFloor);
     }
   }
 
+  /** Back to the stop; opened from a shared link or after a reload there is no stop to go back to. */
   onGoBack() {
-    window.history.back();
+    if (this.router.lastSuccessfulNavigation?.previousNavigation) {
+      window.history.back();
+    } else {
+      this.router.navigate(['/main']);
+    }
   }
 }
