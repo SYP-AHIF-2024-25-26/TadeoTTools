@@ -7,7 +7,7 @@ import {
 import { marked } from 'marked';
 
 /**
- * The white reading card; room and map link live in the title band.
+ * The description as text on the page sheet, no card; room and map link live in the title band.
  * Projected content sits in a column to the right of the text.
  */
 @Component({

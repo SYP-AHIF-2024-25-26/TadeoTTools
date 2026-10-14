@@ -6,7 +6,7 @@
     [backLabel]="currentStopGroup().name || 'Rundgang'"
     [backLink]="['/tour', stopGroupId()]"
   >
-    <!-- With a description the icons sit in its card; without one they stay up here. -->
+    <!-- With a description the icons sit beside its text; without one they stay up here. -->
     @if (headerDivisions().length > 0 || stop().roomNr) {
       <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
         @for (division of headerDivisions(); track division.id) {
@@ -19,6 +19,7 @@
     }
   </app-header>
 
+  <!-- The description is text on the canvas, not a card: cards are what you open and tick. -->
   <main class="flex flex-col gap-3 px-4 pb-28 pt-5">
     @if (stop().description) {
       <app-description-container [description]="stop().description">
@@ -33,6 +34,7 @@
     }
     @if (stop().id !== undefined) {
       <app-seen-toggle
+        [class.mt-3]="!!stop().description"
         [checked]="progress.isStopSeen(stop().id)"
         (toggled)="progress.toggleStop(stop().id)"
       />
