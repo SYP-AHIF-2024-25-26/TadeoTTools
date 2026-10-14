@@ -40,75 +40,66 @@
       />
     }
     @if (showPager()) {
-      <!-- Back and on within the group, in its order. Neutral: orange is for actions. -->
+      <!-- Back and on within the group, in its order. Neutral: orange is for actions.
+           Only the direction, no stop names, so both buttons keep one fixed size. -->
       <nav class="grid grid-cols-2 gap-3" aria-label="Stationen dieser Gruppe">
         @if (previousStop(); as previous) {
           <a
-            class="flex min-h-14 flex-col justify-center rounded-2xl bg-white px-4 py-2.5 shadow-md ring-1 ring-gray-900/5 transition-colors active:bg-gray-50"
+            class="flex h-14 items-center gap-1 rounded-2xl bg-white pl-3 pr-4 text-base font-bold text-gray-900 shadow-md ring-1 ring-gray-900/5 transition-colors active:bg-gray-50"
             [routerLink]="['/tour', stopGroupId(), 'stop', previous.id]"
+            [attr.aria-label]="'Zurück: ' + previous.name"
             (click)="openStop(previous)"
           >
-            <span
-              class="flex items-center gap-0.5 text-base font-semibold text-gray-600"
+            <svg
+              class="h-5 w-5 shrink-0"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2.25"
+              stroke="currentColor"
             >
-              <svg
-                class="-ml-1 h-5 w-5 shrink-0"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.25"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15.75 19.5 8.25 12l7.5-7.5"
-                />
-              </svg>
-              Zurück
-            </span>
-            <span
-              class="line-clamp-3 break-words text-base font-bold leading-snug text-gray-900"
-              >{{ previous.name }}</span
-            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.75 19.5 8.25 12l7.5-7.5"
+              />
+            </svg>
+            Zurück
           </a>
         }
         <a
-          class="col-start-2 flex min-h-14 flex-col items-end justify-center rounded-2xl bg-white px-4 py-2.5 text-right shadow-md ring-1 ring-gray-900/5 transition-colors active:bg-gray-50"
+          class="col-start-2 flex h-14 items-center justify-end gap-1 rounded-2xl bg-white pl-4 pr-3 text-base font-bold text-gray-900 shadow-md ring-1 ring-gray-900/5 transition-colors active:bg-gray-50"
           [routerLink]="
             nextStop()
               ? ['/tour', stopGroupId(), 'stop', nextStop()!.id]
               : ['/tour', stopGroupId()]
           "
+          [attr.aria-label]="
+            nextStop()
+              ? 'Weiter: ' + nextStop()!.name
+              : 'Fertig mit ' + currentStopGroup().name
+          "
           (click)="nextStop() ? openStop(nextStop()!) : null"
         >
-          <span
-            class="flex items-center gap-0.5 text-base font-semibold text-gray-600"
-          >
-            {{ nextStop() ? 'Weiter' : 'Fertig mit' }}
-            @if (nextStop()) {
-              <svg
-                class="-mr-1 h-5 w-5 shrink-0"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.25"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                />
-              </svg>
-            }
-          </span>
-          <span
-            class="line-clamp-3 break-words text-base font-bold leading-snug text-gray-900"
-            >{{ nextStop()?.name ?? currentStopGroup().name }}</span
-          >
+          {{ nextStop() ? 'Weiter' : 'Fertig' }}
+          @if (nextStop()) {
+            <svg
+              class="h-5 w-5 shrink-0"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2.25"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m8.25 4.5 7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          }
         </a>
       </nav>
     }
