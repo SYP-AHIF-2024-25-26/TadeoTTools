@@ -12,10 +12,12 @@ import { TillTotalService } from '@core/services/till-total.service';
 import { OutboxService } from '@core/services/outbox.service';
 import { euro } from '@shared/money';
 
-const sinceFormat = new Intl.DateTimeFormat('de-AT', {
+const dayFormat = new Intl.DateTimeFormat('de-AT', {
   weekday: 'short',
   day: 'numeric',
   month: 'numeric',
+});
+const timeFormat = new Intl.DateTimeFormat('de-AT', {
   hour: '2-digit',
   minute: '2-digit',
 });
@@ -55,20 +57,21 @@ const sinceFormat = new Intl.DateTimeFormat('de-AT', {
           </p>
         }
         <div class="mt-8 flex flex-wrap justify-end gap-4">
+          <!-- Safe answer on the left, as in every dialog; resetting is the quiet one -->
+          <button
+            type="button"
+            class="btn-keep"
+            data-initial-focus
+            (click)="closed.emit()"
+          >
+            Schließen
+          </button>
           <button
             type="button"
             class="h-14 rounded-2xl px-6 text-lg font-medium text-gray-700 hover:bg-gray-100"
             (click)="confirm(true)"
           >
             Auf 0 setzen …
-          </button>
-          <button
-            type="button"
-            class="h-14 rounded-2xl bg-gray-100 px-6 text-lg font-medium text-gray-800 hover:bg-gray-200"
-            data-initial-focus
-            (click)="closed.emit()"
-          >
-            Schließen
           </button>
         </div>
       } @else {
@@ -83,17 +86,13 @@ const sinceFormat = new Intl.DateTimeFormat('de-AT', {
         <div class="mt-8 flex flex-wrap justify-end gap-4">
           <button
             type="button"
-            class="h-14 rounded-2xl bg-gray-100 px-6 text-lg font-medium text-gray-800 hover:bg-gray-200"
+            class="btn-keep"
             data-initial-focus
             (click)="confirm(false)"
           >
             Zurück
           </button>
-          <button
-            type="button"
-            class="h-14 rounded-2xl bg-red-700 px-6 text-lg font-medium text-white shadow-md hover:bg-red-800"
-            (click)="reset()"
-          >
+          <button type="button" class="btn-danger" (click)="reset()">
             Auf 0 setzen
           </button>
         </div>
@@ -110,9 +109,11 @@ export class TillTotalDialogComponent {
 
   private dialog = viewChild.required(DialogComponent);
   protected confirming = signal(false);
-  protected since = computed(() =>
-    sinceFormat.format(new Date(this.tillTotal.total().since))
-  );
+  /** "Mi. 21.10., 07:50" (Intl alone gives "Mi., 21.10., 07:50"). */
+  protected since = computed(() => {
+    const since = new Date(this.tillTotal.total().since);
+    return `${dayFormat.format(since).replace('.,', '.')}, ${timeFormat.format(since)}`;
+  });
   protected sum = computed(() => euro(this.tillTotal.total().cents));
   protected count = computed(() => this.tillTotal.total().count);
   protected unsent = computed(

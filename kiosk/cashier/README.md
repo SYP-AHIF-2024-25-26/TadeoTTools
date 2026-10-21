@@ -11,7 +11,10 @@ für die Anmeldung gefragt.
 ## Anmeldung
 
 Vor der Kassa meldet man sich mit dem Schulkonto an (Keycloak `auth.htl-leonding.ac.at`, Realm
-`htlleonding`, Client `htlleonding-service`, wie das Dashboard). Danach fragt die App
+`htlleonding`, Client `htlleonding-service`, wie das Dashboard). Die App startet mit einer eigenen
+Startseite; erst „Anmelden“ leitet zur Keycloak-Anmeldung weiter. Ist das Tablet noch angemeldet
+(z. B. nach einem Neuladen), geht es ohne Knopfdruck direkt zur Kassa weiter (`check-sso`, kurze
+Weiterleitung ohne Formular). Danach fragt die App
 `GET /v1/users/is-cashier` im TadeoTTools-Backend. Kassieren dürfen:
 
 - alle **Lehrer:innen** (laut LDAP-Eintrag im Token),
@@ -20,9 +23,9 @@ Vor der Kassa meldet man sich mit dem Schulkonto an (Keycloak `auth.htl-leonding
   (Status „Accepted“; offene oder abgelehnte Anfragen zählen nicht).
 
 Die Station muss im Dashboard genau „Buffet“ heißen (Groß-/Kleinschreibung egal). Alle anderen sehen
-„Kein Zugang zur Kassa“ und können sich mit einem anderen Konto anmelden. „Abmelden“ in der
-Statusleiste (nur zwischen zwei Verkäufen) beendet die Anmeldung, z. B. beim Schichtwechsel;
-wartende Verkäufe bleiben auf dem Tablet und werden weiter gesendet.
+„Kein Zugang zur Kassa“ und kommen über „Abmelden“ zurück zur Startseite. „Abmelden“ in der
+Statusleiste (nur zwischen zwei Verkäufen, mit Rückfrage) beendet die Anmeldung, z. B. beim Schichtwechsel, und
+führt ebenfalls zur Startseite; wartende Verkäufe bleiben auf dem Tablet und werden weiter gesendet.
 
 - Die Anmeldung braucht eine Verbindung. Ohne WLAN beim Start zeigt die App „Keine Verbindung“ statt
   der Kassa; das Kassieren selbst geht danach auch offline weiter.
@@ -35,7 +38,9 @@ wartende Verkäufe bleiben auf dem Tablet und werden weiter gesendet.
 
 Produkte antippen → „Kassieren“ → (optional) Betrag, der gegeben wurde → „Verkauf abschließen“.
 
-- **Produkte:** ein Tippen auf die Kachel fügt eins hinzu, „−“ in der Ecke nimmt eins weg. Die Zahl
+- **Produkte:** ein Tippen auf die Kachel fügt eins hinzu; „−“ in der Einkaufsliste rechts nimmt eins
+  weg (so kann ein Tippen auf eine Kachel nur hinzufügen). Die Kassa ist für ein Tablet im
+  Querformat gedacht; im Hochformat steht „−“ in der Ecke der Kachel. Die Zahl
   im Kreis zeigt, wie viele im Einkauf sind (höchstens 99 pro Produkt). Reihenfolge, Namen und
   Preise kommen aus dem alten Admin.
 - **Gutschein:** ein Produkt mit negativem Preis („Gutschein“, −2,00 €). Höchstens einer pro
@@ -44,8 +49,8 @@ Produkte antippen → „Kassieren“ → (optional) Betrag, der gegeben wurde �
 - **Kassieren:** „Passend“ oder ein Schein (5/10/20/50 €, nur die, die die Summe übersteigen), oder
   den Betrag über das Ziffernfeld eintippen (mit Komma). Das Rückgeld steht groß daneben. Der
   Betrag ist freiwillig; „Verkauf abschließen“ geht auch ohne.
-- Danach zeigt die Kassa wieder leere Produkte; Summe und Rückgeld des letzten Verkaufs bleiben
-  stehen, bis das nächste Produkt angetippt wird.
+- Danach zeigt die Kassa wieder leere Produkte; rechts steht groß das Rückgeld (oder „Passend
+  bezahlt“) mit Summe, gegebenem Betrag und Verkaufsnummer, bis das nächste Produkt angetippt wird.
 - „Leeren“ verwirft den Einkauf (bei mehr als einem Artikel mit Rückfrage). Einen abgeschlossenen
   Verkauf kann man nicht rückgängig machen; das alte Backend hat dafür keinen Endpunkt.
 - **Kassastand** (unter den Produkten): Summe und Zahl der Verkäufe auf diesem Tablet seit dem letzten

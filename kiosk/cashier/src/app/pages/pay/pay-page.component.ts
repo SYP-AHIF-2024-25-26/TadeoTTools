@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { CartService, isVoucher } from '@core/services/cart.service';
+import { CartService } from '@core/services/cart.service';
 import { CheckoutService } from '@core/services/checkout.service';
 import { FocusOnShowDirective } from '@shared/directives/focus-on-show.directive';
 import { moveFocus } from '@shared/radio-keys';
@@ -27,11 +27,11 @@ type Quick = 'exact' | number;
   imports: [FocusOnShowDirective],
   template: `
     <main
-      class="mx-auto grid min-h-0 w-full max-w-6xl flex-1 content-start gap-x-10 gap-y-5 overflow-y-auto p-4 sm:p-6 md:grid-cols-2 lg:p-8 short:gap-y-3 short:p-3 short:md:p-4"
+      class="mx-auto grid min-h-0 w-full max-w-6xl flex-1 content-start gap-x-10 gap-y-4 overflow-y-auto p-4 sm:p-6 md:grid-cols-2 lg:p-8 short:gap-y-3 short:p-3 short:md:p-4"
     >
       <!-- Receipt -->
       <section
-        class="flex flex-col rounded-2xl bg-white p-5 shadow-lg sm:p-6 short:p-4"
+        class="flex flex-col rounded-2xl bg-white p-4 shadow-lg sm:p-6 short:p-4"
         aria-labelledby="pay-title"
       >
         <h1
@@ -84,7 +84,7 @@ type Quick = 'exact' | number;
           role="status"
         >
           @if (change(); as c) {
-            <p class="flex flex-wrap items-baseline justify-between gap-x-4">
+            <p class="flex flex-wrap items-center justify-between gap-x-4">
               <span class="text-xl font-medium text-gray-800">Rückgeld</span>
               <span
                 class="text-5xl font-bold tabular-nums tracking-tight text-gray-900 sm:text-6xl short:text-5xl"
@@ -180,7 +180,7 @@ type Quick = 'exact' | number;
     </main>
 
     <footer
-      class="flex items-center justify-between gap-4 bg-white px-4 py-3 shadow-[0_-4px_12px_-2px_rgb(0_0_0/0.08)] sm:px-6 short:py-2"
+      class="flex items-center justify-between gap-4 bg-white px-4 py-3 shadow-bar sm:px-6 short:py-2"
     >
       <button type="button" class="btn-secondary" (click)="checkout.back()">
         Zurück
@@ -190,7 +190,6 @@ type Quick = 'exact' | number;
         class="btn-primary px-6 sm:px-10"
         [attr.aria-disabled]="missing() !== null"
         [attr.aria-describedby]="missing() !== null ? 'pay-hint' : null"
-        [class.opacity-60]="missing() !== null"
         (click)="complete()"
       >
         Verkauf abschließen
@@ -215,15 +214,7 @@ export class PayPageComponent {
   protected quick = signal<Quick | null>(null);
 
   protected total = computed(() => euro(this.cart.total()));
-  protected lines = computed(() =>
-    this.cart.lines().map((l) => ({
-      id: l.product.id,
-      amount: l.amount,
-      name: l.product.name,
-      sum: euro(l.amount * l.product.price),
-      voucher: isVoucher(l.product),
-    }))
-  );
+  protected lines = this.cart.receipt;
   protected summary = computed(() =>
     this.cart
       .lines()

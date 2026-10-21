@@ -22,7 +22,7 @@
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
-        "files": ["/assets/**"]
+        "files": ["/assets/**", "/media/*.(woff|woff2)"]
       }
     }
   ],
@@ -35,18 +35,6 @@
         "maxSize": 1,
         "maxAge": "365d",
         "timeout": "3s"
-      }
-    },
-    {
-      "name": "fonts",
-      "urls": [
-        "https://fonts.googleapis.com/**",
-        "https://fonts.gstatic.com/**"
-      ],
-      "cacheConfig": {
-        "strategy": "performance",
-        "maxSize": 20,
-        "maxAge": "365d"
       }
     }
   ]

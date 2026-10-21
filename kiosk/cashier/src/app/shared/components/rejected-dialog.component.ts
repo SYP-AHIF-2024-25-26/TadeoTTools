@@ -16,6 +16,14 @@ const timeFormat = new Intl.DateTimeFormat('de-AT', {
   minute: '2-digit',
 });
 
+/** The legacy backend answers 400 for a deleted product and 404 for a deleted buffet. */
+function reason(status: number | undefined): string {
+  if (status === 404) return 'Buffet nicht mehr vorhanden';
+  if (status === 400)
+    return 'Ein Produkt ist nicht mehr vorhanden oder geändert';
+  return `Vom Server abgelehnt (Fehler ${status ?? '?'})`;
+}
+
 /**
  * Sales the server refused. They are money already in the cash box, so they
  * stay until the student sends them again or removes one on purpose.
@@ -41,7 +49,7 @@ const timeFormat = new Intl.DateTimeFormat('de-AT', {
         <div class="mt-8 flex flex-wrap justify-end gap-4">
           <button
             type="button"
-            class="h-14 rounded-2xl bg-gray-100 px-6 text-lg font-medium text-gray-800 hover:bg-gray-200"
+            class="btn-keep"
             data-initial-focus
             (click)="ask(null)"
           >
@@ -49,7 +57,7 @@ const timeFormat = new Intl.DateTimeFormat('de-AT', {
           </button>
           <button
             type="button"
-            class="h-14 rounded-2xl bg-red-700 px-6 text-lg font-medium text-white shadow-md hover:bg-red-800"
+            class="btn-danger"
             (click)="remove(sale.number)"
           >
             Entfernen
@@ -61,8 +69,8 @@ const timeFormat = new Intl.DateTimeFormat('de-AT', {
         </h2>
         <p id="rejected-text" class="mt-2 text-lg text-gray-600">
           Der Server hat diese Verkäufe abgelehnt. Sie sind auf dem Tablet
-          gespeichert. Meist hilft es, das Buffet im Admin zu prüfen und sie
-          dann erneut zu senden.
+          gespeichert und im Kassastand enthalten. Bitte der Lehrkraft am Buffet
+          Bescheid geben und danach erneut senden.
         </p>
         <ul class="-mx-2 mt-5 min-h-0 flex-1 overflow-y-auto px-2">
           @for (sale of sales(); track sale.number) {
@@ -74,8 +82,13 @@ const timeFormat = new Intl.DateTimeFormat('de-AT', {
                   {{ sale.time }} Uhr · {{ sale.total }}
                 </p>
                 <p class="text-base text-gray-700">{{ sale.items }}</p>
-                <p class="line-clamp-2 text-sm text-gray-600">
-                  Nr. {{ sale.number }} · {{ sale.reason }}
+                <p class="text-base text-red-700">{{ sale.reason }}</p>
+                <!-- For whoever checks the legacy admin: the order number and the server's own words -->
+                <p class="line-clamp-2 text-sm text-gray-600" lang="en">
+                  <span lang="de">Nr. {{ sale.number }}</span>
+                  @if (sale.detail) {
+                    · {{ sale.detail }}
+                  }
                 </p>
               </div>
               <button
@@ -89,16 +102,12 @@ const timeFormat = new Intl.DateTimeFormat('de-AT', {
           }
         </ul>
         <div class="mt-6 flex flex-wrap justify-end gap-4">
-          <button
-            type="button"
-            class="h-14 rounded-2xl bg-gray-100 px-6 text-lg font-medium text-gray-800 hover:bg-gray-200"
-            (click)="closed.emit()"
-          >
+          <button type="button" class="btn-keep" (click)="closed.emit()">
             Schließen
           </button>
           <button
             type="button"
-            class="btn-primary h-14 sm:h-14"
+            class="btn-primary sm:h-14"
             data-initial-focus
             (click)="retry()"
           >
@@ -122,7 +131,8 @@ export class RejectedDialogComponent {
       time: timeFormat.format(new Date(s.order.date)),
       total: euro(s.total),
       items: s.lines.map((l) => `${l.amount} × ${l.name}`).join(', '),
-      reason: `Fehler ${s.rejected?.status}${s.rejected?.message ? ': ' + s.rejected.message : ''}`,
+      reason: reason(s.rejected?.status),
+      detail: s.rejected?.message ?? '',
     }))
   );
   protected removing = signal<{

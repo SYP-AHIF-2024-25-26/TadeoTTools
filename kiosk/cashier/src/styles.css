@@ -1,3 +1,8 @@
+/* Bundled (no Google Fonts): the tablet needs no outside server, also on the very first start */
+@import '@fontsource/roboto/latin-400.css';
+@import '@fontsource/roboto/latin-500.css';
+@import '@fontsource/roboto/latin-700.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -62,12 +67,12 @@
 
   /* A key of the number pad */
   .key {
-    @apply flex h-16 items-center justify-center rounded-2xl bg-white text-3xl font-medium tabular-nums text-gray-800 shadow-md hover:bg-gray-100 active:bg-accent-50 disabled:opacity-40 short:h-14;
+    @apply flex h-14 items-center justify-center rounded-2xl bg-white text-3xl font-medium tabular-nums text-gray-800 shadow-md hover:bg-gray-100 active:bg-accent-50 disabled:opacity-40 sm:h-16 short:h-14;
   }
 
   /* A short answer in a row of answers (quick amounts) */
   .chip {
-    @apply flex h-16 min-w-16 items-center justify-center rounded-2xl border-[3px] border-transparent bg-white px-5 text-xl font-medium text-gray-800 shadow-md transition-colors hover:bg-gray-50 short:h-14 short:text-lg;
+    @apply flex h-14 min-w-16 items-center justify-center rounded-2xl border-[3px] border-transparent bg-white px-5 text-xl font-medium text-gray-800 shadow-md transition-colors hover:bg-gray-50 sm:h-16 short:h-14 short:text-lg;
   }
   .chip[aria-checked='true'] {
     @apply border-accent-600 bg-accent-50 text-gray-900;
@@ -89,7 +94,24 @@
   .btn-primary {
     @apply flex h-14 items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-accent-600 px-7 text-xl font-bold text-white shadow-md hover:bg-accent-700 active:scale-[0.98] disabled:opacity-70 sm:h-16 short:h-12;
   }
+  /* Stays tappable, so the hint next to it can say why nothing happens */
+  .btn-primary[aria-disabled='true'] {
+    @apply opacity-60;
+  }
   .btn-secondary {
     @apply flex h-14 items-center justify-center gap-2 rounded-2xl bg-white px-6 text-lg font-medium text-gray-700 shadow-md hover:bg-gray-100 sm:h-16 sm:text-xl short:h-12;
+  }
+
+  /* Dialog answers: the safe one gray, the destructive one red and naming the action */
+  .btn-keep {
+    @apply h-14 rounded-2xl bg-gray-100 px-6 text-lg font-medium text-gray-800 hover:bg-gray-200;
+  }
+  .btn-danger {
+    @apply h-14 rounded-2xl bg-red-700 px-6 text-lg font-medium text-white shadow-md hover:bg-red-800;
+  }
+
+  /* A small button in the status strip: 44px tall, the strip stays as slim as before */
+  .btn-strip {
+    @apply -my-1 h-11 rounded-xl px-3 font-medium text-gray-800 underline decoration-gray-400 underline-offset-4 hover:bg-gray-200;
   }
 }

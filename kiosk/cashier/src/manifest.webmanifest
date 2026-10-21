@@ -6,7 +6,7 @@
   "theme_color": "#ea580c",
   "background_color": "#f9fafb",
   "display": "fullscreen",
-  "orientation": "any",
+  "orientation": "landscape",
   "scope": "./",
   "start_url": "./",
   "icons": [

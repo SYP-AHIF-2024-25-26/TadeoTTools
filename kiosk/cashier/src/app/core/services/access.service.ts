@@ -43,16 +43,23 @@ export class AccessService {
       this.state.set('no-network');
       return;
     }
+    let authenticated: boolean;
     try {
+      // check-sso picks up a running login (after the login redirect or a reload)
+      // without ever showing the Keycloak form; nobody logged in ends on the start page.
       this.initialised ??= this.keycloak.init({
-        onLoad: 'login-required',
+        onLoad: 'check-sso',
         checkLoginIframe: false,
       });
-      await this.initialised;
+      authenticated = await this.initialised;
     } catch (err) {
       console.warn('Keycloak login failed', err);
       this.initFailed = true;
       this.state.set(navigator.onLine ? 'server' : 'no-network');
+      return;
+    }
+    if (!authenticated) {
+      this.state.set('logged-out');
       return;
     }
 
@@ -75,7 +82,8 @@ export class AccessService {
       if (err instanceof HttpErrorResponse && err.status === 403) {
         this.state.set('denied');
       } else if (err instanceof HttpErrorResponse && err.status === 401) {
-        await this.keycloak.login();
+        this.keycloak.clearToken();
+        this.state.set('logged-out');
       } else {
         console.warn('Cashier access could not be checked', err);
         this.state.set(classify(err));
@@ -83,7 +91,17 @@ export class AccessService {
     }
   }
 
-  /** Ends the school login, e.g. at a change of shift; the next person logs in again. */
+  /** Only on the button of the start page: redirects to the Keycloak login form. */
+  async login(): Promise<void> {
+    // Without Wi-Fi the redirect would end on the browser's error page.
+    if (!navigator.onLine) {
+      this.state.set('no-network');
+      return;
+    }
+    await this.keycloak.login();
+  }
+
+  /** Ends the school login, e.g. at a change of shift; the app returns to the start page. */
   logout(): Promise<void> {
     return this.keycloak.logout({
       redirectUri: location.href.split('#')[0],
