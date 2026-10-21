@@ -39,11 +39,11 @@ It is built for this one school's open day, by HTL Leonding students (5AHIF SYP 
 
 - Visitor app pages: tour start (list of stop groups), stop group view, stop detail (description, room, mark as done), floor map with room highlighting (`stockwerk-U/E/1`), feedback form, About/Impressum, countdown.
 - Dashboard pages: stop groups (tour order), stops (plus stop manager assignment), divisions (color, image, stops), students (assignments and conflicts), stop managers, user management (admins, stop managers, CSV import/export, wipe, feature flags), feedback configurator (text, rating and choice questions, with conditional dependencies).
-- There is one tour for the whole system. Its order (`StopGroup.Rank`, `StopGroupAssignment.Order`) decides what visitors see.
+- There is one tour for the whole system. Its order (`StopGroup.Order`, `StopGroupAssignment.Order`) decides what visitors see.
 - Feedback is anonymous.
 - Terminology (German in the visitor app, English in the dashboard): Station / Stop, Stationsgruppe / Stop Group, Leitfaden (the tour), Abteilung / Division, Stop-Manager, Guide, Tag der offenen Tür / TdoT.
-- **Open:** the visitor app is German (du-form toward visitors) and the dashboard is English; neither language choice is a confirmed commitment. Performance targets for low-end phones and poor Wi-Fi were not confirmed as requirements.
-- Possible future features (README, not committed): shift planning, queue management, buffet voucher management, a standardized solution for other schools.
+- Languages are confirmed (FSD §1): the visitor app and the kiosks are German (du-form toward visitors), the dashboard is English. Performance targets for low-end phones and poor Wi-Fi are not requirements; offline use of the GuideApp is an extra (FSD §6.3).
+- Possible future features are listed under "Kann (später)" in `spec/fsd.md` §18, among them shift planning, queue management, buffet voucher management and a solution for other schools.
 
 ## Brand Commitments
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-12T16:38:15.117516+00:00",
+  "generatedAt": "2026-10-21T07:47:28.581Z",
   "title": "Design System: TadeoTTools",
   "extensions": {
     "colorMeta": {
@@ -549,6 +549,104 @@
           "oklch(85% 0.215 262.9)",
           "oklch(95% 0.075 262.9)"
         ]
+      },
+      "dash-ink-strong": {
+        "role": "neutral",
+        "displayName": "Dashboard Ink Strong",
+        "tonalRamp": [
+          "oklch(15% 0.028 336.5)",
+          "oklch(25% 0.028 336.5)",
+          "oklch(35% 0.028 336.5)",
+          "oklch(48% 0.028 336.5)",
+          "oklch(60% 0.028 336.5)",
+          "oklch(72% 0.028 336.5)",
+          "oklch(85% 0.028 336.5)",
+          "oklch(95% 0.010 336.5)"
+        ]
+      },
+      "dash-ink-muted": {
+        "role": "neutral",
+        "displayName": "Dashboard Ink Muted",
+        "tonalRamp": [
+          "oklch(15% 0.028 336.5)",
+          "oklch(25% 0.028 336.5)",
+          "oklch(35% 0.028 336.5)",
+          "oklch(48% 0.028 336.5)",
+          "oklch(60% 0.028 336.5)",
+          "oklch(72% 0.028 336.5)",
+          "oklch(85% 0.028 336.5)",
+          "oklch(95% 0.010 336.5)"
+        ]
+      },
+      "dash-focus": {
+        "role": "primary",
+        "displayName": "Dashboard Focus Blue",
+        "tonalRamp": [
+          "#0b2a52",
+          "#123f7a",
+          "#1a5bb5",
+          "#1f6fd1",
+          "#4590e6",
+          "#73abea",
+          "#99ccff",
+          "#e6f2ff"
+        ]
+      },
+      "kiosk-accent": {
+        "role": "primary",
+        "displayName": "Kiosk Orange",
+        "tonalRamp": [
+          "#431407",
+          "#7c2d12",
+          "#9a3412",
+          "#c2410c",
+          "#ea580c",
+          "#f97316",
+          "#fdba74",
+          "#fff7ed"
+        ]
+      },
+      "kiosk-accent-deep": {
+        "role": "primary",
+        "displayName": "Deep Kiosk Orange",
+        "tonalRamp": [
+          "#431407",
+          "#7c2d12",
+          "#9a3412",
+          "#c2410c",
+          "#ea580c",
+          "#f97316",
+          "#fdba74",
+          "#fff7ed"
+        ]
+      },
+      "kiosk-accent-wash": {
+        "role": "primary",
+        "displayName": "Orange Wash",
+        "tonalRamp": [
+          "#431407",
+          "#7c2d12",
+          "#9a3412",
+          "#c2410c",
+          "#ea580c",
+          "#f97316",
+          "#fdba74",
+          "#fff7ed"
+        ]
+      },
+      "kiosk-canvas": {
+        "role": "neutral",
+        "displayName": "Kiosk Canvas",
+        "tonalRamp": [
+          "#030712",
+          "#111827",
+          "#374151",
+          "#4b5563",
+          "#6b7280",
+          "#9ca3af",
+          "#e5e7eb",
+          "#f9fafb"
+        ]
       }
     },
     "typographyMeta": {
@@ -591,6 +689,14 @@
       "dash-label": {
         "displayName": "Dashboard Label",
         "purpose": "Field labels, chips, meta."
+      },
+      "kiosk-button": {
+        "displayName": "Kiosk Button",
+        "purpose": "Primary kiosk buttons; never smaller, because white on accent-600 needs large bold text."
+      },
+      "kiosk-chip": {
+        "displayName": "Kiosk Chip",
+        "purpose": "Short answers in a row (Schulstufe, Schultyp) and quick amounts at the Cashier."
       }
     },
     "shadows": [
@@ -623,6 +729,16 @@
         "name": "drag-preview",
         "value": "0 5px 15px rgba(0,0,0,0.1)",
         "purpose": "Dashboard CDK drag preview."
+      },
+      {
+        "name": "kiosk-lift",
+        "value": "0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1)",
+        "purpose": "Kiosk answer cards and product tiles on the gray-50 canvas (shadow-lg); chips and footer buttons use shadow-md, dialogs shadow-2xl."
+      },
+      {
+        "name": "bottom-bar",
+        "value": "0 -4px 12px -2px rgb(0 0 0 / 0.08)",
+        "purpose": "Cashier bottom bars on the till and the pay screen (shadow-bar); casts upward onto the grid."
       }
     ],
     "motion": [
@@ -751,6 +867,38 @@
       "description": "Sticky sky-blue bar with logo, links and active fill.",
       "html": "<nav class=\"ds-d-nav\"><strong>HTL Leonding</strong><a>Stop Groups</a><a class=\"ds-d-nav--on\">Stops</a><a>Divisions</a><a>Students</a></nav>",
       "css": ".ds-d-nav { font-family: ui-sans-serif, system-ui, sans-serif; display: flex; align-items: center; gap: 16px; padding: 16px; background: #6aa4c9; color: #130710; font-size: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.1); } .ds-d-nav strong { margin-right: 16px; } .ds-d-nav a { padding: 8px 12px; border-radius: 4px; cursor: pointer; } .ds-d-nav a:hover { background: #7ec4ee; } .ds-d-nav--on { background: #1f6fd1; text-decoration: underline; font-weight: 500; }"
+    },
+    {
+      "name": "Kiosk Primary Button",
+      "kind": "button",
+      "refersTo": "kiosk-button-primary",
+      "description": "The one forward action in a kiosk footer (\"Weiter\", \"Anmelden\", \"Verkauf abschließen\").",
+      "html": "<button class=\"ds-k-btn\">Weiter</button>",
+      "css": ".ds-k-btn { font-family: Roboto, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap; height: 64px; padding: 0 28px; border: none; border-radius: 16px; background: #ea580c; color: #fff; font-size: 20px; line-height: 28px; font-weight: 700; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); cursor: pointer; transition: background .15s, transform .15s; } .ds-k-btn:hover { background: #c2410c; } .ds-k-btn:active { transform: scale(.98); } .ds-k-btn:focus-visible { outline: 3px solid #ea580c; outline-offset: 3px; } .ds-k-btn[aria-disabled='true'] { opacity: .6; }"
+    },
+    {
+      "name": "Kiosk Secondary Button",
+      "kind": "button",
+      "refersTo": "kiosk-button-secondary",
+      "description": "White pill for \"Zurück\" and \"Überspringen\" beside the primary.",
+      "html": "<button class=\"ds-k-btn2\">Zurück</button>",
+      "css": ".ds-k-btn2 { font-family: Roboto, sans-serif; display: inline-flex; align-items: center; justify-content: center; height: 64px; padding: 0 24px; border: none; border-radius: 16px; background: #fff; color: #374151; font-size: 20px; font-weight: 500; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); cursor: pointer; transition: background .15s; } .ds-k-btn2:hover { background: #f3f4f6; } .ds-k-btn2:focus-visible { outline: 3px solid #ea580c; outline-offset: 3px; }"
+    },
+    {
+      "name": "Kiosk Choice Card",
+      "kind": "card",
+      "refersTo": "kiosk-choice",
+      "description": "A full-width answer card with a radio dot; selected turns the edge accent-600 on accent-50.",
+      "html": "<div class=\"ds-k-choices\"><button class=\"ds-k-choice\" role=\"radio\" aria-checked=\"true\"><span class=\"ds-k-dot\"><span></span></span>Informatik</button><button class=\"ds-k-choice\" role=\"radio\" aria-checked=\"false\"><span class=\"ds-k-dot\"><span></span></span>Medientechnik</button></div>",
+      "css": ".ds-k-choices { display: grid; gap: 12px; } .ds-k-choice { font-family: Roboto, sans-serif; display: flex; align-items: center; gap: 12px; min-height: 80px; padding: 0 20px; border: 3px solid transparent; border-radius: 8px; background: #fff; color: #1f2937; font-size: 20px; text-align: left; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1); cursor: pointer; transition: background-color .15s, border-color .15s; } .ds-k-choice:hover { background: #f9fafb; } .ds-k-choice[aria-checked='true'] { border-color: #ea580c; background: #fff7ed; } .ds-k-choice:focus-visible { outline: 3px solid #ea580c; outline-offset: 3px; } .ds-k-dot { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; flex-shrink: 0; border: 2px solid #6b7280; border-radius: 9999px; } .ds-k-dot span { width: 14px; height: 14px; border-radius: 9999px; } .ds-k-choice[aria-checked='true'] .ds-k-dot { border-color: #ea580c; } .ds-k-choice[aria-checked='true'] .ds-k-dot span { background: #ea580c; }"
+    },
+    {
+      "name": "Kiosk Chip",
+      "kind": "chip",
+      "refersTo": "kiosk-chip",
+      "description": "Short answers in a row (Schulstufe, Begleitpersonen) and the Cashier quick amounts.",
+      "html": "<div class=\"ds-k-chips\"><button class=\"ds-k-chip\" role=\"radio\" aria-checked=\"false\">1</button><button class=\"ds-k-chip\" role=\"radio\" aria-checked=\"true\">2</button><button class=\"ds-k-chip\" role=\"radio\" aria-checked=\"false\">3+</button></div>",
+      "css": ".ds-k-chips { display: flex; gap: 12px; flex-wrap: wrap; } .ds-k-chip { font-family: Roboto, sans-serif; display: flex; align-items: center; justify-content: center; height: 64px; min-width: 64px; padding: 0 20px; border: 3px solid transparent; border-radius: 16px; background: #fff; color: #1f2937; font-size: 20px; font-weight: 500; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); cursor: pointer; transition: background-color .15s, border-color .15s; } .ds-k-chip:hover { background: #f9fafb; } .ds-k-chip[aria-checked='true'] { border-color: #ea580c; background: #fff7ed; color: #111827; } .ds-k-chip:focus-visible { outline: 3px solid #ea580c; outline-offset: 3px; }"
     }
   ],
   "narrative": {
@@ -762,8 +910,7 @@
       "Dashboard: DaisyUI `light` / `darkCustom` themes, blue primary, filled blue filter fields, a sticky sky-blue top nav, one left-aligned page header on every page.",
       "Tall touch targets (44px or more in the GuideApp) and a 16px side gutter on mobile; the GuideApp is designed only for phone width.",
       "Copy: German with du-form in the GuideApp, English in the dashboard (today's state, not a rule).",
-      "Feedback kiosk (`kiosk/feedback/`): the earlier GuideApp visual language (Roboto, Programme Orange) at tablet size, for the exit tablets; see the Feedback Kiosk section.",
-      "Statistics kiosk (`kiosk/statistics/`): the same world scaled up for a wall projection, an unattended slideshow; see the Statistics Kiosk section."
+      "Kiosks (`kiosk/`): one shared kiosk world (Roboto, the Tailwind orange scale as the only accent, white cards lifted on a `gray-50` canvas) at tablet size. It is the GuideApp's look from before the Nachtband redesign and stays separate from it. Feedback (exit tablets) and Registration (entrance tablets) speak to the visitor, the Cashier (buffet) to the student selling; Statistics scales the same world up for the hall projector. See the four kiosk sections."
     ],
     "rules": [
       {

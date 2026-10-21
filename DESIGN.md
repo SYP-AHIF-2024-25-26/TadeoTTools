@@ -1,6 +1,6 @@
 ---
 name: TadeoTTools
-description: Open-day guide for HTL Leonding. The visitor GuideApp carries the tour in a night-blue band like htl-leonding.at, and the organizer dashboard behind it is built on DaisyUI.
+description: Open-day guide for HTL Leonding. The visitor GuideApp carries the tour in a night-blue band like htl-leonding.at, the organizer dashboard behind it is built on DaisyUI, and four orange-accented kiosk apps run the day on tablets and the hall projector.
 colors:
   division-informatics: "#0059A7"
   division-media: "#70B4D9"
@@ -44,6 +44,10 @@ colors:
   dash-dark-canvas: "#0b0f19"
   dash-dark-surface: "#111827"
   dash-dark-primary: "#2563eb"
+  kiosk-accent: "#ea580c"
+  kiosk-accent-deep: "#c2410c"
+  kiosk-accent-wash: "#fff7ed"
+  kiosk-canvas: "#f9fafb"
 typography:
   guide-display:
     fontFamily: "Manrope Variable, system-ui, -apple-system, Segoe UI, sans-serif"
@@ -98,6 +102,16 @@ typography:
     fontSize: "0.75rem"
     fontWeight: 500
     lineHeight: 1.33
+  kiosk-button:
+    fontFamily: "Roboto, sans-serif"
+    fontSize: "1.25rem"
+    fontWeight: 700
+    lineHeight: "1.75rem"
+  kiosk-chip:
+    fontFamily: "Roboto, sans-serif"
+    fontSize: "1.25rem"
+    fontWeight: 500
+    lineHeight: "1.75rem"
 rounded:
   md: "6px"
   lg: "8px"
@@ -217,6 +231,32 @@ components:
     rounded: "{rounded.lg}"
     padding: "24px"
     width: "448px"
+  kiosk-button-primary:
+    backgroundColor: "{colors.kiosk-accent}"
+    textColor: "{colors.guide-surface}"
+    typography: "{typography.kiosk-button}"
+    rounded: "{rounded.panel}"
+    height: "64px"
+    padding: "0 28px"
+  kiosk-button-primary-hover:
+    backgroundColor: "{colors.kiosk-accent-deep}"
+  kiosk-button-secondary:
+    backgroundColor: "{colors.guide-surface}"
+    textColor: "{colors.guide-ink-secondary}"
+    rounded: "{rounded.panel}"
+    height: "64px"
+    padding: "0 24px"
+  kiosk-choice:
+    backgroundColor: "{colors.guide-surface}"
+    rounded: "{rounded.lg}"
+  kiosk-choice-selected:
+    backgroundColor: "{colors.kiosk-accent-wash}"
+  kiosk-chip:
+    backgroundColor: "{colors.guide-surface}"
+    typography: "{typography.kiosk-chip}"
+    rounded: "{rounded.panel}"
+    height: "64px"
+    padding: "0 20px"
 ---
 
 # Design System: TadeoTTools
@@ -237,8 +277,7 @@ The organizer dashboard is the programme's back office. It uses the same rounded
 - Dashboard: DaisyUI `light` / `darkCustom` themes, blue primary, filled blue filter fields, a sticky sky-blue top nav, one left-aligned page header on every page.
 - Tall touch targets (44px or more in the GuideApp) and a 16px side gutter on mobile; the GuideApp is designed only for phone width.
 - Copy: German with du-form in the GuideApp, English in the dashboard (today's state, not a rule).
-- Feedback kiosk (`kiosk/feedback/`): the earlier GuideApp visual language (Roboto, Programme Orange) at tablet size, for the exit tablets; see the Feedback Kiosk section.
-- Statistics kiosk (`kiosk/statistics/`): the same world scaled up for a wall projection, an unattended slideshow; see the Statistics Kiosk section.
+- Kiosks (`kiosk/`): one shared kiosk world (Roboto, the Tailwind orange scale as the only accent, white cards lifted on a `gray-50` canvas) at tablet size. It is the GuideApp's look from before the Nachtband redesign and stays separate from it. Feedback (exit tablets) and Registration (entrance tablets) speak to the visitor, the Cashier (buffet) to the student selling; Statistics scales the same world up for the hall projector. See the four kiosk sections.
 
 ## Colors
 
@@ -273,6 +312,12 @@ White text on night is the default. The palette comes from Nachtband (leo-projec
 - **Filled Field Blue** (`dash-field`, hover `dash-field-hover`): the background of filter inputs and selects, with white text and placeholders. In dark mode the fields keep the dark `primary-300` fill.
 - **Sky Nav** (`dash-nav`): the sticky top bar.
 - **Pale Blue Tint** (`dash-tint`): hover backgrounds on list rows and secondary actions.
+
+### Primary (Kiosks)
+- **Kiosk Orange** (`kiosk-accent`, accent-600): primary buttons, selected answers, chips and tiles (3px edge), radio dots and checkboxes, the focus ring and `theme-color` in all four kiosks. White text on it is 3.56:1, so it only carries 20px bold text or larger. Hover deepens to **Deep Kiosk Orange** (`kiosk-accent-deep`, accent-700).
+- **Orange Wash** (`kiosk-accent-wash`, accent-50): the fill of a selected answer card, chip or product tile, and the Cashier's change box.
+- **Kiosk Canvas** (`kiosk-canvas`, gray-50): the page background behind the white cards.
+- Templates use the `accent-*` names, never `orange-*`; the full scale is in each kiosk's `tailwind.config.js`.
 
 ### Neutral
 - **Programme Paper** (`guide-canvas`): GuideApp page background and the manifest `background_color`.
@@ -310,6 +355,7 @@ White text on night is the default. The palette comes from Nachtband (leo-projec
 
 **GuideApp font:** Manrope Variable (`@fontsource-variable/manrope`, self-hosted), fallback `system-ui, -apple-system, Segoe UI, sans-serif`.
 **Dashboard font:** the Tailwind default system stack (`ui-sans-serif, system-ui, sans-serif`). The dashboard does not load a webfont.
+**Kiosk font:** Roboto 400/500/700. Feedback, Registration and Statistics load it from Google Fonts; the Cashier bundles it (`@fontsource/roboto`) so the till keeps its type offline.
 
 **Character:** Manrope is the typeface of htl-leonding.at and so the school's own; in the GuideApp one extra-bold title per page sets the tone in the band, and below it hierarchy comes from weight and gray value at sizes legible on a phone. The dashboard's system font keeps it native and dense.
 
@@ -318,7 +364,7 @@ White text on night is the default. The palette comes from Nachtband (leo-projec
 - **Headline** (extra-bold 800, 28px, 34px line, -0.025em): the page title in the band on every other page (stop group, stop, Karte, Feedback, Über die App), at most three lines. Words are never hyphenated: titles, headings and names break only between words (user decision 2026-10-12, after "Informa-tik"); only a word wider than the line may break (`break-words`).
 - **Panel Title** (bold, 20px): the heading of a panel inside the content, such as the load error.
 - **Title** (bold, 18px, snug): stop group and stop names on cards, clamped to two lines. Also "Station gesehen" on the seen toggle.
-- **Body** (regular, 18px, relaxed, gray-700): stop and group descriptions (HTML from the admin).
+- **Body** (regular, 18px, relaxed, gray-700): stop and group descriptions (Markdown from the admin, rendered with `marked`).
 - **Meta** (semibold, 16px, tabular figures): the back link, "Raum …" in the band, the group count ("16 Stationen", "5 von 16 gesehen"), the "3/7" count on group cards.
 
 ### Hierarchy (Dashboard)
@@ -356,13 +402,15 @@ Both apps are lifted rather than flat: depth comes from Tailwind shadows on whit
 - **Night frame shadow** (`0 6px 16px rgba(2,20,34,0.35)`): under the sticky GuideApp top bar, so content scrolling under it stays separated.
 - **Tab bar float** (`shadow-2xl`): the GuideApp bottom navigation. Its shadow casts downward, below the bar, so it barely separates the bar from the list above (an unchanged leftover, not a rule).
 - **Drag preview** (`0 5px 15px rgba(0,0,0,0.1)`): dashboard drag-and-drop of stops and groups (CDK), at 80% opacity.
+- **Kiosk lift** (`shadow-lg` on answer cards and product tiles, `shadow-md` on chips and footer buttons, `shadow-2xl` on dialogs): the kiosks' tappable surfaces on the `gray-50` canvas.
+- **Bottom bar lift** (`shadow-bar`, `0 -4px 12px -2px rgb(0 0 0 / 0.08)`): the Cashier's bottom bars on the till and the pay screen; it casts upward, onto the grid above.
 
 ### Named Rules
 **The Lifted Card Rule.** Anything tappable in the GuideApp is a 16px-radius panel on a soft neutral shadow. Ticking changes nothing about the card itself: it keeps its height (at least 80px), shadow, fill and full opacity, so the next row never moves (user decision).
 
 ## Shapes
 
-Gently rounded throughout. GuideApp panels and cards use generous 16px corners (`rounded-2xl`), buttons 12px (`rounded-xl`) at 44px height, the checkbox box 8px with a 2px inset ring. The tour band is a fully round 12px bar that clips its segments. Dots, toggles and avatars are fully round. The GuideApp tab bar is rounded only on top (`rounded-t-lg`). The dashboard inherits DaisyUI v4 defaults (8px buttons and inputs, 16px cards). Division icons are square, 40px, with no rounding.
+Gently rounded throughout. GuideApp panels and cards use generous 16px corners (`rounded-2xl`), buttons 12px (`rounded-xl`) at 44px height, the checkbox box 8px with a 2px inset ring. The tour band is a fully round 12px bar that clips its segments. Dots, toggles and avatars are fully round. The GuideApp tab bar is rounded only on top (`rounded-t-lg`). The dashboard inherits DaisyUI v4 defaults (8px buttons and inputs, 16px cards). Division icons are square, 40px, with no rounding. The kiosks use 16px corners on buttons, chips and product tiles and 8px on answer cards and dialogs; a selected surface gets a 3px accent edge instead of a heavier shadow.
 
 ## Components
 
@@ -383,7 +431,7 @@ Gently rounded throughout. GuideApp panels and cards use generous 16px corners (
 - **Countdown page (GuideApp):** the only page while the `showCountdown` flag is on, without tab bar, so the night frame fills the whole screen like a poster. The event is the headline: "Tag der offenen Tür" as Display, below it the date line (The Date Line). The tone is friendly, not formal: "Bald geht’s los!" (from the start time "Heute geht’s los!") in 20px bold white above a 2×2 grid of night-800 tiles (Tage, Stunden, Minuten, Sekunden) with large extra-bold white tabular digits (between 48px and 88px, sized by width and height so the page fills a tall phone and still fits a 667px one) that tick every second and 18px night-200 labels. The countdown block takes the free space and sits in its middle; the closing line and link stay at the bottom. Then a 12px band of four equal segments in the exact Informatik, Medientechnik, Elektronik and Medizintechnik colours (the tour band's form, no progress), "Wir freuen uns auf dich!" and a night-200 link "Mehr auf htl-leonding.at" with an external-link icon. From the start time the tiles disappear; without a date only the title, the closing line and the link show.
 - **Über die App (GuideApp):** kept as short as possible, help first and credit last, all in content panels. "So funktioniert's" lists four one-line items (Rundgang, Abhaken, Karte, Feedback), each led by the icon the visitor sees in the app (the tab bar icons and the checked box), then one muted line on privacy. Below it a quiet white row "Häkchen zurücksetzen": the first tap turns the panel into an in-place question ("Alle Häkchen auf diesem Handy löschen?" with Abbrechen and an Action Orange "Löschen"); it clears only the ticks and the last opened group and stop (`ProgressService.reset()`), keeps the offline data and the "feedback sent" mark, and confirms with "Alle Häkchen sind gelöscht." in a status line. Then the team panel (photo, names, class, one neutral sentence about the project) and an "Impressum" link row with an external-link icon.
 - **Stop pager (GuideApp):** under the seen toggle on the stop page, two white panels side by side (16px corners, `shadow-md`, gray-900/5 ring, exactly 56px tall): left "‹ Zurück", right "Weiter ›", in the group's order, in 16px bold gray-900. They show only the direction, never the stop names, so the buttons keep one size on every stop (user decision 2026-10-14: names made them grow and shrink); the name is in the `aria-label` ("Weiter: Robotik"). The first stop has no left panel (the band's back link leads to the group); on the last stop the right panel reads "Fertig" (label "Fertig mit <group name>") and opens the group. A group with one stop has no pager. Neutral on purpose: orange is for actions, not for moving through the group. Paging keeps the page and follows the route, scrolling back to the top.
-- **Karte (GuideApp):** the band shows "Raum E24" (nothing for a whole-floor code like "EG"), then "Zur Station" as the screen's one Action Orange button (only when opened from a stop; from a shared link or after a reload it leads to the tour start), the floor plan in a white panel headed by the floor name (20px bold gray-900), and below it two white floor arrows ("Stockwerk höher" / "Stockwerk tiefer", the stop pager's neutral style: changing floors is moving, not acting). At the top or bottom floor an arrow turns gray-100 with a gray-400 icon and no shadow, never a faded orange: half-transparent accent-700 reads as a second orange (decided 2026-10-14 after the audit). The map opens on the room's floor (`floorOf` in `shared/room.ts`: U → Untergeschoss, E → Erdgeschoss, 1 or OG → 1. Stock) and on the Erdgeschoss when it cannot place the room.
+- **Karte (GuideApp):** the band shows "Raum E24" (nothing for a whole-floor code like "EG"), then "Zur Station" as the screen's one Action Orange button (only when opened from a stop; from a shared link or after a reload it leads to the tour start), the floor plan in a white panel headed by the floor name (20px bold gray-900), and below it two white floor arrows ("Stockwerk höher" / "Stockwerk tiefer", 44px tall, 12px corners, `shadow-md`, neutral like the stop pager: changing floors is moving, not acting). At the top or bottom floor an arrow turns gray-100 with a gray-400 icon and no shadow, never a faded orange: half-transparent accent-700 reads as a second orange (decided 2026-10-14 after the audit). The map opens on the room's floor (`floorOf` in `shared/room.ts`: U → Untergeschoss, E → Erdgeschoss, 1 or OG → 1. Stock) and on the Erdgeschoss when it cannot place the room.
 - **Loading and error (GuideApp):** while a list loads, static white card outlines with a gray-200 bar (`app-card-skeleton`, no shimmer: The One Motion Rule) and a hidden "Wird geladen …" status. When loading fails and nothing is stored, a content panel (`app-load-error`, `role="alert"`) names the problem ("Der Rundgang konnte nicht geladen werden"), says what to do and that the ticks stay on the phone, with "Erneut versuchen" as the screen's one Action Orange button. Reads of groups, stops, divisions and feedback questions keep their last answer in `localStorage` (`lastKnown:<path>`) and fall back to it offline, so the error only shows before the first successful load. A group with no stops and no text says "Zu dieser Gruppe gibt es keine eigenen Stationen."
 
 ### Inputs / Fields
@@ -426,11 +474,9 @@ One question per screen, inside the night frame. The band holds "Feedback", the 
 
 Sending goes through `FeedbackOutboxService` (`localStorage` `feedbackOutbox`, only non-empty answers, retried on app start, on `online` and every 30s; 400/409 are dropped). The thanks screen is a white panel with the gray-900 check box, "Danke für dein Feedback!", one sentence and a status line ("Gesendet." or "Noch nicht gesendet – wir senden es, sobald du wieder Netz hast."), then a quiet white row "Noch ein Feedback geben". It shows whenever the page is reopened after sending (`feedbackSubmitted`), unless a new feedback is in progress.
 
-The map's disabled floor arrows (accent-700 at 50% opacity) are an unchanged leftover, recorded, not canonized.
-
 ## Feedback Kiosk
 
-The kiosk (`kiosk/feedback/`) runs on tablets at the building exit. A student holds or sets up the tablet, talks with the visitor and types in their feedback, so the screen speaks to the visitor (du-form) while a slim status strip speaks to the student. It inherits the GuideApp's world (Roboto, Programme Orange as the only accent, white cards lifted on `gray-50`, 16px pill corners) at tablet scale: question text 30–36px, answers at least 80px tall, footer buttons 64px. There is no dark mode; the hall is lit.
+The kiosk (`kiosk/feedback/`) runs on tablets at the building exit. A student holds or sets up the tablet, talks with the visitor and types in their feedback, so the screen speaks to the visitor (du-form) while a slim status strip speaks to the student. It defines the kiosk world (Roboto, `kiosk-accent` orange as the only accent, white cards lifted on `kiosk-canvas`, 16px corners on buttons and chips, 8px on answer cards) at tablet scale: question text 30–36px, answers at least 80px tall, footer buttons 64px. There is no dark mode; the hall is lit.
 
 ### Colors and tokens
 - `tailwind.config.js` names the roles: `accent` (the Tailwind orange scale) and `canvas` (`gray-50`). Templates use `accent-*`, never `orange-*`.
