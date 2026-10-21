@@ -9,12 +9,17 @@ import { euro } from '@shared/money';
 
 /**
  * The sale just completed. It stays on the till until the next product is
- * tapped, so the change can still be read while counting coins.
+ * tapped, so the change can still be read while counting coins: the change is
+ * the loudest thing on the screen, in the same box as on the pay screen.
  */
 @Component({
   selector: 'app-last-sale',
   template: `
-    <p class="flex items-center gap-2 text-lg font-medium text-gray-800">
+    <p
+      class="flex flex-wrap items-center gap-x-2 font-medium text-gray-800"
+      [class.text-lg]="!compact()"
+      [class.text-base]="compact()"
+    >
       <span
         class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-600 text-white"
         aria-hidden="true"
@@ -35,30 +40,67 @@ import { euro } from '@shared/money';
         </svg>
       </span>
       Verkauf gespeichert
-    </p>
-    @if (change(); as c) {
-      <p
-        class="text-gray-700"
-        [class.mt-4]="!compact()"
-        [class.mt-1]="compact()"
-      >
-        Summe {{ total() }} · gegeben {{ c.given }}
-      </p>
-      <p
-        class="flex items-baseline gap-3"
-        [class.mt-1]="!compact()"
-        [class.flex-wrap]="!compact()"
-      >
-        <span class="text-lg text-gray-700">Rückgeld</span>
-        <span
-          class="font-bold tabular-nums tracking-tight text-gray-900"
-          [class.text-5xl]="!compact()"
-          [class.text-3xl]="compact()"
-          >{{ c.change }}</span
+      @if (compact()) {
+        <!-- Beside the heading where it fits; on phones a line of its own, without a leading dot -->
+        <span class="w-full font-normal text-gray-600 sm:w-auto"
+          ><span class="hidden sm:inline" aria-hidden="true">· </span
+          >{{ detail() }}</span
         >
-      </p>
-    } @else {
-      <p class="text-gray-700" [class.mt-2]="!compact()">Summe {{ total() }}</p>
+      }
+    </p>
+
+    @switch (paid().kind) {
+      @case ('change') {
+        <div
+          class="flex flex-wrap items-center justify-between gap-x-4 rounded-xl bg-accent-50"
+          [class.mt-4]="!compact()"
+          [class.px-4]="!compact()"
+          [class.py-3]="!compact()"
+          [class.mt-1]="compact()"
+          [class.px-3]="compact()"
+          [class.py-1]="compact()"
+        >
+          <span class="text-xl font-medium text-gray-800">Rückgeld</span>
+          <span
+            class="font-bold tabular-nums tracking-tight text-gray-900"
+            [class.text-6xl]="!compact()"
+            [class.text-4xl]="compact()"
+            >{{ paid().change }}</span
+          >
+        </div>
+      }
+      @case ('exact') {
+        <p
+          class="font-bold text-gray-900"
+          [class.mt-4]="!compact()"
+          [class.text-4xl]="!compact()"
+          [class.mt-1]="compact()"
+          [class.text-3xl]="compact()"
+        >
+          Passend bezahlt
+        </p>
+      }
+      @default {
+        <p
+          class="flex flex-wrap items-baseline gap-x-3"
+          [class.mt-4]="!compact()"
+          [class.mt-1]="compact()"
+        >
+          <span class="text-xl text-gray-700">Summe</span>
+          <span
+            class="font-bold tabular-nums tracking-tight text-gray-900"
+            [class.text-5xl]="!compact()"
+            [class.text-3xl]="compact()"
+            >{{ total() }}</span
+          >
+        </p>
+      }
+    }
+
+    @if (!compact()) {
+      <p class="mt-3 text-lg text-gray-700">{{ summary() }}</p>
+      <!-- Only needed when a sale has to be traced later (refused, or sold twice) -->
+      <p class="mt-1 text-base text-gray-600">Nr. {{ sale().orderNumber }}</p>
     }
   `,
   host: { class: 'block', role: 'status' },
@@ -70,10 +112,24 @@ export class LastSaleComponent {
   readonly compact = input(false);
 
   protected total = computed(() => euro(this.sale().total));
-  protected change = computed(() => {
+  /** Change to hand out, paid exactly, or no amount entered. */
+  protected paid = computed(() => {
     const { given, total } = this.sale();
-    return given === null
-      ? null
-      : { given: euro(given), change: euro(given - total) };
+    if (given === null) return { kind: 'none' as const, change: '' };
+    if (given === total) return { kind: 'exact' as const, change: '' };
+    return { kind: 'change' as const, change: euro(given - total) };
   });
+  protected summary = computed(() => {
+    const given = this.sale().given;
+    if (given === null) return 'Ohne gegebenen Betrag abgeschlossen';
+    return given === this.sale().total
+      ? `Summe ${this.total()}`
+      : `Summe ${this.total()} · gegeben ${euro(given)}`;
+  });
+  /** The bottom bar's one line of context. */
+  protected detail = computed(() =>
+    this.paid().kind === 'none'
+      ? `Nr. ${this.sale().orderNumber}`
+      : this.summary()
+  );
 }

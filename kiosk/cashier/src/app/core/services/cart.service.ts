@@ -2,6 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { CatalogService } from './catalog.service';
 import { CartLine, Product } from '@shared/models/types';
 import { MAX_AMOUNT } from '@shared/constants';
+import { euro } from '@shared/money';
 
 /** The sale being put together at the counter. */
 @Injectable({
@@ -22,6 +23,18 @@ export class CartService {
       .filter((p) => (amounts.get(p.id) ?? 0) > 0)
       .map((product) => ({ product, amount: amounts.get(product.id) ?? 0 }));
   });
+  /** The lines as the cart panel and the receipt show them ("2×", name, line total). */
+  readonly receipt = computed(() =>
+    this.lines().map((l) => ({
+      id: l.product.id,
+      product: l.product,
+      amount: l.amount,
+      // A break opportunity after "/" ("Wurst-/Käsesemmel") before any mid-word break
+      name: l.product.name.replaceAll('/', '/​'),
+      sum: euro(l.amount * l.product.price),
+      voucher: isVoucher(l.product),
+    }))
+  );
   readonly total = computed(() =>
     this.lines().reduce((sum, l) => sum + l.amount * l.product.price, 0)
   );

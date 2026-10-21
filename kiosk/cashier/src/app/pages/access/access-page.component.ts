@@ -4,8 +4,9 @@ import { FocusOnShowDirective } from '@shared/directives/focus-on-show.directive
 import { AccessService } from '@core/services/access.service';
 
 /**
- * Before the till: the school login is being checked, or the logged-in person
- * may not sell (then another account can log in).
+ * Before the till: start page with the login button, the school login is being
+ * checked, or the logged-in person may not sell (then they log out again).
+ * Keycloak's form only appears after "Anmelden" is pressed.
  */
 @Component({
   selector: 'app-access-page',
@@ -60,6 +61,20 @@ import { AccessService } from '@core/services/access.service';
             Anmeldung wird geprüft …
           </p>
         }
+        @case ('logged-out') {
+          <div class="max-w-lg">
+            <p class="text-lg text-gray-600">
+              Zum Kassieren mit dem Schulkonto anmelden.
+            </p>
+            <button
+              type="button"
+              class="btn-primary mx-auto mt-8 px-12"
+              (click)="access.login()"
+            >
+              Anmelden
+            </button>
+          </div>
+        }
         @case ('denied') {
           <div class="max-w-lg" role="alert">
             <p class="text-xl font-medium text-gray-800">
@@ -69,16 +84,16 @@ import { AccessService } from '@core/services/access.service';
               }
             </p>
             <p class="mt-2 text-lg text-gray-600">
-              Kassieren dürfen Lehrer:innen und Schüler:innen, die im
-              TadeoT-Dashboard der Station „Buffet“ zugeteilt und bestätigt
-              sind.
+              Kassieren dürfen Lehrer:innen und Schüler:innen, die der Station
+              „Buffet“ zugeteilt sind. Fehlt die Zuteilung, bitte der Lehrkraft
+              am Buffet Bescheid geben.
             </p>
             <button
               type="button"
               class="btn-primary mx-auto mt-8 px-10"
               (click)="access.logout()"
             >
-              Mit anderem Konto anmelden
+              Abmelden
             </button>
           </div>
         }

@@ -15,6 +15,10 @@ module.exports = {
         // answer lists fit. Listed after the width breakpoints, so it wins.
         short: { raw: '(max-height: 700px)' },
       },
+      boxShadow: {
+        // The bars at the bottom of the till and the pay screen, lifted off the content above
+        bar: '0 -4px 12px -2px rgb(0 0 0 / 0.08)',
+      },
       fontFamily: {
         sans: ['Roboto', 'sans-serif'],
       },

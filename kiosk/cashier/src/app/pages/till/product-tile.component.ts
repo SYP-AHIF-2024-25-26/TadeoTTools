@@ -11,8 +11,9 @@ import { Product } from '@shared/models/types';
 import { euro } from '@shared/money';
 
 /**
- * One product on the till. A tap anywhere adds one; "−" sits apart in the
- * corner, so a hurried tap can only ever add. A voucher is a toggle instead
+ * One product on the till. A tap anywhere adds one. From lg the cart panel
+ * takes one out again, so a tap on a tile can only ever add; below lg (no
+ * cart list) "−" sits in the corner of a selected tile. A voucher is a toggle instead
  * (one per sale).
  */
 @Component({
@@ -81,7 +82,7 @@ import { euro } from '@shared/money';
     @if (!voucher() && amount() > 0) {
       <button
         type="button"
-        class="absolute bottom-2 right-2 flex h-14 w-14 items-center justify-center rounded-xl border-2 border-accent-600 bg-white text-accent-700 shadow-sm hover:bg-accent-100 short:h-12 short:w-12"
+        class="absolute bottom-2 right-2 flex h-14 w-14 items-center justify-center rounded-xl border-2 border-accent-600 bg-white text-accent-700 shadow-sm hover:bg-accent-100 lg:hidden short:h-12 short:w-12"
         [attr.aria-label]="'Einmal ' + name() + ' weniger'"
         (click)="cart.remove(product())"
       >

@@ -12,6 +12,7 @@ import { CheckoutService } from '@core/services/checkout.service';
 import { OutboxService } from '@core/services/outbox.service';
 import { NgOptimizedImage } from '@angular/common';
 import { RejectedDialogComponent } from './rejected-dialog.component';
+import { ConfirmDialogComponent } from './confirm-dialog.component';
 
 /**
  * For the student at the counter: which buffet, who is logged in, and whether
@@ -20,7 +21,7 @@ import { RejectedDialogComponent } from './rejected-dialog.component';
  */
 @Component({
   selector: 'app-status-bar',
-  imports: [NgOptimizedImage, RejectedDialogComponent],
+  imports: [NgOptimizedImage, RejectedDialogComponent, ConfirmDialogComponent],
   template: `
     <div
       class="flex min-h-14 items-center gap-4 bg-gray-100 px-4 py-2 text-base text-gray-700 sm:px-6 short:min-h-12 short:py-1"
@@ -35,7 +36,7 @@ import { RejectedDialogComponent } from './rejected-dialog.component';
           @if (canSwitch()) {
             <button
               type="button"
-              class="-my-1 h-10 rounded-xl px-3 font-medium text-gray-800 underline decoration-gray-400 underline-offset-4 hover:bg-gray-200"
+              class="btn-strip"
               (click)="catalog.picking.set(true)"
             >
               Wechseln
@@ -43,16 +44,17 @@ import { RejectedDialogComponent } from './rejected-dialog.component';
           }
         }
 
-        <span class="flex items-center gap-1 whitespace-nowrap">
+        <!-- Name and "Abmelden" may wrap onto two lines on phones instead of running under the logo -->
+        <span class="flex flex-wrap items-center gap-x-1">
           @if (userName()) {
-            <span>{{ userName() }}</span>
+            <span class="whitespace-nowrap">{{ userName() }}</span>
           }
           <!-- Only between two sales: logging out reloads the page and would drop the cart -->
           @if (betweenSales()) {
             <button
               type="button"
-              class="-my-1 h-10 rounded-xl px-3 font-medium text-gray-800 underline decoration-gray-400 underline-offset-4 hover:bg-gray-200"
-              (click)="access.logout()"
+              class="btn-strip"
+              (click)="confirmingLogout.set(true)"
             >
               Abmelden
             </button>
@@ -60,7 +62,10 @@ import { RejectedDialogComponent } from './rejected-dialog.component';
         </span>
 
         <span class="ml-auto flex flex-wrap items-center gap-x-5 gap-y-1">
-          <span role="status" class="contents">
+          <span
+            role="status"
+            class="flex flex-wrap items-center gap-x-5 gap-y-1"
+          >
             @if (waiting() > 0) {
               <span class="flex items-center gap-2 font-medium text-gray-900">
                 <svg
@@ -103,7 +108,7 @@ import { RejectedDialogComponent } from './rejected-dialog.component';
           @if (waiting() > 0) {
             <button
               type="button"
-              class="-my-1 h-10 rounded-xl bg-white px-4 font-medium text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-60"
+              class="-my-1 h-11 rounded-xl bg-white px-4 font-medium text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-60"
               [disabled]="sending()"
               (click)="outbox.flush()"
             >
@@ -113,7 +118,7 @@ import { RejectedDialogComponent } from './rejected-dialog.component';
           @if (rejected() > 0) {
             <button
               type="button"
-              class="-my-1 h-10 rounded-xl bg-white px-4 font-medium text-red-700 shadow-sm hover:bg-red-50"
+              class="-my-1 h-11 rounded-xl bg-white px-4 font-medium text-red-700 shadow-sm hover:bg-red-50"
               (click)="showRejected.set(true)"
             >
               Ansehen
@@ -134,6 +139,17 @@ import { RejectedDialogComponent } from './rejected-dialog.component';
     @if (showRejected()) {
       <app-rejected-dialog (closed)="showRejected.set(false)" />
     }
+    <!-- Logging in again means typing the school password at the counter -->
+    @if (confirmingLogout()) {
+      <app-confirm-dialog
+        title="Abmelden?"
+        text="Danach meldet sich die nächste Person mit ihrem Schulkonto an. Wartende Verkäufe bleiben auf dem Tablet."
+        keepLabel="Angemeldet bleiben"
+        confirmLabel="Abmelden"
+        (keep)="confirmingLogout.set(false)"
+        (confirm)="access.logout()"
+      />
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -145,6 +161,7 @@ export class StatusBarComponent {
   private checkout = inject(CheckoutService);
 
   protected showRejected = signal(false);
+  protected confirmingLogout = signal(false);
   protected buffet = this.catalog.buffet;
   protected userName = this.access.userName;
   protected betweenSales = computed(
