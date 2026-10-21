@@ -40,8 +40,10 @@ builder.AddJavaScriptApp("kiosk-registration", "../../kiosk/registration")
     .WithBuildScript("start")
     .WithRunScript("start");
 
-// Also talks to the legacy TadeoT backend. Every completed sale there is a real one.
-builder.AddJavaScriptApp("kiosk-cashier", "../../kiosk/cashier")
+// Sells through the legacy TadeoT backend (every completed sale there is a real one);
+// asks webapi only who may log in.
+var cashierKiosk = builder.AddJavaScriptApp("kiosk-cashier", "../../kiosk/cashier")
+    .WithReference(webapi)
     .WithEnvironment("CASHIER_API_URL", "https://tadeot.htl-leonding.ac.at/tadeot-api")
     .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints()
@@ -59,6 +61,7 @@ builder.AddJavaScriptApp("kiosk-statistics", "../../kiosk/statistics")
 webapi
     .WithEnvironment("AllowedOrigins__0", dashboard.GetEndpoint("http"))
     .WithEnvironment("AllowedOrigins__1", guideapp.GetEndpoint("http"))
-    .WithEnvironment("AllowedOrigins__2", feedbackKiosk.GetEndpoint("http"));
+    .WithEnvironment("AllowedOrigins__2", feedbackKiosk.GetEndpoint("http"))
+    .WithEnvironment("AllowedOrigins__3", cashierKiosk.GetEndpoint("http"));
 
 builder.Build().Run();
