@@ -11,6 +11,7 @@ internal static class Setup
     public const string CorsPolicyName = "AllowOrigins";
     public const string AdminPolicyName = "IsAdmin";
     public const string StopManagerOrAdminPolicyName = "IsStopManagerOrAdmin";
+    public const string CashierPolicyName = "IsCashier";
 
     public static void AddLeoAuthentication(this IServiceCollection services)
     {
@@ -68,12 +69,15 @@ internal static class Setup
                 .Add(new AdminRequirement()))
             .AddPolicy(StopManagerOrAdminPolicyName, policy => policy.Requirements
                 .Add(new StopManagerOrAdminRequirement()))
+            .AddPolicy(CashierPolicyName, policy => policy.Requirements
+                .Add(new CashierRequirement()))
             .AddPolicy(nameof(LeoUserRole.Student), policy => policy.Requirements
                 .Add(new LeoAuthRequirement(LeoUserRole.Student, true)));
 
             
         services.AddScoped<IAuthorizationHandler, StopManagerOrAdminHandler>();
         services.AddScoped<IAuthorizationHandler, AdminAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, CashierAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, LeoAuthorizationHandler>();
     }
 }

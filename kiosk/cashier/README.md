@@ -5,8 +5,31 @@ Buffet, tippt die gewünschten Produkte an, kassiert und gibt Rückgeld. Der Bil
 Person an der Kassa an, nicht die Besucher:innen.
 
 Ersetzt die alte Angular-14-App (`tadeot-frontend/kassa` im Repository `htl-leo-tadeot`). Das
-**alte Backend bleibt unverändert** und wird weiter verwendet; diese App ruft nicht die API dieses
-Repositorys auf.
+**alte Backend bleibt unverändert** und wird weiter verwendet; die API dieses Repositorys wird nur
+für die Anmeldung gefragt.
+
+## Anmeldung
+
+Vor der Kassa meldet man sich mit dem Schulkonto an (Keycloak `auth.htl-leonding.ac.at`, Realm
+`htlleonding`, Client `htlleonding-service`, wie das Dashboard). Danach fragt die App
+`GET /v1/users/is-cashier` im TadeoTTools-Backend. Kassieren dürfen:
+
+- alle **Lehrer:innen** (laut LDAP-Eintrag im Token),
+- **Admins** des Dashboards,
+- **Schüler:innen**, deren Zuteilung zur Station mit dem Namen **„Buffet“** bestätigt ist
+  (Status „Accepted“; offene oder abgelehnte Anfragen zählen nicht).
+
+Die Station muss im Dashboard genau „Buffet“ heißen (Groß-/Kleinschreibung egal). Alle anderen sehen
+„Kein Zugang zur Kassa“ und können sich mit einem anderen Konto anmelden. „Abmelden“ in der
+Statusleiste (nur zwischen zwei Verkäufen) beendet die Anmeldung, z. B. beim Schichtwechsel;
+wartende Verkäufe bleiben auf dem Tablet und werden weiter gesendet.
+
+- Die Anmeldung braucht eine Verbindung. Ohne WLAN beim Start zeigt die App „Keine Verbindung“ statt
+  der Kassa; das Kassieren selbst geht danach auch offline weiter.
+- Die Berechtigung wird nur beim Start geprüft (und nach jedem Neuladen). Eine Zuteilung, die im
+  Dashboard entfernt wird, wirkt also erst beim nächsten Start.
+- **Nur der Bildschirm ist geschützt:** die Endpunkte des alten Backends brauchen weiterhin keinen
+  Login (das alte Backend bleibt unverändert).
 
 ## Ablauf
 
@@ -67,7 +90,9 @@ aber jeder abgeschlossene Verkauf landet als echter Verkauf in der Statistik. Zu
 Mock-Backend verwenden (`GET /api/Buffets` mit Testdaten, `POST /api/orders` mit 201 beantworten).
 
 Unter Aspire (`backend/AppHost`) startet die App mit `npm start`; `update_base_url.js` schreibt
-dabei `CASHIER_API_URL` in `environment.development.ts` (nicht committen).
+dabei `CASHIER_API_URL` und die URL der API dieses Repositorys (`toolsApiBaseUrl`) in
+`environment.development.ts` (nicht committen). Mit `npx ng serve` erwartet die App die API unter
+`http://localhost:5001`.
 
 Verwendete Endpunkte des alten Backends (beide ohne Login): `GET /api/Buffets` (Buffets mit ihren
 Produkten, Preise in Cent) und `POST /api/orders`
@@ -76,8 +101,10 @@ Produkten, Preise in Cent) und `POST /api/orders`
 ## Docker
 
 `BACKEND_URL` ist die URL des alten Backends **ohne** `/api`
-(z. B. `https://tadeot.htl-leonding.ac.at/tadeot-api`) und wird beim Containerstart in `env.js`
-geschrieben. Die `base href` ist relativ (`./`), daher läuft dasselbe Image unter `/` und hinter
+(z. B. `https://tadeot.htl-leonding.ac.at/tadeot-api`), `TOOLS_BACKEND_URL` die des
+TadeoTTools-Backends **ohne** `/v1` (für die Anmeldung). Beide werden beim Containerstart in
+`env.js` geschrieben. Die Kassa-URL muss im Keycloak-Client `htlleonding-service` als Redirect-URI
+erlaubt sein. Die `base href` ist relativ (`./`), daher läuft dasselbe Image unter `/` und hinter
 einem Pfad-Präfix (Präfix im Reverse Proxy entfernen). Der Aufruf muss mit `/` enden
 (`…/kassa/`), sonst lädt der Browser `main.js` und `env.js` vom Root. Mit Traefik, unter dem
 bisherigen Pfad `/kassa`, damit die Lesezeichen auf den Tablets weiter funktionieren:
@@ -100,5 +127,5 @@ Auf demselben Host darf nur **eine** App unter `/kassa` laufen: die alte oder di
 
 ```bash
 docker build -t tadeot-cashier .
-docker run -p 8080:80 -e BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-api tadeot-cashier
+docker run -p 8080:80 -e BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-api   -e TOOLS_BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126 tadeot-cashier
 ```

@@ -134,6 +134,7 @@ Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logisc
 - `GET /v1/users/is-admin`
 - `GET /v1/users/token-data`
 - `GET /v1/users/in-database`
+- `GET /v1/users/is-cashier` (Kassa-Kiosk: 200 für Lehrer:innen, Admins und Schüler:innen mit bestätigter Zuteilung zur Station „Buffet“, sonst 403)
 
 ---
 

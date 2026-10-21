@@ -59,3 +59,12 @@ export interface TillTotal {
 
 /** Why loading failed: no connection at all, or the backend answered with an error. */
 export type LoadFailure = 'no-network' | 'server';
+
+/** Whether the logged-in person may use the till, or why that is not known yet. */
+export type AccessState = 'checking' | 'granted' | 'denied' | LoadFailure;
+
+/** `GET /v1/users/is-cashier` of the TadeoTTools backend; the class is empty for teachers. */
+export interface CashierUser {
+  name: string;
+  studentClass: string;
+}

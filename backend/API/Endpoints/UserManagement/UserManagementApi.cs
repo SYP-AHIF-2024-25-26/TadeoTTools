@@ -26,6 +26,12 @@ public static class UserManagementApi
             Results.Ok("You are an admin")
         ).RequireAuthorization(Setup.AdminPolicyName);
 
+        // Checked by the cashier kiosk after the Keycloak login; 403 shows "no access" there.
+        group.MapGet("/is-cashier", UserManagementEndpoints.GetCashierUser)
+            .RequireAuthorization(Setup.CashierPolicyName)
+            .Produces<UserManagementEndpoints.CashierUserDto>()
+            .Produces(StatusCodes.Status403Forbidden);
+
         group.MapGet("/token-data", static (HttpContext httpContext) =>
         {
             var userInfo = httpContext.User.GetLeoUserInformation();

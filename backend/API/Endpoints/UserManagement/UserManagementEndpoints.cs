@@ -38,6 +38,31 @@ public class UserManagementEndpoints
         return data;
     }
 
+    public record CashierUserDto(string Name, string StudentClass);
+
+    /// <summary>
+    /// Who is selling, for the cashier's status strip: name and class from the Students table,
+    /// otherwise (teachers, admins) the name from the token without a class.
+    /// </summary>
+    public static async Task<IResult> GetCashierUser(TadeoTDbContext context, HttpContext httpContext)
+    {
+        var username = httpContext.User.FindFirst("preferred_username")?.Value ?? string.Empty;
+        var student = await context.Students
+            .FirstOrDefaultAsync(s => s.EdufsUsername.ToLower() == username.ToLower());
+        var name = student != null
+            ? $"{student.FirstName} {student.LastName}".Trim()
+            : httpContext.User.GetLeoUserInformation().Match(
+                user => user.Name.Match(
+                    fullName => fullName.Name,
+                    firstNameOnly => firstNameOnly.FirstName,
+                    lastNameOnly => lastNameOnly.LastName,
+                    _ => string.Empty),
+                _ => string.Empty);
+        return Results.Ok(new CashierUserDto(
+            string.IsNullOrEmpty(name) ? username : name,
+            student?.StudentClass ?? string.Empty));
+    }
+
     public static async Task<IResult> UserInDatabase(TadeoTDbContext context, HttpContext httpContext)
     {
         var userInfo = httpContext.User.GetLeoUserInformation();

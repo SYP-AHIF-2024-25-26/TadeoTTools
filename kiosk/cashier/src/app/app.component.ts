@@ -7,11 +7,13 @@ import {
   signal,
 } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
+import { AccessService } from '@core/services/access.service';
 import { CatalogService } from '@core/services/catalog.service';
 import { CartService } from '@core/services/cart.service';
 import { CheckoutService } from '@core/services/checkout.service';
 import { OutboxService } from '@core/services/outbox.service';
 import { WakeLockService } from '@core/services/wake-lock.service';
+import { AccessPageComponent } from '@pages/access/access-page.component';
 import { StartPageComponent } from '@pages/start/start-page.component';
 import { TillPageComponent } from '@pages/till/till-page.component';
 import { PayPageComponent } from '@pages/pay/pay-page.component';
@@ -24,6 +26,7 @@ import { StatusBarComponent } from '@shared/components/status-bar.component';
 @Component({
   selector: 'app-root',
   imports: [
+    AccessPageComponent,
     StartPageComponent,
     TillPageComponent,
     PayPageComponent,
@@ -34,7 +37,9 @@ import { StatusBarComponent } from '@shared/components/status-bar.component';
       <app-status-bar />
     }
     <div class="min-h-0 flex-1">
-      @if (!selling()) {
+      @if (!granted()) {
+        <app-access-page />
+      } @else if (!selling()) {
         <app-start-page />
       } @else if (checkout.screen() === 'pay') {
         <app-pay-page />
@@ -47,6 +52,7 @@ import { StatusBarComponent } from '@shared/components/status-bar.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
+  private access = inject(AccessService);
   private catalog = inject(CatalogService);
   private cart = inject(CartService);
   private outbox = inject(OutboxService);
@@ -54,13 +60,19 @@ export class AppComponent {
   private swUpdate = inject(SwUpdate);
   private updateReady = signal(false);
 
+  protected granted = computed(() => this.access.state() === 'granted');
   /** A buffet is known and the student is not switching to another one. */
   protected selling = computed(
-    () => this.catalog.buffet() !== null && !this.catalog.picking()
+    () =>
+      this.granted() &&
+      this.catalog.buffet() !== null &&
+      !this.catalog.picking()
   );
 
   constructor() {
     inject(WakeLockService).keepAwake();
+    // Products load and waiting sales are sent while the login is still checked.
+    this.access.check();
     this.catalog.load();
 
     if (this.swUpdate.isEnabled) {

@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { AccessService } from '@core/services/access.service';
 import { CatalogService } from '@core/services/catalog.service';
 import { CartService } from '@core/services/cart.service';
 import { CheckoutService } from '@core/services/checkout.service';
@@ -13,8 +14,9 @@ import { NgOptimizedImage } from '@angular/common';
 import { RejectedDialogComponent } from './rejected-dialog.component';
 
 /**
- * For the student at the counter: which buffet, and whether sales are still
- * waiting to reach the server. The school logo closes the strip on the right.
+ * For the student at the counter: which buffet, who is logged in, and whether
+ * sales are still waiting to reach the server. The school logo closes the strip
+ * on the right.
  */
 @Component({
   selector: 'app-status-bar',
@@ -40,6 +42,22 @@ import { RejectedDialogComponent } from './rejected-dialog.component';
             </button>
           }
         }
+
+        <span class="flex items-center gap-1 whitespace-nowrap">
+          @if (userName()) {
+            <span>{{ userName() }}</span>
+          }
+          <!-- Only between two sales: logging out reloads the page and would drop the cart -->
+          @if (betweenSales()) {
+            <button
+              type="button"
+              class="-my-1 h-10 rounded-xl px-3 font-medium text-gray-800 underline decoration-gray-400 underline-offset-4 hover:bg-gray-200"
+              (click)="access.logout()"
+            >
+              Abmelden
+            </button>
+          }
+        </span>
 
         <span class="ml-auto flex flex-wrap items-center gap-x-5 gap-y-1">
           <span role="status" class="contents">
@@ -121,19 +139,21 @@ import { RejectedDialogComponent } from './rejected-dialog.component';
 })
 export class StatusBarComponent {
   protected catalog = inject(CatalogService);
+  protected access = inject(AccessService);
   protected outbox = inject(OutboxService);
   private cart = inject(CartService);
   private checkout = inject(CheckoutService);
 
   protected showRejected = signal(false);
   protected buffet = this.catalog.buffet;
+  protected userName = this.access.userName;
+  protected betweenSales = computed(
+    () => this.cart.empty() && this.checkout.screen() === 'till'
+  );
   /** Only between two sales, and not while the choice is already open. */
   protected canSwitch = computed(
     () =>
-      this.catalog.hasChoice() &&
-      !this.catalog.picking() &&
-      this.cart.empty() &&
-      this.checkout.screen() === 'till'
+      this.catalog.hasChoice() && !this.catalog.picking() && this.betweenSales()
   );
   /** Right after a sale it is being sent; only worth a word once that failed. */
   protected waiting = computed(() =>
