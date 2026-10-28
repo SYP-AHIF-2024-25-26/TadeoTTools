@@ -1,4 +1,10 @@
-import { Component, computed, input, model } from '@angular/core';
+import {
+  Component,
+  computed,
+  input,
+  model,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Stop, StopGroup } from '@/shared/models/types';
 import {
@@ -10,6 +16,7 @@ import {
 @Component({
   selector: 'app-stop-group-stop-selector',
   imports: [FormsModule, DragDropModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './stop-group-stop-selector.component.html',
 })
 export class StopGroupStopSelectorComponent {

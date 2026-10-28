@@ -1,9 +1,17 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ToastService } from '@/core/services/toast.service';
 import { FeedbackQuestion } from '@/shared/models/types';
 
 @Component({
   selector: 'app-feedback-preview',
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './feedback-preview.component.html',
 })
 export class FeedbackPreviewComponent {

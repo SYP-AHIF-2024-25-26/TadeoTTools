@@ -1,4 +1,11 @@
-import { Component, inject, input, output, computed } from '@angular/core';
+import {
+  Component,
+  inject,
+  input,
+  output,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { DialogComponent } from '@/shared/components/dialog/dialog.component';
 import {
   FormArray,
@@ -17,6 +24,7 @@ import {
 @Component({
   selector: 'app-feedback-question-editor',
   imports: [ReactiveFormsModule, DialogComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './feedback-question-editor.component.html',
 })
 export class FeedbackQuestionEditorComponent {

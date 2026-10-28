@@ -1,4 +1,11 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  input,
+  output,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { DialogComponent } from '@/shared/components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
 import { Student } from '@/shared/models/types';
@@ -7,6 +14,7 @@ import { StudentService } from '@/core/services/student.service';
 @Component({
   selector: 'app-add-student-dialog',
   imports: [FormsModule, DialogComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './add-student-dialog.component.html',
 })
 export class AddStudentDialogComponent {

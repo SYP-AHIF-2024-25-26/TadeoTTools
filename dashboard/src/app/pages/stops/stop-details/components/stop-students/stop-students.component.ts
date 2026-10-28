@@ -5,6 +5,7 @@ import {
   input,
   model,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Stop, Student, Status } from '@/shared/models/types';
@@ -16,6 +17,7 @@ import { statusBadgeClass, statusText } from '@/shared/utils/assignment-status';
 @Component({
   selector: 'app-stop-students',
   imports: [FormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './stop-students.component.html',
 })
 export class StopStudentsComponent {

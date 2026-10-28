@@ -1,4 +1,10 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { StopManagerService } from '@/core/services/stop-manager.service';
@@ -17,6 +23,7 @@ import { ImportResult } from '@/shared/models/types';
     ActionIconComponent,
     CsvImportComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './stop-manager-overview.component.html',
 })
 export class StopManagerOverviewComponent {

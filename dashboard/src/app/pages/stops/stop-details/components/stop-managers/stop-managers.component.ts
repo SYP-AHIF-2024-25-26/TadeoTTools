@@ -1,10 +1,18 @@
-import { Component, computed, input, model, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  input,
+  model,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Stop, StopManager } from '@/shared/models/types';
 
 @Component({
   selector: 'app-stop-managers',
   imports: [FormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './stop-managers.component.html',
 })
 export class StopManagersComponent {

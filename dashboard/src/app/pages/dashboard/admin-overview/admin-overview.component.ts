@@ -1,4 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import Keycloak from 'keycloak-js';
 import { errorText } from '@/core/services/toast.service';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
@@ -8,6 +14,7 @@ import { AdminService } from '@/core/services/admin.service';
 @Component({
   selector: 'app-admin-overview',
   imports: [FormsModule, DeletePopupComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './admin-overview.component.html',
 })
 export class AdminOverviewComponent implements OnInit {

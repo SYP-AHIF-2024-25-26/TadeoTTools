@@ -1,4 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { LoaderComponent } from './shared/components/loading-spinner/loading-spinner.component';
@@ -10,6 +15,7 @@ import { InfoPopupComponent } from './shared/modals/info-modal/info-modal.compon
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, NavbarComponent, LoaderComponent, InfoPopupComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './app.component.html',
 })
 export class AppComponent {

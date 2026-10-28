@@ -1,4 +1,10 @@
-import { Component, computed, input, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  input,
+  output,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { RouterLink } from '@angular/router';
 import { Stop, StopGroup } from '@/shared/models/types';
@@ -7,6 +13,7 @@ import { ActionIconComponent } from '@/shared/components/action-icon/action-icon
 @Component({
   selector: 'app-stop-group-list',
   imports: [CdkDropList, CdkDrag, RouterLink, ActionIconComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './stop-group-list.component.html',
 })
 export class StopGroupListComponent {

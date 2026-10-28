@@ -1,4 +1,9 @@
-import { Component, input, output } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import {
   CdkDrag,
   CdkDragDrop,
@@ -11,6 +16,7 @@ import { ActionIconComponent } from '@/shared/components/action-icon/action-icon
 @Component({
   selector: 'app-feedback-question-list',
   imports: [CdkDropList, CdkDrag, CdkDragHandle, ActionIconComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './feedback-question-list.component.html',
 })
 export class FeedbackQuestionListComponent {

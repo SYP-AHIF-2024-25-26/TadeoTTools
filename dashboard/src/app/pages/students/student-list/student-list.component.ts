@@ -5,6 +5,7 @@ import {
   signal,
   ViewContainerRef,
   OnInit,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -66,6 +67,7 @@ export interface StudentWithUI extends Student {
     DeletePopupComponent,
     PageHeaderComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './student-list.component.html',
 })
 export class ListStudentsComponent implements OnInit {
