@@ -2,13 +2,20 @@ import { RouterOutlet, Router, Routes } from '@angular/router';
 import { NextYearPageComponent } from '@pages/next-year/next-year-page/next-year-page.component';
 import { ApiFetchService } from '@core/services/api-fetch.service';
 import { FeedbackOutboxService } from '@core/services/feedback-outbox.service';
-import { Component, signal, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  signal,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class AppComponent implements OnInit {

@@ -1,6 +1,5 @@
 import {
   ApplicationConfig,
-  importProvidersFrom,
   InjectionToken,
   provideZonelessChangeDetection,
 } from '@angular/core';
@@ -9,8 +8,8 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { environment } from '@env/environment';
-import { HAMMER_GESTURE_CONFIG, HammerModule } from '@angular/platform-browser';
-import { MyHammerConfig } from '../hammer-config';
+import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
+import { HammerSwipePlugin } from '../hammer-config';
 
 export const BASE_URL = new InjectionToken<string>('BaseUrl');
 
@@ -36,7 +35,10 @@ export const appConfig: ApplicationConfig = {
       },
     },
     provideHttpClient(withFetch()),
-    importProvidersFrom(HammerModule),
-    { provide: HAMMER_GESTURE_CONFIG, useClass: MyHammerConfig },
+    {
+      provide: EVENT_MANAGER_PLUGINS,
+      useClass: HammerSwipePlugin,
+      multi: true,
+    },
   ],
 };
