@@ -53,7 +53,7 @@ export class MapComponent {
 
   /** Back to the stop; opened from a shared link or after a reload there is no stop to go back to. */
   onGoBack() {
-    if (this.router.lastSuccessfulNavigation?.previousNavigation) {
+    if (this.router.lastSuccessfulNavigation()?.previousNavigation) {
       window.history.back();
     } else {
       this.router.navigate(['/main']);

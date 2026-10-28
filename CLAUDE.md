@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## What this is
 
 TadeoTTools manages the HTL Leonding open day ("Tag der offenen Tür"). Four deployables live in one repo, grouped by purpose:
@@ -10,16 +8,16 @@ TadeoTTools manages the HTL Leonding open day ("Tag der offenen Tür"). Four dep
 - `dashboard/` — Angular 19 admin app (Keycloak login) for admins, stop managers and students
 - `guide/` — the GuideApp: Angular 19 public PWA for visitors/guides (no login). Docker image is still named `frontend`.
 - `kiosk/` — one folder per kiosk app for fixed devices:
-  - `kiosk/feedback/` — Angular 19 kiosk PWA for the exit tablets, where students enter visitor feedback (no login, no router; see `kiosk/feedback/README.md`). Docker image is named `feedback`.
-  - `kiosk/registration/` — Angular 19 kiosk PWA for the entrance tablets, where students register arriving visitors (postcode/town, about, how they heard of the school, interests, optional photo for the Roboterführerschein). **Talks to the legacy TadeoT backend** (`…/tadeot-api/api/`, separate repo `htl-leo-tadeot`, must stay unchanged), not to `backend/`. `BACKEND_URL` excludes `/api`. Saving needs a connection (no outbox). Docker image `registration`; see `kiosk/registration/README.md`.
-  - `kiosk/cashier/` — Angular 19 kiosk PWA for the buffet counter ("Kassa"; replaces the legacy `kassa` app). Sells through the **legacy backend** (`GET /api/Buffets`, `POST /api/orders`, no login there). The screen itself needs a Keycloak login (keycloak-js directly, same client as the dashboard); access is decided by `GET /v1/users/is-cashier` in `backend/` (`IsCashier` policy: LeoAuth teacher, admin, or student with an ACCEPTED assignment to the stop named "Buffet"), checked once at startup. Second env var `TOOLS_BACKEND_URL` (excludes `/v1`). Completed sales go through a `localStorage` outbox and are sent oldest first; 400/404 responses are **kept** as "nicht übertragbar" (real money), not dropped. `orderNumber` is `<device id>-<sequence>` so duplicates can be traced (the legacy backend does not deduplicate). Prices are integer cents; a negative price is a voucher (max. 1 per sale). Docker image `cashier`, served under `/kassa`; see `kiosk/cashier/README.md`.
-  - `kiosk/statistics/` — Angular 19 kiosk PWA: an unattended slideshow of visitor statistics for the projector in the hall (replaces the legacy `statistics` app). **Reads the legacy backend** (`GET /api/Visitors/count|bytime|departmentcount|reasoncount|schooltypecount|districtcount|gendercount`, no login; never writes). Data is refreshed every 60s and cached in `localStorage`; failures are never shown, only "Stand" stops moving. `districtcount` counts towns per district, not visitors, and the slide says so. The hours slide has one row per day: the latest day plus days with registrations in the week before it (max. 3). `?delay=N` sets seconds per slide (3–120, default 10); the image's nginx redirects the old `/slideshow/N` URLs there. Charts are plain HTML bars (no chart library). Docker image `statistics`, served under `/statistics`; see `kiosk/statistics/README.md`.
+  - `kiosk/feedback/` — exit tablets: students enter visitor feedback. Talks to `backend/`, no login. Image `feedback`; see `kiosk/feedback/README.md`.
+  - `kiosk/registration/` — entrance tablets: students register arriving visitors. **Talks to the legacy TadeoT backend** (`…/tadeot-api/api/`, separate repo `htl-leo-tadeot`, must stay unchanged), not to `backend/`. Saving needs a connection (no outbox). Image `registration`; see `kiosk/registration/README.md`.
+  - `kiosk/cashier/` — buffet counter ("Kassa", replaces the legacy `kassa` app). Sells through the **legacy backend**; the screen needs a Keycloak login, and access is checked once at startup via `GET /v1/users/is-cashier` in `backend/`. Sales go through a `localStorage` outbox; 400/404 responses are **kept** as "nicht übertragbar" (real money). Image `cashier`, served under `/kassa`; see `kiosk/cashier/README.md`.
+  - `kiosk/statistics/` — unattended slideshow of visitor statistics for the hall projector (replaces the legacy `statistics` app). **Reads the legacy backend**, never writes. Image `statistics`, served under `/statistics`; see `kiosk/statistics/README.md`.
 
 CI (`docker-build-push-images.yml`) maps image names to folders in its "Resolve source folder" step; a new kiosk app needs a filter entry there, a `docker pull` line in `deploy-to-vm.yml`, an AppHost resource and (only if it talks to `backend/`, like feedback and cashier) an `AllowedOrigins` entry.
 
 Project docs (`README.md`, `TadeotTools_Dokumentation.md`) are written in German; the latter has the full endpoint list, page list and data model description.
 
-**Functional specification** — `spec/fsd.md` (German) is the agreed behaviour of the whole system: roles and rights, data rules, each app and kiosk, priorities. Read the sections for the area you work on before changing behaviour. Requirements marked **(Lücke)** are decided but not built yet; they are also listed in §18 (Soll/Kann), and §19 holds the points still open. When you close a gap, remove its **(Lücke)** marker and update §18 in the same change; when the code and the FSD disagree, ask instead of picking one. `spec/questions.md` and `spec/answers.md` record how each decision was made (same numbering).
+**Functional specification** — `spec/fsd.md` (German) is the agreed behaviour of the whole system: roles and rights, data rules, each app and kiosk, priorities. Read the sections for the area you work on before changing behaviour. Requirements marked **(Lücke)** are decided but not built yet; they are also listed in §18 (Soll/Kann), and §19 holds the points still open. When you close a gap, remove its **(Lücke)** marker and update §18 in the same change; when the code and the FSD disagree, ask instead of picking one. `spec/questions.md` and `spec/answers.md` record how each decision was made (same numbering). `spec/README.md` holds the OpenSpec plan: not set up before the open day (20.11.2026), only the (Lücke) rule applies until then.
 
 ## Commands
 
@@ -59,10 +57,10 @@ EF migrations: `dotnet-ef` is a local tool (`dotnet tool restore` in `backend/`)
 ```bash
 npm run build      # production build (every app)
 npm run format     # prettier incl. tailwind class sorting (every app)
-npm run lint       # guide and kiosk/feedback (angular-eslint)
+npm run lint       # every app except dashboard (angular-eslint)
 ```
 
-There are no `*.spec.ts` files in either app, and `dashboard` has no `test`/`lint` script.
+No app has `*.spec.ts` files; guide's `test` script has nothing to run.
 
 ### CI/CD
 
@@ -82,7 +80,7 @@ Shared query helpers and DTOs used by several endpoints sit in `Database/Reposit
 
 **Route convention** — everything is under `/v1`. `/v1/api/...` is the authenticated management surface used by the dashboard; `/v1/...` without `api` is what the GuideApp and kiosks read (`/v1/stops`, `/v1/groups`, `/v1/divisions`, `/v1/feedback-questions`, `/v1/featureflags/{name}`).
 
-**Auth** (`API/Setup.cs`) — JWT bearer against the school Keycloak (`auth.htl-leonding.ac.at`, realm `htlleonding`) via the `LeoAuth` package. Roles are **not** taken from the token: the `IsAdmin` and `IsStopManagerOrAdmin` policies look up the token's `preferred_username` (case-insensitive) in the `Admins` / `StopManagers` tables. A user is only an admin if a row exists in `Admins`. The seeding described in `API/SETUP.md` (`appsettings.Local.json`, `SeedData:InitialAdminId`) is currently commented out in `Program.cs` and that file is not loaded.
+**Auth** (`API/Setup.cs`) — JWT bearer against the school Keycloak (`auth.htl-leonding.ac.at`, realm `htlleonding`) via the `LeoAuth` package. Roles are **not** taken from the token: the `IsAdmin` and `IsStopManagerOrAdmin` policies look up the token's `preferred_username` (case-insensitive) in the `Admins` / `StopManagers` tables. A user is only an admin if a row exists in `Admins`. `IsCashier` allows a LeoAuth teacher, an admin, or a student with an ACCEPTED assignment to the stop named "Buffet"; `Student` is a plain LeoAuth role check. The seeding described in `API/SETUP.md` (`appsettings.Local.json`, `SeedData:InitialAdminId`) is currently commented out in `Program.cs` and that file is not loaded.
 
 **Startup behaviour** (`Program.cs`) — applies migrations; in Development it also imports `Students.csv`, `Teachers.csv` and `TdoT_Stationsplanung_2025.csv` into empty tables. CORS allows any origin in Development, otherwise a static list plus the `AllowedOrigins` config array (AppHost fills this with the Angular app endpoints).
 
@@ -105,18 +103,21 @@ Shared query helpers and DTOs used by several endpoints sit in `Database/Reposit
 
 ## Angular apps
 
-Both apps are zoneless (`provideExperimentalZonelessChangeDetection`), standalone-only, and styled with Tailwind (dashboard additionally DaisyUI). Services wrap `HttpClient` calls in `firstValueFrom` and return Promises. Folder layout in both: `core/` (services, guards), `pages/`, `shared/` (components, modals, `models/types.ts`).
+All six apps are zoneless (`provideExperimentalZonelessChangeDetection`), standalone-only, and styled with Tailwind (dashboard additionally DaisyUI). Services wrap `HttpClient` calls in `firstValueFrom` and return Promises. Folder layout: `core/` (services, guards), `pages/` (statistics: `slides/`), `shared/` (components, modals, `models/types.ts`).
 
-**API base URL** — both inject a `BASE_URL` token defined in `app.config.ts`. In production it comes from `window.__env.backendURL`, written to `assets/env.js` by `docker-entrypoint.sh` from the `BACKEND_URL` container env; otherwise from `environment.apiBaseUrl`. The two apps differ:
+**API base URL** — every app injects a `BASE_URL` token defined in `app.config.ts`. In production it comes from `window.__env.backendURL`, written to `env.js` by `docker-entrypoint.sh` from the `BACKEND_URL` container env; otherwise from `environment.apiBaseUrl`. What it points at differs:
 
 - dashboard: `BASE_URL` **includes** `/v1`; services call `${baseUrl}/api/stops`.
-- guide: `BASE_URL` **excludes** `/v1`; `ApiFetchService` calls `baseURL + '/v1/stops'`.
+- guide and feedback kiosk: `BASE_URL` **excludes** `/v1`; `ApiFetchService` calls `baseURL + '/v1/stops'`.
+- registration, cashier, statistics: the legacy backend, `BASE_URL` **excludes** `/api`. Cashier reads `backend/` through a second token from `TOOLS_BACKEND_URL` (excludes `/v1`).
+
+**Kiosks** — no router. `env.js` sits next to `index.html` (dashboard and guide: `assets/env.js`) so the service worker's hash check does not break when the entrypoint rewrites it. `<base href="./">` is relative on purpose: the service worker resolves the `./` paths in `ngsw.json` against its scope, so one image works at `/` and behind any path prefix.
 
 **Path aliases** — dashboard: `@/*` → `src/app/*`, `@env/*`. Guide: `@app/*`, `@pages/*`, `@core/*`, `@shared/*`, `@env/*`, `@assets/*`.
 
 **Dashboard auth** — `keycloak-angular` with `onLoad: 'login-required'`; the bearer interceptor attaches the token only to URLs matching `BASE_URL`. Route guards decide roles by calling the backend (`/users/is-admin`, `/users/in-database`) rather than inspecting the token, and redirect non-admins to `/stop-manager` or `/student`. Detail pages use a single route with query params (`/stop`, `/stopgroup`, `/division`), not `:id` segments.
 
-**Feedback kiosk** (`kiosk/feedback/`) — same `BASE_URL` convention as the guide (excludes `/v1`), but `env.js` sits next to `index.html` (not in `assets/`) so the service worker's hash check does not break when the entrypoint rewrites it. `<base href="./">` is relative on purpose: the kiosk has no router, and the service worker resolves the `./` paths in `ngsw.json` against its scope, so one image works at `/` and behind any path prefix. Finished feedback goes through a `localStorage` outbox (`OutboxService`) and is retried until the backend accepts it; 400/409 responses are dropped. Only non-empty answers are sent, since `AddValidation()` rejects empty `Answer` strings.
+**Feedback kiosk** — finished feedback goes through a `localStorage` outbox (`OutboxService`) and is retried until the backend accepts it; 400/409 responses are dropped. Only non-empty answers are sent, since `AddValidation()` rejects empty `Answer` strings.
 
 **Guide state** — no login and no server-side visitor state. Tour progress (finished stops/groups) is kept in the browser under the keys in `shared/constants/constants.ts`. It is a PWA (`ngsw-config.json`) and uses HammerJS for swipe gestures.
 
@@ -132,3 +133,12 @@ From `dashboard/.github/copilot-instructions.md`, `guide/.github/copilot-instruc
 - No `@HostBinding` / `@HostListener` (use the `host` object); no `ngClass` / `ngStyle` (use `class` / `style` bindings).
 - Reactive forms over template-driven; `NgOptimizedImage` for static images.
 - No `any`; use `unknown` when the type is uncertain.
+
+## Up-to-date documentation
+
+Look up current docs instead of relying on memory:
+
+- .NET, C#, EF Core, ASP.NET Core: the `microsoft-docs` skill.
+- Creating an Angular app: the `angular-new-app` skill.
+- Before writing a larger piece of Angular code: read the `angular-developer` skill.
+- Any other library detail (API signature, config option, how-to): the `find-docs` skill (Context7).
