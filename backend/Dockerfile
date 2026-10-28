@@ -10,7 +10,7 @@ RUN dotnet restore ./API/API.csproj
 COPY ./Database/ ./Database/
 COPY ./API/ ./API/
 
-RUN dotnet publish ./API/API.csproj -c Release -o /app/publish
+RUN dotnet publish ./API/API.csproj -c Release -o /app/publish --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
@@ -18,4 +18,6 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ASPNETCORE_URLS=http://+:5005
 EXPOSE 5005
 COPY --from=build /app/publish .
+# Run as the non-root user that ships with the .NET images
+USER $APP_UID
 ENTRYPOINT ["dotnet", "API.dll"]
