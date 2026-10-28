@@ -15,7 +15,7 @@ import { environment } from '@env/environment';
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class AppComponent implements OnInit {
