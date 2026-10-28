@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StopManager } from '@/shared/models/types';
@@ -12,7 +12,6 @@ import { ImportResult } from '@/shared/models/types';
 @Component({
   selector: 'app-stop-manager-overview',
   imports: [
-    CommonModule,
     FormsModule,
     DeletePopupComponent,
     ActionIconComponent,

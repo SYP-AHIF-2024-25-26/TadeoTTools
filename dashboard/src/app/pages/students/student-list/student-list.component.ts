@@ -14,7 +14,7 @@ import {
   Student,
   StudentAssignment,
 } from '@/shared/models/types';
-import { CommonModule } from '@angular/common';
+
 import { sortStudents, downloadFile, plural } from '@/shared/utils/utils';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { StopService } from '@/core/services/stop.service';
@@ -59,7 +59,6 @@ export interface StudentWithUI extends Student {
   selector: 'app-list-students',
   imports: [
     FormsModule,
-    CommonModule,
     StudentFiltersComponent,
     RouterLink,
     AddStudentDialogComponent,
