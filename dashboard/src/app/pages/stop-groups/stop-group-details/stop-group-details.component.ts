@@ -1,4 +1,11 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
@@ -28,6 +35,7 @@ import { StopGroupStopSelectorComponent } from '@/pages/stop-groups/stop-group-d
     DeletePopupComponent,
   ],
   templateUrl: './stop-group-details.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
 })
 export class StopgroupDetailsComponent implements OnInit, HasUnsavedChanges {

@@ -6,6 +6,7 @@ import {
   Injector,
   OnInit,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { StopService } from '@/core/services/stop.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -55,6 +56,7 @@ const FIELD_ERRORS = 'Some fields need attention, see the messages above.';
     DeletePopupComponent,
   ],
   templateUrl: './stop-details.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
 })
 export class StopDetailsComponent implements OnInit, HasUnsavedChanges {

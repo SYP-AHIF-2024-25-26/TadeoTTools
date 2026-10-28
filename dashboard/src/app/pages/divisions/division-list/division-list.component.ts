@@ -1,4 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BASE_URL } from '@/app.config';
 import { ConfirmDialogService } from '@/core/services/confirm-dialog.service';
@@ -14,6 +20,7 @@ import { ActionIconComponent } from '@/shared/components/action-icon/action-icon
 @Component({
   selector: 'app-divisions-list',
   imports: [RouterModule, DivisionDetailsComponent, ActionIconComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './division-list.component.html',
 })
 export class DivisionsListComponent {

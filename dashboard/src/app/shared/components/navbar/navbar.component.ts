@@ -1,4 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { RouterModule, RouterLinkActive } from '@angular/router';
 import Keycloak from 'keycloak-js';
 import { AdminDropdownComponent } from '@/shared/components/user-menu/user-menu.component';
@@ -13,6 +18,7 @@ import { NgOptimizedImage } from '@angular/common';
     AdminDropdownComponent,
     NgOptimizedImage,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent {

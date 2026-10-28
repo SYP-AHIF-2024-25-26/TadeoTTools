@@ -1,10 +1,11 @@
-import { Component, model } from '@angular/core';
+import { Component, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StopGroup } from '@/shared/models/types';
 
 @Component({
   selector: 'app-stop-group-general-info',
   imports: [FormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './stop-group-general-info.component.html',
 })
 export class StopGroupGeneralInfoComponent {

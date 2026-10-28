@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { LoginService } from '@/core/services/auth.service';
 import Keycloak from 'keycloak-js';
 import { Router } from '@angular/router';
@@ -7,6 +12,7 @@ import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spi
 @Component({
   selector: 'app-login',
   imports: [LoaderComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {

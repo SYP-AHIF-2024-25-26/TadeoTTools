@@ -1,9 +1,15 @@
-import { Component, input, model } from '@angular/core';
+import {
+  Component,
+  input,
+  model,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-student-filters',
   imports: [FormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './student-filters.component.html',
 })
 export class StudentFiltersComponent {

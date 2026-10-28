@@ -1,4 +1,11 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -32,6 +39,7 @@ import { PageHeaderComponent } from '@/shared/components/page-header/page-header
   ],
 
   templateUrl: './stop-group-list.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
 })
 export class StopGroupsComponent implements OnInit, HasUnsavedChanges {

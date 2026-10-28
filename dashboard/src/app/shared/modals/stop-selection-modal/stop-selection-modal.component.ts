@@ -1,4 +1,11 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  input,
+  output,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { StudentWithUI } from '@/pages/students/student-list/student-list.component';
 import { Status, Stop } from '@/shared/models/types';
 import { FormsModule } from '@angular/forms';
@@ -6,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-stops-popup',
   imports: [FormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './stop-selection-modal.component.html',
 })
 export class StopsPopupComponent {

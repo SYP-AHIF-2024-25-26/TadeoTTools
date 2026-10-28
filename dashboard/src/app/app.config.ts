@@ -1,7 +1,7 @@
 import {
   ApplicationConfig,
   InjectionToken,
-  provideExperimentalZonelessChangeDetection,
+  provideZonelessChangeDetection,
 } from '@angular/core';
 import {
   provideRouter,
@@ -83,7 +83,7 @@ const keycloakProvider = provideKeycloak({
 export const appConfig: ApplicationConfig = {
   providers: [
     keycloakProvider,
-    provideExperimentalZonelessChangeDetection(),
+    provideZonelessChangeDetection(),
     {
       provide: BASE_URL,
       useFactory: () => {

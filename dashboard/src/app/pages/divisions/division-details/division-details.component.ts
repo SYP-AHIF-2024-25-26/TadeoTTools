@@ -8,6 +8,7 @@ import {
   output,
   signal,
   viewChild,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { errorText } from '@/core/services/toast.service';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +23,7 @@ import { ScrollPersistenceService } from '@/core/services/scroll-persistence.ser
 @Component({
   selector: 'app-division-details',
   imports: [FormsModule, RouterModule, DeletePopupComponent, DialogComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './division-details.component.html',
 })
 export class DivisionDetailsComponent implements OnInit {

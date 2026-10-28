@@ -1,4 +1,11 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { StopOfStudent } from '@/shared/models/types';
 import { StopService } from '@/core/services/stop.service';
 import { Status } from '@/shared/models/types';
@@ -9,6 +16,7 @@ import { MarkdownComponent } from '@/shared/components/markdown/markdown.compone
 @Component({
   selector: 'app-student',
   imports: [PageHeaderComponent, MarkdownComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './student-details.component.html',
 })
 export class StudentComponent implements OnInit {
