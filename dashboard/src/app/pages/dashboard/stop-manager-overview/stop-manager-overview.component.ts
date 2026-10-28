@@ -5,7 +5,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from '@angular/core';
-
 import { FormsModule } from '@angular/forms';
 import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StopManager } from '@/shared/models/types';

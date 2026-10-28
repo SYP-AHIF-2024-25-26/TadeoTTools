@@ -15,7 +15,6 @@ import {
   Student,
   StudentAssignment,
 } from '@/shared/models/types';
-
 import { sortStudents, downloadFile, plural } from '@/shared/utils/utils';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { StopService } from '@/core/services/stop.service';
