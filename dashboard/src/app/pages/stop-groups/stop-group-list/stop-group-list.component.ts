@@ -24,7 +24,6 @@ import { Router, RouterLink } from '@angular/router';
 import { ToastService } from '@/core/services/toast.service';
 import { HasUnsavedChanges } from '@/core/guards/unsaved-changes.guard';
 import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spinner.component';
-import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-stopgroups',
@@ -34,7 +33,6 @@ import { PageHeaderComponent } from '@/shared/components/page-header/page-header
     StopGroupListComponent,
     AddStopDialogComponent,
     LoaderComponent,
-    PageHeaderComponent,
     RouterLink,
   ],
 

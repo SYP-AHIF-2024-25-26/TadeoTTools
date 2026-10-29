@@ -28,10 +28,11 @@ colors:
   guide-tab-rest: "#000000"
   dash-primary: "#1f6fd1"
   dash-primary-deep: "#1a5bb5"
-  dash-field: "#4a7aa3"
-  dash-field-hover: "#3a6080"
-  dash-nav: "#6aa4c9"
+  dash-field: "#e6f2ff"
+  dash-field-hover: "#cce5ff"
+  dash-nav: "#cce5ff"
   dash-tint: "#cce5ff"
+  dash-border: "#99ccff"
   dash-canvas: "#f1f1f1"
   dash-surface: "#ffffff"
   dash-ink-strong: "#130710"
@@ -215,7 +216,7 @@ components:
     padding: "0 12px"
   dash-field-filled:
     backgroundColor: "{colors.dash-field}"
-    textColor: "{colors.dash-surface}"
+    textColor: "{colors.dash-ink}"
     rounded: "{rounded.lg}"
     height: "48px"
     padding: "0 16px"
@@ -269,12 +270,12 @@ TadeoTTools works like an open-day programme you carry on your phone. The visito
 
 Colour is strictly distributed. Night blue is the frame and never content. Orange only marks what you can do (the "Auf der Karte" link next to the room, "Erneut versuchen"), the active tab and the focus. Status is neutral: a seen stop gets a gray-900 tick, not an orange one. Type is Manrope, the school's typeface, with one extra-bold title per page in the band. Rows are tall (at least 80px) and every tap target is at least 44px, because visitors tap while walking; body text never drops below 16px. There is one motion moment: the tour band grows in once per visit.
 
-The organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, a sky-blue palette instead of orange, and a full dark mode. Its distinctive habit is **filled blue filter fields**: the search and filter fields above a list sit in solid steel blue (`dash-field`) with white text and placeholders, while form inputs are plain bordered fields. The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.
+The organizer dashboard is the programme's back office. It uses the same rounded, lifted vocabulary at office density: DaisyUI components, 14px body text, one blue instead of orange (Dashboard Blue and its pale tints, everything else neutral grey), and a full dark mode. Its habit is **one blue**: solid Dashboard Blue marks only what you click or what is selected, its pale tints carry the nav bar, the filter fields above lists and the active tab, and everything else is neutral grey (The One Blue Rule). The two apps are documented as separate sub-systems that share only the HTL Leonding logo and the division colors.
 
 **Key Characteristics:**
 - Division colors are the identity and the wayfinding signal; they come from the school, not from the design.
 - GuideApp: Nachtband on the phone: a sticky night top bar and title band, a tour band per stop group, white 16px-radius panels on a light canvas, orange only for action, selection and focus, a fixed bottom tab bar.
-- Dashboard: DaisyUI `light` / `darkCustom` themes, blue primary, filled blue filter fields, a sticky sky-blue top nav, one left-aligned page header on every page.
+- Dashboard: DaisyUI `light` / `darkCustom` themes, one blue (Dashboard Blue for action, its pale tints for fields, tabs and the top nav), neutral grey for everything else, one left-aligned page header on every page.
 - Tall touch targets (44px or more in the GuideApp) and a 16px side gutter on mobile; the GuideApp is designed only for phone width.
 - Copy: German with du-form in the GuideApp, English in the dashboard (today's state, not a rule).
 - Kiosks (`kiosk/`): one shared kiosk world (Roboto, the Tailwind orange scale as the only accent, white cards lifted on a `gray-50` canvas) at tablet size. It is the GuideApp's look from before the Nachtband redesign and stays separate from it. Feedback (exit tablets) and Registration (entrance tablets) speak to the visitor, the Cashier (buffet) to the student selling; Statistics scales the same world up for the hall projector. See the four kiosk sections.
@@ -309,9 +310,11 @@ White text on night is the default. The palette comes from Nachtband (leo-projec
 
 ### Primary (Dashboard)
 - **Dashboard Blue** (`dash-primary`): DaisyUI `btn-primary` and the active nav link. **Deep Dashboard Blue** (`dash-primary-deep`) is its hover/focus state.
-- **Filled Field Blue** (`dash-field`, hover `dash-field-hover`): the background of filter inputs and selects, with white text and placeholders. In dark mode the fields keep the dark `primary-300` fill.
-- **Sky Nav** (`dash-nav`): the sticky top bar.
-- **Pale Blue Tint** (`dash-tint`): hover backgrounds on list rows and secondary actions.
+- **Pale Field Tint** (`dash-field`, hover `dash-field-hover`): the background of filter inputs and selects, with dark text and muted placeholders and a Tint Border. In dark mode the fields keep the dark `primary-300` fill with white text.
+- **Pale Nav** (`dash-nav`, `primary-100`, one step darker than the fields so the bar holds the page edge): the sticky top bar, with a Tint Border below it; the active link is the one solid Dashboard Blue in it.
+- **Pale Blue Tint** (`dash-tint`, `primary-100`): hover backgrounds on list rows, the active tab, chips and secondary actions.
+- **Tint Border** (`dash-border`, `primary-200`): every blue border. Other borders are neutral grey (`background-200/300`).
+- In light mode `primary`, `secondary` and `accent` are one scale on Dashboard Blue's hue (`500` is Dashboard Blue, `600` its hover, `700` for blue text on grey), and `background-200…900` are neutral greys. DaisyUI's `secondary`, `accent`, `info`, `neutral` and `base-300` are set to the same values, so no component brings in cyan, teal, periwinkle or steel blue.
 
 ### Primary (Kiosks)
 - **Kiosk Orange** (`kiosk-accent`, accent-600): primary buttons, selected answers, chips and tiles (3px edge), radio dots and checkboxes, the focus ring and `theme-color` in all four kiosks. White text on it is 3.56:1, so it only carries 20px bold text or larger. Hover deepens to **Deep Kiosk Orange** (`kiosk-accent-deep`, accent-700).
@@ -347,6 +350,8 @@ White text on night is the default. The palette comes from Nachtband (leo-projec
 
 **The Same White Text Rule.** (GuideApp, user decision) Stop names are white on every fill, with a soft text shadow (`0 1px 2px rgb(0 0 0 / 0.45)`). The user chose this knowingly over a white chip or a per-fill text colour. Its known cost: white fails WCAG contrast on light fills such as HITM, HBG, ALL and ORG.
 
+**The One Blue Rule.** (Dashboard, user decision 2026-10-29) The dashboard has one blue hue in three strengths, each with one job: solid Dashboard Blue for what you click or what is selected (buttons, active nav link, tab underline, focus, links, toggles, chart marks), pale tints for surfaces that belong to it (nav bar, filter fields, active tab, chips, row hovers, blue borders), and neutral grey for everything else (card shadows, other borders and fills). A new blue needs a role from this list; cyan, teal, periwinkle and steel are out.
+
 **The White Text Needs 4.5 Rule.** Any fill that carries white text in the dashboard (primary buttons, filled fields, toasts) must reach 4.5:1. That is why the primary is `#1f6fd1`, not the lighter `#4590e6`, and why status text uses the 700 shades in light mode and the 400 shades in dark mode.
 
 **The Pending Is Not A Warning Rule.** Pending is teal, near Approved green: it means "on track, waiting for a decision". Orange is reserved for Conflict, the one state that needs the admin's attention.
@@ -368,7 +373,7 @@ White text on night is the default. The palette comes from Nachtband (leo-projec
 - **Meta** (semibold, 16px, tabular figures): the back link, "Raum …" in the band, the group count ("16 Stationen", "5 von 16 gesehen"), the "3/7" count on group cards.
 
 ### Hierarchy (Dashboard)
-- **Headline** (bold, 24px, `h1`): the page title such as "Stops" or "Students", left-aligned in the page header. Exactly one per routed page; tabs inside a page do not get their own `h1`.
+- **Headline** (bold, 24px, `h1`): the page title such as "Students & Stops" or "Feedback", left-aligned in the page header. Exactly one per routed page; tabs inside a page do not get their own `h1`.
 - **Title** (bold, 18px, `h2`): section, card and dialog headings.
 - **Item** (semibold, 16px, `h3`): headings inside a section, such as one question or one stop card.
 - **Body** (regular, 14px): tables, forms, lists, the default for almost all dashboard text.
@@ -387,7 +392,7 @@ White text on night is the default. The palette comes from Nachtband (leo-projec
 
 1. **Page header** (`app-page-header`, `title` and optional `subtitle` inputs, actions projected): the `h1` on the left, an optional one-line subtitle under it, and the page's actions on the right. Below `sm` the actions wrap under the title.
 2. **Tabs**, if the page has several views (see Tabs).
-3. **Filter bar** of filled blue fields (full width on mobile, `max-w-xs` from `sm`), with Clear Filters shown only while a filter is set.
+3. **Filter bar** of tinted filter fields (full width on mobile, `max-w-xs` from `sm`), with Clear Filters shown only while a filter is set.
 4. The table, card list or form.
 
 Detail editors (stop, stop group) sit in a card inside the same shell, not in a narrower one. The spacing rhythm is 8px / 16px / 24px (`gap-2`, `gap-4`, `p-6`). Below `md`, nav links move into a hamburger dropdown.
@@ -397,7 +402,7 @@ Detail editors (stop, stop group) sit in a card inside the same shell, not in a 
 Both apps are lifted rather than flat: depth comes from Tailwind shadows on white or tinted surfaces, not from borders or tonal layers.
 
 ### Shadow Vocabulary
-- **Card lift** (`shadow-lg`): dashboard cards and modals. The default resting elevation.
+- **Card lift** (`shadow-lg`, neutral, never tinted): dashboard cards and modals. The default resting elevation. In dark mode cards add a 1px slate border (`background-600`).
 - **Panel lift** (`shadow-md`, on white panels with a 1px `gray-900/5` ring): every GuideApp card and panel (group cards, stop cards, content panels, the map panel) and the orange action buttons.
 - **Night frame shadow** (`0 6px 16px rgba(2,20,34,0.35)`): under the sticky GuideApp top bar, so content scrolling under it stays separated.
 - **Tab bar float** (`shadow-2xl`): the GuideApp bottom navigation. Its shadow casts downward, below the bar, so it barely separates the bar from the list above (an unchanged leftover, not a rule).
@@ -438,18 +443,19 @@ Gently rounded throughout. GuideApp panels and cards use generous 16px corners (
 - **GuideApp feedback answers:** choice answers are full-width white rows (16px corners, `shadow-md`, gray-900/5 ring, at least 56px tall, 18px text) holding a native radio or checkbox; the mark sits at the right end in a 44px area, a 28px circle (single choice) or 8px-radius box (multiple choice, with "Mehrere Antworten möglich" above). Selected: a 2px accent-600 ring on the row, an accent-600 dot or filled box with a white tick, the text bold; never an orange wash. An answer that names a division ("Informatik", "Medientechnik", "Elektronik", "Medizintechnik", or its short code; `divisionColorFor` in `shared/division-colors.ts`) is filled with that division's exact colour like a stop card: bold white text with the soft shadow, no ring at rest, the mark on a white 12px-radius box, and when selected the accent-600 ring with a 2px canvas offset so it never touches the fill. Without loaded divisions the answers stay white. Ratings are one row of equal 56px tiles with bold tabular numbers (two rows above 7 values), the first and last label under the ends and the chosen one written out ("4 – Gut"). Text answers are a white 16px-radius textarea that grows with the text (`field-sizing: content`), with the admin's placeholder or none. Focus draws the 3px accent-600 outline around the whole row.
 - **GuideApp checkbox (signature):** a 44px tap target holding a 28px box with 8px corners. Unchecked: white with a 2px gray-400 ring. Checked: gray-900 fill and ring with a white 3px-stroke tick, a 150ms colour transition. The label names the item ("Gaming Garden gesehen"). Focus is a 3px accent-600 outline on the box.
 - **GuideApp focus:** one 3px accent-600 outline with a 3px offset everywhere (`styles.css`), accent-400 inside the night frame. Cards draw it around the whole card (an `::after` over the card), not around the inner button.
-- **Dashboard filter field:** DaisyUI `input input-bordered` / `select select-bordered` plus the `.field-filter` class from `styles.css`: filled with Filled Field Blue, white text and placeholders (placeholders at 4.5:1 too), darkening on hover. Used only in filter bars above lists.
+- **Dashboard filter field:** DaisyUI `input input-bordered` / `select select-bordered` plus the `.field-filter` class from `styles.css`: Pale Field Tint with a Tint Border, dark text and muted placeholders (4.5:1), one tint step darker on hover; dark mode keeps the filled `primary-300` with white text. Used only in filter bars above lists.
 - **Dashboard form field:** DaisyUI `input` / `select` / `textarea` / `file-input` with `-bordered` on the surface color, `w-full`, never hand-written border classes. Inside dense sub-forms (stop students, stop managers, question conditions) the `-sm` sizes are used. Every field has a visible label above it (`label for` matching the field `id`); a field inside a table row or a list gets an `aria-label` instead. Placeholders only show an example. Required fields get `<span aria-hidden="true">*</span>` after the label and `required` on the field, nothing else.
-- **Focus (all controls):** one 2px outline in `--focus-ring` with a 2px offset on every field, button, tab and link (Dashboard Blue `dash-focus` in light mode, `#60a5fa` in dark mode, Ink Strong on the sky-blue nav bar). It is set globally in `styles.css`; templates don't add `focus:ring-*` or `focus:outline-none`.
+- **Focus (all controls):** one 2px outline in `--focus-ring` with a 2px offset on every field, button, tab and link (Dashboard Blue `dash-focus` in light mode, `#60a5fa` in dark mode, Ink Strong on the pale nav bar). It is set globally in `styles.css`; templates don't add `focus:ring-*` or `focus:outline-none`.
 
 ### Navigation
 - **GuideApp top bar:** night-950, sticky, 56px plus the safe area, the white HTL Leonding logo (32px tall) linking to the start page. Nothing else: no menu, no login.
 - **GuideApp title band:** night-950 → night-900 top to bottom, white title, then per page: on the start page and the countdown the date line ("Freitag, 20. November 2026, 13–19 Uhr", 18px semibold night-100); on subpages the back link above the title and the division icons plus room or group count below it, and the group's tour band on a group page. It replaces the earlier breadcrumb and "Zurück" pill. Karte, Feedback (with its step line and step band), Über die App and the countdown get the band without a back link.
 - **GuideApp bottom tab bar:** a white 56px bar fixed to the bottom with an 8px side inset, four evenly spaced 20–24px icons in 44px buttons (Rundgang, Karte, Feedback, Über die App), black at rest and Selection Orange (accent-600) when active, `aria-current="page"`. Icons only, with `aria-label`s. Position and icons are unchanged by the redesign (user decision).
-- **Dashboard top nav:** sticky Sky Nav bar with the HTL Leonding logo (32px tall) on the left, then text links (the active link gets a primary fill and underline), a theme toggle switch and the user menu on the right. Below `md` the links collapse into a hamburger with a dropdown.
-- **Users & Data:** the admin's home for people, master data and visitor-app settings, as tabs: Stop Managers (list, add, CSV import), Admins, Students (student and assignment CSV imports, students export, delete all students), Divisions (cards, Add Division, CSV export) and Visitor App (countdown on/off and date). File actions sit with their data: there is no separate Import & Export tab, the Stops export is in the Stops page header, the feedback answers export is on Feedback > Responses. `/divisions` redirects to `?tab=divisions`; the Students page and the Overview link into the Students and Visitor App tabs. CSV imports use the shared `app-csv-import` (label, expected columns, result).
+- **Dashboard top nav:** sticky Pale Nav bar with the HTL Leonding logo (32px tall) on the left (the official colour logo with black lettering, `assets/htl-leonding-logo.png`, in light mode; the white logo, `assets/Leonding_Logo.svg`, on the dark bar), then text links (the active link gets a primary fill and underline), a theme toggle switch and the user menu on the right. Below `md` the links collapse into a hamburger with a dropdown. The admin links name places, not lists: **Students & Stops · Feedback · Buffet · Users & Data**. The Overview is the admins' home and has no link: the logo leads there (for everyone else it leads to their own start page). A link stays marked on the editors that belong to it (Students & Stops on `/stop` and `/stopgroup`).
+- **Students & Stops:** one page (`/students-and-stops`) with the tabs Students (default, no `?tab`), Stop Groups and Stops; Students and Stops carry a count badge. Each tab's actions sit in a right-aligned toolbar under the tab bar, in their usual order and weights. The tabs are buttons that change `?tab=`, so switching away from Stop Groups with an unsaved tour order asks first, like leaving the page. `/students`, `/stopgroups` and `/stops` redirect to their tab.
+- **Users & Data:** the admin's home for people, master data and visitor-app settings, as tabs: Stop Managers (list, add, CSV import), Admins, Students (student and assignment CSV imports, students export, delete all students), Divisions (cards, Add Division, CSV export) and Visitor App (countdown on/off and date). File actions sit with their data: there is no separate Import & Export tab, the Stops export is in the Stops tab's toolbar, the feedback answers export is on Feedback > Responses. `/divisions` redirects to `?tab=divisions`; the Students tab and the Overview link into the Students and Visitor App tabs. CSV imports use the shared `app-csv-import` (label, expected columns, result).
 
-- **Dashboard tabs:** `.page-tabs` / `.page-tab` from `styles.css` under the page header: a full-width 2px line, tabs in 16px semibold muted text with 20px side padding, and the active tab in strong text on a Pale Blue Tint (`primary-100`) fill with rounded top corners and a 3px Dashboard Blue underline sitting on the line. `role="tablist"` with `role="tab"` and `aria-selected` on each tab (the style keys off `aria-selected`), and the active tab in the URL (`?tab=…`) so other pages can link to it. Used on Feedback and Users & Data.
+- **Dashboard tabs:** `.page-tabs` / `.page-tab` from `styles.css` under the page header: a full-width 2px line, tabs in 16px semibold muted text with 20px side padding, and the active tab in strong text on a Pale Blue Tint (`primary-100`) fill with rounded top corners and a 3px Dashboard Blue underline sitting on the line. `role="tablist"` with `role="tab"` and `aria-selected` on each tab (the style keys off `aria-selected`), and the active tab in the URL (`?tab=…`) so other pages can link to it. Used on Students & Stops, Feedback, Buffet and Users & Data.
 
 ### Dialogs (Dashboard)
 - **Shell:** one shared dialog component (`app-dialog`, `title`, `size` md/lg, `role`, `busy`, `(close)`; actions go in `<div dialog-actions class="contents">`, a form's submit button uses `form="…"`): a `black/50` scrim, a `background-100` panel (`background-800` in dark mode) with 8px corners, 24px padding and `shadow-lg`, the `h2` title with a close button in the header, actions right-aligned at the bottom (primary last). `role="dialog"`, `aria-modal`, labelled by its title, focus trapped (`cdkFocusInitial` picks the first focus, e.g. Cancel in confirmations), Escape closes only the topmost dialog. Widths: `max-w-md` (448px) for confirmations, `max-w-2xl` for forms.
@@ -587,4 +593,4 @@ The kiosk (`kiosk/statistics/`) is a slideshow projected onto a wall in the lit 
 - **Don't** set GuideApp body text below 16px.
 - **Don't** add raw hex colors in dashboard templates; extend the `--primary-*` / `--background-*` variables so both themes stay in sync.
 - **Don't** put two `btn-primary` buttons in one dashboard toolbar, form or dialog.
-- **Don't** use the filled blue field style for form inputs, or a placeholder in place of a label.
+- **Don't** use the tinted filter field style for form inputs, or a placeholder in place of a label.

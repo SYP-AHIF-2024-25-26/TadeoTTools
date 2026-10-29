@@ -1,0 +1,157 @@
+<div class="page-shell">
+  <app-page-header
+    title="Buffet"
+    subtitle="Products, menus and sales of the cashier kiosk"
+  >
+    @if (tab() === 'products' && !loading() && !loadFailed() && canImport()) {
+      <button
+        type="button"
+        class="btn btn-outline btn-sm"
+        [disabled]="importing()"
+        (click)="importLegacy()"
+      >
+        Import from Legacy Backend
+      </button>
+    }
+  </app-page-header>
+
+  <div role="tablist" aria-label="Buffet" class="page-tabs">
+    @for (t of tabs; track t.id) {
+      <a
+        role="tab"
+        class="page-tab"
+        [attr.aria-selected]="tab() === t.id"
+        [attr.aria-controls]="'buffet-panel-' + t.id"
+        routerLink="."
+        [queryParams]="{ tab: t.id === 'products' ? null : t.id }"
+        queryParamsHandling="merge"
+        replaceUrl
+      >
+        {{ t.label }}
+        @if (t.id === 'sales' && sales(); as s) {
+          <span class="badge badge-sm tabular-nums">{{ s.orderCount }}</span>
+        }
+      </a>
+    }
+  </div>
+
+  <div [id]="'buffet-panel-' + tab()" role="tabpanel">
+    @if (tab() === 'statistics') {
+      <!-- Loads its own figures each time the tab opens -->
+      <app-buffet-statistics />
+    } @else if (loading()) {
+      <div class="flex flex-col gap-6" aria-hidden="true">
+        <div class="skeleton h-64 rounded-lg"></div>
+        <div class="skeleton h-40 rounded-lg"></div>
+      </div>
+      <span class="sr-only" role="status">Loading the buffet…</span>
+    } @else if (loadFailed()) {
+      <div
+        class="flex flex-col items-center gap-3 rounded-lg bg-background-100 p-6 text-center shadow-lg"
+        role="alert"
+      >
+        <p>
+          The buffet could not be loaded. Check your connection and try again.
+        </p>
+        <button class="btn btn-primary btn-sm" (click)="load(true)">
+          Try again
+        </button>
+      </div>
+    } @else {
+      @switch (tab()) {
+        @case ('products') {
+          <app-buffet-products [products]="products()" (changed)="load()" />
+        }
+        @case ('buffets') {
+          <div class="flex flex-col gap-6">
+            <p class="text-sm text-ink-muted">
+              Each buffet's menu is what its cashier tablets show, in this
+              order. A buffet with an empty menu is not shown at the cashier.
+            </p>
+            @if (products().length === 0) {
+              <p class="text-sm text-ink-muted" role="note">
+                There are no products yet. Add them on the
+                <a
+                  class="link"
+                  routerLink="."
+                  [queryParams]="{ tab: null }"
+                  queryParamsHandling="merge"
+                  replaceUrl
+                  >Products</a
+                >
+                tab first.
+              </p>
+            }
+            @for (buffet of buffets(); track buffet.id) {
+              <app-buffet-card
+                [buffet]="buffet"
+                [products]="products()"
+                (changed)="load()"
+              />
+            } @empty {
+              <p class="text-sm text-ink-muted">No buffet yet.</p>
+            }
+
+            <form
+              class="flex flex-wrap items-end gap-3 rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+              [formGroup]="buffetForm"
+              (ngSubmit)="addBuffet()"
+              aria-label="Add buffet"
+            >
+              <div class="w-24">
+                <label for="new-buffet-location" class="label py-1 text-sm">
+                  Location <span aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="new-buffet-location"
+                  class="input input-sm input-bordered w-full"
+                  formControlName="location"
+                  maxlength="3"
+                  placeholder="OG"
+                  required
+                  [class.input-error]="
+                    buffetForm.controls.location.invalid &&
+                    buffetForm.controls.location.touched
+                  "
+                />
+              </div>
+              <div class="min-w-56 flex-1">
+                <label for="new-buffet-description" class="label py-1 text-sm">
+                  Description
+                </label>
+                <input
+                  id="new-buffet-description"
+                  class="input input-sm input-bordered w-full"
+                  formControlName="description"
+                  maxlength="100"
+                />
+              </div>
+              <!-- Each buffet card has its own primary Save; this one stays outline -->
+              <button
+                type="submit"
+                class="btn btn-outline btn-sm"
+                [disabled]="addingBuffet()"
+              >
+                Add Buffet
+              </button>
+              @if (addBuffetError()) {
+                <p class="w-full text-sm text-error" role="alert">
+                  {{ addBuffetError() }}
+                </p>
+              }
+            </form>
+          </div>
+        }
+        @case ('sales') {
+          @if (sales(); as s) {
+            <app-buffet-sales
+              [sales]="s"
+              [buffets]="buffets()"
+              (changed)="load()"
+            />
+          }
+        }
+      }
+    }
+  </div>
+</div>

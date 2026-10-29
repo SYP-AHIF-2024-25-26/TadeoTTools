@@ -1,10 +1,11 @@
-<div class="page-shell">
-  <app-page-header title="Stops">
+<div>
+  <!-- The tab's actions; the page title and tabs are in Students & Stops. -->
+  <div class="mb-6 flex flex-wrap items-center justify-end gap-2">
     <button class="btn btn-outline btn-sm" (click)="downloadStopsData()">
       Export CSV
     </button>
     <a [routerLink]="['/stop']" class="btn btn-primary btn-sm">Add Stop</a>
-  </app-page-header>
+  </div>
 
   <!-- Action Buttons and Filter Toggle -->
   <div class="mb-6 flex flex-wrap gap-2">

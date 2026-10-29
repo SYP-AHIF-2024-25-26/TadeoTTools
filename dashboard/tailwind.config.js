@@ -27,6 +27,9 @@ module.exports = {
           950: 'var(--background-950)',
         },
         primary: {
+          // DaisyUI's Dashboard Blue. Without it this scale hides DaisyUI's `primary`,
+          // so `bg-primary` (the active nav link) generated no rule at all.
+          DEFAULT: 'var(--fallback-p,oklch(var(--p)/<alpha-value>))',
           50: 'var(--primary-50)',
           100: 'var(--primary-100)',
           200: 'var(--primary-200)',
@@ -75,17 +78,17 @@ module.exports = {
       light: {
         "base-100": "#ffffff",
         "base-200": "#ffffff",
-        "base-300": "#98ecff",
-        neutral: "#7ec4ee",
-        "neutral-focus": "#6aa4c9",
+        "base-300": "#e2e5ea",
+        neutral: "#d1d6dd",
+        "neutral-focus": "#b4bcc7",
         primary: "#1f6fd1",
         "primary-focus": "#1a5bb5",
         "primary-content": "#ffffffff",
-        secondary: "#8ba9fd",
-        "secondary-focus": "#629ead",
-        accent: "#74b9cc",
-        "accent-focus": "#538691",
-        "info": "#3abff8",
+        secondary: "#cce5ff",
+        "secondary-focus": "#99ccff",
+        accent: "#1f6fd1",
+        "accent-focus": "#1a5bb5",
+        "info": "#1f6fd1",
         "success": "#22c55e",
         "warning": "#facc15",
         "error": "#dc2626",
@@ -94,7 +97,8 @@ module.exports = {
         "primary-content": "#ffffffff",
         "error-content": "#ffffffff",
         "secondary-content": "#130710",
-        "accent-content": "#130710"
+        "accent-content": "#ffffff",
+        "info-content": "#ffffff"
       },
       darkCustom: {
         "base-100": "#0b0f19",

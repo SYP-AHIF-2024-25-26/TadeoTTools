@@ -47,7 +47,7 @@ It is built for this one school's open day, by HTL Leonding students (5AHIF SYP 
 
 ## Brand Commitments
 
-- **HTL Leonding identity is binding:** keep the school's name and logo (`dashboard/src/assets/Leonding_Logo.svg`, `guide/src/assets/logo.png`), and respect the per-division colors and images that admins configure in the dashboard.
+- **HTL Leonding identity is binding:** keep the school's name and logo (`dashboard/src/assets/htl-leonding-logo.png` in colour and `Leonding_Logo.svg` in white, `guide/src/assets/logo.png`), and respect the per-division colors and images that admins configure in the dashboard.
 - Product name in the visitor app: "Tadeot GuideApp". The repository and system are called TadeoTTools.
 - The Impressum links to https://www.htl-leonding.at/impressum.
 

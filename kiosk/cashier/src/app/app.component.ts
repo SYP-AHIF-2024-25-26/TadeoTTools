@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { AccessService } from '@core/services/access.service';
@@ -71,9 +72,17 @@ export class AppComponent {
 
   constructor() {
     inject(WakeLockService).keepAwake();
-    // Products load and waiting sales are sent while the login is still checked.
     this.access.check();
-    this.catalog.load();
+    // Products and sales need the login: load and send as soon as it is confirmed,
+    // also after logging in again when the session ran out.
+    effect(() => {
+      if (this.granted()) {
+        untracked(() => {
+          this.catalog.load();
+          this.outbox.flush();
+        });
+      }
+    });
 
     if (this.swUpdate.isEnabled) {
       this.swUpdate.versionUpdates.subscribe((event) => {

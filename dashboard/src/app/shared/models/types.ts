@@ -247,3 +247,100 @@ export type Overview = {
   groups: OverviewGroup[];
   stops: OverviewStop[];
 };
+
+// Buffet (cashier kiosk). Prices and amounts are in cents; a negative price is a voucher.
+export type BuffetProduct = {
+  id: number;
+  name: string;
+  unit: string;
+  priceCents: number;
+  menuCount: number;
+  soldCount: number;
+};
+
+export type SaveBuffetProductRequest = {
+  name: string;
+  unit: string;
+  priceCents: number;
+};
+
+export type CashMovement = {
+  id: number;
+  time: string;
+  amountCents: number;
+};
+
+export type Buffet = {
+  id: number;
+  location: string;
+  description: string;
+  // Product ids in counter order.
+  menu: number[];
+  cashMovements: CashMovement[];
+  orderCount: number;
+};
+
+export type SaveBuffetRequest = {
+  location: string;
+  description: string;
+};
+
+export type ProductSales = {
+  productId: number;
+  name: string;
+  quantity: number;
+  revenueCents: number;
+};
+
+export type BuffetSales = {
+  buffetId: number;
+  location: string;
+  orderCount: number;
+  revenueCents: number;
+  cashCents: number;
+  products: ProductSales[];
+};
+
+export type Sales = {
+  orderCount: number;
+  revenueCents: number;
+  buffets: BuffetSales[];
+};
+
+export type LegacyBuffetImport = {
+  products: number;
+  buffets: number;
+  menuEntries: number;
+};
+
+export type SalesHour = {
+  hour: number;
+  orderCount: number;
+  revenueCents: number;
+};
+
+export type SalesDay = {
+  // "2026-11-20", the open day's date in Vienna time.
+  date: string;
+  orderCount: number;
+  revenueCents: number;
+  hours: SalesHour[];
+};
+
+export type ProductRank = {
+  productId: number;
+  name: string;
+  quantity: number;
+  revenueCents: number;
+};
+
+export type SalesStatistics = {
+  orderCount: number;
+  revenueCents: number;
+  // Items without vouchers.
+  itemCount: number;
+  voucherCount: number;
+  voucherCents: number;
+  days: SalesDay[];
+  products: ProductRank[];
+};

@@ -1,0 +1,161 @@
+@let b = buffet();
+<article
+  class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+  [attr.aria-labelledby]="'till-' + b.id + '-heading'"
+>
+  <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+    <h3 [id]="'till-' + b.id + '-heading'" class="text-lg font-bold">
+      Buffet {{ b.location }}
+    </h3>
+    <p class="text-sm text-ink-muted">
+      {{ plural(sales()?.orderCount ?? 0, 'sale') }}
+    </p>
+  </div>
+
+  <div class="mt-4 grid grid-cols-1 gap-8 lg:grid-cols-[3fr_2fr]">
+    <!-- Revenue per product, at the stored sale prices -->
+    <div class="min-w-0">
+      <h4 class="mb-2 font-semibold">Revenue</h4>
+      @if (sales()?.products?.length) {
+        <div class="overflow-x-auto">
+          <table class="table table-sm">
+            <thead>
+              <tr class="text-ink-muted">
+                <th scope="col">Product</th>
+                <th scope="col" class="text-right">Quantity</th>
+                <th scope="col" class="text-right">Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of sales()!.products; track product.productId) {
+                <tr>
+                  <td>{{ product.name }}</td>
+                  <td class="text-right tabular-nums">
+                    {{ product.quantity }}
+                  </td>
+                  <td class="text-right tabular-nums">
+                    {{ euro(product.revenueCents) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="text-sm text-ink-muted">No sales at this buffet yet.</p>
+      }
+    </div>
+
+    <!-- Cash in and out, and what the till should hold -->
+    <div class="min-w-0">
+      <h4 class="mb-2 font-semibold">Cash</h4>
+      @if (b.cashMovements.length > 0) {
+        <table class="table table-sm">
+          <thead>
+            <tr class="text-ink-muted">
+              <th scope="col">Time</th>
+              <th scope="col">Type</th>
+              <th scope="col" class="text-right">Amount</th>
+              <th scope="col"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (movement of b.cashMovements; track movement.id) {
+              <tr>
+                <td class="whitespace-nowrap">
+                  {{ movement.time | date: 'd MMM, HH:mm' }}
+                </td>
+                <td>
+                  {{ movement.amountCents < 0 ? 'Withdrawal' : 'Deposit' }}
+                </td>
+                <td class="text-right tabular-nums">
+                  {{ euro(movement.amountCents) }}
+                </td>
+                <td class="text-right">
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm text-error"
+                    title="Delete cash movement"
+                    [attr.aria-label]="
+                      'Delete cash movement of ' + euro(movement.amountCents)
+                    "
+                    (click)="removeCash(movement)"
+                  >
+                    <app-action-icon name="delete" />
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="text-sm text-ink-muted">No deposits or withdrawals yet.</p>
+      }
+
+      <form
+        class="mt-3 flex flex-wrap items-end gap-3"
+        [formGroup]="cashForm"
+        (ngSubmit)="addCash()"
+      >
+        <div>
+          <label
+            [for]="'till-' + b.id + '-cash-direction'"
+            class="label py-1 text-sm"
+          >
+            Type
+          </label>
+          <select
+            [id]="'till-' + b.id + '-cash-direction'"
+            class="select select-bordered select-sm"
+            formControlName="direction"
+          >
+            <option value="in">Deposit</option>
+            <option value="out">Withdrawal</option>
+          </select>
+        </div>
+        <div class="w-28">
+          <label
+            [for]="'till-' + b.id + '-cash-amount'"
+            class="label py-1 text-sm"
+          >
+            Amount in € <span aria-hidden="true">*</span>
+          </label>
+          <input
+            [id]="'till-' + b.id + '-cash-amount'"
+            class="input input-sm input-bordered w-full text-right"
+            formControlName="amount"
+            inputmode="decimal"
+            placeholder="50"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="btn btn-outline btn-sm"
+          [disabled]="addingCash()"
+        >
+          Add
+        </button>
+        @if (cashError()) {
+          <p class="w-full text-sm text-error" role="alert">
+            {{ cashError() }}
+          </p>
+        }
+      </form>
+
+      <!-- The sum to count against at the end of a shift -->
+      <dl
+        class="mt-5 grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 border-t border-primary-100 pt-3 text-sm dark:border-background-600"
+      >
+        <dt class="text-ink-muted">Revenue</dt>
+        <dd class="text-right tabular-nums">{{ euro(revenue()) }}</dd>
+        <dt class="text-ink-muted">Deposits minus withdrawals</dt>
+        <dd class="text-right tabular-nums">{{ euro(cashTotal()) }}</dd>
+        <dt class="pt-1 font-semibold text-ink-strong">Expected in the till</dt>
+        <dd class="pt-1 text-right font-bold tabular-nums text-ink-strong">
+          {{ euro(expected()) }}
+        </dd>
+      </dl>
+    </div>
+  </div>
+</article>

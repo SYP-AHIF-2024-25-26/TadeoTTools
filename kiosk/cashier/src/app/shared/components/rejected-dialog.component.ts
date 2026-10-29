@@ -16,7 +16,7 @@ const timeFormat = new Intl.DateTimeFormat('de-AT', {
   minute: '2-digit',
 });
 
-/** The legacy backend answers 400 for a deleted product and 404 for a deleted buffet. */
+/** The backend answers 400 for a product no longer on the menu and 404 for a deleted buffet. */
 function reason(status: number | undefined): string {
   if (status === 404) return 'Buffet nicht mehr vorhanden';
   if (status === 400)
@@ -83,7 +83,7 @@ function reason(status: number | undefined): string {
                 </p>
                 <p class="text-base text-gray-700">{{ sale.items }}</p>
                 <p class="text-base text-red-700">{{ sale.reason }}</p>
-                <!-- For whoever checks the legacy admin: the order number and the server's own words -->
+                <!-- For whoever checks the dashboard: the order number and the server's own words -->
                 <p class="line-clamp-2 text-sm text-gray-600" lang="en">
                   <span lang="de">Nr. {{ sale.number }}</span>
                   @if (sale.detail) {

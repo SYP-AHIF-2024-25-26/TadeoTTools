@@ -1,4 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { AccessService } from './access.service';
 import { CashierApiService } from './cashier-api.service';
 import { classify } from './failure';
 import { Buffet, LoadFailure } from '@shared/models/types';
@@ -13,13 +14,15 @@ import {
  * Buffets and their products. Loaded from the backend and kept in
  * localStorage, so a restarted tablet can sell at once, even offline.
  * With one buffet it is used automatically; with several the tablet asks
- * once and remembers the choice.
+ * once and remembers the choice. Loading needs the login; until then the
+ * cache is used.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class CatalogService {
   private api = inject(CashierApiService);
+  private access = inject(AccessService);
   private running: Promise<void> | undefined;
 
   readonly buffets = signal<Buffet[]>(readCache());
@@ -51,6 +54,7 @@ export class CatalogService {
   }
 
   load(): Promise<void> {
+    if (this.access.state() !== 'granted') return Promise.resolve();
     this.running ??= this.fetch().finally(() => (this.running = undefined));
     return this.running;
   }

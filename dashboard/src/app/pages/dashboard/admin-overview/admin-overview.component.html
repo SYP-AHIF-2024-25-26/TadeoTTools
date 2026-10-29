@@ -27,7 +27,7 @@
     }
     @for (admin of admins(); track $index) {
       <div
-        class="mb-4 flex items-center justify-between rounded-lg bg-background-100 p-4 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+        class="mb-4 flex items-center justify-between rounded-lg bg-background-100 p-4 shadow-lg dark:border dark:border-background-600"
       >
         <div class="text-lg font-semibold">{{ admin }}</div>
         @if (isCurrentUser(admin)) {

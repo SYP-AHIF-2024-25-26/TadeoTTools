@@ -1,0 +1,100 @@
+@let s = sales();
+<!-- The whole set first: count, revenue and the export -->
+<div class="mb-4 flex flex-wrap items-end justify-between gap-4">
+  <div>
+    <h2 class="text-lg font-bold">
+      <span class="tabular-nums">{{ s.orderCount }}</span>
+      {{ s.orderCount === 1 ? 'sale' : 'sales' }}
+      @if (s.orderCount > 0) {
+        <span class="font-normal text-ink-muted">·</span>
+        <span class="tabular-nums">{{ euro(s.revenueCents) }}</span>
+      }
+    </h2>
+    <p class="text-sm text-ink-muted">
+      Revenue at the prices the items were sold at. Every sale is counted as
+      paid in cash.
+    </p>
+  </div>
+  <button
+    type="button"
+    class="btn btn-outline btn-sm"
+    [disabled]="s.orderCount === 0 || downloading()"
+    (click)="downloadCsv()"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+      />
+    </svg>
+    Export CSV
+  </button>
+</div>
+
+<div class="flex flex-col gap-6">
+  @for (till of tills(); track till.buffet.id) {
+    <app-buffet-till
+      [buffet]="till.buffet"
+      [sales]="till.sales"
+      (changed)="changed.emit()"
+    />
+  } @empty {
+    <p
+      class="rounded-lg bg-background-100 p-6 text-sm text-ink-muted shadow-lg dark:border dark:border-background-600"
+    >
+      No buffet yet. Add one on the Buffets tab.
+    </p>
+  }
+
+  @if (tills().length > 1) {
+    <p class="text-right">
+      All buffets, expected in the tills:
+      <span class="font-bold tabular-nums">{{
+        euro(cashTotal() + s.revenueCents)
+      }}</span>
+    </p>
+  }
+
+  <section
+    class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+    aria-labelledby="sales-delete-heading"
+  >
+    <h2 id="sales-delete-heading" class="mb-2 text-lg font-bold">
+      Delete all sales
+    </h2>
+    <p class="mb-4 text-sm text-ink-muted">
+      Clears the sales at every buffet, e.g. after test sales or before the next
+      open day. Products, menus and cash movements stay.
+    </p>
+    <button
+      type="button"
+      class="btn btn-outline btn-error btn-sm"
+      [disabled]="s.orderCount === 0"
+      (click)="confirmingDelete.set(true)"
+    >
+      Delete All Sales
+    </button>
+  </section>
+</div>
+
+@if (confirmingDelete()) {
+  <app-delete-popup
+    title="Delete All Sales"
+    [message]="deleteMessage()"
+    confirmLabel="Delete All Sales"
+    secondaryLabel="Export CSV"
+    [busy]="deleting()"
+    (secondary)="downloadCsv()"
+    (cancel)="confirmingDelete.set(false)"
+    (removeConfirmed)="deleteAll()"
+  />
+}

@@ -1,5 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AccessService } from './access.service';
 import { CashierApiService } from './cashier-api.service';
 import { PendingSale } from '@shared/models/types';
 import { OUTBOX_KEY, OUTBOX_RETRY_MS } from '@shared/constants';
@@ -9,12 +10,14 @@ import { OUTBOX_KEY, OUTBOX_RETRY_MS } from '@shared/constants';
  * Whatever cannot be sent stays in localStorage and is retried, so the buffet
  * keeps selling through a Wi-Fi gap. A sale the server refuses is not dropped:
  * it is real money, so it waits for the student to send it again or remove it.
+ * Sending needs the login; without it the sales wait until the next one.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class OutboxService {
   private api = inject(CashierApiService);
+  private access = inject(AccessService);
   private entries = signal<PendingSale[]>(read());
 
   /** Sales waiting to be sent. */
@@ -58,7 +61,7 @@ export class OutboxService {
    * stops at the first network failure.
    */
   async flush(): Promise<void> {
-    if (this.sending()) return;
+    if (this.sending() || this.access.state() !== 'granted') return;
     this.sending.set(true);
     try {
       let sale: PendingSale | undefined;
@@ -70,6 +73,10 @@ export class OutboxService {
             this.entries().filter((e) => e.order.orderNumber !== sent)
           );
         } catch (err) {
+          if (isLoginLost(err)) {
+            // The access service sends the student to the login; the sale waits.
+            return;
+          }
           if (!isRefused(err)) {
             // No connection, a timeout or a server error: try again later.
             this.offline.set(true);
@@ -86,7 +93,7 @@ export class OutboxService {
   }
 
   private mark(orderNumber: string, err: HttpErrorResponse): void {
-    const message = typeof err.error === 'string' ? err.error : err.message;
+    const message = serverMessage(err.error) ?? err.message;
     this.write(
       this.entries().map((e) =>
         e.order.orderNumber === orderNumber
@@ -115,6 +122,31 @@ function read(): PendingSale[] {
   } catch {
     return [];
   }
+}
+
+/** 401: the login ran out; 403: the access was taken away. Neither is the sale's fault. */
+function isLoginLost(err: unknown): boolean {
+  return (
+    err instanceof HttpErrorResponse &&
+    (err.status === 401 || err.status === 403)
+  );
+}
+
+/** The backend's reason: a JSON string ("Only one voucher per sale.") or ProblemDetails. */
+function serverMessage(body: unknown): string | undefined {
+  if (typeof body !== 'string' || body === '') return undefined;
+  try {
+    const parsed: unknown = JSON.parse(body);
+    if (typeof parsed === 'string') return parsed;
+    if (parsed && typeof parsed === 'object') {
+      const { detail, title } = parsed as { detail?: unknown; title?: unknown };
+      if (typeof detail === 'string') return detail;
+      if (typeof title === 'string') return title;
+    }
+  } catch {
+    // Not JSON: plain text.
+  }
+  return body;
 }
 
 /**

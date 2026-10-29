@@ -1,0 +1,190 @@
+<section
+  class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+  aria-labelledby="products-heading"
+>
+  <h2 id="products-heading" class="mb-1 text-lg font-bold">Products</h2>
+  <p class="mb-4 text-sm text-ink-muted">
+    One price at every buffet. A negative price is a voucher (at most one per
+    sale).
+  </p>
+
+  <div class="overflow-x-auto">
+    <table class="table table-sm">
+      <thead>
+        <tr class="text-ink-muted">
+          <th scope="col">Name</th>
+          <th scope="col">Unit</th>
+          <th scope="col" class="text-right">Price</th>
+          <th scope="col" class="text-right">Sold</th>
+          <th scope="col"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of products(); track product.id) {
+          @if (editingId() === product.id) {
+            <tr [formGroup]="editForm">
+              <td>
+                <input
+                  class="input input-sm input-bordered w-full min-w-40"
+                  formControlName="name"
+                  maxlength="40"
+                  required
+                  [attr.aria-label]="'Name of ' + product.name"
+                />
+              </td>
+              <td>
+                <input
+                  class="input input-sm input-bordered w-full min-w-24"
+                  formControlName="unit"
+                  maxlength="20"
+                  [attr.aria-label]="'Unit of ' + product.name"
+                />
+              </td>
+              <td>
+                <input
+                  class="input input-sm input-bordered w-28 text-right"
+                  formControlName="price"
+                  inputmode="decimal"
+                  required
+                  [class.input-error]="
+                    editForm.controls.price.invalid &&
+                    editForm.controls.price.touched
+                  "
+                  [attr.aria-label]="'Price of ' + product.name + ' in euros'"
+                />
+              </td>
+              <td class="text-right tabular-nums">{{ product.soldCount }}</td>
+              <td>
+                <div class="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm"
+                    [disabled]="saving()"
+                    (click)="cancelEdit()"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm"
+                    [disabled]="saving() || editForm.pristine"
+                    (click)="save(product)"
+                  >
+                    Save
+                  </button>
+                </div>
+              </td>
+            </tr>
+            @if (editError()) {
+              <tr>
+                <td colspan="5" class="text-sm text-error" role="alert">
+                  {{ editError() }}
+                </td>
+              </tr>
+            }
+          } @else {
+            <tr>
+              <td>
+                {{ product.name }}
+                @if (product.priceCents < 0) {
+                  <span class="badge badge-sm ml-2">Voucher</span>
+                }
+              </td>
+              <td>{{ product.unit }}</td>
+              <td class="text-right tabular-nums">
+                {{ euro(product.priceCents) }}
+              </td>
+              <td class="text-right tabular-nums">{{ product.soldCount }}</td>
+              <td>
+                <div class="flex justify-end">
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm"
+                    [title]="'Edit ' + product.name"
+                    [attr.aria-label]="'Edit ' + product.name"
+                    (click)="edit(product)"
+                  >
+                    <app-action-icon name="edit" />
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm text-error"
+                    [title]="'Delete ' + product.name"
+                    [attr.aria-label]="'Delete ' + product.name"
+                    (click)="remove(product)"
+                  >
+                    <app-action-icon name="delete" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        } @empty {
+          <tr>
+            <td colspan="5" class="py-4 text-center text-ink-muted">
+              No products yet
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Adding a product: one inline row of fields below the table -->
+  <form
+    class="mt-4 flex flex-wrap items-end gap-3"
+    [formGroup]="addForm"
+    (ngSubmit)="add()"
+  >
+    <div class="min-w-48 flex-1">
+      <label for="product-name" class="label py-1 text-sm">
+        Name <span aria-hidden="true">*</span>
+      </label>
+      <input
+        #addName
+        id="product-name"
+        class="input input-sm input-bordered w-full"
+        formControlName="name"
+        maxlength="40"
+        placeholder="Kaffee"
+        required
+      />
+    </div>
+    <div class="w-32">
+      <label for="product-unit" class="label py-1 text-sm">Unit</label>
+      <input
+        id="product-unit"
+        class="input input-sm input-bordered w-full"
+        formControlName="unit"
+        maxlength="20"
+        placeholder="Becher"
+      />
+    </div>
+    <div class="w-32">
+      <label for="product-price" class="label py-1 text-sm">
+        Price in € <span aria-hidden="true">*</span>
+      </label>
+      <input
+        id="product-price"
+        class="input input-sm input-bordered w-full text-right"
+        formControlName="price"
+        inputmode="decimal"
+        placeholder="1,50"
+        required
+        [class.input-error]="
+          addForm.controls.price.invalid && addForm.controls.price.touched
+        "
+        aria-describedby="product-price-hint"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary btn-sm" [disabled]="adding()">
+      Add Product
+    </button>
+    <p id="product-price-hint" class="w-full text-xs text-ink-muted">
+      Price like 1,50 or -2 for a voucher.
+    </p>
+    @if (addError()) {
+      <p class="w-full text-sm text-error" role="alert">{{ addError() }}</p>
+    }
+  </form>
+</section>

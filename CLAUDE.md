@@ -5,12 +5,12 @@
 TadeoTTools manages the HTL Leonding open day ("Tag der offenen Tür"). Four deployables live in one repo, grouped by purpose:
 
 - `backend/` — .NET 10 minimal API + EF Core on PostgreSQL
-- `dashboard/` — Angular 19 admin app (Keycloak login) for admins, stop managers and students
-- `guide/` — the GuideApp: Angular 19 public PWA for visitors/guides (no login). Docker image is still named `frontend`.
-- `kiosk/` — one folder per kiosk app for fixed devices:
+- `dashboard/` — Angular 22 admin app (Keycloak login) for admins, stop managers and students
+- `guide/` — the GuideApp: Angular 22 public PWA for visitors/guides (no login). Docker image is still named `frontend`.
+- `kiosk/` — one folder per kiosk app for fixed devices (Angular 19):
   - `kiosk/feedback/` — exit tablets: students enter visitor feedback. Talks to `backend/`, no login. Image `feedback`; see `kiosk/feedback/README.md`.
   - `kiosk/registration/` — entrance tablets: students register arriving visitors. **Talks to the legacy TadeoT backend** (`…/tadeot-api/api/`, separate repo `htl-leo-tadeot`, must stay unchanged), not to `backend/`. Saving needs a connection (no outbox). Image `registration`; see `kiosk/registration/README.md`.
-  - `kiosk/cashier/` — buffet counter ("Kassa", replaces the legacy `kassa` app). Sells through the **legacy backend**; the screen needs a Keycloak login, and access is checked once at startup via `GET /v1/users/is-cashier` in `backend/`. Sales go through a `localStorage` outbox; 400/404 responses are **kept** as "nicht übertragbar" (real money). Image `cashier`, served under `/kassa`; see `kiosk/cashier/README.md`.
+  - `kiosk/cashier/` — buffet counter ("Kassa", replaces the legacy `kassa` app). Sells through `backend/` (`GET /v1/buffets`, `POST /v1/orders`, both `IsCashier`) with a Keycloak login; access is checked at startup via `GET /v1/users/is-cashier`, and an interceptor sends the token with every request. Sales go through a `localStorage` outbox; `POST /v1/orders` is idempotent on `orderNumber`; 400/404 responses are **kept** as "nicht übertragbar" (real money), 401/403 keep the sale queued and send the student back to the login. Products, buffets and menus are managed on the dashboard page `/buffet`. Until 20.11.2026 the legacy backend stays the fallback (pin the old cashier image); the buffet import keeps the legacy ids for that. Image `cashier`, served under `/kassa`; see `kiosk/cashier/README.md`.
   - `kiosk/statistics/` — unattended slideshow of visitor statistics for the hall projector (replaces the legacy `statistics` app). **Reads the legacy backend**, never writes. Image `statistics`, served under `/statistics`; see `kiosk/statistics/README.md`.
 
 CI (`docker-build-push-images.yml`) maps image names to folders in its "Resolve source folder" step; a new kiosk app needs a filter entry there, a `docker pull` line in `deploy-to-vm.yml`, an AppHost resource and (only if it talks to `backend/`, like feedback and cashier) an `AllowedOrigins` entry.
@@ -84,7 +84,7 @@ Shared query helpers and DTOs used by several endpoints sit in `Database/Reposit
 
 **Startup behaviour** (`Program.cs`) — applies migrations; in Development it also imports `Students.csv`, `Teachers.csv` and `TdoT_Stationsplanung_2025.csv` into empty tables. CORS allows any origin in Development, otherwise a static list plus the `AllowedOrigins` config array (AppHost fills this with the Angular app endpoints).
 
-**Errors** — `GlobalExceptionHandler` maps `ValidationException` → 400 and `DbUpdateException` → 409 as ProblemDetails. Unique-constraint violations therefore surface as 409 without explicit checks.
+**Errors** — `GlobalExceptionHandler` maps `ValidationException` → 400 and `DbUpdateException` → 409 as ProblemDetails and sets the response status to match. Unique-constraint violations therefore surface as 409 without explicit checks.
 
 **Data model notes**
 
@@ -93,6 +93,7 @@ Shared query helpers and DTOs used by several endpoints sit in `Database/Reposit
 - `StopGroup.Order` and `StopGroupAssignment.Order` define the tour order shown in the GuideApp. There is a single system-wide tour.
 - `FeatureFlag` rows are runtime toggles read by the GuideApp (e.g. `showCountdown`).
 - CSV exports use `;` separators and UTF-8 with BOM (`Endpoints/Utils.cs`).
+- Buffet (`Endpoints/BuffetManagement/`): `Buffet`, `Product` (`PriceCents`, negative = voucher), `BuffetProduct` (menu with `Order`), `CashMovement`, `Order` (unique `OrderNumber`) and `OrderItem`, which stores `UnitPriceCents` so later price changes keep the revenue. `POST /v1/api/legacy-import/buffet` (`Endpoints/LegacyImportManagement/`) copies products, buffets and menus from the legacy API (`LegacyApi:BaseUrl`) into empty tables with explicit ids, then moves the identity sequences past them.
 
 **Tests**
 
@@ -103,13 +104,14 @@ Shared query helpers and DTOs used by several endpoints sit in `Database/Reposit
 
 ## Angular apps
 
-All six apps are zoneless (`provideExperimentalZonelessChangeDetection`), standalone-only, and styled with Tailwind (dashboard additionally DaisyUI). Services wrap `HttpClient` calls in `firstValueFrom` and return Promises. Folder layout: `core/` (services, guards), `pages/` (statistics: `slides/`), `shared/` (components, modals, `models/types.ts`).
+All six apps are zoneless (`provideZonelessChangeDetection` in dashboard and guide, `provideExperimentalZonelessChangeDetection` in the Angular 19 kiosks), standalone-only, and styled with Tailwind (dashboard additionally DaisyUI). Services wrap `HttpClient` calls in `firstValueFrom` and return Promises. Folder layout: `core/` (services, guards), `pages/` (statistics: `slides/`), `shared/` (components, modals, `models/types.ts`).
 
 **API base URL** — every app injects a `BASE_URL` token defined in `app.config.ts`. In production it comes from `window.__env.backendURL`, written to `env.js` by `docker-entrypoint.sh` from the `BACKEND_URL` container env; otherwise from `environment.apiBaseUrl`. What it points at differs:
 
 - dashboard: `BASE_URL` **includes** `/v1`; services call `${baseUrl}/api/stops`.
 - guide and feedback kiosk: `BASE_URL` **excludes** `/v1`; `ApiFetchService` calls `baseURL + '/v1/stops'`.
-- registration, cashier, statistics: the legacy backend, `BASE_URL` **excludes** `/api`. Cashier reads `backend/` through a second token from `TOOLS_BACKEND_URL` (excludes `/v1`).
+- cashier: `backend/`, `BASE_URL` **excludes** `/v1`; `authInterceptor` adds the Keycloak token to every request under `BASE_URL`.
+- registration, statistics: the legacy backend, `BASE_URL` **excludes** `/api`.
 
 **Kiosks** — no router. `env.js` sits next to `index.html` (dashboard and guide: `assets/env.js`) so the service worker's hash check does not break when the entrypoint rewrites it. `<base href="./">` is relative on purpose: the service worker resolves the `./` paths in `ngsw.json` against its scope, so one image works at `/` and behind any path prefix.
 
@@ -129,7 +131,7 @@ From `dashboard/.github/copilot-instructions.md`, `guide/.github/copilot-instruc
 - `changeDetection: ChangeDetectionStrategy.OnPush` on every component.
 - Native control flow (`@if`, `@for`, `@switch`) only; no `*ngIf` / `*ngFor`.
 - `inject()` instead of constructor injection; services are `providedIn: 'root'`.
-- Do not write `standalone: true` (it is the default in Angular 19; the `.agent` rule saying otherwise predates that).
+- Do not write `standalone: true` (it is the default since Angular 19; the `.agent` rule saying otherwise predates that).
 - No `@HostBinding` / `@HostListener` (use the `host` object); no `ngClass` / `ngStyle` (use `class` / `style` bindings).
 - Reactive forms over template-driven; `NgOptimizedImage` for static images.
 - No `any`; use `unknown` when the type is uncertain.

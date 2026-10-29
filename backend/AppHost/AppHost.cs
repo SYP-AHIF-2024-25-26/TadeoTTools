@@ -40,11 +40,9 @@ builder.AddJavaScriptApp("kiosk-registration", "../../kiosk/registration")
     .WithBuildScript("start")
     .WithRunScript("start");
 
-// Sells through the legacy TadeoT backend (every completed sale there is a real one);
-// asks webapi only who may log in.
+// Sells through webapi (with the school login); every completed sale is a real one.
 var cashierKiosk = builder.AddJavaScriptApp("kiosk-cashier", "../../kiosk/cashier")
     .WithReference(webapi)
-    .WithEnvironment("CASHIER_API_URL", "https://tadeot.htl-leonding.ac.at/tadeot-api")
     .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints()
     .WithBuildScript("start")

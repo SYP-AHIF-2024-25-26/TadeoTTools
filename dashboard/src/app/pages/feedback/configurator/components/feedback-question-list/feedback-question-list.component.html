@@ -1,5 +1,5 @@
 <div
-  class="mb-6 rounded-lg bg-background-100 p-6 text-ink shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+  class="mb-6 rounded-lg bg-background-100 p-6 text-ink shadow-lg dark:border dark:border-background-600"
 >
   <div class="mb-4 flex items-center justify-between">
     <h2 class="text-lg font-semibold">Questions</h2>
@@ -61,7 +61,7 @@
                       : 'Unknown'
             }}
             @if (question.dependencies && question.dependencies.length > 0) {
-              · <span class="text-primary-500">Follow-up</span>
+              · <span class="text-primary-700 dark:text-primary-600">Follow-up</span>
             }
           </p>
         </div>

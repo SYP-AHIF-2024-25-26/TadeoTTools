@@ -52,6 +52,9 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IPro
 
 
         // Use IProblemDetailsService to write the response
+        // The body alone does not set the status; without this every exception answers 500.
+        httpContext.Response.StatusCode = problemDetails.Status.Value;
+
         var problemDetailsContext = new ProblemDetailsContext
         {
             HttpContext = httpContext,

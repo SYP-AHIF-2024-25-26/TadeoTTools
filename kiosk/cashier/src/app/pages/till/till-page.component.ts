@@ -74,8 +74,8 @@ import { LastSaleComponent } from './last-sale.component';
             </p>
             <p class="mt-2 text-lg text-gray-600">
               Bitte der Lehrkraft am Buffet Bescheid geben: Produkte werden im
-              alten TadeoT-Admin dem Buffet zugeordnet. Das Tablet lädt sie alle
-              5 Minuten neu.
+              Dashboard (Seite „Buffet“) dem Buffet zugeordnet. Das Tablet lädt
+              sie alle 5 Minuten neu.
             </p>
           </div>
         }

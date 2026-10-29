@@ -1,17 +1,16 @@
 import { inject } from '@angular/core';
 import { Router, Routes } from '@angular/router';
 import { LoginComponent } from './pages/auth/login/login.component';
-import { StopGroupsComponent } from './pages/stop-groups/stop-group-list/stop-group-list.component';
 import { DivisionDetailsComponent } from './pages/divisions/division-details/division-details.component';
 import { StopgroupDetailsComponent } from './pages/stop-groups/stop-group-details/stop-group-details.component';
 import { StopDetailsComponent } from './pages/stops/stop-details/stop-details.component';
-import { StopsComponent } from './pages/stops/stop-list/stop-list.component';
 import { StudentComponent } from './pages/students/student-details/student-details.component';
 import { StopManagerDetailsComponent } from './pages/stop-managers/stop-manager-details/stop-manager-details.component';
-import { ListStudentsComponent } from './pages/students/student-list/student-list.component';
 import { FeedbackConfiguratorComponent } from './pages/feedback/configurator/configurator.component';
 import { DataManagementComponent } from './pages/dashboard/data-management.component';
 import { OverviewComponent } from './pages/overview/overview.component';
+import { BuffetComponent } from './pages/buffet/buffet.component';
+import { StudentsAndStopsComponent } from './pages/students-and-stops/students-and-stops.component';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { adminOrStopManagerGuard } from './core/guards/admin-or-stop-manager.guard';
@@ -26,17 +25,27 @@ export const routes: Routes = [
     canActivate: [adminGuard],
   },
   {
-    path: 'stopgroups',
-    component: StopGroupsComponent,
+    // Students, Stop Groups and Stops are tabs of one page; Students has no ?tab.
+    path: 'students-and-stops',
+    component: StudentsAndStopsComponent,
     canMatch: [authGuard],
     canActivate: [adminGuard],
     canDeactivate: [unsavedChangesGuard],
   },
   {
+    path: 'students',
+    // Keeps ?status= from the overview's bookmarks.
+    redirectTo: ({ queryParams }) =>
+      inject(Router).createUrlTree(['/students-and-stops'], { queryParams }),
+  },
+  {
+    path: 'stopgroups',
+    redirectTo: () =>
+      inject(Router).parseUrl('/students-and-stops?tab=stopgroups'),
+  },
+  {
     path: 'stops',
-    component: StopsComponent,
-    canMatch: [authGuard],
-    canActivate: [adminGuard],
+    redirectTo: () => inject(Router).parseUrl('/students-and-stops?tab=stops'),
   },
   {
     // Divisions are a tab of Users & Data now.
@@ -77,14 +86,14 @@ export const routes: Routes = [
     canActivate: [adminGuard],
   },
   {
-    path: 'students',
-    component: ListStudentsComponent,
+    path: 'feedback',
+    component: FeedbackConfiguratorComponent,
     canMatch: [authGuard],
     canActivate: [adminGuard],
   },
   {
-    path: 'feedback',
-    component: FeedbackConfiguratorComponent,
+    path: 'buffet',
+    component: BuffetComponent,
     canMatch: [authGuard],
     canActivate: [adminGuard],
   },
