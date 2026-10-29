@@ -1,6 +1,6 @@
-<div class="nav-surface sticky top-0 z-50 border-b border-primary-200 bg-primary-100 shadow-sm dark:border-background-600 dark:bg-background-400">
+<div class="nav-surface sticky top-0 z-50 bg-night-950">
   <nav
-    class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-ink"
+    class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-night-100"
   >
     <!-- Logo -->
     <!-- Admins: the Overview (their home); everyone else: their own start page -->
@@ -10,20 +10,12 @@
       [attr.aria-current]="isAdmin() && path() === '/overview' ? 'page' : null"
       class="flex items-center"
     >
-      <!-- The school's colour logo on the pale bar; the white one on the dark bar -->
-      <img
-        ngSrc="assets/htl-leonding-logo.png"
-        priority
-        alt="HTL Leonding"
-        class="h-8 w-auto dark:hidden"
-        height="347"
-        width="1536"
-      />
+      <!-- The white school logo on the night bar, as on htl-leonding.at -->
       <img
         ngSrc="assets/Leonding_Logo.svg"
         priority
         alt="HTL Leonding"
-        class="hidden h-8 w-auto dark:block"
+        class="h-8 w-auto"
         height="29"
         width="128"
       />
@@ -33,12 +25,13 @@
     <div class="hidden space-x-4 md:flex md:items-center md:justify-start">
       @if (isAdmin()) {
         @for (link of navLinks; track link.route) {
+          <!-- Active: a white pill with night text (Nachtband); otherwise night white -->
           <a
-            class="px-3 py-2"
+            class="rounded-lg px-3 py-2 transition-colors"
             [class]="
               isActive(link)
-                ? 'bg-primary rounded font-medium text-primary-content underline'
-                : ''
+                ? 'bg-white font-bold text-night-950'
+                : 'hover:bg-white/10 hover:text-white'
             "
             [routerLink]="[link.route]"
             [attr.aria-current]="isActive(link) ? 'page' : null"
@@ -59,7 +52,7 @@
           (click)="changeDarkMode()"
         />
         <div
-          class="peer relative ml-8 h-6 w-11 rounded-full bg-background-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-background-50 after:transition-all after:content-[''] peer-checked:bg-background-600 peer-checked:after:translate-x-full peer-checked:after:border-white md:p-0"
+          class="peer relative ml-8 h-6 w-11 rounded-full bg-white/25 ring-1 ring-white/25 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full md:p-0"
         ></div>
         <span class="ms-2 hidden md:block">Theme</span>
       </label>
@@ -76,7 +69,7 @@
     <div class="relative md:hidden">
       <!-- Hamburger (mobile only) -->
       <button
-        class="inline-flex items-center justify-center rounded p-2 text-ink hover:bg-background-300"
+        class="inline-flex items-center justify-center rounded p-2 text-white hover:bg-white/10"
         type="button"
         aria-label="Menu"
         [attr.aria-expanded]="mobileMenuOpen()"
@@ -104,7 +97,7 @@
       <!-- Mobile Menu Dropdown -->
       @if (mobileMenuOpen()) {
         <div
-          class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-background-100 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-background-800"
+          class="nav-menu absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-background-100 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-background-800"
         >
           <div class="py-1">
             @if (isAdmin()) {
