@@ -94,12 +94,13 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
 - `backend/`: .NET 10 Minimal API mit EF Core auf PostgreSQL; alle Routen unter `/v1`.
   `/v1/api/...` ist die geschützte Verwaltungsschnittstelle, `/v1/...` ohne `api` das, was
   GuideApp und Kiosks lesen.
-- `dashboard/`: Angular 19, Login über Keycloak, für Admins, Stop-Manager und Schüler:innen.
-- `guide/`: GuideApp, Angular-19-PWA ohne Login.
+- `dashboard/`: Angular 22, Login über Keycloak, für Admins, Stop-Manager und Schüler:innen.
+- `guide/`: GuideApp, Angular-22-PWA ohne Login.
 - `kiosk/feedback/`, `kiosk/registration/`, `kiosk/cashier/`, `kiosk/statistics/`: Angular-19-PWAs
   für feste Geräte (§11).
-- Altes Backend `htl-leo-tadeot` (eigenes Repo): Anmeldung, Kassa und Statistik nutzen es. Es wird
-  **nicht verändert**, bis es migriert wird (§3.4).
+- Altes Backend `htl-leo-tadeot` (eigenes Repo): Anmeldung und Statistik nutzen es. Die Kassa
+  läuft ab der Umstellung am 9.11.2026 über `backend/`. Das alte Backend wird **nicht verändert**
+  (§3.4).
 
 ## 3.2 Identität
 - Keycloak der Schule (`auth.htl-leonding.ac.at`, Realm `htlleonding`), JWT über LeoAuth.
@@ -112,8 +113,15 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
 - Datenbank-Migrationen werden beim Start des Backends angewendet.
 
 ## 3.4 Altes Backend
-- Das alte Backend und seine Administrationsseite werden in TadeoTTools migriert, aber erst nach
-  dem TdoT am 20.11.2026 (§18 „Soll“). Mehrere Lücken in §11 hängen davon ab.
+- Das alte Backend und seine Administrationsseite werden vor dem TdoT in zwei Schritten in
+  TadeoTTools migriert, jeder mit Generalprobe und eigener Entscheidung:
+  1. Buffet und Kassa (Umstellung 9.11.2026): Produkte, Buffets, Speisekarten, Kassenbewegungen
+     und Verkäufe liegen in `backend/` und werden im Dashboard verwaltet (§11.2).
+  2. Anmeldung, Statistik und Fotos (Umstellung 16.11.2026, §18 „Soll“). Mehrere Lücken in §11
+     hängen davon ab.
+- Das alte Backend bleibt unverändert und läuft bis nach dem 20.11.2026 als Rückfall weiter. Ein
+  Rückfall setzt nur die Images der Kiosks zurück; der Import übernimmt die alten IDs (Buffets,
+  Produkte), damit wartende Verkäufe in beiden Systemen gültig bleiben.
 
 ## 3.5 Geräte
 - Kiosk-Apps laufen auf Android-Tablets verschiedener Generationen und Auflösungen.
@@ -192,8 +200,11 @@ Eigenschaften:
 - Kein Login (das alte Backend verlangt keines).
 
 ## 5.4 Kassa
-- Login über Keycloak (gleicher Client wie das Dashboard). Der Zugang wird einmal beim Start über
+- Login über Keycloak (gleicher Client wie das Dashboard). Der Zugang wird beim Start über
   `GET /v1/users/is-cashier` geprüft (§11.2).
+- Ein einziges Token: Jede Anfrage an `backend/` trägt die Anmeldung; `GET /v1/buffets` und
+  `POST /v1/orders` verlangen dieselbe Berechtigung wie `is-cashier`. Läuft die Anmeldung ab oder
+  wird der Zugang entzogen, kehrt die Kassa zur Anmeldung zurück; wartende Verkäufe bleiben am Gerät.
 
 ---
 
@@ -333,14 +344,21 @@ Eigenschaften:
 ## 11.2 Kassa (`kiosk/cashier`, Buffet, `/kassa`)
 - Zugang: alle Lehrkräfte (LeoAuth), alle Admins und Schüler:innen mit bestätigter Zuteilung zur
   Station, die genau „Buffet“ heißt.
-- Artikel und Preise kommen aus dem alten Backend (`GET /api/Buffets`); Preise in ganzen Cent;
-  ein negativer Preis ist ein Gutschein (max. einer pro Verkauf).
+- Produkte, Buffets und Speisekarten verwalten Admins im Dashboard (Seite „Buffet“). Die Kassa
+  liest sie über `GET /v1/buffets`; Preise in ganzen Cent; ein negativer Preis ist ein Gutschein
+  (max. einer pro Verkauf, auch vom Backend geprüft). Ein Produkt hat an allen Buffets denselben
+  Preis.
+- Mehrere Buffets sind möglich; ein Buffet ohne Produkte auf der Speisekarte erscheint nicht in der
+  Kassa, ohne dass es oder seine Verkäufe gelöscht werden.
 - Verkäufe gehen über eine Warteschlange am Gerät und werden der Reihe nach gesendet. Nichts wird
   verworfen; abgelehnte Verkäufe bleiben als „nicht übertragbar“ stehen.
-- `orderNumber` = `<Gerätekennung>-<laufende Nummer>`, damit Doppelte nachvollziehbar sind.
+- `orderNumber` = `<Gerätekennung>-<laufende Nummer>`. `POST /v1/orders` speichert jede Nummer
+  nur einmal und beantwortet eine Wiederholung mit Erfolg; ein erneut gesendeter Verkauf zählt
+  also nicht doppelt.
+- Jeder Verkauf speichert den Preis, zu dem verkauft wurde; eine spätere Preisänderung ändert den
+  Umsatz nicht.
 - Ein abgeschlossener Verkauf lässt sich nicht stornieren.
-- **(Lücke, mit Migration):** `POST /api/orders` des alten Backends ist ohne Login erreichbar;
-  das wird bei der Migration behoben.
+- `POST /v1/orders` verlangt die Anmeldung als Kassier:in.
 - **(Lücke):** Welche Stationen kassieren dürfen, ist konfigurierbar (z. B. auch die
   Infrastruktur-Station), statt des fest eingebauten Namens „Buffet“.
 
@@ -527,8 +545,8 @@ Ein Stand gilt als abnahmefähig für den TdoT, wenn mindestens funktioniert:
 - Feedback-Quelle speichern (§9.2).
 - Zeitzone der Statistik (§11.4).
 - Kein `localhost` in CORS der Produktion (§13.3).
-- Migration des alten Backends und seiner Administrationsseite nach dem 20.11.2026 (§3.4), mit:
-  Login für `POST /api/orders`, Geschlecht „keine Angabe“.
+- Migration von Anmeldung und Statistik aus dem alten Backend vor dem TdoT (§3.4, Schritt 2), mit
+  Geschlecht „keine Angabe“.
 - Infrastruktur-Seite mit „verfügbar“/„erledigt“ und Deadline (§7.1).
 - Vorschau-Seite der Tour für alle Rollen und Navigation für Schüler:innen (§2.4).
 
@@ -548,5 +566,8 @@ Ein Stand gilt als abnahmefähig für den TdoT, wenn mindestens funktioniert:
 - **Zuteilungs-Import (§10.3):** Wie genau überspringen (welche Fehler, Rückmeldung an den Admin)
   ist noch zu klären (Antworten 32/34).
 - **Navigation für Schüler:innen (§2.4):** Entwurf der Vorschau-Seite und der Navigation offen.
+- **Alte Buffet-Endpunkte (§3.4):** Bis zur zweiten Umstellung bleiben `GET /api/Buffets` und
+  `POST /api/orders` des alten Backends ohne Login erreichbar (es wird nicht verändert), werden aber
+  nur noch im Rückfall verwendet. Nach dem 20.11.2026 wird das alte Backend abgeschaltet.
 - **Mehrtägige Veranstaltung (§1):** Das Datenmodell kennt keinen Tag; wie Tage geplant werden,
   wird mit der Erweiterung „mehrere Veranstaltungen“ entschieden.

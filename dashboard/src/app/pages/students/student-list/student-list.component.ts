@@ -40,7 +40,6 @@ import {
   statusTextClass,
   UNASSIGNED_TEXT_CLASS,
 } from '@/shared/utils/assignment-status';
-import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 
 const STATUS_FILTERS = [
   'unassigned',
@@ -64,7 +63,6 @@ export interface StudentWithUI extends Student {
     AddStudentDialogComponent,
     ConflictDetailsModalComponent,
     DeletePopupComponent,
-    PageHeaderComponent,
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './student-list.component.html',

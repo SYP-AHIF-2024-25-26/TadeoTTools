@@ -6,22 +6,23 @@ import { Buffet, OrderSubmission } from '@shared/models/types';
 import { SEND_TIMEOUT_MS } from '@shared/constants';
 
 /**
- * `GET /api/Buffets` as the legacy backend sends it. It also has a free-text
- * `description` (left from an earlier event) and cash movements; neither is used.
+ * `GET /v1/buffets`, in the shape of the legacy `GET /api/Buffets`. Only buffets
+ * with products on the menu are listed. The description is free text and not shown.
  */
 interface BuffetDto {
   id: number;
-  location: string | null;
+  location: string;
   products: {
     id: number;
-    name: string | null;
+    name: string;
+    /** Cents. */
     price: number;
-    measure: string | null;
+    measure: string;
     rank: number;
   }[];
 }
 
-/** The endpoints of the legacy TadeoT backend that the kiosk uses; none needs a login. */
+/** The backend endpoints the kiosk uses; both need the login (`authInterceptor`). */
 @Injectable({
   providedIn: 'root',
 })
@@ -32,18 +33,17 @@ export class CashierApiService {
   /** All buffets with their products, already in counter order. */
   getBuffets(): Promise<Buffet[]> {
     return firstValueFrom(
-      this.http.get<BuffetDto[]>(`${this.baseUrl}/api/Buffets`).pipe(
+      this.http.get<BuffetDto[]>(`${this.baseUrl}/v1/buffets`).pipe(
         map((buffets) =>
           buffets.map((b) => ({
             id: b.id,
-            location: (b.location ?? '').trim(),
+            location: b.location.trim(),
             products: b.products
               .map((p) => ({
                 id: p.id,
-                name: (p.name ?? '').trim(),
-                // A double in the database; the legacy admin stores cents.
-                price: Math.round(p.price),
-                measure: (p.measure ?? '').trim(),
+                name: p.name.trim(),
+                price: p.price,
+                measure: p.measure.trim(),
                 rank: p.rank,
               }))
               .sort((x, y) => x.rank - y.rank),
@@ -53,10 +53,11 @@ export class CashierApiService {
     );
   }
 
+  /** Answers 200 also for a sale already stored, so a retry never counts twice. */
   submitOrder(order: OrderSubmission): Promise<unknown> {
     return firstValueFrom(
       this.http
-        .post(`${this.baseUrl}/api/orders`, order, { responseType: 'text' })
+        .post(`${this.baseUrl}/v1/orders`, order, { responseType: 'text' })
         .pipe(timeout(SEND_TIMEOUT_MS))
     );
   }

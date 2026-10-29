@@ -59,9 +59,9 @@ export class CheckoutService {
 }
 
 /**
- * "K7Q2-0047": a random id per tablet and a running number. The legacy backend
- * does not check for duplicates; with this, a sale sent twice (the answer to the
- * first attempt got lost) can be found in the database (`Orders.OrderNumber`).
+ * "K7Q2-0047": a random id per tablet and a running number. The backend stores
+ * each number once, so a sale sent twice (the answer to the first attempt got
+ * lost) is not counted twice.
  */
 function nextOrderNumber(): string {
   try {

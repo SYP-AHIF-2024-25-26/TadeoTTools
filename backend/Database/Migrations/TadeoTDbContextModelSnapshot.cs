@@ -17,7 +17,7 @@ namespace Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("ProductVersion", "10.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -34,6 +34,74 @@ namespace Database.Migrations
                         .IsUnique();
 
                     b.ToTable("Admins");
+                });
+
+            modelBuilder.Entity("Database.Entities.Buffet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Location")
+                        .IsUnique();
+
+                    b.ToTable("Buffets");
+                });
+
+            modelBuilder.Entity("Database.Entities.BuffetProduct", b =>
+                {
+                    b.Property<int>("BuffetId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.HasKey("BuffetId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("BuffetProducts");
+                });
+
+            modelBuilder.Entity("Database.Entities.CashMovement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AmountCents")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BuffetId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuffetId");
+
+                    b.ToTable("CashMovements");
                 });
 
             modelBuilder.Entity("Database.Entities.Division", b =>
@@ -174,7 +242,7 @@ namespace Database.Migrations
 
                     b.ToTable("FeedbackQuestions");
 
-                    b.HasDiscriminator().HasValue("FeedbackQuestion");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("FeedbackQuestion");
 
                     b.UseTphMappingStrategy();
                 });
@@ -221,6 +289,98 @@ namespace Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FeedbackSessions");
+                });
+
+            modelBuilder.Entity("Database.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BuffetId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CashierUsername")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("OrderNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuffetId");
+
+                    b.HasIndex("OrderNumber")
+                        .IsUnique();
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Database.Entities.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UnitPriceCents")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("Database.Entities.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<int>("PriceCents")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Database.Entities.Stop", b =>
@@ -474,6 +634,36 @@ namespace Database.Migrations
                     b.HasDiscriminator().HasValue("FeedbackTextQuestion");
                 });
 
+            modelBuilder.Entity("Database.Entities.BuffetProduct", b =>
+                {
+                    b.HasOne("Database.Entities.Buffet", "Buffet")
+                        .WithMany("Menu")
+                        .HasForeignKey("BuffetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Database.Entities.Product", "Product")
+                        .WithMany("BuffetProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Buffet");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Database.Entities.CashMovement", b =>
+                {
+                    b.HasOne("Database.Entities.Buffet", "Buffet")
+                        .WithMany("CashMovements")
+                        .HasForeignKey("BuffetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Buffet");
+                });
+
             modelBuilder.Entity("Database.Entities.FeedbackDependency", b =>
                 {
                     b.HasOne("Database.Entities.FeedbackQuestion", "DependsOnQuestion")
@@ -521,6 +711,36 @@ namespace Database.Migrations
                     b.Navigation("FeedbackQuestion");
 
                     b.Navigation("FeedbackSession");
+                });
+
+            modelBuilder.Entity("Database.Entities.Order", b =>
+                {
+                    b.HasOne("Database.Entities.Buffet", "Buffet")
+                        .WithMany("Orders")
+                        .HasForeignKey("BuffetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Buffet");
+                });
+
+            modelBuilder.Entity("Database.Entities.OrderItem", b =>
+                {
+                    b.HasOne("Database.Entities.Order", "Order")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Database.Entities.Product", "Product")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Database.Entities.StopGroupAssignment", b =>
@@ -595,6 +815,15 @@ namespace Database.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Database.Entities.Buffet", b =>
+                {
+                    b.Navigation("CashMovements");
+
+                    b.Navigation("Menu");
+
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("Database.Entities.FeedbackQuestion", b =>
                 {
                     b.Navigation("Dependencies");
@@ -605,6 +834,18 @@ namespace Database.Migrations
             modelBuilder.Entity("Database.Entities.FeedbackSession", b =>
                 {
                     b.Navigation("FeedbackQuestionAnswers");
+                });
+
+            modelBuilder.Entity("Database.Entities.Order", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Database.Entities.Product", b =>
+                {
+                    b.Navigation("BuffetProducts");
+
+                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("Database.Entities.Stop", b =>

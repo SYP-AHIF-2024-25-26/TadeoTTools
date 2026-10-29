@@ -10,7 +10,7 @@ Das Projekt gliedert sich physisch in folgende Hauptverzeichnisse:
 - **`backend/`**: Beinhaltet die REST-API, geschrieben in C# mit .NET und Entity Framework Core.
 - **`guide/`**: Die GuideApp, die öffentliche Web-App (PWA) für Besucher und Guides, entwickelt mit Angular und TailwindCSS.
 - **`dashboard/`**: Das Admin-Dashboard zur Datenverwaltung, ebenfalls entwickelt mit Angular.
-- **`kiosk/`**: Kiosk-Apps für fest aufgestellte Geräte, je App ein Unterordner. Derzeit `kiosk/feedback/` (Feedback-App für die Tablets am Ausgang), `kiosk/registration/` (Anmelde-App für die Tablets am Eingang), `kiosk/cashier/` (Kassa für das Buffet) und `kiosk/statistics/` (Diashow mit der Besucherstatistik für den Beamer). Anmeldung, Kassa und Statistik verwenden weiterhin das Backend des alten TadeoT-Systems.
+- **`kiosk/`**: Kiosk-Apps für fest aufgestellte Geräte, je App ein Unterordner. Derzeit `kiosk/feedback/` (Feedback-App für die Tablets am Ausgang), `kiosk/registration/` (Anmelde-App für die Tablets am Eingang), `kiosk/cashier/` (Kassa für das Buffet) und `kiosk/statistics/` (Diashow mit der Besucherstatistik für den Beamer). Anmeldung und Statistik verwenden weiterhin das Backend des alten TadeoT-Systems; die Kassa verkauft über `backend/` (das alte Backend bleibt bis nach dem TdoT als Rückfall).
 - **`deployment/`** & **`docker-compose.yml`**: Beschreibt die Bereitstellung der Applikationen und der zugehörigen PostgreSQL-Datenbank als Docker-Container.
 
 ---
@@ -46,13 +46,16 @@ Das Dashboard dient zur Datenpflege, Konfiguration und Verwaltung.
 
 ### Seiten (Pages / Routing)
 - **Login (`/login`)**: Nutzt die `LoginComponent`. Die Anmeldung ins System erfolgt sicher via Schulaccount-SSO (Keycloak).
-- **Stationsgruppen / StopGroups (`/stopgroups` & `/stopgroup`)**: Verwaltung *des einen* zentralen Leitfadens. Hier werden neue Stopgroups erstellt (`StopGroupsComponent`) und verwaltet (`StopgroupDetailsComponent`). *Wichtig:* Die Anordnung der Gruppen/Stationen hier ändert direkt die finale Reihenfolge im Frontend!
-- **Stationen / Stops (`/stops` & `/stop`)**: Umfassende Liste (`StopsComponent`) und Detailansicht (`StopDetailsComponent`) aller Stationen. Auf den Detailseiten einzelner Stops werden zudem vom Admin die zuständigen **Stop-Manager zugewiesen**.
+- **Übersicht / Overview (`/overview`)**: Startseite der Admins nach dem Login; erreichbar über das Logo (kein eigener Menüpunkt).
+- **Students & Stops (`/students-and-stops`)**: Ein Menüpunkt mit drei Tabs: Students (Standard), Stop Groups (`?tab=stopgroups`) und Stops (`?tab=stops`). Die alten Adressen `/students`, `/stopgroups` und `/stops` leiten auf den passenden Tab weiter. Wer Stop Groups mit ungespeicherter Reihenfolge verlässt (auch per Tab-Wechsel), wird gefragt.
+- **Stationsgruppen / StopGroups (Tab Stop Groups & `/stopgroup`)**: Verwaltung *des einen* zentralen Leitfadens. Hier werden neue Stopgroups erstellt (`StopGroupsComponent`) und verwaltet (`StopgroupDetailsComponent`). *Wichtig:* Die Anordnung der Gruppen/Stationen hier ändert direkt die finale Reihenfolge im Frontend!
+- **Stationen / Stops (Tab Stops & `/stop`)**: Umfassende Liste (`StopsComponent`) und Detailansicht (`StopDetailsComponent`) aller Stationen. Auf den Detailseiten einzelner Stops werden zudem vom Admin die zuständigen **Stop-Manager zugewiesen**.
 - **Abteilungen / Divisions (`/divisions` & `/division`)**: Verwaltung (`DivisionsListComponent` / `DivisionDetailsComponent`) inkl. Farbkodierung, Bilder und zugeordneter Stationen.
-- **Schüler / Students (`/students` & `/student`)**: In der ListView (`ListStudentsComponent`) ermöglicht dies dem Admin und System Administratoren die Übersicht aller zugewiesener Schüler sowie das Lösen von organisatorischen Konflikten. In der `StudentComponent` Ansicht (nur für den relevanten Schüler) sind die Einsatzdetails aufgelistet.
+- **Schüler / Students (Tab Students & `/student`)**: In der ListView (`ListStudentsComponent`) ermöglicht dies dem Admin und System Administratoren die Übersicht aller zugewiesener Schüler sowie das Lösen von organisatorischen Konflikten. In der `StudentComponent` Ansicht (nur für den relevanten Schüler) sind die Einsatzdetails aufgelistet.
 - **Stationsmanager / Stop-Manager (`/stop-manager`)**: Übersicht der Stationsverantwortlichen. (*Hinweis: Manager werden vom Admin auf der Stop-Details Seite zugewiesen - neue Manager-Accounts können im UserManagement hinzugefügt werden*).
 - **Nutzerverwaltung (`/user-management`)**: Anlegen/Löschen der Administratoren und der Stop-Manager. Zusätzlich bietet das Modul den Im- und Export (`Upload`/`CSV`) aller Datensätze, den massenhaften Reset (`Wipe`) aller Studenten-Einträge und die Parameter, um z.B. den Frontend-Countdown einzustellen.
 - **Feedback-Konfigurator (`/feedback`)**: Tool zum dynamischen Erstellen und Bearbeiten von Feedback-Fragen, Antwort-Optionen und Konditionierungen, das den Endnutzern auf der Frontend-Feedbackpage dargestellt wird.
+- **Buffet (`/buffet`, nur Admins)**: Produkte (Name, Einheit, Preis in Euro; ein negativer Preis ist ein Gutschein), je Buffet eine Karte mit Ort, Beschreibung, der Speisekarte in Reihenfolge der Kassa (ein Buffet ohne Produkte erscheint nicht in der Kassa), Ein- und Auszahlungen; dazu die Verkäufe je Buffet und Produkt, CSV-Export und „Delete all sales“. Solange weder Produkte noch Buffets angelegt sind, übernimmt „Import from Legacy Backend“ Produkte, Buffets und Speisekarten aus dem alten TadeoT-Admin (mit den alten IDs).
 
 ---
 
@@ -136,6 +139,24 @@ Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logisc
 - `GET /v1/users/in-database`
 - `GET /v1/users/is-cashier` (Kassa-Kiosk: 200 für Lehrer:innen, Admins und Schüler:innen mit bestätigter Zuteilung zur Station „Buffet“, sonst 403)
 
+**Buffet (Kassa-Kiosk, Richtlinie `IsCashier`):**
+- `GET /v1/buffets` - Buffets mit Produkten auf der Speisekarte, in Reihenfolge der Kassa, Preise in Cent (gleiche Form wie das alte `GET /api/Buffets`)
+- `POST /v1/orders` - Speichert einen Verkauf (`{ buffetId, date, orderNumber, soldUnits: [{ productId, amount }] }`). Eine bereits gespeicherte `orderNumber` wird mit 200 beantwortet, ohne sie erneut zu speichern; 404 für ein unbekanntes Buffet, 400 für Produkte, die nicht auf der Speisekarte stehen, Mengen außerhalb 1–99 oder mehr als einen Gutschein
+
+**Buffet (Verwaltung, nur Admins):**
+- `GET /v1/api/products` - Alle Produkte mit Anzahl Speisekarten und verkaufter Menge
+- `POST /v1/api/products`, `PUT /v1/api/products/{productId}` - Produkt anlegen / ändern (409 bei doppeltem Namen)
+- `DELETE /v1/api/products/{productId}` - Löscht ein Produkt (409, solange es auf einer Speisekarte steht oder Verkäufe hat)
+- `GET /v1/api/buffets` - Buffets mit Speisekarte, Kassenbewegungen und Anzahl Verkäufe
+- `POST /v1/api/buffets`, `PUT /v1/api/buffets/{buffetId}` - Buffet anlegen / ändern (409 bei doppeltem Ort)
+- `DELETE /v1/api/buffets/{buffetId}` - Löscht ein Buffet samt Speisekarte (409 bei Verkäufen oder Kassenbewegungen)
+- `PUT /v1/api/buffets/{buffetId}/menu` - Ersetzt die Speisekarte (Liste von Produkt-IDs in Reihenfolge)
+- `POST /v1/api/buffets/{buffetId}/cash-movements`, `DELETE /v1/api/cash-movements/{cashMovementId}` - Ein- und Auszahlungen
+- `GET /v1/api/sales` - Umsatz je Buffet und Produkt, aus den gespeicherten Verkaufspreisen
+- `GET /v1/api/sales/csv` - Alle verkauften Positionen als CSV (Uhrzeit in Wiener Zeit)
+- `DELETE /v1/api/sales` - Löscht alle Verkäufe
+- `POST /v1/api/legacy-import/buffet` - Übernimmt Produkte, Buffets und Speisekarten aus dem alten Backend (`LegacyApi:BaseUrl`) mit den alten IDs; nur in leere Tabellen (sonst 409)
+
 ---
 
 ## 5. Datenmodell
@@ -162,6 +183,12 @@ Das in Entity-Framework Core hinterlegte PostgreSQL Datenmodell umfasst folgende
 - **FeedbackOptions**: Entitäten für das MultiSelect / RadioButton-Menü, die genau einer Frage zugeteilt sind (`Value`).
 - **FeedbackDependencies**: Logische Konditionen (Frage 2 wird nur unter der Voraussetzung gezeigt, dass bei Frage 1 der Wert in `ConditionValue` gewählt wurde).
 - **FeedbackQuestionAnswers**: Konkrete Speicherung des eingereichten Wertes (`Answer`) referenzierend auf die jeweilige Frage und den Einreicher.
+
+### Buffet
+- **Products**: `Name` (eindeutig, max. 40), `Unit`, `PriceCents` (negativ = Gutschein). Ein Preis gilt an allen Buffets.
+- **Buffets**: `Location` (eindeutig, max. 3 Zeichen), `Description`. Über **BuffetProducts** (`BuffetId`, `ProductId`, `Order`) hängt die Speisekarte.
+- **CashMovements**: Ein- (positiv) und Auszahlungen (negativ) eines Buffets in Cent, Zeit in UTC.
+- **Orders**: ein Verkauf mit eindeutiger `OrderNumber` (vom Tablet), `CreatedAt` (UTC, Zeitpunkt des Abschließens), `BuffetId` und `CashierUsername`. **OrderItems** speichern `Quantity` und `UnitPriceCents`, den Preis beim Verkauf; spätere Preisänderungen ändern den Umsatz nicht.
 
 ### System-Konfiguration
 - **FeatureFlags**: Beschreibt globale Key-Value Pairs im System wie den Boolean "ShowCountdown", welche von Frontends oder Dashboards abgefragt und mittels Admin-Status rekonfiguriert werden können.
@@ -237,6 +264,7 @@ Hier läuft die für den tatsächlichen Tag der offenen Tür relevante, stabile 
 | `ASPNETCORE_FORWARDEDHEADERS_ENABLED` | Aktiviert Proxy-Header-Weiterleitung | `true` |
 | `ConnectionStrings__DefaultConnection` | EF Core Datenbankverbindung | `Host=tadeot-postgres;Database=tadeot;Username=user;Password=...` |
 | `ASPNETCORE_URLS` | Interner Port-Binding | `http://+:4100` |
+| `LegacyApi__BaseUrl` | Altes TadeoT-Backend für den Buffet-Import (optional, Standard aus `appsettings.json`) | `https://tadeot.htl-leonding.ac.at/tadeot-api` |
 
 **PostgreSQL** (`tadeot-postgres`):
 

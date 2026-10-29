@@ -1,5 +1,6 @@
-<div class="page-shell">
-  <app-page-header title="Students">
+<div>
+  <!-- The tab's actions; the page title and tabs are in Students & Stops. -->
+  <div class="mb-6 flex flex-wrap items-center justify-end gap-2">
     <button
       class="btn-approve btn whitespace-nowrap"
       (click)="showApproveAllConfirm.set(true)"
@@ -21,7 +22,7 @@
     >
       Import &amp; Export
     </a>
-  </app-page-header>
+  </div>
 
   @if (approveError()) {
     <div role="alert" class="alert alert-error mb-4">

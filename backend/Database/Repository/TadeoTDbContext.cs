@@ -27,6 +27,13 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<FeedbackOption> FeedbackOptions => Set<FeedbackOption>();
     public DbSet<FeedbackSession> FeedbackSessions => Set<FeedbackSession>();
     public DbSet<FeatureFlag> FeatureFlags => Set<FeatureFlag>();
+
+    public DbSet<Buffet> Buffets => Set<Buffet>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<BuffetProduct> BuffetProducts => Set<BuffetProduct>();
+    public DbSet<CashMovement> CashMovements => Set<CashMovement>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<FeedbackQuestion>()
@@ -51,6 +58,43 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
             .HasMany(s => s.FeedbackQuestionAnswers)
             .WithOne(a => a.FeedbackSession)
             .HasForeignKey(a => a.FeedbackSessionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // A buffet or product with sales or cash movements stays; the endpoints say why.
+        modelBuilder.Entity<Buffet>()
+            .HasMany(b => b.Menu)
+            .WithOne(m => m.Buffet)
+            .HasForeignKey(m => m.BuffetId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Buffet>()
+            .HasMany(b => b.CashMovements)
+            .WithOne(c => c.Buffet)
+            .HasForeignKey(c => c.BuffetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Buffet>()
+            .HasMany(b => b.Orders)
+            .WithOne(o => o.Buffet)
+            .HasForeignKey(o => o.BuffetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.BuffetProducts)
+            .WithOne(m => m.Product)
+            .HasForeignKey(m => m.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.OrderItems)
+            .WithOne(i => i.Product)
+            .HasForeignKey(i => i.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Order>()
+            .HasMany(o => o.Items)
+            .WithOne(i => i.Order)
+            .HasForeignKey(i => i.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 

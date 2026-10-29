@@ -40,13 +40,12 @@ services:
     networks:
       - tadeotnet-201126
 
-  # Buffet cashier; sells through the legacy TadeoT backend, the TadeoTTools backend only checks the login
+  # Buffet cashier; sells through the TadeoTTools backend with the school login
   tadeot-cashier-201126:
     image: ghcr.io/syp-ahif-2024-25-26/tadeottools/cashier:latest
     container_name: tadeot-cashier-201126
     environment:
-      - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-api
-      - TOOLS_BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126
+      - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126
     networks:
       - tadeotnet-201126
 

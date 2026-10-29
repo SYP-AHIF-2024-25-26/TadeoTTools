@@ -1,0 +1,248 @@
+@if (loading() && !statistics()) {
+  <div class="flex flex-col gap-6" aria-hidden="true">
+    <div class="skeleton h-24 rounded-lg"></div>
+    <div class="skeleton h-72 rounded-lg"></div>
+  </div>
+  <span class="sr-only" role="status">Loading the statistics…</span>
+} @else if (loadFailed()) {
+  <div
+    class="flex flex-col items-center gap-3 rounded-lg bg-background-100 p-6 text-center shadow-lg"
+    role="alert"
+  >
+    <p>
+      The statistics could not be loaded. Check your connection and try again.
+    </p>
+    <button class="btn btn-primary btn-sm" (click)="load()">Try again</button>
+  </div>
+} @else if (statistics(); as st) {
+  @if (st.orderCount === 0) {
+    <p
+      class="rounded-lg bg-background-100 p-6 text-sm text-ink-muted shadow-lg dark:border dark:border-background-600"
+    >
+      No sales yet. The statistics fill in as the cashier tablets sell.
+    </p>
+  } @else {
+    <div class="flex flex-col gap-6">
+      <!-- Key figures, one quiet row -->
+      <section
+        class="rounded-lg bg-background-100 px-6 py-5 shadow-lg dark:border dark:border-background-600"
+        aria-label="Key figures"
+      >
+        <dl
+          class="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3 lg:grid-cols-5"
+        >
+          <div>
+            <dt class="text-sm text-ink-muted">Sales</dt>
+            <dd class="text-xl font-bold tabular-nums">{{ st.orderCount }}</dd>
+          </div>
+          <div>
+            <dt class="text-sm text-ink-muted">Revenue</dt>
+            <dd class="text-xl font-bold tabular-nums">
+              {{ euro(st.revenueCents) }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-ink-muted">Average sale</dt>
+            <dd class="text-xl font-bold tabular-nums">
+              {{ euro(st.revenueCents / st.orderCount) }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-ink-muted">Items per sale</dt>
+            <dd class="text-xl font-bold tabular-nums">
+              {{ st.itemCount / st.orderCount | number: '1.1-1' }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-ink-muted">Vouchers redeemed</dt>
+            <dd class="text-xl font-bold tabular-nums">
+              {{ st.voucherCount }}
+              @if (st.voucherCount > 0) {
+                <span class="text-sm font-normal text-ink-muted">
+                  {{ euro(st.voucherCents) }}
+                </span>
+              }
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- Sales per hour, one chart per day on a shared scale -->
+      <section
+        class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+        aria-labelledby="hours-heading"
+      >
+        <h2 id="hours-heading" class="text-lg font-bold">Sales per hour</h2>
+        <p class="mb-2 text-sm text-ink-muted">
+          Vienna time. All days share one scale, so their bars compare directly.
+        </p>
+
+        @for (day of days(); track day.date) {
+          <figure class="mt-6">
+            <figcaption
+              class="mb-3 flex flex-wrap items-baseline justify-between gap-x-4"
+            >
+              <span class="font-semibold">{{
+                day.date | date: 'EEEE, d MMMM y'
+              }}</span>
+              <span class="text-sm tabular-nums text-ink-muted">
+                {{ plural(day.orderCount, 'sale') }} ·
+                {{ euro(day.revenueCents) }}
+              </span>
+            </figcaption>
+
+            <div class="flex">
+              <!-- Recessive scale: the top value only -->
+              <div
+                class="relative mr-2 h-40 w-8 shrink-0 text-right text-xs tabular-nums text-ink-muted"
+                aria-hidden="true"
+              >
+                <span class="absolute -top-2 right-0">{{ hourMax() }}</span>
+                <span class="absolute -bottom-2 right-0">0</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div
+                  class="chart-frame relative flex h-40 items-end gap-[2px]"
+                  role="list"
+                  [attr.aria-label]="
+                    'Sales per hour on ' + (day.date | date: 'EEEE, d MMMM')
+                  "
+                >
+                  @for (hour of day.hours; track hour.hour) {
+                    <div
+                      class="group relative flex h-full flex-1 flex-col justify-end outline-offset-2"
+                      role="listitem"
+                      tabindex="0"
+                      [attr.aria-label]="
+                        hourLabel(hour.hour) +
+                        ': ' +
+                        plural(hour.orderCount, 'sale') +
+                        ', ' +
+                        euro(hour.revenueCents)
+                      "
+                    >
+                      @if (hour.hour === day.peakHour) {
+                        <span
+                          class="mb-1 text-center text-xs font-semibold tabular-nums text-ink"
+                          aria-hidden="true"
+                          >{{ hour.orderCount }}</span
+                        >
+                      }
+                      @if (hour.orderCount > 0) {
+                        <div
+                          class="chart-bar rounded-t-[4px] transition-opacity group-hover:opacity-80"
+                          [style.height.%]="(hour.orderCount / hourMax()) * 100"
+                        ></div>
+                      }
+                      <!-- Tooltip on hover and keyboard focus -->
+                      <div
+                        class="pointer-events-none invisible absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-background-900 px-2.5 py-1.5 text-xs text-white shadow-lg group-hover:visible group-focus-visible:visible dark:bg-background-50 dark:text-ink-strong"
+                        aria-hidden="true"
+                      >
+                        <span class="font-semibold">{{
+                          hourLabel(hour.hour)
+                        }}</span>
+                        <br />
+                        {{ plural(hour.orderCount, 'sale') }} ·
+                        {{ euro(hour.revenueCents) }}
+                      </div>
+                    </div>
+                  }
+                </div>
+                <div
+                  class="mt-1 flex gap-[2px] text-xs tabular-nums text-ink-muted"
+                  aria-hidden="true"
+                >
+                  @for (hour of day.hours; track hour.hour) {
+                    <span class="flex-1 text-center">{{ hour.hour }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <details class="mt-3 text-sm">
+              <summary class="cursor-pointer text-ink-muted hover:text-ink">
+                Show as table
+              </summary>
+              <table class="table table-sm mt-2 max-w-md">
+                <thead>
+                  <tr class="text-ink-muted">
+                    <th scope="col">Hour</th>
+                    <th scope="col" class="text-right">Sales</th>
+                    <th scope="col" class="text-right">Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (hour of day.hours; track hour.hour) {
+                    <tr>
+                      <td class="tabular-nums">{{ hourLabel(hour.hour) }}</td>
+                      <td class="text-right tabular-nums">
+                        {{ hour.orderCount }}
+                      </td>
+                      <td class="text-right tabular-nums">
+                        {{ euro(hour.revenueCents) }}
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </details>
+          </figure>
+        }
+      </section>
+
+      <!-- Products by quantity; vouchers are in the key figures -->
+      <section
+        class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+        aria-labelledby="ranking-heading"
+      >
+        <h2 id="ranking-heading" class="text-lg font-bold">Products</h2>
+        <p class="mb-4 text-sm text-ink-muted">
+          By quantity sold, all buffets together. The share is of the product
+          revenue before vouchers.
+        </p>
+        <div class="overflow-x-auto">
+          <table class="table table-sm">
+            <thead>
+              <tr class="text-ink-muted">
+                <th scope="col">Product</th>
+                <th scope="col" class="w-1/2">
+                  <span class="sr-only">Quantity as a bar</span>
+                </th>
+                <th scope="col" class="text-right">Quantity</th>
+                <th scope="col" class="text-right">Revenue</th>
+                <th scope="col" class="text-right">Share</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of st.products; track product.productId) {
+                <tr>
+                  <td class="whitespace-nowrap">{{ product.name }}</td>
+                  <td aria-hidden="true">
+                    <div
+                      class="chart-bar h-3 rounded-r-[4px]"
+                      [style.width.%]="(product.quantity / productMax()) * 100"
+                    ></div>
+                  </td>
+                  <td class="text-right tabular-nums">
+                    {{ product.quantity }}
+                  </td>
+                  <td class="text-right tabular-nums">
+                    {{ euro(product.revenueCents) }}
+                  </td>
+                  <td class="text-right tabular-nums">
+                    {{
+                      productRevenue() > 0
+                        ? (product.revenueCents / productRevenue() | percent)
+                        : '–'
+                    }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  }
+}

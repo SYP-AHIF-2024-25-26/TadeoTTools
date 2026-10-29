@@ -1,4 +1,4 @@
-/** A product as sold at one buffet. Prices are in cents, as in the legacy backend. */
+/** A product as sold at one buffet. Prices are in cents, as in the backend. */
 export interface Product {
   id: number;
   name: string;
@@ -6,7 +6,7 @@ export interface Product {
   price: number;
   /** Unit shown under the name ("Stück", "Becher", "Teller"); may be empty. */
   measure: string;
-  /** Order at the counter, as set in the legacy admin. */
+  /** Order at the counter, as set in the dashboard. */
   rank: number;
 }
 
@@ -23,7 +23,7 @@ export interface CartLine {
   amount: number;
 }
 
-/** `POST /api/orders` body of the legacy backend. */
+/** `POST /v1/orders` body; the same as for the legacy `POST /api/orders`. */
 export interface OrderSubmission {
   buffetId: number;
   /** ISO time the sale was completed (not when it was sent). */
@@ -67,7 +67,7 @@ export type LoadFailure = 'no-network' | 'server';
 export type AccessState =
   'checking' | 'logged-out' | 'granted' | 'denied' | LoadFailure;
 
-/** `GET /v1/users/is-cashier` of the TadeoTTools backend; the class is empty for teachers. */
+/** `GET /v1/users/is-cashier`; the class is empty for teachers. */
 export interface CashierUser {
   name: string;
   studentClass: string;

@@ -26,7 +26,7 @@
         <!-- Students, feedback and the visitor app switch, right of the stops -->
         <div class="flex min-w-0 flex-col gap-6 lg:col-start-3 lg:row-start-1">
           <section
-            class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+            class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
             aria-labelledby="students-heading"
           >
             <div class="flex items-baseline justify-between gap-4">
@@ -50,7 +50,7 @@
                     <li>
                       <a
                         class="flex items-center gap-2 rounded hover:underline"
-                        routerLink="/students"
+                        routerLink="/students-and-stops"
                         [queryParams]="{ status: seg.status }"
                       >
                         <span
@@ -81,7 +81,7 @@
           </section>
 
           <section
-            class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400"
+            class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
             aria-labelledby="visitor-app-heading"
           >
             <div class="flex items-baseline justify-between gap-4">
@@ -167,7 +167,7 @@
 
         <!-- All stops: the tour's groups in tour order, then the internal stops. Each row is collapsed to its student totals. -->
         <section
-          class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg shadow-secondary-200 dark:border dark:border-accent-400 lg:col-span-2"
+          class="min-w-0 rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600 lg:col-span-2"
           aria-labelledby="stops-heading"
         >
           <div class="flex items-baseline justify-between gap-4">

@@ -17,7 +17,7 @@ export const SEQUENCE_KEY = 'tadeot-cashier-sequence';
 /** Retry interval while the tablet has no products at all (first start without Wi-Fi). */
 export const CATALOG_RETRY_MS = 30000;
 
-/** Prices may be changed in the legacy admin during the day; the till picks that up. */
+/** Prices may be changed in the dashboard during the day; the till picks that up. */
 export const CATALOG_REFRESH_MS = 5 * 60000;
 
 /** Retry interval for sales that could not be sent. */

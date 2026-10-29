@@ -1,14 +1,29 @@
-<div class="nav-surface sticky top-0 z-50 bg-background-400 shadow">
+<div class="nav-surface sticky top-0 z-50 border-b border-primary-200 bg-primary-100 shadow-sm dark:border-background-600 dark:bg-background-400">
   <nav
     class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-ink"
   >
     <!-- Logo -->
-    <a [routerLink]="['/']" class="flex items-center">
+    <!-- Admins: the Overview (their home); everyone else: their own start page -->
+    <a
+      [routerLink]="isAdmin() ? ['/overview'] : ['/']"
+      [attr.aria-label]="isAdmin() ? 'Overview' : 'Home'"
+      [attr.aria-current]="isAdmin() && path() === '/overview' ? 'page' : null"
+      class="flex items-center"
+    >
+      <!-- The school's colour logo on the pale bar; the white one on the dark bar -->
+      <img
+        ngSrc="assets/htl-leonding-logo.png"
+        priority
+        alt="HTL Leonding"
+        class="h-8 w-auto dark:hidden"
+        height="347"
+        width="1536"
+      />
       <img
         ngSrc="assets/Leonding_Logo.svg"
         priority
-        alt="Leonding Logo"
-        class="h-8"
+        alt="HTL Leonding"
+        class="hidden h-8 w-auto dark:block"
         height="29"
         width="128"
       />
@@ -20,9 +35,13 @@
         @for (link of navLinks; track link.route) {
           <a
             class="px-3 py-2"
+            [class]="
+              isActive(link)
+                ? 'bg-primary rounded font-medium text-primary-content underline'
+                : ''
+            "
             [routerLink]="[link.route]"
-            routerLinkActive="bg-primary text-primary-content underline font-medium rounded"
-            ariaCurrentWhenActive="page"
+            [attr.aria-current]="isActive(link) ? 'page' : null"
           >
             {{ link.label }}
           </a>
@@ -93,8 +112,13 @@
                 <a
                   class="block px-4 py-2 text-sm text-ink"
                   (click)="mobileMenuOpen.set(false)"
+                  [class]="
+                    isActive(link)
+                      ? 'bg-primary font-medium text-primary-content'
+                      : ''
+                  "
                   [routerLink]="[link.route]"
-                  routerLinkActive="bg-primary text-primary-content font-medium"
+                  [attr.aria-current]="isActive(link) ? 'page' : null"
                 >
                   {{ link.label }}
                 </a>

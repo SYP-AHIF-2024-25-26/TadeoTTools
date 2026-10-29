@@ -2,22 +2,22 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import Keycloak from 'keycloak-js';
-import { TOOLS_URL } from '@app/app.config';
+import { BASE_URL } from '@app/app.config';
 import { classify } from './failure';
 import { AccessState, CashierUser } from '@shared/models/types';
 
 /**
  * School login (Keycloak, same client as the dashboard) before the till opens.
- * Who may sell is decided by the TadeoTTools backend: teachers, admins and students
- * accepted at the "Buffet" stop. The legacy backend itself still needs no login,
- * so this only guards the screen.
+ * Who may sell is decided by the backend: teachers, admins and students accepted
+ * at the "Buffet" stop. The same login goes with every request (`authInterceptor`),
+ * so the backend refuses products and sales without it.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class AccessService {
   private http = inject(HttpClient);
-  private toolsUrl = inject(TOOLS_URL);
+  private baseUrl = inject(BASE_URL);
   private keycloak = new Keycloak({
     url: 'https://auth.htl-leonding.ac.at',
     realm: 'htlleonding',
@@ -68,11 +68,8 @@ export class AccessService {
     this.userName.set(token?.['name'] ?? token?.['preferred_username'] ?? '');
 
     try {
-      await this.keycloak.updateToken(30);
       const user = await firstValueFrom(
-        this.http.get<CashierUser>(`${this.toolsUrl}/v1/users/is-cashier`, {
-          headers: { Authorization: `Bearer ${this.keycloak.token}` },
-        })
+        this.http.get<CashierUser>(`${this.baseUrl}/v1/users/is-cashier`)
       );
       this.userName.set(
         user.studentClass ? `${user.name} (${user.studentClass})` : user.name
@@ -88,6 +85,36 @@ export class AccessService {
         console.warn('Cashier access could not be checked', err);
         this.state.set(classify(err));
       }
+    }
+  }
+
+  /**
+   * The token for the next request, refreshed when it runs out within 30 s.
+   * Undefined while nobody is logged in. If the refresh fails (no Wi-Fi), the
+   * old token is sent and the request fails like any other.
+   */
+  async token(): Promise<string | undefined> {
+    if (!this.keycloak.authenticated) return undefined;
+    try {
+      await this.keycloak.updateToken(30);
+    } catch (err) {
+      console.warn('Token could not be refreshed', err);
+    }
+    return this.keycloak.token;
+  }
+
+  /**
+   * The backend refused a request while selling: the login ran out for good (401,
+   * back to the start page) or the access was taken away (403, checked again).
+   * Waiting sales stay in the outbox and are sent after the next login.
+   */
+  lost(status: 401 | 403): void {
+    if (this.state() !== 'granted') return;
+    if (status === 401) {
+      this.keycloak.clearToken();
+      this.state.set('logged-out');
+    } else {
+      this.check();
     }
   }
 

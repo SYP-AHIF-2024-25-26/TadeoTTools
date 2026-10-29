@@ -15,6 +15,8 @@ using API.Endpoints.AdminManagement;
 using API.Endpoints.FeedbackManagement;
 using API.Endpoints.FeatureFlagManagement;
 using API.Endpoints.OverviewManagement;
+using API.Endpoints.BuffetManagement;
+using API.Endpoints.LegacyImportManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +38,9 @@ builder.Services.AddScoped<DivisionFunctions>();
 builder.Services.AddScoped<StopGroupFunctions>();
 builder.Services.AddScoped<StopFunctions>();
 builder.Services.AddScoped<TadeoTDbContext>();
+
+// Reads the legacy TadeoT backend for the one-time import (LegacyApi:BaseUrl).
+builder.Services.AddHttpClient();
 
 builder.Services.AddLeoAuthentication();
 builder.Services.AddBasicAuthorization();
@@ -119,6 +124,8 @@ app.MapAdminEndpoints();
 app.MapFeedbackEndpoints();
 app.MapFeatureFlagEndpoints();
 app.MapOverviewEndpoints();
+app.MapBuffetEndpoints();
+app.MapLegacyImportEndpoints();
 
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetService<TadeoTDbContext>();

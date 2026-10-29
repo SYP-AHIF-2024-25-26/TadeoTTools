@@ -25,7 +25,6 @@ import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StudentService } from '@/core/services/student.service';
 import { FilterStateService } from '@/core/services/filter-state.service';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
-import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 import { ActionIconComponent } from '@/shared/components/action-icon/action-icon.component';
 import { errorText, ToastService } from '@/core/services/toast.service';
 import { downloadFile } from '@/shared/utils/utils';
@@ -35,7 +34,6 @@ import { downloadFile } from '@/shared/utils/utils';
   imports: [
     RouterModule,
     FormsModule,
-    PageHeaderComponent,
     ActionIconComponent,
   ],
   templateUrl: './stop-list.component.html',

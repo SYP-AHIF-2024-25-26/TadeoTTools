@@ -59,10 +59,16 @@ export class CartService {
     return this.amounts().get(product.id) ?? 0;
   }
 
-  /** Vouchers count once per sale, as in the legacy app: a second tap takes it out again. */
+  /**
+   * One voucher per sale, as the backend accepts it: a second tap takes it out
+   * again, and another voucher replaces it.
+   */
   add(product: Product): void {
     const current = this.amount(product);
     if (isVoucher(product)) {
+      for (const line of this.lines())
+        if (isVoucher(line.product) && line.product.id !== product.id)
+          this.set(line.product, 0);
       this.set(product, current > 0 ? 0 : 1);
     } else if (current < MAX_AMOUNT) {
       this.set(product, current + 1);

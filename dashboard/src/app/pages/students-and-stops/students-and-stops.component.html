@@ -1,0 +1,44 @@
+<div class="page-shell">
+  <app-page-header title="Students &amp; Stops" />
+
+  <!-- Buttons, not links: leaving Stop Groups with an unsaved tour order asks first. -->
+  <div role="tablist" aria-label="Students &amp; Stops" class="page-tabs">
+    @for (t of tabs; track t.id) {
+      <button
+        type="button"
+        role="tab"
+        class="page-tab"
+        [id]="'sas-tab-' + t.id"
+        [attr.aria-selected]="tab() === t.id"
+        aria-controls="sas-panel"
+        (click)="select(t.id)"
+      >
+        {{ t.label }}
+        @if (t.id === 'students' && studentCount() !== null) {
+          <span class="badge badge-sm tabular-nums">{{ studentCount() }}</span>
+        }
+        @if (t.id === 'stops' && stopCount() !== null) {
+          <span class="badge badge-sm tabular-nums">{{ stopCount() }}</span>
+        }
+      </button>
+    }
+  </div>
+
+  <div
+    id="sas-panel"
+    role="tabpanel"
+    [attr.aria-labelledby]="'sas-tab-' + tab()"
+  >
+    @switch (tab()) {
+      @case ('students') {
+        <app-list-students />
+      }
+      @case ('stopgroups') {
+        <app-stopgroups />
+      }
+      @case ('stops') {
+        <app-stops />
+      }
+    }
+  </div>
+</div>
