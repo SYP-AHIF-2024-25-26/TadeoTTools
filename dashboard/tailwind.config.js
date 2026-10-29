@@ -26,6 +26,13 @@ module.exports = {
           900: 'var(--background-900)',
           950: 'var(--background-950)',
         },
+        // Nachtband frame (leo-projects, from htl-leonding.at): the top bar. The same
+        // in both themes, so not a theme variable.
+        night: {
+          950: '#021422',
+          900: '#04243d',
+          100: '#dde7f0',
+        },
         primary: {
           // DaisyUI's Dashboard Blue. Without it this scale hides DaisyUI's `primary`,
           // so `bg-primary` (the active nav link) generated no rule at all.

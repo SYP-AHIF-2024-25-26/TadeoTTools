@@ -87,8 +87,21 @@ body {
   }
 
   /* The sky-blue nav bar is too light for the blue ring. */
-  :root:not(.dark) .nav-surface {
-    --focus-ring: var(--ink-strong);
+  /* The night top bar (Nachtband frame): a light focus ring that carries on night.
+     The white menus inside it set Dashboard Blue back (`.nav-menu`). */
+  .nav-surface {
+    --focus-ring: #60a5fa;
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.08),
+      0 6px 16px rgb(2 20 34 / 0.35);
+  }
+
+  .nav-menu {
+    --focus-ring: #1f6fd1;
+  }
+
+  .dark .nav-menu {
+    --focus-ring: #60a5fa;
   }
 
   .dark {
