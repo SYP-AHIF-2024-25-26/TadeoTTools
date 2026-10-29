@@ -1,118 +1,80 @@
 <div class="nav-surface sticky top-0 z-50 bg-night-950">
-  <nav
-    class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-night-100"
-  >
+  <nav class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-night-100">
     <!-- Logo -->
     <!-- Admins: the Overview (their home); everyone else: their own start page -->
-    <a
-      [routerLink]="isAdmin() ? ['/overview'] : ['/']"
-      [attr.aria-label]="isAdmin() ? 'Overview' : 'Home'"
-      [attr.aria-current]="isAdmin() && path() === '/overview' ? 'page' : null"
-      class="flex items-center"
-    >
+    <a [routerLink]="isAdmin() ? ['/overview'] : ['/']" [attr.aria-label]="isAdmin() ? 'Overview' : 'Home'"
+      [attr.aria-current]="isAdmin() && path() === '/overview' ? 'page' : null" class="flex items-center">
       <!-- The white school logo on the night bar, as on htl-leonding.at -->
-      <img ngSrc="assets/tadeot-tools-logo.png" priority alt="HTL Leonding TadeotTools" class="h-8 w-auto" height="29"
-        width="128" />
+      <img ngSrc="assets/tadeottools-logo-transparent.png" priority alt="TadeotTools – HTL Leonding" class="h-10 w-auto"
+        height="40" width="192" />
     </a>
 
     <!-- Nav Links (desktop) -->
     <div class="hidden space-x-4 md:flex md:items-center md:justify-start">
       @if (isAdmin()) {
-        @for (link of navLinks; track link.route) {
-          <!-- Active: a white pill with night text (Nachtband); otherwise night white -->
-          <a
-            class="rounded-lg px-3 py-2 transition-colors"
-            [class]="
+      @for (link of navLinks; track link.route) {
+      <!-- Active: a white pill with night text (Nachtband); otherwise night white -->
+      <a class="rounded-lg px-3 py-2 transition-colors" [class]="
               isActive(link)
                 ? 'bg-white font-bold text-night-950'
                 : 'hover:bg-white/10 hover:text-white'
-            "
-            [routerLink]="[link.route]"
-            [attr.aria-current]="isActive(link) ? 'page' : null"
-          >
-            {{ link.label }}
-          </a>
-        }
+            " [routerLink]="[link.route]" [attr.aria-current]="isActive(link) ? 'page' : null">
+        {{ link.label }}
+      </a>
+      }
       }
     </div>
 
     <div class="flex items-center space-x-4">
       <label class="inline-flex cursor-pointer items-center">
-        <input
-          type="checkbox"
-          class="peer sr-only"
-          aria-label="Dark mode"
-          [checked]="!isWhiteMode()"
-          (click)="changeDarkMode()"
-        />
+        <input type="checkbox" class="peer sr-only" aria-label="Dark mode" [checked]="!isWhiteMode()"
+          (click)="changeDarkMode()" />
         <div
-          class="peer relative ml-8 h-6 w-11 rounded-full bg-white/25 ring-1 ring-white/25 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full md:p-0"
-        ></div>
+          class="peer relative ml-8 h-6 w-11 rounded-full bg-white/25 ring-1 ring-white/25 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full md:p-0">
+        </div>
         <span class="ms-2 hidden md:block">Theme</span>
       </label>
 
       <!-- Admin/User Logic -->
       @if (!isAdmin()) {
-        <button (click)="logout()">Logout</button>
+      <button (click)="logout()">Logout</button>
       } @else {
-        <app-admin-dropdown></app-admin-dropdown>
+      <app-admin-dropdown></app-admin-dropdown>
       }
     </div>
 
     <!-- Hamburger and Mobile Dropdown Wrapper -->
     <div class="relative md:hidden">
       <!-- Hamburger (mobile only) -->
-      <button
-        class="inline-flex items-center justify-center rounded p-2 text-white hover:bg-white/10"
-        type="button"
-        aria-label="Menu"
-        [attr.aria-expanded]="mobileMenuOpen()"
-        (click)="mobileMenuOpen.set(!mobileMenuOpen())"
-      >
-        <svg
-          class="h-6 w-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            [attr.d]="
+      <button class="inline-flex items-center justify-center rounded p-2 text-white hover:bg-white/10" type="button"
+        aria-label="Menu" [attr.aria-expanded]="mobileMenuOpen()" (click)="mobileMenuOpen.set(!mobileMenuOpen())">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path [attr.d]="
               mobileMenuOpen()
                 ? 'M6 18L18 6M6 6l12 12'
                 : 'M4 6h16M4 12h16M4 18h16'
-            "
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-          />
+            " stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
         </svg>
       </button>
 
       <!-- Mobile Menu Dropdown -->
       @if (mobileMenuOpen()) {
-        <div
-          class="nav-menu absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-background-100 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-background-800"
-        >
-          <div class="py-1">
-            @if (isAdmin()) {
-              @for (link of navLinks; track link.route) {
-                <a
-                  class="block px-4 py-2 text-sm text-ink"
-                  (click)="mobileMenuOpen.set(false)"
-                  [class]="
+      <div
+        class="nav-menu absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-background-100 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-background-800">
+        <div class="py-1">
+          @if (isAdmin()) {
+          @for (link of navLinks; track link.route) {
+          <a class="block px-4 py-2 text-sm text-ink" (click)="mobileMenuOpen.set(false)" [class]="
                     isActive(link)
                       ? 'bg-primary font-medium text-primary-content'
                       : ''
-                  "
-                  [routerLink]="[link.route]"
-                  [attr.aria-current]="isActive(link) ? 'page' : null"
-                >
-                  {{ link.label }}
-                </a>
-              }
-            }
-          </div>
+                  " [routerLink]="[link.route]" [attr.aria-current]="isActive(link) ? 'page' : null">
+            {{ link.label }}
+          </a>
+          }
+          }
         </div>
+      </div>
       }
     </div>
   </nav>
