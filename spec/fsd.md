@@ -44,6 +44,7 @@ Nicht-Ziele:
   Tabelle `StopManagers` steht (Admins tragen das in „Users & Data“ ein).
 - `Admin`: Vollzugriff. Ist, wer in der Tabelle `Admins` steht.
 - `Kassier:in`: darf die Kassa bedienen (§11.2).
+- `Anmelder:in`: darf am Eingang Besucher:innen anmelden (§11.3).
 
 Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_username` des Tokens
 (ohne Beachtung der Groß-/Kleinschreibung) in den Tabellen `Admins` und `StopManagers`.
@@ -69,6 +70,7 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
   - Admins anlegen (nur über den Benutzernamen, ohne Prüfung, ob es ihn gibt) und entfernen.
     Ein Admin kann sich nicht selbst entfernen; damit bleibt immer mindestens ein Admin übrig.
 - `Kassier:in`: Verkäufe an der Kassa erfassen.
+- `Anmelder:in`: Besucher:innen am Anmelde-Kiosk anmelden.
 
 ## 2.3 Erster Admin
 - **(Lücke):** Der erste Admin wird beim Start automatisch angelegt, konfiguriert über eine
@@ -98,9 +100,11 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
 - `guide/`: GuideApp, Angular-22-PWA ohne Login.
 - `kiosk/feedback/`, `kiosk/registration/`, `kiosk/cashier/`, `kiosk/statistics/`: Angular-19-PWAs
   für feste Geräte (§11).
-- Altes Backend `htl-leo-tadeot` (eigenes Repo): Anmeldung und Statistik nutzen es. Die Kassa
-  läuft ab der Umstellung am 9.11.2026 über `backend/`. Das alte Backend wird **nicht verändert**
-  (§3.4).
+- Altes Backend `htl-leo-tadeot` (eigenes Repo): wird ersetzt. Die Kassa läuft schon über
+  `backend/`, Anmeldung und Statistik ab der Umstellung am 16.11.2026. Bis nach dem TdoT bleibt
+  das alte Backend der Rückfall und wird **nicht verändert** (§3.4).
+- `tools/photo-downloader/`: Programm für die Roboterführerschein-Stationen, holt die Fotos der
+  Anmeldung (§11.3).
 
 ## 3.2 Identität
 - Keycloak der Schule (`auth.htl-leonding.ac.at`, Realm `htlleonding`), JWT über LeoAuth.
@@ -115,13 +119,16 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
 ## 3.4 Altes Backend
 - Das alte Backend und seine Administrationsseite werden vor dem TdoT in zwei Schritten in
   TadeoTTools migriert, jeder mit Generalprobe und eigener Entscheidung:
-  1. Buffet und Kassa (Umstellung 9.11.2026): Produkte, Buffets, Speisekarten, Kassenbewegungen
-     und Verkäufe liegen in `backend/` und werden im Dashboard verwaltet (§11.2).
-  2. Anmeldung, Statistik und Fotos (Umstellung 16.11.2026, §18 „Soll“). Mehrere Lücken in §11
-     hängen davon ab.
+  1. Buffet und Kassa (umgestellt): Produkte, Buffets, Speisekarten, Kassenbewegungen und
+     Verkäufe liegen in `backend/` und werden im Dashboard verwaltet (§11.2).
+  2. Anmeldung, Statistik und Fotos (Umstellung 16.11.2026): Orte, Bezirke, Auswahllisten,
+     Anmeldungen und Fotos liegen in `backend/` und werden im Dashboard verwaltet (§11.3, §11.4).
+- Daten aus dem alten Backend kommen nur als CSV-Datei ins System, über den Import im Dashboard;
+  `backend/` ruft das alte Backend nie auf. Die Orte und Bezirke wurden am 29.10.2026 exportiert.
 - Das alte Backend bleibt unverändert und läuft bis nach dem 20.11.2026 als Rückfall weiter. Ein
-  Rückfall setzt nur die Images der Kiosks zurück; der Import übernimmt die alten IDs (Buffets,
-  Produkte), damit wartende Verkäufe in beiden Systemen gültig bleiben.
+  Rückfall setzt nur die Images der Kiosks zurück. Die Orte behalten ihre alten IDs, damit ein
+  zurückgestellter Anmelde-Kiosk gültige IDs sendet. Die Produkte wurden von Hand angelegt; vor
+  einem Rückfall der Kassa müssen die Warteschlangen der Tablets leer sein.
 
 ## 3.5 Geräte
 - Kiosk-Apps laufen auf Android-Tablets verschiedener Generationen und Auflösungen.
@@ -197,7 +204,13 @@ Eigenschaften:
 - Kein Login.
 
 ## 5.3 Anmeldung
-- Kein Login (das alte Backend verlangt keines).
+- Login über Keycloak wie bei der Kassa (§5.4); der Zugang wird beim Start über
+  `GET /v1/users/is-registrar` geprüft (§11.3).
+- Nur `POST /v1/visitors` verlangt die Anmeldung. `GET /v1/cities`, `GET /v1/registration-options`
+  und `GET /v1/visitors/count` bleiben offen (keine personenbezogenen Daten); der Kiosk lädt sie
+  schon vor dem Login.
+- Beim Start einer Anmeldung muss der Login noch mindestens 10 Minuten gelten, sonst wird zuerst
+  neu eingeloggt: Der Login lädt die Seite neu und würde eingegebene Angaben verwerfen.
 
 ## 5.4 Kassa
 - Login über Keycloak (gleicher Client wie das Dashboard). Der Zugang wird beim Start über
@@ -363,24 +376,51 @@ Eigenschaften:
   Infrastruktur-Station), statt des fest eingebauten Namens „Buffet“.
 
 ## 11.3 Anmeldung (`kiosk/registration`, Eingang, `/registration`)
+- Zugang: alle Lehrkräfte (LeoAuth), alle Admins und Schüler:innen mit bestätigter Zuteilung zur
+  Station, die genau „Empfang“ heißt (fest eingebaut, Groß-/Kleinschreibung egal; wie bei der
+  Kassa, §11.2). Stop-Manager sind nicht ausgeschlossen, die Rolle allein gibt aber keinen
+  Zugang: Lehrkräfte unter ihnen dürfen als Lehrkräfte anmelden, Schüler:innen unter ihnen nur mit
+  der Zuteilung zu „Empfang“. Offene oder abgelehnte Zuteilungen zählen nicht.
+- Der Kiosk sagt „einloggen“/„ausloggen“, weil „Anmelden“ dort das Speichern einer Besucherin
+  oder eines Besuchers ist. Die Statusleiste zeigt, wer eingeloggt ist; „Ausloggen“ gibt es nur
+  auf dem Startbildschirm, mit Rückfrage (z. B. beim Schichtwechsel).
+- Kein Datenverlust durch den Login: „Anmeldung starten“ prüft zuerst, ob die Sitzung noch
+  mindestens 10 Minuten gilt, sonst wird vorher neu eingeloggt (§5.3). Wird das Speichern trotzdem
+  wegen des Logins abgelehnt (abgelaufen oder Zugang entzogen), bleiben die Angaben stehen und
+  werden erst nach Rückfrage verworfen.
+- Jede Anmeldung speichert, wer am Kiosk eingeloggt war (Benutzername); er steht im CSV-Export
+  („Angemeldet von“).
 - Schüler:innen erfassen ankommende Besucher:innen: Postleitzahl/Ort, Angaben zur Person, wie sie
   von der Schule erfahren haben, Interessen, optional ein Foto für den Roboterführerschein.
-- Nur österreichische Postleitzahlen (Liste aus dem alten Backend); die Liste muss aktuell sein.
-- Geschlecht: männlich/weiblich. **(Lücke, mit Migration):** zusätzlich „keine Angabe“.
-- Die Einwilligung zum Foto wird am Kiosk eingeholt. Fotos löscht ein Admin manuell in der alten
-  Administrationsseite.
+- Nur österreichische Postleitzahlen; die Liste muss aktuell sein. Admins pflegen Orte und Bezirke
+  im Dashboard (Seite „Registration“): anlegen, ändern (auch den Bezirk eines Orts), löschen. Ein
+  Ort mit Anmeldungen und ein Bezirk mit Orten lassen sich nicht löschen. Die erste Befüllung
+  kommt per CSV-Import aus den Daten des alten Backends; ein Import füllt nur eine leere Liste,
+  ganz oder gar nicht.
+- Die Auswahllisten „Grund des Besuchs“ und „Schultyp“ pflegen Admins ebenfalls dort (Reihenfolge,
+  ergänzen, entfernen). Eine Anmeldung speichert den gewählten Text; eine spätere Änderung der
+  Liste ändert sie nicht.
+- Geschlecht: männlich, weiblich oder „keine Angabe“.
+- Die Einwilligung zum Foto wird am Kiosk eingeholt. Das Foto liegt als Datei `Visitor_0001.png`
+  (Besuchernummer) im Backend und ist **ohne Login über die Besuchernummer abrufbar**, damit die
+  Roboterführerschein-Stationen es mit dem PhotoDownloader holen können (Entscheidung). Kann das
+  Foto nicht gespeichert werden, wird auch die Anmeldung nicht gespeichert.
+- Admins exportieren die Anmeldungen als CSV, laden alle Fotos als ZIP und löschen alle
+  Anmeldungen (samt Fotos) oder nur alle Fotos im Dashboard.
 - Speichern braucht eine Verbindung (keine Warteschlange).
 
 ## 11.4 Statistik (`kiosk/statistics`, Beamer in der Aula, `/statistics`)
-- Unbeaufsichtigte Diashow aus dem alten Backend (nur lesend): Besucherzahl, Anmeldungen pro
-  Stunde, Abteilungen, Gründe, Schultypen, Bezirke, Geschlecht.
+- Unbeaufsichtigte Diashow (nur lesend, `GET /v1/visitor-statistics`): Besucherzahl, Anmeldungen
+  pro Stunde, Abteilungen, Gründe, Schultypen, Bezirke, Geschlecht.
+- Die Bezirks-Folie zählt die Anmeldungen je Bezirk des gewählten Orts (Begleitpersonen nicht
+  mitgezählt; das alte Backend zählte die Orte mit Anmeldungen). Wien erscheint je
+  Gemeindebezirk, so wie die Wiener Orte im Dashboard ihren Bezirken zugeordnet sind.
 - Aktualisierung alle 60 s, Zwischenspeicher im Browser; Fehler werden nie angezeigt, nur der
   „Stand“ bleibt stehen.
 - `?delay=N` setzt die Sekunden pro Folie (3–120, Standard 10).
 - Die Stunden-Folie zeigt eine Zeile je Tag: den letzten Tag und Tage mit Anmeldungen in der Woche
   davor (max. 3).
-- **(Lücke):** Die Zeitzone wird korrekt behandelt (heute liefert das alte Backend die Stunden um
-  1 h verschoben).
+- Die Stunden sind Wiener Zeit (Sommer- und Winterzeit); das Backend speichert in UTC.
 
 ---
 
@@ -390,7 +430,9 @@ Eigenschaften:
   spätestens im neuen Schuljahr, wenn die Planung des nächsten TdoT beginnt.
 - Stop-Manager werden nicht gelöscht, außer als Teil der Schüler:innen, die Stop-Manager sind.
 - Feedback wird manuell gelöscht (§9.3).
-- Fotos der Anmeldung: §11.3.
+- Anmeldungen und Fotos löscht ein Admin im Dashboard nach dem TdoT, nach dem Export (§11.3);
+  damit auch der gespeicherte Benutzername der Anmelder:innen. Das Archiv der Daten aus dem alten
+  Backend wird an dem Tag gelöscht, den die Aufbewahrungsregel der Schule vorgibt.
 - Stationen, Gruppen und Abteilungen bleiben über die Jahre bestehen.
 
 ---
@@ -493,6 +535,8 @@ Als Schüler:in am Eingang möchte ich ankommende Besucher:innen erfassen.
 Akzeptanzkriterien:
 - Nur gültige österreichische Postleitzahlen.
 - Ohne Verbindung wird nicht gespeichert, und das ist sichtbar.
+- Nur berechtigte Personen kommen nach dem Login zur Anmeldung; ein ablaufender Login verwirft
+  keine bereits eingegebenen Angaben ohne Rückfrage.
 
 ## US-08 Kassieren
 Als Kassier:in möchte ich Verkäufe am Buffet erfassen.
@@ -543,17 +587,15 @@ Ein Stand gilt als abnahmefähig für den TdoT, wenn mindestens funktioniert:
 - Zuteilungs-Import über Benutzernamen, fehlerhafte Zeilen überspringen (§10.3).
 - `resetDB` entfernen, CSV-Spaltennamen vereinheitlichen (§10).
 - Feedback-Quelle speichern (§9.2).
-- Zeitzone der Statistik (§11.4).
 - Kein `localhost` in CORS der Produktion (§13.3).
-- Migration von Anmeldung und Statistik aus dem alten Backend vor dem TdoT (§3.4, Schritt 2), mit
-  Geschlecht „keine Angabe“.
 - Infrastruktur-Seite mit „verfügbar“/„erledigt“ und Deadline (§7.1).
 - Vorschau-Seite der Tour für alle Rollen und Navigation für Schüler:innen (§2.4).
 
 ## Kann (später)
 - Mehrere Schuljahre und Veranstaltungen; abgeschlossene nur lesbar, nur aktuelle editierbar;
   mehrere Veranstaltungen pro Schuljahr für dieselben Schüler:innen.
-- Konfigurierbar, welche Stationen kassieren dürfen (§11.2).
+- Konfigurierbar, welche Stationen kassieren dürfen (§11.2); ebenso für die Anmeldung statt
+  „Empfang“ (§11.3).
 - QR-Codes an Stationen mit funktionierendem Direktlink (§6.5).
 - E-Mail-Benachrichtigung bei Änderungen an Zuteilungen (§8.3).
 - Aus dem README: Schichtplanung, Warteschlangen-Management, Gutscheinverwaltung fürs Buffet,
@@ -566,8 +608,9 @@ Ein Stand gilt als abnahmefähig für den TdoT, wenn mindestens funktioniert:
 - **Zuteilungs-Import (§10.3):** Wie genau überspringen (welche Fehler, Rückmeldung an den Admin)
   ist noch zu klären (Antworten 32/34).
 - **Navigation für Schüler:innen (§2.4):** Entwurf der Vorschau-Seite und der Navigation offen.
-- **Alte Buffet-Endpunkte (§3.4):** Bis zur zweiten Umstellung bleiben `GET /api/Buffets` und
-  `POST /api/orders` des alten Backends ohne Login erreichbar (es wird nicht verändert), werden aber
-  nur noch im Rückfall verwendet. Nach dem 20.11.2026 wird das alte Backend abgeschaltet.
+- **Alte Endpunkte (§3.4):** Bis zum 20.11.2026 bleiben die Endpunkte des alten Backends (Buffet,
+  Anmeldung, Statistik) ohne Login erreichbar (es wird nicht verändert), werden aber nur noch im
+  Rückfall verwendet. Danach wird das alte Backend abgeschaltet. Im Rückfall der Anmeldung braucht
+  der alte Kiosk keinen Login und speichert keinen Benutzernamen.
 - **Mehrtägige Veranstaltung (§1):** Das Datenmodell kennt keinen Tag; wie Tage geplant werden,
   wird mit der Erweiterung „mehrere Veranstaltungen“ entschieden.

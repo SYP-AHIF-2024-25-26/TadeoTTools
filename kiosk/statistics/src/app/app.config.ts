@@ -9,8 +9,8 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { environment } from '@env/environment';
 
 /**
- * URL of the legacy TadeoT backend without `/api`
- * (e.g. `https://tadeot.htl-leonding.ac.at/tadeot-api`).
+ * URL of `backend/` without `/v1`
+ * (e.g. `https://tadeot.htl-leonding.ac.at/tadeot-backend-201126`).
  */
 export const BASE_URL = new InjectionToken<string>('BaseUrl');
 

@@ -31,12 +31,12 @@ services:
     depends_on:
       - tadeot-backend-201126
 
-  # Talks to the legacy TadeoT backend, not to tadeot-backend-201126
+  # Registers visitors (with photo) through the TadeoTTools backend, no login
   tadeot-registration-201126:
     image: ghcr.io/syp-ahif-2024-25-26/tadeottools/registration:latest
     container_name: tadeot-registration-201126
     environment:
-      - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-api
+      - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126
     networks:
       - tadeotnet-201126
 
@@ -49,12 +49,12 @@ services:
     networks:
       - tadeotnet-201126
 
-  # Visitor statistics slideshow for the projector; reads the legacy TadeoT backend
+  # Visitor statistics slideshow for the projector; reads the TadeoTTools backend
   tadeot-statistics-201126:
     image: ghcr.io/syp-ahif-2024-25-26/tadeottools/statistics:latest
     container_name: tadeot-statistics-201126
     environment:
-      - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-api
+      - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126
     networks:
       - tadeotnet-201126
 
@@ -71,6 +71,10 @@ services:
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
       - ConnectionStrings__DefaultConnection=Host=tadeot-postgres;Database=tadeot;Username=user;Password=test
       - ASPNETCORE_URLS=http://+:4100
+    volumes:
+      # Visitor photos (Visitor_0001.png ...); back them up next to pg_dump. The folder must be
+      # writable by the API's non-root user: mkdir photos && sudo chown 1654 photos
+      - ./photos:/app/photos
     depends_on:
       tadeot-postgres:
         condition: service_healthy

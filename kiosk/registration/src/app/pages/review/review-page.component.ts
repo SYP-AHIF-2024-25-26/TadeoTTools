@@ -10,8 +10,14 @@ import {
   RegistrationSessionService,
 } from '@core/services/registration-session.service';
 import { ConfirmCancelDialogComponent } from '@shared/components/confirm-cancel-dialog.component';
+import { ConfirmDialogComponent } from '@shared/components/confirm-dialog.component';
+import { AccessService } from '@core/services/access.service';
 import { FocusOnShowDirective } from '@shared/directives/focus-on-show.directive';
-import { INTEREST_GROUPS, OTHER_REASON } from '@shared/constants';
+import {
+  GENDER_LABELS,
+  INTEREST_GROUPS,
+  OTHER_REASON,
+} from '@shared/constants';
 
 interface Row {
   label: string;
@@ -26,7 +32,11 @@ const INTEREST_LABELS = new Map(
 /** Last look before saving; tapping a row opens its step. */
 @Component({
   selector: 'app-review-page',
-  imports: [ConfirmCancelDialogComponent, FocusOnShowDirective],
+  imports: [
+    ConfirmCancelDialogComponent,
+    ConfirmDialogComponent,
+    FocusOnShowDirective,
+  ],
   template: `
     <header class="flex items-start gap-6 px-4 pt-4 sm:px-6 sm:pt-6 md:px-10">
       <div class="flex-1">
@@ -110,7 +120,13 @@ const INTEREST_LABELS = new Map(
           Die Anmeldung wurde nicht gespeichert.
         </p>
         <p class="mt-1 text-lg text-gray-700">
-          @if (error.kind === 'no-network') {
+          @if (error.kind === 'login') {
+            Der Login am Tablet ist abgelaufen. Ohne Login kann die Anmeldung
+            nicht gespeichert werden; neu einloggen verwirft die Angaben.
+          } @else if (error.kind === 'denied') {
+            Dieser Login darf keine Besucher:innen mehr anmelden. Bitte die
+            Lehrkraft am Empfang fragen.
+          } @else if (error.kind === 'no-network') {
             Keine Verbindung zum Server. Bitte das WLAN des Tablets prüfen und
             erneut versuchen – alle Angaben bleiben erhalten.
           } @else {
@@ -119,6 +135,15 @@ const INTEREST_LABELS = new Map(
             }}. Bitte erneut versuchen – alle Angaben bleiben erhalten.
           }
         </p>
+        @if (lostLogin()) {
+          <button
+            type="button"
+            class="btn-primary mt-4 px-8"
+            (click)="confirmLeave.set(true)"
+          >
+            {{ error.kind === 'login' ? 'Neu einloggen' : 'Verwerfen' }}
+          </button>
+        }
       </div>
     }
 
@@ -152,6 +177,7 @@ const INTEREST_LABELS = new Map(
       <button
         type="button"
         class="btn-primary pl-8 pr-6"
+        [class.invisible]="lostLogin()"
         [disabled]="session.saving()"
         (click)="session.save()"
       >
@@ -206,13 +232,34 @@ const INTEREST_LABELS = new Map(
         (discard)="discard()"
       />
     }
+    @if (confirmLeave()) {
+      <app-confirm-dialog
+        title="Angaben verwerfen?"
+        text="Die Angaben und ein aufgenommenes Foto werden nicht gespeichert. Bitte die Person danach noch einmal anmelden."
+        keepLabel="Zurück"
+        [confirmLabel]="
+          session.saveError()?.kind === 'login'
+            ? 'Verwerfen und einloggen'
+            : 'Verwerfen'
+        "
+        (keep)="confirmLeave.set(false)"
+        (confirm)="leave()"
+      />
+    }
   `,
   host: { class: 'flex h-full flex-col' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReviewPageComponent {
   protected session = inject(RegistrationSessionService);
+  private access = inject(AccessService);
   protected confirmCancel = signal(false);
+  protected confirmLeave = signal(false);
+  /** Saving was refused for the login itself; trying again cannot help. */
+  protected lostLogin = computed(() => {
+    const kind = this.session.saveError()?.kind;
+    return kind === 'login' || kind === 'denied';
+  });
   protected photo = computed(() => this.session.draft().photo);
 
   protected rows = computed<Row[]>(() => {
@@ -228,7 +275,7 @@ export class ReviewPageComponent {
       },
       {
         label: 'Geschlecht',
-        value: d.isMale === null ? '–' : d.isMale ? 'männlich' : 'weiblich',
+        value: d.gender === null ? '–' : GENDER_LABELS[d.gender],
         step: 'about',
       },
       {
@@ -270,5 +317,17 @@ export class ReviewPageComponent {
   protected discard(): void {
     this.confirmCancel.set(false);
     this.session.reset();
+  }
+
+  /** 401: back to the Keycloak login (the page reloads); 403: check again, which shows "Kein Zugang". */
+  protected leave(): void {
+    const kind = this.session.saveError()?.kind;
+    this.confirmLeave.set(false);
+    this.session.reset();
+    if (kind === 'login') {
+      this.access.login();
+    } else {
+      this.access.check();
+    }
   }
 }

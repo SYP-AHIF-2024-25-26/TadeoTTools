@@ -3,20 +3,24 @@ import {
   Component,
   computed,
   inject,
+  signal,
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { VisitorCountService } from '@core/services/visitor-count.service';
 import { RegistrationSessionService } from '@core/services/registration-session.service';
+import { AccessService } from '@core/services/access.service';
+import { ConfirmDialogComponent } from './confirm-dialog.component';
 
 const numberFormat = new Intl.NumberFormat('de-AT');
 
 /**
  * For the students at the entrance: how many visitors are registered so far,
- * and a warning when the server cannot be reached (saving would fail).
+ * who is logged in, and a warning when the server cannot be reached (saving
+ * would fail).
  */
 @Component({
   selector: 'app-status-bar',
-  imports: [NgOptimizedImage],
+  imports: [NgOptimizedImage, ConfirmDialogComponent],
   template: `
     <div
       class="flex min-h-11 items-center gap-4 bg-gray-100 px-4 py-2 text-base text-gray-700 sm:px-6 md:px-10 short:py-1"
@@ -67,6 +71,21 @@ const numberFormat = new Intl.NumberFormat('de-AT');
             <span>Anmeldungen werden gezählt …</span>
           }
         </span>
+        <span class="flex flex-wrap items-center gap-x-1">
+          @if (userName()) {
+            <span class="whitespace-nowrap">{{ userName() }}</span>
+          }
+          <!-- Only on the start screen: logging out reloads the page and would drop a registration -->
+          @if (session.step() === 'start') {
+            <button
+              type="button"
+              class="-my-1 h-11 rounded-xl px-3 font-medium text-gray-800 underline decoration-gray-400 underline-offset-4 hover:bg-gray-200"
+              (click)="confirmingLogout.set(true)"
+            >
+              Ausloggen
+            </button>
+          }
+        </span>
         @if (!reachable()) {
           <span class="flex items-center gap-2 font-medium text-gray-900">
             <svg
@@ -99,13 +118,27 @@ const numberFormat = new Intl.NumberFormat('de-AT');
         class="h-6 w-auto shrink-0 sm:h-8 short:h-7"
       />
     </div>
+    <!-- Logging in again means typing the school password at the entrance -->
+    @if (confirmingLogout()) {
+      <app-confirm-dialog
+        title="Ausloggen?"
+        text="Danach loggt sich die nächste Person mit ihrem Schulkonto ein."
+        keepLabel="Eingeloggt bleiben"
+        confirmLabel="Ausloggen"
+        (keep)="confirmingLogout.set(false)"
+        (confirm)="access.logout()"
+      />
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusBarComponent {
   private counter = inject(VisitorCountService);
   protected session = inject(RegistrationSessionService);
+  protected access = inject(AccessService);
 
+  protected confirmingLogout = signal(false);
+  protected userName = this.access.userName;
   protected reachable = this.counter.reachable;
   protected count = computed(() => {
     const c = this.counter.count();

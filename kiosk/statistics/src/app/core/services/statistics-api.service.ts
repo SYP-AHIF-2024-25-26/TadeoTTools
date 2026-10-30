@@ -3,18 +3,9 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom, timeout } from 'rxjs';
 import { BASE_URL } from '@app/app.config';
 import { REQUEST_TIMEOUT_MS } from '@shared/constants';
-import { VisitorCount, VisitorResult } from '@shared/types';
+import { Statistics } from '@shared/types';
 
-/** Paths of the legacy statistics endpoints, all `GET /api/Visitors/<path>` without login. */
-export type ResultPath =
-  | 'bytime'
-  | 'departmentcount'
-  | 'reasoncount'
-  | 'schooltypecount'
-  | 'districtcount'
-  | 'gendercount';
-
-/** Read-only access to the legacy TadeoT backend. This app never writes. */
+/** Read-only access to `backend/` (`GET /v1/visitor-statistics`, no login). This app never writes. */
 @Injectable({
   providedIn: 'root',
 })
@@ -22,18 +13,11 @@ export class StatisticsApiService {
   private http = inject(HttpClient);
   private baseUrl = inject(BASE_URL);
 
-  getCount(): Promise<VisitorCount> {
+  /** Everything the slides show, in one answer. */
+  getStatistics(): Promise<unknown> {
     return firstValueFrom(
       this.http
-        .get<VisitorCount>(`${this.baseUrl}/api/Visitors/count`)
-        .pipe(timeout(REQUEST_TIMEOUT_MS))
-    );
-  }
-
-  getResults(path: ResultPath): Promise<VisitorResult[]> {
-    return firstValueFrom(
-      this.http
-        .get<VisitorResult[]>(`${this.baseUrl}/api/Visitors/${path}`)
+        .get<Statistics>(`${this.baseUrl}/v1/visitor-statistics`)
         .pipe(timeout(REQUEST_TIMEOUT_MS))
     );
   }

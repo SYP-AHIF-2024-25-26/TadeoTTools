@@ -5,12 +5,18 @@ import {
   MAX_TIME_DAYS,
   TIME_WINDOW_DAYS,
 } from '@shared/constants';
-import { Bar, Slide, Statistics, VisitorResult } from '@shared/types';
+import {
+  Bar,
+  Slide,
+  Statistics,
+  VisitorHour,
+  VisitorResult,
+} from '@shared/types';
 
 /** Bars that are not a division (and the summed-up rest). */
 const NEUTRAL = '#9ca3af';
-/** The two parts of the gender bar: two neutral tones, no blue and pink. */
-const GENDER_COLORS = ['#374151', '#9ca3af'];
+/** The parts of the gender bar: neutral tones, no blue and pink; "keine Angabe" is the lightest. */
+const GENDER_COLORS = ['#374151', '#9ca3af', '#d1d5db'];
 
 /**
  * The slides in their fixed order, built from one data snapshot. A chart
@@ -49,15 +55,11 @@ export function buildSlides(data: Statistics | null): Slide[] {
       bars: bars(data.schoolTypes),
       percentOf: sum(data.schoolTypes),
     }),
-    // The legacy endpoint counts the towns with registrations per district
-    // (top 10), not the visitors, and says so here.
     barSlide({
       kind: 'bars',
       id: 'districts',
       title: 'Aus diesen Bezirken kommen unsere Gäste',
-      note: 'Zahl der Gemeinden je Bezirk, aus denen sich jemand angemeldet hat',
       bars: bars(data.districts),
-      unit: { one: 'Gemeinde', many: 'Gemeinden' },
     }),
     genderSlide(data.gender),
   ];
@@ -74,17 +76,16 @@ export function slideId(slide: Slide): string {
  * and the days with registrations in the week before it (at most
  * MAX_TIME_DAYS), one row per day on a shared hour axis. Older days stay out,
  * unless the URL says `?days=all` (for trying the rows with older data).
- * The legacy backend already shifts the hour to local winter time:
- * "21.11.2025-14:00" is 14–15 Uhr.
+ * The backend gives the hours in Vienna time: hour 14 is 14–15 Uhr.
  */
-function timeSlide(results: VisitorResult[]): Slide | null {
+function timeSlide(results: VisitorHour[]): Slide | null {
   const parsed = results
     .map((r) => {
-      const m = /^(\d{1,2})\.(\d{1,2})\.(\d{4})-(\d{1,2}):/.exec(r.category);
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(r.date);
       return m
         ? {
-            day: Date.UTC(+m[3], +m[2] - 1, +m[1]),
-            hour: +m[4],
+            day: Date.UTC(+m[1], +m[2] - 1, +m[3]),
+            hour: r.hour,
             count: r.count,
           }
         : null;

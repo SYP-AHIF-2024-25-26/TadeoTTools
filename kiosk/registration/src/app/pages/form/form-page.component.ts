@@ -152,7 +152,7 @@ export class FormPageComponent {
         return 'Bitte Postleitzahl eingeben und Ort wählen.';
       case 'about': {
         const missing = [
-          d.isMale === null && 'Geschlecht',
+          d.gender === null && 'Geschlecht',
           d.schoolLevel === null && 'Schulstufe',
           d.schoolType === null && 'Schultyp',
           d.adults === null && 'Begleitpersonen',

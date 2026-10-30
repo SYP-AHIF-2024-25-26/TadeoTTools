@@ -12,6 +12,7 @@ internal static class Setup
     public const string AdminPolicyName = "IsAdmin";
     public const string StopManagerOrAdminPolicyName = "IsStopManagerOrAdmin";
     public const string CashierPolicyName = "IsCashier";
+    public const string RegistrarPolicyName = "IsRegistrar";
 
     public static void AddLeoAuthentication(this IServiceCollection services)
     {
@@ -70,14 +71,16 @@ internal static class Setup
             .AddPolicy(StopManagerOrAdminPolicyName, policy => policy.Requirements
                 .Add(new StopManagerOrAdminRequirement()))
             .AddPolicy(CashierPolicyName, policy => policy.Requirements
-                .Add(new CashierRequirement()))
+                .Add(new KioskStaffRequirement(KioskStaffRequirement.BuffetStopName)))
+            .AddPolicy(RegistrarPolicyName, policy => policy.Requirements
+                .Add(new KioskStaffRequirement(KioskStaffRequirement.ReceptionStopName)))
             .AddPolicy(nameof(LeoUserRole.Student), policy => policy.Requirements
                 .Add(new LeoAuthRequirement(LeoUserRole.Student, true)));
 
             
         services.AddScoped<IAuthorizationHandler, StopManagerOrAdminHandler>();
         services.AddScoped<IAuthorizationHandler, AdminAuthorizationHandler>();
-        services.AddScoped<IAuthorizationHandler, CashierAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, KioskStaffAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, LeoAuthorizationHandler>();
     }
 }

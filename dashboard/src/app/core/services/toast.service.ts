@@ -26,7 +26,8 @@ export class ToastService {
   }
 }
 
-// The backend answers failed requests with a plain string or ProblemDetails.
+// The backend answers failed requests with a plain string, ProblemDetails or,
+// for a csv import, { errors: ["Line 3: …", …] } (one line per error).
 export function errorText(error: unknown, fallback: string): string {
   if (error instanceof HttpErrorResponse) {
     if (error.status === 0) {
@@ -37,7 +38,18 @@ export function errorText(error: unknown, fallback: string): string {
       return body;
     }
     if (body && typeof body === 'object') {
-      const { detail, title } = body as { detail?: unknown; title?: unknown };
+      const { detail, title, errors } = body as {
+        detail?: unknown;
+        title?: unknown;
+        errors?: unknown;
+      };
+      if (
+        Array.isArray(errors) &&
+        errors.length > 0 &&
+        errors.every((e) => typeof e === 'string')
+      ) {
+        return errors.join('\n');
+      }
       if (typeof detail === 'string' && detail !== '') return detail;
       if (typeof title === 'string' && title !== '') return title;
     }

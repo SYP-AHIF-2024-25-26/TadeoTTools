@@ -8,6 +8,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { FocusOnShowDirective } from '@shared/directives/focus-on-show.directive';
 import { RegistrationSessionService } from '@core/services/registration-session.service';
 import { ReferenceDataService } from '@core/services/reference-data.service';
+import { AccessService } from '@core/services/access.service';
 
 const timeFormat = new Intl.DateTimeFormat('de-AT', {
   hour: '2-digit',
@@ -42,13 +43,32 @@ const timeFormat = new Intl.DateTimeFormat('de-AT', {
         </p>
       </div>
 
-      @if (ready()) {
+      @if (session.renewLogin()) {
+        <!-- Nothing is entered yet, so logging in again loses nothing -->
+        <div class="max-w-lg" role="alert">
+          <p class="text-xl font-medium text-gray-800">
+            Der Login läuft bald ab.
+          </p>
+          <p class="mt-2 text-lg text-gray-600">
+            Bitte jetzt neu einloggen, damit die nächste Anmeldung sicher
+            gespeichert werden kann.
+          </p>
+          <button
+            type="button"
+            class="btn-primary mx-auto mt-8 px-10"
+            (click)="access.login()"
+          >
+            Neu einloggen
+          </button>
+        </div>
+      } @else if (ready()) {
         <button
           type="button"
-          class="flex h-20 items-center gap-3 whitespace-nowrap rounded-2xl bg-accent-600 px-8 text-2xl font-bold text-white shadow-md hover:bg-accent-700 active:scale-[0.98] sm:px-12"
+          class="flex h-20 items-center gap-3 whitespace-nowrap rounded-2xl bg-accent-600 px-8 text-2xl font-bold text-white shadow-md hover:bg-accent-700 active:scale-[0.98] disabled:opacity-70 sm:px-12"
+          [disabled]="session.starting()"
           (click)="session.start()"
         >
-          Anmeldung starten
+          {{ session.starting() ? 'Einen Moment …' : 'Anmeldung starten' }}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-7 w-7"
@@ -132,6 +152,7 @@ const timeFormat = new Intl.DateTimeFormat('de-AT', {
 export class StartPageComponent {
   protected session = inject(RegistrationSessionService);
   protected reference = inject(ReferenceDataService);
+  protected access = inject(AccessService);
 
   protected ready = this.reference.ready;
   protected loading = this.reference.loading;

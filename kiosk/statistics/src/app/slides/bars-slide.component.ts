@@ -74,20 +74,14 @@ export class BarsSlideComponent {
   readonly slide = input.required<Slide & { kind: 'bars' }>();
 
   protected rows = computed(() => {
-    const { bars, unit, percentOf } = this.slide();
+    const { bars, percentOf } = this.slide();
     const max = Math.max(...bars.map((b) => b.count));
     return bars.map((b) => ({
       label: b.label,
       share: b.count / max,
       color: b.color ?? 'var(--bar)',
       value: formatCount(b.count),
-      extra: unit
-        ? b.count === 1
-          ? unit.one
-          : unit.many
-        : percentOf
-          ? `· ${formatPercent(b.count, percentOf)}`
-          : '',
+      extra: percentOf ? `· ${formatPercent(b.count, percentOf)}` : '',
     }));
   });
 
@@ -102,7 +96,6 @@ export class BarsSlideComponent {
 
   /** Room kept free at the end of the longest bar for its value, in em. */
   protected reserve = computed(() => {
-    const { unit, percentOf } = this.slide();
-    return unit ? 7.5 : percentOf ? 6.5 : 3.2;
+    return this.slide().percentOf ? 6.5 : 3.2;
   });
 }

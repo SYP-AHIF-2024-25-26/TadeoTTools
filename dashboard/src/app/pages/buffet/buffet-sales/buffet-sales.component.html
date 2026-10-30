@@ -5,9 +5,12 @@
     <h2 class="text-lg font-bold">
       <span class="tabular-nums">{{ s.orderCount }}</span>
       {{ s.orderCount === 1 ? 'sale' : 'sales' }}
+      <!-- One text node: Angular drops whitespace-only text between elements -->
       @if (s.orderCount > 0) {
-        <span class="font-normal text-ink-muted">·</span>
-        <span class="tabular-nums">{{ euro(s.revenueCents) }}</span>
+        <span class="tabular-nums"
+          ><span class="font-normal text-ink-muted">· </span
+          >{{ euro(s.revenueCents) }}</span
+        >
       }
     </h2>
     <p class="text-sm text-ink-muted">

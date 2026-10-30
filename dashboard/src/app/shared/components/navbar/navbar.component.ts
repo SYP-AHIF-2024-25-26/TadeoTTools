@@ -37,6 +37,7 @@ export class NavbarComponent {
       also: ['/stop', '/stopgroup'],
     },
     { label: 'Feedback', route: '/feedback' },
+    { label: 'Registration', route: '/registration' },
     { label: 'Buffet', route: '/buffet' },
     { label: 'Users & Data', route: '/data-management' },
   ];

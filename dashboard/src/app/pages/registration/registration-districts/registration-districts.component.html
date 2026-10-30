@@ -1,0 +1,227 @@
+<section
+  class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+  aria-labelledby="districts-heading"
+>
+  <div class="mb-4 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h2 id="districts-heading" class="mb-1 text-lg font-bold">Districts</h2>
+      <p class="text-sm text-ink-muted">
+        Every town belongs to one district; the statistics count the towns per
+        district. The number is the three-digit district code of Statistik
+        Austria.
+      </p>
+    </div>
+    @if (districts().length > 0) {
+      <button
+        type="button"
+        class="btn btn-outline btn-sm"
+        [disabled]="downloading()"
+        (click)="downloadCsv()"
+      >
+        Export CSV
+      </button>
+    }
+  </div>
+
+  @if (districts().length === 0) {
+    <div
+      class="mb-6 rounded-md border border-dashed border-primary-200 p-4 dark:border-background-600"
+    >
+      <p class="mb-3 text-sm">
+        No districts yet. Import them first, then the towns on the Towns tab.
+      </p>
+      <app-csv-import
+        label="Districts file"
+        format="Number;Name"
+        hint="For example districts.csv from the legacy export. The import only fills an empty list; a file with an error is not imported at all."
+        noun="district"
+        [upload]="upload"
+        (imported)="changed.emit()"
+      />
+    </div>
+  }
+
+  <div class="overflow-x-auto">
+    <table class="table table-sm">
+      <thead>
+        <tr class="text-ink-muted">
+          <th
+            scope="col"
+            class="w-24"
+            [attr.aria-sort]="ariaSort(sort(), 'number')"
+          >
+            <app-sort-header
+              label="Number"
+              [direction]="direction('number')"
+              (sort)="sortOn('number')"
+            />
+          </th>
+          <th scope="col" [attr.aria-sort]="ariaSort(sort(), 'name')">
+            <app-sort-header
+              label="Name"
+              [direction]="direction('name')"
+              (sort)="sortOn('name')"
+            />
+          </th>
+          <th
+            scope="col"
+            class="text-right"
+            [attr.aria-sort]="ariaSort(sort(), 'cityCount')"
+          >
+            <app-sort-header
+              label="Towns"
+              alignEnd
+              [direction]="direction('cityCount')"
+              (sort)="sortOn('cityCount')"
+            />
+          </th>
+          <th scope="col"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (district of sorted(); track district.id) {
+          @if (editingId() === district.id) {
+            <tr [formGroup]="editForm">
+              <td>
+                <input
+                  class="input input-sm input-bordered w-20 tabular-nums"
+                  formControlName="number"
+                  inputmode="numeric"
+                  maxlength="3"
+                  required
+                  [class.input-error]="
+                    editForm.controls.number.invalid &&
+                    editForm.controls.number.touched
+                  "
+                  [attr.aria-label]="'Number of ' + district.name"
+                />
+              </td>
+              <td>
+                <input
+                  class="input input-sm input-bordered w-full min-w-48"
+                  formControlName="name"
+                  maxlength="100"
+                  required
+                  [attr.aria-label]="'Name of ' + district.name"
+                />
+              </td>
+              <td class="text-right tabular-nums">{{ district.cityCount }}</td>
+              <td>
+                <div class="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm"
+                    [disabled]="saving()"
+                    (click)="cancelEdit()"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm"
+                    [disabled]="saving() || editForm.pristine"
+                    (click)="save(district)"
+                  >
+                    Save
+                  </button>
+                </div>
+              </td>
+            </tr>
+            @if (editError()) {
+              <tr>
+                <td colspan="4" class="text-sm text-error" role="alert">
+                  {{ editError() }}
+                </td>
+              </tr>
+            }
+          } @else {
+            <tr>
+              <td class="tabular-nums">{{ district.number }}</td>
+              <td>{{ district.name }}</td>
+              <td class="text-right tabular-nums">
+                @if (district.cityCount === 0) {
+                  <span class="text-ink-muted">0</span>
+                } @else {
+                  {{ district.cityCount }}
+                }
+              </td>
+              <td>
+                <div class="flex justify-end">
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm"
+                    [title]="'Edit ' + district.name"
+                    [attr.aria-label]="'Edit ' + district.name"
+                    (click)="edit(district)"
+                  >
+                    <app-action-icon name="edit" />
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm text-error"
+                    [title]="'Delete ' + district.name"
+                    [attr.aria-label]="'Delete ' + district.name"
+                    (click)="remove(district)"
+                  >
+                    <app-action-icon name="delete" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        } @empty {
+          <tr>
+            <td colspan="4" class="py-4 text-center text-ink-muted">
+              No districts yet
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Adding a district: one inline row of fields below the table -->
+  <form
+    class="mt-4 flex flex-wrap items-end gap-3"
+    [formGroup]="addForm"
+    (ngSubmit)="add()"
+    aria-label="Add district"
+  >
+    <div class="w-24">
+      <label for="district-number" class="label py-1 text-sm">
+        Number <span aria-hidden="true">*</span>
+      </label>
+      <input
+        id="district-number"
+        class="input input-sm input-bordered w-full tabular-nums"
+        formControlName="number"
+        inputmode="numeric"
+        maxlength="3"
+        placeholder="410"
+        required
+        [class.input-error]="
+          addForm.controls.number.invalid && addForm.controls.number.touched
+        "
+      />
+    </div>
+    <div class="min-w-56 flex-1">
+      <label for="district-name" class="label py-1 text-sm">
+        Name <span aria-hidden="true">*</span>
+      </label>
+      <input
+        id="district-name"
+        class="input input-sm input-bordered w-full"
+        formControlName="name"
+        maxlength="100"
+        placeholder="Linz-Land"
+        required
+      />
+    </div>
+    <button type="submit" class="btn btn-primary btn-sm" [disabled]="adding()">
+      Add District
+    </button>
+    @if (addError()) {
+      <p class="w-full text-sm text-error" role="alert">{{ addError() }}</p>
+    }
+  </form>
+</section>

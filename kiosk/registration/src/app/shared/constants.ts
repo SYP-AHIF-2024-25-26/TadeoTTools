@@ -1,4 +1,4 @@
-import { InterestKey } from './models/types';
+import { Gender, InterestKey } from './models/types';
 
 /** localStorage key of the towns, reasons and school types last loaded from the backend. */
 export const REFERENCE_CACHE_KEY = 'tadeot-registration-reference';
@@ -26,6 +26,23 @@ export const IDLE_COUNTDOWN_S = 15;
 
 /** The reason that asks for a free-text comment. */
 export const OTHER_REASON = 'Anderes';
+
+/**
+ * The login has to last at least this long when a registration starts, or the
+ * student logs in again first: the Keycloak login replaces the page and would
+ * drop the entered details. "Noch da?" ends a registration much sooner.
+ */
+export const MIN_SESSION_FOR_REGISTRATION_MS = 10 * 60 * 1000;
+
+/** How long "Anmeldung starten" waits for the token refresh before starting anyway. */
+export const SESSION_CHECK_TIMEOUT_MS = 5000;
+
+/** How the kiosk names each gender; the chips show them in this order. */
+export const GENDER_LABELS: Record<Gender, string> = {
+  Male: 'männlich',
+  Female: 'weiblich',
+  NotStated: 'keine Angabe',
+};
 
 /** Austrian postcodes have four digits. */
 export const ZIP_LENGTH = 4;

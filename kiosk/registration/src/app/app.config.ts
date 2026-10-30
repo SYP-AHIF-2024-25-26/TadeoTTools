@@ -4,13 +4,18 @@ import {
   isDevMode,
   provideExperimentalZonelessChangeDetection,
 } from '@angular/core';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { environment } from '@env/environment';
+import { authInterceptor } from '@core/services/auth.interceptor';
 
 /**
- * URL of the legacy TadeoT backend without `/api`
- * (e.g. `https://tadeot.htl-leonding.ac.at/tadeot-api`).
+ * URL of `backend/` without `/v1`
+ * (e.g. `https://tadeot.htl-leonding.ac.at/tadeot-backend-201126`).
  */
 export const BASE_URL = new InjectionToken<string>('BaseUrl');
 
@@ -29,7 +34,7 @@ const baseUrl = (
 export const appConfig: ApplicationConfig = {
   providers: [
     provideExperimentalZonelessChangeDetection(),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     { provide: BASE_URL, useValue: baseUrl },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),

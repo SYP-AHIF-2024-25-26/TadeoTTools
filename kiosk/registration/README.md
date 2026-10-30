@@ -5,8 +5,42 @@ ankommenden Besucher:innen und tragen die Angaben am Tablet ein; der Bildschirm 
 Besucher:innen an (du-Form), die Statusleiste oben die Schüler:innen.
 
 Ersetzt die alte Angular-14-App (`tadeot-frontend/registration` im Repository `htl-leo-tadeot`).
-Das **alte Backend bleibt unverändert** und wird weiter verwendet; diese App ruft nicht die API
-dieses Repositorys auf.
+Sie speichert über die API dieses Repositorys (`backend/`, mit Schul-Login, siehe „Login“). Orte, Gründe und Schultypen
+pflegen Admins im Dashboard (Seite „Registration“). Bis 20.11.2026 bleibt das alte Backend die
+Rückfallebene: dafür das alte Image dieser App pinnen; die Orts-IDs sind in beiden Systemen gleich.
+
+## Login
+
+Vor der ersten Anmeldung loggt man sich mit dem Schulkonto ein (Keycloak `auth.htl-leonding.ac.at`,
+Realm `htlleonding`, Client `htlleonding-service`, wie Dashboard und Kassa). Die App wählt dafür die
+Wörter **einloggen/ausloggen**, weil „Anmelden“ hier das Speichern einer Besucherin oder eines
+Besuchers ist. Erst „Einloggen“ leitet zur Keycloak-Anmeldung weiter; ist das Tablet noch
+eingeloggt (z. B. nach einem Neuladen), geht es ohne Knopfdruck weiter (`check-sso`). Danach fragt
+die App `GET /v1/users/is-registrar`. Besucher:innen anmelden dürfen:
+
+- alle **Lehrer:innen** (laut LDAP-Eintrag im Token),
+- **Admins** des Dashboards,
+- **Schüler:innen**, deren Zuteilung zur Station mit dem Namen **„Empfang“** bestätigt ist
+  (Groß-/Kleinschreibung egal; offene oder abgelehnte Anfragen zählen nicht).
+
+Alle anderen sehen „Kein Zugang zur Anmeldung“ und kommen über „Ausloggen“ zurück. Die Statusleiste
+zeigt, wer eingeloggt ist; „Ausloggen“ (nur auf dem Startbildschirm, mit Rückfrage) beendet den
+Login, z. B. beim Schichtwechsel. Jede Anmeldung speichert den Benutzernamen (`RegisteredBy`, im
+CSV-Export „Angemeldet von“).
+
+- **Kein Datenverlust durch ablaufenden Login:** Das Einloggen lädt die Seite neu und würde
+  eingegebene Angaben samt Foto verwerfen. Deshalb erneuert „Anmeldung starten“ zuerst das Token
+  und prüft am Refresh-Token, wie lange die Keycloak-Sitzung noch gilt. Sind es weniger als
+  10 Minuten (`MIN_SESSION_FOR_REGISTRATION_MS`), heißt es „Der Login läuft bald ab“ und man loggt
+  sich neu ein, bevor etwas eingegeben ist. Eine Anmeldung dauert nie so lange: „Noch da?“
+  verwirft sie nach 90 s ohne Eingabe.
+- Antwortet Keycloak bei dieser Prüfung nicht (kein WLAN, 5 s), startet die Anmeldung trotzdem;
+  das Speichern braucht ohnehin eine Verbindung und bietet „Erneut versuchen“.
+- Lehnt das Backend das Speichern trotzdem mit 401 (Sitzung serverseitig beendet) oder 403
+  (Zugang entzogen) ab, bleibt die Übersicht stehen; erst nach Rückfrage werden die Angaben
+  verworfen und es geht zum Login bzw. zu „Kein Zugang“.
+- Orte, Auswahllisten und Zähler laden ohne Login; nur `POST /v1/visitors` verlangt ihn.
+- Die URL der App muss im Keycloak-Client `htlleonding-service` als Redirect-URI eingetragen sein.
 
 ## Ablauf
 
@@ -16,7 +50,8 @@ Start → fünf Schritte → Übersicht („Alles richtig?“) → Anmelden → 
    den Ort antippen; danach geht es von selbst weiter. Gibt es zur Postleitzahl nur einen Ort, ist er
    schon gewählt (dann „Weiter“ oder den Ort antippen). Die Liste kennt
    nur österreichische Postleitzahlen.
-2. **Über dich:** Geschlecht, Begleitpersonen (0–4), Schulstufe (7–13), Schultyp.
+2. **Über dich:** Geschlecht (männlich, weiblich, keine Angabe), Begleitpersonen (0–4),
+   Schulstufe (7–13), Schultyp.
 3. **Erfahren:** wie die Person von der Schule erfahren hat; ein Tippen geht weiter, außer bei
    „Anderes“ (dann ein freiwilliges Textfeld).
 4. **Interessen:** Zweige, Mehrfachauswahl, freiwillig.
@@ -44,6 +79,9 @@ Start → fünf Schritte → Übersicht („Alles richtig?“) → Anmelden → 
 - Orte, Besuchsgründe und Schultypen werden in `localStorage` zwischengespeichert; eine Anmeldung
   kann also auch ohne Verbindung begonnen werden. Ohne Zwischenspeicher versucht das Tablet alle
   30 s selbst, die Listen zu laden.
+- Die Listen werden beim Start der App, bei „Start“ (im Hintergrund, die Anmeldung beginnt sofort)
+  und bei der Rückkehr zum Startbildschirm neu geladen. Eine Änderung im Dashboard gilt also ab der
+  nächsten Anmeldung; misslingt das Laden, bleiben die zwischengespeicherten Listen.
 - **Anmelden braucht eine Verbindung.** Schlägt das Speichern fehl, bleiben alle Angaben und das
   Foto erhalten, und „Erneut versuchen“ sendet noch einmal. Auf dem Tablet wird nichts
   gespeichert.
@@ -62,21 +100,20 @@ npm run lint
 npm run format
 ```
 
-**Achtung:** `environment.development.ts` zeigt auf das **echte** alte Backend. Lesen ist harmlos,
-aber jedes „Anmelden“ legt dort einen echten Besucher an (die Daten werden vor dem Tag der offenen
-Tür im alten Admin gelöscht). Zum Testen lieber ein Mock-Backend verwenden.
+Mit `npx ng serve` erwartet die App die API unter `http://localhost:5001`; lokal braucht das Backend
+Orte und die beiden Auswahllisten (im Dashboard per CSV importieren). Unter Aspire
+(`backend/AppHost`) startet die App mit `npm start`; `update_base_url.js` schreibt dabei die URL der
+API in `environment.development.ts` (nicht committen).
 
-Unter Aspire (`backend/AppHost`) startet die App mit `npm start`; `update_base_url.js` schreibt
-dabei `REGISTRATION_API_URL` in `environment.development.ts` (nicht committen).
-
-Verwendete Endpunkte des alten Backends (alle ohne Login): `GET /api/Cities`,
-`GET /api/ReasonsForVisit`, `GET /api/SchoolTypes`, `GET /api/Visitors/count`,
-`POST /api/Visitors` (Antwort: die neue Id; das Foto als PNG-Data-URL in `photoFileName`).
+Verwendete Endpunkte: ohne Login `GET /v1/cities`, `GET /v1/registration-options`,
+`GET /v1/visitors/count`; mit Login `GET /v1/users/is-registrar` und `POST /v1/visitors` (Antwort: die neue Id; `gender` ist `Male`, `Female`
+oder `NotStated`; das Foto als PNG-Data-URL in `photo`, sonst `null`). Das Backend speichert das
+Foto als `Visitor_0001.png`; gelingt das nicht, wird auch die Anmeldung nicht gespeichert.
 
 ## Docker
 
-`BACKEND_URL` ist die URL des alten Backends **ohne** `/api`
-(z. B. `https://tadeot.htl-leonding.ac.at/tadeot-api`) und wird beim Containerstart in `env.js`
+`BACKEND_URL` ist die URL von `backend/` **ohne** `/v1`
+(z. B. `https://tadeot.htl-leonding.ac.at/tadeot-backend-201126`) und wird beim Containerstart in `env.js`
 geschrieben. Die `base href` ist relativ (`./`), daher läuft dasselbe Image unter `/` und hinter
 einem Pfad-Präfix (Präfix im Reverse Proxy entfernen). Der Aufruf muss mit `/` enden
 (`…/registration/`), sonst lädt der Browser `main.js` und `env.js` vom Root. Mit Traefik:
@@ -99,5 +136,5 @@ Auf demselben Host darf nur **eine** App unter `/registration` laufen: die alte 
 
 ```bash
 docker build -t tadeot-registration .
-docker run -p 8080:80 -e BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-api tadeot-registration
+docker run -p 8080:80 -e BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126 tadeot-registration
 ```

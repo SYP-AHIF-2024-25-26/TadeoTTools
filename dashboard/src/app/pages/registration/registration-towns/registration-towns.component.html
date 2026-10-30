@@ -1,0 +1,377 @@
+<section
+  class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+  aria-labelledby="towns-heading"
+>
+  <div class="mb-4 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h2 id="towns-heading" class="mb-1 text-lg font-bold">
+        Towns
+        @if (cities().length > 0) {
+          <span class="font-normal tabular-nums text-ink-muted">{{
+            cities().length
+          }}</span>
+        }
+      </h2>
+      <p class="text-sm text-ink-muted">
+        The kiosk offers these towns for the postcode a visitor gives. When
+        districts or municipalities change, move or rename the towns here.
+      </p>
+    </div>
+    @if (cities().length > 0) {
+      <button
+        type="button"
+        class="btn btn-outline btn-sm"
+        [disabled]="downloading()"
+        (click)="downloadCsv()"
+      >
+        Export CSV
+      </button>
+    }
+  </div>
+
+  @if (cities().length === 0) {
+    <div
+      class="mb-6 rounded-md border border-dashed border-primary-200 p-4 dark:border-background-600"
+    >
+      @if (districts().length === 0) {
+        <p class="text-sm">
+          No towns yet. Import the districts on the Districts tab first: every
+          town belongs to one.
+        </p>
+      } @else {
+        <p class="mb-3 text-sm">No towns yet.</p>
+        <app-csv-import
+          label="Towns file"
+          format="Id;ZipCode;Name;Number;DistrictNumber"
+          hint="For example cities.csv from the legacy export. A given Id is kept (the legacy kiosk sends these ids), an empty one gets a new id. The import only fills an empty list; a file with an error is not imported at all."
+          noun="town"
+          [upload]="upload"
+          (imported)="changed.emit()"
+        />
+      }
+    </div>
+  } @else {
+    <div class="mb-4 flex flex-col gap-3 sm:flex-row">
+      <label class="flex-1">
+        <span class="sr-only">Search by postcode or name</span>
+        <input
+          type="search"
+          class="field-filter input input-sm input-bordered w-full"
+          placeholder="Search by postcode or name"
+          [value]="search()"
+          (input)="setSearch($event)"
+        />
+      </label>
+      <label class="sm:w-72">
+        <span class="sr-only">District</span>
+        <select
+          class="field-filter select select-bordered select-sm w-full"
+          (change)="setDistrict($event)"
+        >
+          <option value="" [selected]="districtFilter() === null">
+            All districts
+          </option>
+          @for (d of districts(); track d.id) {
+            <option [value]="d.id" [selected]="districtFilter() === d.id">
+              {{ d.name }} ({{ d.number }})
+            </option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <p class="mb-2 text-sm text-ink-muted" role="status">
+      @if (filtered().length === cities().length) {
+        All {{ cities().length }} towns
+      } @else {
+        {{ plural(filtered().length, 'town') }} found
+      }
+    </p>
+
+    <div class="overflow-x-auto">
+      <table class="table table-sm">
+        <thead>
+          <tr class="text-ink-muted">
+            <th
+              scope="col"
+              class="w-20"
+              [attr.aria-sort]="ariaSort(sort(), 'zipCode')"
+            >
+              <app-sort-header
+                label="Postcode"
+                [direction]="direction('zipCode')"
+                (sort)="sortOn('zipCode')"
+              />
+            </th>
+            <th scope="col" [attr.aria-sort]="ariaSort(sort(), 'name')">
+              <app-sort-header
+                label="Name"
+                [direction]="direction('name')"
+                (sort)="sortOn('name')"
+              />
+            </th>
+            <th
+              scope="col"
+              class="w-28"
+              [attr.aria-sort]="ariaSort(sort(), 'number')"
+            >
+              <app-sort-header
+                label="Gemeinde-Nr."
+                [direction]="direction('number')"
+                (sort)="sortOn('number')"
+              />
+            </th>
+            <th scope="col" [attr.aria-sort]="ariaSort(sort(), 'district')">
+              <app-sort-header
+                label="District"
+                [direction]="direction('district')"
+                (sort)="sortOn('district')"
+              />
+            </th>
+            <th
+              scope="col"
+              class="text-right"
+              [attr.aria-sort]="ariaSort(sort(), 'visitorCount')"
+            >
+              <app-sort-header
+                label="Registrations"
+                alignEnd
+                [direction]="direction('visitorCount')"
+                (sort)="sortOn('visitorCount')"
+              />
+            </th>
+            <th scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (city of shown(); track city.id) {
+            @if (editingId() === city.id) {
+              <tr [formGroup]="editForm">
+                <td>
+                  <input
+                    class="input input-sm input-bordered w-20 tabular-nums"
+                    formControlName="zipCode"
+                    inputmode="numeric"
+                    maxlength="4"
+                    required
+                    [class.input-error]="
+                      editForm.controls.zipCode.invalid &&
+                      editForm.controls.zipCode.touched
+                    "
+                    [attr.aria-label]="'Postcode of ' + city.name"
+                  />
+                </td>
+                <td>
+                  <input
+                    class="input input-sm input-bordered w-full min-w-40"
+                    formControlName="name"
+                    maxlength="300"
+                    required
+                    [attr.aria-label]="'Name of ' + city.name"
+                  />
+                </td>
+                <td>
+                  <input
+                    class="input input-sm input-bordered w-24 tabular-nums"
+                    formControlName="number"
+                    inputmode="numeric"
+                    maxlength="5"
+                    required
+                    [class.input-error]="
+                      editForm.controls.number.invalid &&
+                      editForm.controls.number.touched
+                    "
+                    [attr.aria-label]="'Gemeindekennziffer of ' + city.name"
+                  />
+                </td>
+                <td>
+                  <select
+                    class="select select-bordered select-sm w-full min-w-48"
+                    formControlName="districtId"
+                    required
+                    [attr.aria-label]="'District of ' + city.name"
+                  >
+                    @for (d of districts(); track d.id) {
+                      <option [ngValue]="d.id">
+                        {{ d.name }} ({{ d.number }})
+                      </option>
+                    }
+                  </select>
+                </td>
+                <td class="text-right tabular-nums">{{ city.visitorCount }}</td>
+                <td>
+                  <div class="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-sm"
+                      [disabled]="saving()"
+                      (click)="cancelEdit()"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-sm"
+                      [disabled]="saving() || editForm.pristine"
+                      (click)="save(city)"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              @if (editError()) {
+                <tr>
+                  <td colspan="6" class="text-sm text-error" role="alert">
+                    {{ editError() }}
+                  </td>
+                </tr>
+              }
+            } @else {
+              <tr>
+                <td class="tabular-nums">{{ city.zipCode }}</td>
+                <td>{{ city.name }}</td>
+                <td class="tabular-nums text-ink-muted">{{ city.number }}</td>
+                <td>{{ districtLabel(city.districtId) }}</td>
+                <td class="text-right tabular-nums">{{ city.visitorCount }}</td>
+                <td>
+                  <div class="flex justify-end">
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-sm"
+                      [title]="'Edit ' + city.name"
+                      [attr.aria-label]="
+                        'Edit ' + city.zipCode + ' ' + city.name
+                      "
+                      (click)="edit(city)"
+                    >
+                      <app-action-icon name="edit" />
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-sm text-error"
+                      [title]="'Delete ' + city.name"
+                      [attr.aria-label]="
+                        'Delete ' + city.zipCode + ' ' + city.name
+                      "
+                      (click)="remove(city)"
+                    >
+                      <app-action-icon name="delete" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          } @empty {
+            <tr>
+              <td colspan="6" class="py-4 text-center text-ink-muted">
+                No town matches
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (shown().length < filtered().length) {
+      <div class="mt-3 flex justify-center">
+        <button type="button" class="btn btn-ghost btn-sm" (click)="showMore()">
+          Show {{ nextPage() }} more ({{ filtered().length - shown().length }}
+          not shown)
+        </button>
+      </div>
+    }
+  }
+
+  @if (districts().length > 0) {
+    <!-- Adding a town: one inline row of fields below the table -->
+    <form
+      class="mt-6 flex flex-wrap items-end gap-3"
+      [formGroup]="addForm"
+      (ngSubmit)="add()"
+      aria-label="Add town"
+    >
+      <div class="w-24">
+        <label for="town-zip" class="label py-1 text-sm">
+          Postcode <span aria-hidden="true">*</span>
+        </label>
+        <input
+          id="town-zip"
+          class="input input-sm input-bordered w-full tabular-nums"
+          formControlName="zipCode"
+          inputmode="numeric"
+          maxlength="4"
+          placeholder="4060"
+          required
+          [class.input-error]="
+            addForm.controls.zipCode.invalid && addForm.controls.zipCode.touched
+          "
+        />
+      </div>
+      <div class="min-w-48 flex-1">
+        <label for="town-name" class="label py-1 text-sm">
+          Name <span aria-hidden="true">*</span>
+        </label>
+        <input
+          id="town-name"
+          class="input input-sm input-bordered w-full"
+          formControlName="name"
+          maxlength="300"
+          placeholder="Leonding"
+          required
+        />
+      </div>
+      <div class="w-28">
+        <label for="town-number" class="label py-1 text-sm">
+          Gemeinde-Nr. <span aria-hidden="true">*</span>
+        </label>
+        <input
+          id="town-number"
+          class="input input-sm input-bordered w-full tabular-nums"
+          formControlName="number"
+          inputmode="numeric"
+          maxlength="5"
+          placeholder="41011"
+          required
+          [class.input-error]="
+            addForm.controls.number.invalid && addForm.controls.number.touched
+          "
+        />
+      </div>
+      <div class="min-w-56">
+        <label for="town-district" class="label py-1 text-sm">
+          District <span aria-hidden="true">*</span>
+        </label>
+        <select
+          id="town-district"
+          class="select select-bordered select-sm w-full"
+          formControlName="districtId"
+          required
+          [class.select-error]="
+            addForm.controls.districtId.invalid &&
+            addForm.controls.districtId.touched
+          "
+        >
+          <option [ngValue]="null" disabled>Choose…</option>
+          @for (d of districts(); track d.id) {
+            <option [ngValue]="d.id">{{ d.name }} ({{ d.number }})</option>
+          }
+        </select>
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primary btn-sm"
+        [disabled]="adding()"
+      >
+        Add Town
+      </button>
+      <p class="w-full text-xs text-ink-muted">
+        Several towns can share a postcode. The Gemeindekennziffer of Statistik
+        Austria starts with the district number.
+      </p>
+      @if (addError()) {
+        <p class="w-full text-sm text-error" role="alert">{{ addError() }}</p>
+      }
+    </form>
+  }
+</section>

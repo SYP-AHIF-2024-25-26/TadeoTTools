@@ -1,21 +1,12 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { ResultPath, StatisticsApiService } from './statistics-api.service';
+import { StatisticsApiService } from './statistics-api.service';
 import { REFRESH_MS, RETRY_MS, STATISTICS_CACHE_KEY } from '@shared/constants';
 import {
   Statistics,
-  StatisticsKey,
   VisitorCount,
+  VisitorHour,
   VisitorResult,
 } from '@shared/types';
-
-const RESULT_PATHS: Record<Exclude<StatisticsKey, 'count'>, ResultPath> = {
-  byTime: 'bytime',
-  departments: 'departmentcount',
-  reasons: 'reasoncount',
-  schoolTypes: 'schooltypecount',
-  districts: 'districtcount',
-  gender: 'gendercount',
-};
 
 interface Cached {
   data: Statistics;
@@ -23,7 +14,7 @@ interface Cached {
 }
 
 /**
- * The visitor statistics, loaded from the legacy backend every minute and
+ * The visitor statistics, loaded from the backend every minute and
  * kept in localStorage. Nobody watches over the projector, so a failed
  * request is never shown: the last data stays, and only "Stand" ages.
  */
@@ -36,7 +27,7 @@ export class StatisticsService {
 
   private cached = signal<Cached | null>(readCache());
   readonly data = computed(() => this.cached()?.data ?? null);
-  /** When every endpoint last answered; a partly failed refresh keeps the older time. */
+  /** When the backend last answered; a failed refresh keeps the older time. */
   readonly loadedAt = computed(() => {
     const at = this.cached()?.loadedAt;
     return at ? new Date(at) : null;
@@ -57,40 +48,53 @@ export class StatisticsService {
   }
 
   private async fetch(): Promise<void> {
-    const keys = Object.keys(RESULT_PATHS) as (keyof typeof RESULT_PATHS)[];
-    const [count, ...results] = await Promise.allSettled([
-      this.api.getCount(),
-      ...keys.map((key) => this.api.getResults(RESULT_PATHS[key])),
-    ]);
-
-    const previous = this.cached()?.data;
-    const fresh: Partial<Statistics> = {};
-    if (count.status === 'fulfilled' && isCount(count.value)) {
-      fresh.count = count.value;
+    let data: unknown;
+    try {
+      data = await this.api.getStatistics();
+    } catch (err) {
+      console.warn(
+        'Statistics could not be loaded, keeping the last data',
+        err
+      );
+      return;
     }
-    keys.forEach((key, i) => {
-      const result = results[i];
-      if (result.status === 'fulfilled' && isResultList(result.value)) {
-        fresh[key] = result.value;
-      }
-    });
-
-    const complete = Object.keys(fresh).length === keys.length + 1;
-    if (!complete) {
-      console.warn('Statistics only partly loaded, keeping the rest', results);
+    if (!isStatistics(data)) {
+      console.warn(
+        'Statistics have an unexpected shape, keeping the last data',
+        data
+      );
+      return;
     }
-    // A partial answer only fills in what is there; the first data must be complete.
-    if (!previous && !complete) return;
 
-    const next: Cached = {
-      data: { ...(previous as Statistics), ...fresh },
-      loadedAt: complete
-        ? new Date().toISOString()
-        : (this.cached()?.loadedAt ?? new Date().toISOString()),
-    };
+    const next: Cached = { data, loadedAt: new Date().toISOString() };
     this.cached.set(next);
     writeCache(next);
   }
+}
+
+function isStatistics(value: unknown): value is Statistics {
+  const v = value as Statistics | null;
+  return (
+    isCount(v?.count) &&
+    isHourList(v?.byTime) &&
+    isResultList(v?.departments) &&
+    isResultList(v?.reasons) &&
+    isResultList(v?.schoolTypes) &&
+    isResultList(v?.districts) &&
+    isResultList(v?.gender)
+  );
+}
+
+function isHourList(value: unknown): value is VisitorHour[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (r: VisitorHour | null) =>
+        typeof r?.date === 'string' &&
+        typeof r?.hour === 'number' &&
+        typeof r?.count === 'number'
+    )
+  );
 }
 
 function isCount(value: unknown): value is VisitorCount {
@@ -113,7 +117,8 @@ function readCache(): Cached | null {
     const raw = localStorage.getItem(STATISTICS_CACHE_KEY);
     if (!raw) return null;
     const cached = JSON.parse(raw) as Cached;
-    return cached?.data && cached.loadedAt ? cached : null;
+    // Data cached from the legacy backend has another byTime shape and is dropped.
+    return isStatistics(cached?.data) && cached.loadedAt ? cached : null;
   } catch {
     return null;
   }

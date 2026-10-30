@@ -2,18 +2,7 @@
   <app-page-header
     title="Buffet"
     subtitle="Products, menus and sales of the cashier kiosk"
-  >
-    @if (tab() === 'products' && !loading() && !loadFailed() && canImport()) {
-      <button
-        type="button"
-        class="btn btn-outline btn-sm"
-        [disabled]="importing()"
-        (click)="importLegacy()"
-      >
-        Import from Legacy Backend
-      </button>
-    }
-  </app-page-header>
+  ></app-page-header>
 
   <div role="tablist" aria-label="Buffet" class="page-tabs">
     @for (t of tabs; track t.id) {

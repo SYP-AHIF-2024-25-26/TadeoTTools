@@ -1,17 +1,26 @@
-/** A town from the legacy backend (`GET /api/Cities`). Several towns can share a postcode. */
+/** A town (`GET /v1/cities`). Several towns can share a postcode. The ids are the legacy ones. */
 export interface City {
   id: number;
   name: string;
   zipCode: string;
 }
 
-/** `GET /api/Visitors/count`: registered visitors and the adults who came with them. */
+/** `GET /v1/visitors/count`: registered visitors and the adults who came with them. */
 export interface VisitorCount {
   count: number;
   adultsCount: number;
 }
 
-/** The branches a visitor can tick; each one is a flag in `POST /api/Visitors`. */
+/** `GET /v1/registration-options`: the two choice lists, each in kiosk order. */
+export interface RegistrationOptions {
+  reasonsForVisit: string[];
+  schoolTypes: string[];
+}
+
+/** "keine Angabe" is `NotStated`. */
+export type Gender = 'Male' | 'Female' | 'NotStated';
+
+/** The branches a visitor can tick; each one is a flag in `POST /v1/visitors`. */
 export type InterestKey =
   | 'interestedInInformatik'
   | 'interestedInMedientechnik'
@@ -21,25 +30,24 @@ export type InterestKey =
   | 'interestedInAbendschule'
   | 'interestedInKolleg';
 
-/** Body of `POST /api/Visitors` (the backend's `AddVisitorDto`); the response is the new id. */
+/** Body of `POST /v1/visitors` (the backend's `AddVisitorDto`); the response is the new id. */
 export type VisitorSubmission = {
   cityId: number;
-  isMale: boolean;
+  gender: Gender;
   adults: number;
   schoolLevel: number;
   schoolType: string;
   reasonForVisit: string;
   comment: string | null;
-  usePhoto: boolean;
-  /** The photo as a PNG data URL; the backend stores it as `Visitor_<id>.png`. */
-  photoFileName: string | null;
+  /** The photo as a PNG data URL, null without one; the backend stores it as `Visitor_<id>.png`. */
+  photo: string | null;
 } & Record<InterestKey, boolean>;
 
 /** What has been entered for the visitor at the tablet so far. */
 export interface Draft {
   zip: string;
   cityId: number | null;
-  isMale: boolean | null;
+  gender: Gender | null;
   schoolLevel: number | null;
   schoolType: string | null;
   adults: number | null;
@@ -53,7 +61,7 @@ export interface Draft {
 export const EMPTY_DRAFT: Draft = {
   zip: '',
   cityId: null,
-  isMale: null,
+  gender: null,
   schoolLevel: null,
   schoolType: null,
   adults: null,
@@ -66,3 +74,13 @@ export const EMPTY_DRAFT: Draft = {
 
 /** Why a request to the backend failed. */
 export type LoadFailure = 'no-network' | 'server';
+
+/** Where the school login stands; only 'granted' shows the registration. */
+export type AccessState =
+  'checking' | 'logged-out' | 'granted' | 'denied' | LoadFailure;
+
+/** `GET /v1/users/is-registrar`; the class is empty for teachers. */
+export interface KioskUser {
+  name: string;
+  studentClass: string;
+}
