@@ -57,8 +57,9 @@ schema: spec-driven
 context: |
   TadeoTTools organisiert den Tag der offenen Tür der HTL Leonding.
   Fachliche Grundlage ist spec/fsd.md (Deutsch); Specs und Proposals zitieren es als "FSD §N.M".
-  Stack: .NET 10 Minimal API + EF Core + PostgreSQL (backend/), Angular 19 zoneless
-  (dashboard/, guide/, kiosk/*). Login über Keycloak (LeoAuth); Rollen kommen aus den Tabellen
+  Stack: .NET 10 Minimal API + EF Core + PostgreSQL (backend/), Angular zoneless
+  (dashboard/, guide/ und kiosk/feedback/ auf Angular 22, die übrigen Kiosks noch auf 19).
+  Login über Keycloak (LeoAuth); Rollen kommen aus den Tabellen
   Admins und StopManagers, nicht aus dem Token.
   Das alte Backend htl-leo-tadeot (Anmeldung, Kassa, Statistik) wird bis zu seiner Migration
   nicht verändert.
