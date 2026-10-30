@@ -2,7 +2,7 @@ import {
   ApplicationConfig,
   InjectionToken,
   isDevMode,
-  provideExperimentalZonelessChangeDetection,
+  provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
@@ -28,7 +28,7 @@ const baseUrl = (
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideExperimentalZonelessChangeDetection(),
+    provideZonelessChangeDetection(),
     provideHttpClient(withFetch()),
     { provide: BASE_URL, useValue: baseUrl },
     provideServiceWorker('ngsw-worker.js', {
