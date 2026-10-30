@@ -155,15 +155,20 @@
         </div>
         <div class="mt-2">
           <label for="ratingLabels" class="mb-1 block text-xs text-ink"
-            >Labels (comma separated, e.g. "Poor, Average, Excellent")</label
+            >Labels (comma separated, optional)</label
           >
           <input
             type="text"
             id="ratingLabels"
             formControlName="ratingLabels"
             class="input input-bordered w-full"
-            placeholder="Poor, Average, Excellent"
+            aria-describedby="ratingLabels-hint"
+            placeholder="Schlecht, Gut, Sehr gut"
           />
+          <p id="ratingLabels-hint" class="mt-1 text-xs text-ink">
+            Shown to visitors under the numbers, in German. Leave empty to show
+            only the numbers.
+          </p>
         </div>
       </div>
     }
@@ -172,15 +177,20 @@
     @if (questionForm().get('type')?.value === 'Text') {
       <div class="mb-4">
         <label for="placeholder" class="mb-1 block text-sm font-medium"
-          >Answer Placeholder</label
+          >Answer Placeholder (optional)</label
         >
         <input
           type="text"
           id="placeholder"
           formControlName="placeholder"
           class="input input-bordered w-full"
-          placeholder="e.g., Enter your answer"
+          aria-describedby="placeholder-hint"
+          placeholder="Deine Antwort"
         />
+        <p id="placeholder-hint" class="mt-1 text-xs text-ink">
+          Shown to visitors in the empty answer field, in German. If empty, the
+          feedback tablets show "Antwort eingeben".
+        </p>
       </div>
     }
 

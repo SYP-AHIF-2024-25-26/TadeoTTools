@@ -139,11 +139,11 @@ export class FeedbackConfiguratorComponent implements OnInit {
       question: ['', Validators.required],
       type: this.fb.control<QuestionType>('Text'),
       required: [true],
-      placeholder: ['Enter your answer'],
+      placeholder: [''],
       options: this.fb.array<FormControl<string>>([]),
       minRating: [1],
       maxRating: [5],
-      ratingLabels: ['Poor, Average, Excellent'],
+      ratingLabels: [''],
       dependencies: this.fb.array<FormGroup<DependencyFormGroup>>([]),
     });
   }
@@ -247,10 +247,10 @@ export class FeedbackConfiguratorComponent implements OnInit {
       question: question.question,
       type: question.type,
       required: question.required,
-      placeholder: question.placeholder || 'Enter your answer',
+      placeholder: question.placeholder ?? '',
       minRating: question.minRating ?? 1,
       maxRating: question.maxRating ?? 5,
-      ratingLabels: question.ratingLabels || 'Poor, Average, Excellent',
+      ratingLabels: question.ratingLabels ?? '',
     });
 
     // Add options for choice types
