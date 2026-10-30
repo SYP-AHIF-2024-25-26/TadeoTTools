@@ -7,7 +7,7 @@ TadeoTTools manages the HTL Leonding open day ("Tag der offenen Tür"). Four dep
 - `backend/` — .NET 10 minimal API + EF Core on PostgreSQL
 - `dashboard/` — Angular 22 admin app (Keycloak login) for admins, stop managers and students
 - `guide/` — the GuideApp: Angular 22 public PWA for visitors/guides (no login). Docker image is still named `frontend`.
-- `kiosk/` — one folder per kiosk app for fixed devices (feedback, statistics and registration on Angular 22; cashier still on Angular 19):
+- `kiosk/` — one folder per kiosk app for fixed devices (all on Angular 22):
   - `kiosk/feedback/` — exit tablets: students enter visitor feedback. Talks to `backend/`, no login. Image `feedback`; see `kiosk/feedback/README.md`.
   - `kiosk/registration/` — entrance tablets: students register arriving visitors (town by postcode, gender incl. "keine Angabe", optional photo for the Roboterführerschein). Keycloak login like the cashier (`GET /v1/users/is-registrar`, policy `IsRegistrar`: teachers, admins, students accepted at the stop named "Empfang"); only `POST /v1/visitors` needs it, `GET /v1/cities`, `GET /v1/registration-options` and `GET /v1/visitors/count` stay open and load before the login. "Anmeldung starten" first checks that the Keycloak session lasts at least 10 more minutes, because logging in again reloads the page and would drop the entered data. Each visitor stores `RegisteredBy` (`preferred_username`). The kiosk says einloggen/ausloggen, since "Anmelden" means saving a visitor. Saving needs a connection (no outbox). Towns, districts and the two choice lists are managed on the dashboard page `/registration`. Until 20.11.2026 the legacy TadeoT backend (`…/tadeot-api/`, separate repo `htl-leo-tadeot`, must stay unchanged) stays the fallback (pin the old image); the town ids are the legacy ones for that. Image `registration`; see `kiosk/registration/README.md`.
   - `kiosk/cashier/` — buffet counter ("Kassa", replaces the legacy `kassa` app). Sells through `backend/` (`GET /v1/buffets`, `POST /v1/orders`, both `IsCashier`) with a Keycloak login; access is checked at startup via `GET /v1/users/is-cashier`, and an interceptor sends the token with every request. Sales go through a `localStorage` outbox; `POST /v1/orders` is idempotent on `orderNumber`; 400/404 responses are **kept** as "nicht übertragbar" (real money), 401/403 keep the sale queued and send the student back to the login. Products, buffets and menus are managed on the dashboard page `/buffet`. Until 20.11.2026 the legacy backend stays the fallback (pin the old cashier image); the products were entered by hand, so let the outbox empty before falling back. Image `cashier`, served under `/kassa`; see `kiosk/cashier/README.md`.
@@ -108,7 +108,7 @@ Shared query helpers and DTOs used by several endpoints sit in `Database/Reposit
 
 ## Angular apps
 
-All six apps are zoneless (`provideZonelessChangeDetection` in dashboard, guide and the feedback, statistics and registration kiosks, `provideExperimentalZonelessChangeDetection` in the Angular 19 cashier kiosk), standalone-only, and styled with Tailwind (dashboard additionally DaisyUI). Services wrap `HttpClient` calls in `firstValueFrom` and return Promises. Folder layout: `core/` (services, guards), `pages/` (statistics: `slides/`), `shared/` (components, modals, `models/types.ts`).
+All six apps run Angular 22 and are zoneless (`provideZonelessChangeDetection`), standalone-only, and styled with Tailwind (dashboard additionally DaisyUI). Services wrap `HttpClient` calls in `firstValueFrom` and return Promises. Folder layout: `core/` (services, guards), `pages/` (statistics: `slides/`), `shared/` (components, modals, `models/types.ts`).
 
 **API base URL** — every app injects a `BASE_URL` token defined in `app.config.ts`. In production it comes from `window.__env.backendURL`, written to `env.js` by `docker-entrypoint.sh` from the `BACKEND_URL` container env; otherwise from `environment.apiBaseUrl`. What it points at differs:
 
@@ -132,10 +132,10 @@ All six apps are zoneless (`provideZonelessChangeDetection` in dashboard, guide 
 From `dashboard/.github/copilot-instructions.md`, `guide/.github/copilot-instructions.md` and `.agent/rules/tadeot-angular-code-style.md`:
 
 - Signals for state: `signal()`, `computed()` for derived state, `input()` / `output()` / `model()` instead of decorators. Use `set`/`update`, never `mutate`.
-- `changeDetection: ChangeDetectionStrategy.OnPush` on every component.
+- `changeDetection: ChangeDetectionStrategy.OnPush` on every component (OnPush is the default since Angular 22, but keep writing it; never `ChangeDetectionStrategy.Eager`).
 - Native control flow (`@if`, `@for`, `@switch`) only; no `*ngIf` / `*ngFor`.
 - `inject()` instead of constructor injection; services are `providedIn: 'root'`.
-- Do not write `standalone: true` (it is the default since Angular 19; the `.agent` rule saying otherwise predates that).
+- Do not write `standalone: true` (it is the default since Angular 19, and all apps are on Angular 22; the `.agent` rule saying otherwise predates that).
 - No `@HostBinding` / `@HostListener` (use the `host` object); no `ngClass` / `ngStyle` (use `class` / `style` bindings).
 - Reactive forms over template-driven; `NgOptimizedImage` for static images.
 - No `any`; use `unknown` when the type is uncertain.
