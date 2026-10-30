@@ -102,8 +102,8 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
   GuideApp und Kiosks lesen.
 - `dashboard/`: Angular 22, Login über Keycloak, für Admins, Stop-Manager und Schüler:innen.
 - `guide/`: GuideApp, Angular-22-PWA ohne Login.
-- `kiosk/feedback/`, `kiosk/registration/`, `kiosk/cashier/`, `kiosk/statistics/`: Angular-19-PWAs
-  für feste Geräte (§11).
+- `kiosk/feedback/` (Angular 22), `kiosk/registration/`, `kiosk/cashier/`, `kiosk/statistics/`
+  (Angular 19): PWAs für feste Geräte (§11).
 - Altes Backend `htl-leo-tadeot` (eigenes Repo): wird ersetzt. Die Kassa läuft schon über
   `backend/`, Anmeldung und Statistik ab der Umstellung am 16.11.2026. Bis nach dem TdoT bleibt
   das alte Backend der Rückfall und wird **nicht verändert** (§3.4).
