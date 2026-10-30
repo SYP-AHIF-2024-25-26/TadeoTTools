@@ -38,6 +38,12 @@ public static class UserManagementApi
             .Produces<UserManagementEndpoints.KioskUserDto>()
             .Produces(StatusCodes.Status403Forbidden);
 
+        // Checked by the dashboard before it shows the visitor photos of the Roboterführerschein stop.
+        group.MapGet("/is-photo-viewer", UserManagementEndpoints.GetPhotoViewer)
+            .RequireAuthorization(Setup.PhotoViewerPolicyName)
+            .Produces<UserManagementEndpoints.PhotoViewerDto>()
+            .Produces(StatusCodes.Status403Forbidden);
+
         group.MapGet("/token-data", static (HttpContext httpContext) =>
         {
             var userInfo = httpContext.User.GetLeoUserInformation();

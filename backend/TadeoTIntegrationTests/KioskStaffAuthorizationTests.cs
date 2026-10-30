@@ -78,6 +78,55 @@ public class KioskStaffAuthorizationTests(IntegrationTestWebAppFactory factory) 
     }
 
     [Fact]
+    public async Task StopManager_ShouldSeePhotos_OnlyAtTheRoboterfuehrerscheinStop()
+    {
+        await ManageAsync("if200001", "Roboterführerschein");
+        await ManageAsync("if200002", "Robotics");
+
+        (await IsPhotoViewer(User("IF200001", StudentDn))).Should().BeTrue();
+        (await IsPhotoViewer(User("if200002", StudentDn))).Should().BeFalse();
+        // The stop-manager check is only on for the photos.
+        (await IsAllowed(User("if200001", StudentDn))).Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(Status.ACCEPTED, true)]
+    [InlineData(Status.PENDING, false)]
+    public async Task Student_ShouldSeePhotos_OnlyWhenAcceptedAtRoboterfuehrerschein(Status status, bool allowed)
+    {
+        await AssignAsync("if200001", "Roboterführerschein", status);
+
+        (await IsPhotoViewer(User("if200001", StudentDn))).Should().Be(allowed);
+    }
+
+    [Fact]
+    public async Task Teacher_ShouldNotSeePhotos_WithoutTheStop()
+    {
+        (await IsPhotoViewer(User("lehrer", TeacherDn))).Should().BeFalse();
+
+        await ManageAsync("lehrer", "Roboterführerschein");
+        (await IsPhotoViewer(User("lehrer", TeacherDn))).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Admin_ShouldSeePhotos_ButNotBeAtTheStop()
+    {
+        DbContext.Admins.Add(new Admin { Id = "if200001" });
+        await DbContext.SaveChangesAsync();
+
+        (await IsPhotoViewer(User("if200001", StudentDn))).Should().BeTrue();
+        (await PhotoViewer(User("if200001", StudentDn))).Should().Be(new UserManagementEndpoints.PhotoViewerDto(false));
+    }
+
+    [Fact]
+    public async Task PhotoViewer_ShouldBeAtTheStop_ForItsStopManager()
+    {
+        await ManageAsync("if200001", "Roboterführerschein");
+
+        (await PhotoViewer(User("IF200001", StudentDn))).Should().Be(new UserManagementEndpoints.PhotoViewerDto(true));
+    }
+
+    [Fact]
     public async Task Admin_ShouldBeAllowed()
     {
         DbContext.Admins.Add(new Admin { Id = "if200001" });
@@ -128,9 +177,27 @@ public class KioskStaffAuthorizationTests(IntegrationTestWebAppFactory factory) 
         await DbContext.SaveChangesAsync();
     }
 
-    private async Task<bool> IsAllowed(ClaimsPrincipal user, string stopName = KioskStaffRequirement.BuffetStopName)
+    private async Task ManageAsync(string username, string stopName)
     {
-        var requirement = new KioskStaffRequirement(stopName);
+        var stop = new Stop { Name = stopName, Description = "", RoomNr = "" };
+        DbContext.StopManagers.Add(new StopManager { EdufsUsername = username });
+        DbContext.StopManagerAssignments.Add(new StopManagerAssignment { StopManagerId = username, Stop = stop });
+        await DbContext.SaveChangesAsync();
+    }
+
+    private Task<bool> IsPhotoViewer(ClaimsPrincipal user) => IsAllowed(KioskStaffRequirement.PhotoViewer, user);
+
+    private async Task<UserManagementEndpoints.PhotoViewerDto> PhotoViewer(ClaimsPrincipal user)
+    {
+        var result = await UserManagementEndpoints.GetPhotoViewer(DbContext, new DefaultHttpContext { User = user });
+        return result.Should().BeOfType<Ok<UserManagementEndpoints.PhotoViewerDto>>().Subject.Value!;
+    }
+
+    private Task<bool> IsAllowed(ClaimsPrincipal user, string stopName = KioskStaffRequirement.BuffetStopName) =>
+        IsAllowed(new KioskStaffRequirement(stopName), user);
+
+    private async Task<bool> IsAllowed(KioskStaffRequirement requirement, ClaimsPrincipal user)
+    {
         var context = new AuthorizationHandlerContext([requirement], user, null);
         await new KioskStaffAuthorizationHandler(DbContext).HandleAsync(context);
         return context.HasSucceeded;

@@ -45,6 +45,8 @@ Nicht-Ziele:
 - `Admin`: Vollzugriff. Ist, wer in der Tabelle `Admins` steht.
 - `Kassier:in`: darf die Kassa bedienen (§11.2).
 - `Anmelder:in`: darf am Eingang Besucher:innen anmelden (§11.3).
+- `Fotostation`: darf im Dashboard die Fotos der Anmeldung für den Roboterführerschein ansehen
+  und herunterladen (§5.5).
 
 Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_username` des Tokens
 (ohne Beachtung der Groß-/Kleinschreibung) in den Tabellen `Admins` und `StopManagers`.
@@ -71,6 +73,8 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
     Ein Admin kann sich nicht selbst entfernen; damit bleibt immer mindestens ein Admin übrig.
 - `Kassier:in`: Verkäufe an der Kassa erfassen.
 - `Anmelder:in`: Besucher:innen am Anmelde-Kiosk anmelden.
+- `Fotostation`: die Liste aller Fotos sehen, einzelne Fotos ansehen und herunterladen,
+  alle Fotos als ZIP laden. Nicht löschen (nur Admins, §11.3).
 
 ## 2.3 Erster Admin
 - **(Lücke):** Der erste Admin wird beim Start automatisch angelegt, konfiguriert über eine
@@ -218,6 +222,23 @@ Eigenschaften:
 - Ein einziges Token: Jede Anfrage an `backend/` trägt die Anmeldung; `GET /v1/buffets` und
   `POST /v1/orders` verlangen dieselbe Berechtigung wie `is-cashier`. Läuft die Anmeldung ab oder
   wird der Zugang entzogen, kehrt die Kassa zur Anmeldung zurück; wartende Verkäufe bleiben am Gerät.
+
+## 5.5 Fotos im Dashboard (Roboterführerschein)
+- Zugang: die Stop-Manager der Station, die genau „Roboterführerschein“ heißt, die Schüler:innen
+  mit bestätigter Zuteilung zu ihr (Groß-/Kleinschreibung egal) und Admins. Anders als bei Kassa
+  und Anmeldung haben Lehrkräfte nicht von sich aus Zugang, nur als Stop-Manager der Station.
+  Geprüft über `GET /v1/users/is-photo-viewer`.
+- Kein eigener Menüpunkt: Der Abschnitt „Fotos“ erscheint auf `/student` und `/stop-manager` nur
+  für die Leute der Station (nicht für Admins, die diese Seiten ansehen); Admins finden ihn im Tab
+  „Registrations“ auf `/registration`.
+- Kein Foto wird von selbst gezeigt. Alle Fotos stehen als Raster von Buttons (Besuchernummer
+  und Uhrzeit der Anmeldung, Wiener Zeit) in Nummernfolge, geblättert mit standardmäßig 20 Fotos
+  pro Seite (wählbar 20, 50, 100). Ein Klick zeigt das Foto klein neben dem Raster (am Handy
+  darunter), mit Download (`Visitor_0001.png`) und „Hide“; ein zweiter Klick blendet es aus.
+  Dazu die Anzahl, die höchste
+  Nummer und alle Fotos als ZIP. Die Liste wird alle 30 Sekunden nachgeladen, solange der Tab
+  sichtbar ist.
+- Die Fotodateien selbst bleiben öffentlich (§11.3); geschützt sind die Liste und das ZIP.
 
 ---
 
@@ -403,8 +424,9 @@ Eigenschaften:
 - Geschlecht: männlich, weiblich oder „keine Angabe“.
 - Die Einwilligung zum Foto wird am Kiosk eingeholt. Das Foto liegt als Datei `Visitor_0001.png`
   (Besuchernummer) im Backend und ist **ohne Login über die Besuchernummer abrufbar**, damit die
-  Roboterführerschein-Stationen es mit dem PhotoDownloader holen können (Entscheidung). Kann das
-  Foto nicht gespeichert werden, wird auch die Anmeldung nicht gespeichert.
+  Roboterführerschein-Stationen es mit dem PhotoDownloader holen können (Entscheidung, bis nach
+  dem TdoT 20.11.2026; dann neu entscheiden). Zusätzlich zeigt das Dashboard die Fotos der
+  Station (§5.5). Kann das Foto nicht gespeichert werden, wird auch die Anmeldung nicht gespeichert.
 - Admins exportieren die Anmeldungen als CSV, laden alle Fotos als ZIP und löschen alle
   Anmeldungen (samt Fotos) oder nur alle Fotos im Dashboard. Nach dem Löschen aller Anmeldungen beginnt die
   Besuchernummer (und damit die Nummer für den Roboterführerschein) wieder bei 1.

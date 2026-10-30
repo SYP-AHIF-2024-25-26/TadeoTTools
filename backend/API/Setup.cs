@@ -13,6 +13,7 @@ internal static class Setup
     public const string StopManagerOrAdminPolicyName = "IsStopManagerOrAdmin";
     public const string CashierPolicyName = "IsCashier";
     public const string RegistrarPolicyName = "IsRegistrar";
+    public const string PhotoViewerPolicyName = "IsPhotoViewer";
 
     public static void AddLeoAuthentication(this IServiceCollection services)
     {
@@ -74,6 +75,8 @@ internal static class Setup
                 .Add(new KioskStaffRequirement(KioskStaffRequirement.BuffetStopName)))
             .AddPolicy(RegistrarPolicyName, policy => policy.Requirements
                 .Add(new KioskStaffRequirement(KioskStaffRequirement.ReceptionStopName)))
+            .AddPolicy(PhotoViewerPolicyName, policy => policy.Requirements
+                .Add(KioskStaffRequirement.PhotoViewer))
             .AddPolicy(nameof(LeoUserRole.Student), policy => policy.Requirements
                 .Add(new LeoAuthRequirement(LeoUserRole.Student, true)));
 

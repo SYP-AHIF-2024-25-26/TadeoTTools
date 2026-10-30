@@ -63,6 +63,17 @@ public class UserManagementEndpoints
             student?.StudentClass ?? string.Empty));
     }
 
+    /// <param name="AtStop">Stop manager or accepted student of the Roboterführerschein stop; false for
+    /// admins who only pass as admins (they see the photos in the Registrations tab, not on their own pages).</param>
+    public record PhotoViewerDto(bool AtStop);
+
+    public static async Task<IResult> GetPhotoViewer(TadeoTDbContext context, HttpContext httpContext)
+    {
+        var username = httpContext.User.FindFirst("preferred_username")?.Value?.ToLower() ?? string.Empty;
+        return Results.Ok(new PhotoViewerDto(
+            await KioskStaffAuthorizationHandler.IsAtStopAsync(context, username, KioskStaffRequirement.PhotoViewer)));
+    }
+
     public static async Task<IResult> UserInDatabase(TadeoTDbContext context, HttpContext httpContext)
     {
         var userInfo = httpContext.User.GetLeoUserInformation();

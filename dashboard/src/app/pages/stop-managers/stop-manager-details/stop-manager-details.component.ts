@@ -21,6 +21,7 @@ import { StopManagerService } from '@/core/services/stop-manager.service';
 import { StopManagerStudentsComponent } from './components/stop-manager-students/stop-manager-students.component';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
+import { VisitorPhotosComponent } from '@/shared/components/visitor-photos/visitor-photos.component';
 
 @Component({
   selector: 'app-stop-manager-details',
@@ -30,6 +31,7 @@ import { PageHeaderComponent } from '@/shared/components/page-header/page-header
     RouterLink,
     StopManagerStudentsComponent,
     PageHeaderComponent,
+    VisitorPhotosComponent,
   ],
   templateUrl: './stop-manager-details.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -10,6 +10,7 @@ import {
 import { RegistrationService } from '@/core/services/registration.service';
 import { errorText, ToastService } from '@/core/services/toast.service';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
+import { VisitorPhotosComponent } from '@/shared/components/visitor-photos/visitor-photos.component';
 import { VisitorSummary } from '@/shared/models/types';
 import { downloadFile, plural } from '@/shared/utils/utils';
 
@@ -19,7 +20,7 @@ type Deleting = 'visitors' | 'photos';
   selector: 'app-registration-visitors',
   templateUrl: './registration-visitors.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DeletePopupComponent],
+  imports: [DeletePopupComponent, VisitorPhotosComponent],
 })
 export class RegistrationVisitorsComponent {
   private registrationService = inject(RegistrationService);

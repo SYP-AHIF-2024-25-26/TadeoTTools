@@ -96,11 +96,19 @@ public static class RegistrationApi
             .Produces<DeleteVisitorsResultDto>()
             .RequireAuthorization(Setup.AdminPolicyName);
 
+        // Photo section in the dashboard (Roboterführerschein stop and admins)
+        group.MapGet("api/visitor-photos", GetVisitorPhotoIndex)
+            .WithName(nameof(GetVisitorPhotoIndex))
+            .WithDescription("Get all photos with their registration time, newest first; " +
+                             "each file is served at /v1/visitor-photos/{fileName}")
+            .Produces<List<VisitorPhotoDto>>()
+            .RequireAuthorization(Setup.PhotoViewerPolicyName);
+
         group.MapGet("api/visitor-photos/zip", GetVisitorPhotosZip)
             .WithName(nameof(GetVisitorPhotosZip))
             .WithDescription("Get all photo files in one zip file")
             .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(Setup.AdminPolicyName);
+            .RequireAuthorization(Setup.PhotoViewerPolicyName);
 
         group.MapDelete("api/visitor-photos", DeleteVisitorPhotos)
             .WithName(nameof(DeleteVisitorPhotos))
