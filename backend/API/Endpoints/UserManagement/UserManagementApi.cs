@@ -27,9 +27,15 @@ public static class UserManagementApi
         ).RequireAuthorization(Setup.AdminPolicyName);
 
         // Checked by the cashier kiosk after the Keycloak login; 403 shows "no access" there.
-        group.MapGet("/is-cashier", UserManagementEndpoints.GetCashierUser)
+        group.MapGet("/is-cashier", UserManagementEndpoints.GetKioskUser)
             .RequireAuthorization(Setup.CashierPolicyName)
-            .Produces<UserManagementEndpoints.CashierUserDto>()
+            .Produces<UserManagementEndpoints.KioskUserDto>()
+            .Produces(StatusCodes.Status403Forbidden);
+
+        // The same for the registration kiosk at the entrance.
+        group.MapGet("/is-registrar", UserManagementEndpoints.GetKioskUser)
+            .RequireAuthorization(Setup.RegistrarPolicyName)
+            .Produces<UserManagementEndpoints.KioskUserDto>()
             .Produces(StatusCodes.Status403Forbidden);
 
         group.MapGet("/token-data", static (HttpContext httpContext) =>

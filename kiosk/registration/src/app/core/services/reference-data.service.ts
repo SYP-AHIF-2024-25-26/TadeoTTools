@@ -73,12 +73,15 @@ export class ReferenceDataService {
   private async fetch(): Promise<void> {
     this.loading.set(true);
     try {
-      const [cities, reasons, schoolTypes] = await Promise.all([
+      const [cities, options] = await Promise.all([
         this.api.getCities(),
-        this.api.getReasons(),
-        this.api.getSchoolTypes(),
+        this.api.getOptions(),
       ]);
-      const data = { cities, reasons, schoolTypes };
+      const data = {
+        cities,
+        reasons: options.reasonsForVisit,
+        schoolTypes: options.schoolTypes,
+      };
       this.data.set(data);
       this.failure.set(null);
       writeCache(data);

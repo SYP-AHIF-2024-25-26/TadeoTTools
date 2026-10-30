@@ -3,7 +3,8 @@ import { RegistrationSessionService } from '@core/services/registration-session.
 import { ReferenceDataService } from '@core/services/reference-data.service';
 import { FocusOnShowDirective } from '@shared/directives/focus-on-show.directive';
 import { moveFocus } from '@shared/radio-keys';
-import { ADULT_COUNTS, SCHOOL_LEVELS } from '@shared/constants';
+import { ADULT_COUNTS, GENDER_LABELS, SCHOOL_LEVELS } from '@shared/constants';
+import { Gender } from '@shared/models/types';
 
 /** Four short questions on one screen, answered with a tap each. */
 @Component({
@@ -35,8 +36,8 @@ import { ADULT_COUNTS, SCHOOL_LEVELS } from '@shared/constants';
                 type="button"
                 role="radio"
                 class="chip min-w-36"
-                [attr.aria-checked]="draft().isMale === option.isMale"
-                (click)="session.update({ isMale: option.isMale })"
+                [attr.aria-checked]="draft().gender === option.gender"
+                (click)="session.update({ gender: option.gender })"
                 (keydown)="moveFocus($event)"
               >
                 {{ option.label }}
@@ -139,10 +140,9 @@ export class AboutStepComponent {
   protected draft = this.session.draft;
   protected moveFocus = moveFocus;
 
-  protected genders = [
-    { label: 'männlich', isMale: true },
-    { label: 'weiblich', isMale: false },
-  ] as const;
+  protected genders = (Object.keys(GENDER_LABELS) as Gender[]).map(
+    (gender) => ({ label: GENDER_LABELS[gender], gender })
+  );
   protected schoolLevels = SCHOOL_LEVELS;
   protected adultCounts = ADULT_COUNTS;
 }

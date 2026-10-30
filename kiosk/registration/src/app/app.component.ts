@@ -1,15 +1,18 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   inject,
   signal,
 } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
+import { AccessService } from '@core/services/access.service';
 import { RegistrationSessionService } from '@core/services/registration-session.service';
 import { ReferenceDataService } from '@core/services/reference-data.service';
 import { VisitorCountService } from '@core/services/visitor-count.service';
 import { WakeLockService } from '@core/services/wake-lock.service';
+import { AccessPageComponent } from '@pages/access/access-page.component';
 import { StartPageComponent } from '@pages/start/start-page.component';
 import { FormPageComponent } from '@pages/form/form-page.component';
 import { ReviewPageComponent } from '@pages/review/review-page.component';
@@ -25,6 +28,7 @@ import { StatusBarComponent } from '@shared/components/status-bar.component';
 @Component({
   selector: 'app-root',
   imports: [
+    AccessPageComponent,
     StartPageComponent,
     FormPageComponent,
     ReviewPageComponent,
@@ -33,20 +37,26 @@ import { StatusBarComponent } from '@shared/components/status-bar.component';
     StatusBarComponent,
   ],
   template: `
-    <app-status-bar />
+    @if (granted()) {
+      <app-status-bar />
+    }
     <div class="min-h-0 flex-1">
-      @switch (session.step()) {
-        @case ('start') {
-          <app-start-page />
-        }
-        @case ('form') {
-          <app-form-page />
-        }
-        @case ('review') {
-          <app-review-page />
-        }
-        @case ('done') {
-          <app-done-page />
+      @if (!granted()) {
+        <app-access-page />
+      } @else {
+        @switch (session.step()) {
+          @case ('start') {
+            <app-start-page />
+          }
+          @case ('form') {
+            <app-form-page />
+          }
+          @case ('review') {
+            <app-review-page />
+          }
+          @case ('done') {
+            <app-done-page />
+          }
         }
       }
     </div>
@@ -57,11 +67,16 @@ import { StatusBarComponent } from '@shared/components/status-bar.component';
 })
 export class AppComponent {
   protected session = inject(RegistrationSessionService);
+  private access = inject(AccessService);
   private swUpdate = inject(SwUpdate);
   private updateReady = signal(false);
 
+  /** Saving needs the school login; the lists and the count load before it. */
+  protected granted = computed(() => this.access.state() === 'granted');
+
   constructor() {
     inject(WakeLockService).keepAwake();
+    this.access.check();
     inject(ReferenceDataService).load();
     inject(VisitorCountService).start();
 

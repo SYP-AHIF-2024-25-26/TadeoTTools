@@ -18,6 +18,8 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ASPNETCORE_URLS=http://+:5005
 EXPOSE 5005
 COPY --from=build /app/publish .
+# Visitor photos; mount a host folder here that the app user (UID $APP_UID) can write
+RUN mkdir -p /app/photos && chown $APP_UID /app/photos
 # Run as the non-root user that ships with the .NET images
 USER $APP_UID
 ENTRYPOINT ["dotnet", "API.dll"]

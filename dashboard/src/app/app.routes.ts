@@ -92,6 +92,16 @@ export const routes: Routes = [
     canActivate: [adminGuard],
   },
   {
+    path: 'registration',
+    // Lazy, so the initial bundle stays within its budget.
+    loadComponent: () =>
+      import('./pages/registration/registration.component').then(
+        (m) => m.RegistrationComponent
+      ),
+    canMatch: [authGuard],
+    canActivate: [adminGuard],
+  },
+  {
     path: 'buffet',
     component: BuffetComponent,
     canMatch: [authGuard],

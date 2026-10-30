@@ -1,0 +1,113 @@
+@let s = summary();
+<div class="flex flex-col gap-6">
+  <section
+    class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+    aria-labelledby="visitors-heading"
+  >
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 id="visitors-heading" class="text-lg font-bold">
+          <span class="tabular-nums">{{ s.count }}</span>
+          {{ s.count === 1 ? 'registration' : 'registrations' }}
+          <!-- One text node: Angular drops whitespace-only text between elements -->
+          @if (s.count > 0) {
+            <span class="font-normal text-ink-muted"
+              >· {{ withCompany() }}
+              {{ withCompany() === 1 ? 'person' : 'people' }} including
+              accompanying adults</span
+            >
+          }
+        </h2>
+        <p class="text-sm text-ink-muted">
+          Saved at the entrance tablets. The statistics on the hall projector
+          show the same numbers.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="btn btn-outline btn-sm"
+        [disabled]="s.count === 0 || downloading() !== null"
+        (click)="downloadCsv()"
+      >
+        Export CSV
+      </button>
+    </div>
+  </section>
+
+  <section
+    class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+    aria-labelledby="photos-heading"
+  >
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 id="photos-heading" class="text-lg font-bold">
+          <span class="tabular-nums">{{ s.photoCount }}</span>
+          {{ s.photoCount === 1 ? 'photo' : 'photos' }}
+        </h2>
+        <p class="text-sm text-ink-muted">
+          Taken for the Roboterführerschein. The stops fetch them with the
+          PhotoDownloader by visitor number.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="btn btn-outline btn-sm"
+        [disabled]="s.photoCount === 0 || downloading() !== null"
+        (click)="downloadPhotos()"
+      >
+        @if (downloading() === 'zip') {
+          <span class="loading loading-spinner loading-xs"></span>
+        }
+        Download All (ZIP)
+      </button>
+    </div>
+  </section>
+
+  <section
+    class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+    aria-labelledby="registration-delete-heading"
+  >
+    <h2 id="registration-delete-heading" class="mb-2 text-lg font-bold">
+      Delete registrations or photos
+    </h2>
+    <p class="mb-4 text-sm text-ink-muted">
+      After the open day, or after test registrations. Towns, districts and the
+      choice lists stay.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <button
+        type="button"
+        class="btn btn-outline btn-error btn-sm"
+        [disabled]="s.count === 0"
+        (click)="confirming.set('visitors')"
+      >
+        Delete All Registrations
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline btn-error btn-sm"
+        [disabled]="s.photoCount === 0"
+        (click)="confirming.set('photos')"
+      >
+        Delete All Photos
+      </button>
+    </div>
+  </section>
+</div>
+
+@if (confirming(); as what) {
+  <app-delete-popup
+    [title]="
+      what === 'photos' ? 'Delete All Photos' : 'Delete All Registrations'
+    "
+    [message]="deleteMessage()"
+    [confirmLabel]="
+      what === 'photos' ? 'Delete All Photos' : 'Delete All Registrations'
+    "
+    [secondaryLabel]="what === 'photos' ? 'Download Photos' : 'Export CSV'"
+    [busy]="deleting()"
+    (secondary)="exportFirst()"
+    (cancel)="confirming.set(null)"
+    (removeConfirmed)="deleteConfirmed()"
+  />
+}

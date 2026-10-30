@@ -1,12 +1,13 @@
 <div class="nav-surface sticky top-0 z-50 bg-night-950">
-  <nav class="mx-auto flex max-w-screen-xl items-center justify-between p-4 text-night-100">
+  <nav class="mx-auto flex max-w-screen-xl items-center justify-between gap-3 p-4 text-night-100">
     <!-- Logo -->
     <!-- Admins: the Overview (their home); everyone else: their own start page -->
     <a [routerLink]="isAdmin() ? ['/overview'] : ['/']" [attr.aria-label]="isAdmin() ? 'Overview' : 'Home'"
-      [attr.aria-current]="isAdmin() && path() === '/overview' ? 'page' : null" class="flex items-center">
-      <!-- The white school logo on the night bar, as on htl-leonding.at -->
-      <img ngSrc="assets/tadeottools-logo-transparent.png" priority alt="TadeotTools – HTL Leonding" class="h-10 w-auto"
-        height="40" width="192" />
+      [attr.aria-current]="isAdmin() && path() === '/overview' ? 'page' : null" class="flex min-w-0 items-center">
+      <!-- The logo with the white "HTL Leonding" on the night bar. On a narrow phone it gets
+           smaller with its proportions kept, instead of being squeezed by the controls. -->
+      <img ngSrc="assets/tadeottools-logo-transparent.png" priority alt="TadeotTools – HTL Leonding"
+        class="h-auto max-h-10 w-auto max-w-full" height="40" width="211" />
     </a>
 
     <!-- Nav Links (desktop) -->
@@ -25,12 +26,12 @@
       }
     </div>
 
-    <div class="flex items-center space-x-4">
+    <div class="flex shrink-0 items-center space-x-4">
       <label class="inline-flex cursor-pointer items-center">
         <input type="checkbox" class="peer sr-only" aria-label="Dark mode" [checked]="!isWhiteMode()"
           (click)="changeDarkMode()" />
         <div
-          class="peer relative ml-8 h-6 w-11 rounded-full bg-white/25 ring-1 ring-white/25 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full md:p-0">
+          class="peer relative h-6 w-11 md:ml-8 rounded-full bg-white/25 ring-1 ring-white/25 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full md:p-0">
         </div>
         <span class="ms-2 hidden md:block">Theme</span>
       </label>
@@ -44,7 +45,7 @@
     </div>
 
     <!-- Hamburger and Mobile Dropdown Wrapper -->
-    <div class="relative md:hidden">
+    <div class="relative shrink-0 md:hidden">
       <!-- Hamburger (mobile only) -->
       <button class="inline-flex items-center justify-center rounded p-2 text-white hover:bg-white/10" type="button"
         aria-label="Menu" [attr.aria-expanded]="mobileMenuOpen()" (click)="mobileMenuOpen.set(!mobileMenuOpen())">

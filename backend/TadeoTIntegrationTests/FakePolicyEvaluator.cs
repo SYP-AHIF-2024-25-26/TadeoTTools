@@ -16,6 +16,7 @@ public class FakePolicyEvaluator : IPolicyEvaluator
             {
                 new Claim(ClaimTypes.Role, "Admin"), // Simulate Admin role
                 new Claim(ClaimTypes.NameIdentifier, "admin"),
+                new Claim("preferred_username", "admin"),
                 new Claim("role", "Admin") // LeoAuth might use this claim type
             }, "FakeScheme"));
 

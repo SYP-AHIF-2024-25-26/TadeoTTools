@@ -22,7 +22,7 @@ const FADE_MS = 900;
 /**
  * An unattended slideshow for the projector: no routes, no buttons, no
  * dialogs. Everything it needs comes from the URL (`?delay=N`) and the
- * legacy backend.
+ * backend.
  */
 @Component({
   selector: 'app-root',

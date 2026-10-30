@@ -12,7 +12,7 @@ using Xunit;
 namespace TadeoTIntegrationTests;
 
 // FakePolicyEvaluator authorizes every request, so the handler is called directly here.
-public class CashierAuthorizationTests(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+public class KioskStaffAuthorizationTests(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
 {
     private const string TeacherDn = "CN=lehrer,OU=Teachers,OU=HTL-Leonding,DC=EDU,DC=HTL-LEONDING,DC=AC,DC=AT";
     private const string StudentDn = "CN=if200001,OU=Students,OU=HTL-Leonding,DC=EDU,DC=HTL-LEONDING,DC=AC,DC=AT";
@@ -29,6 +29,7 @@ public class CashierAuthorizationTests(IntegrationTestWebAppFactory factory) : B
     public async Task Teacher_ShouldBeAllowed_WithoutAnyAssignment()
     {
         (await IsAllowed(User("lehrer", TeacherDn))).Should().BeTrue();
+        (await IsAllowed(User("lehrer", TeacherDn), KioskStaffRequirement.ReceptionStopName)).Should().BeTrue();
     }
 
     [Fact]
@@ -51,16 +52,43 @@ public class CashierAuthorizationTests(IntegrationTestWebAppFactory factory) : B
     }
 
     [Fact]
+    public async Task Student_ShouldBeAllowedToRegister_OnlyWhenAcceptedAtEmpfang()
+    {
+        await AssignAsync("if200001", "Empfang", Status.ACCEPTED);
+
+        (await IsAllowed(User("if200001", StudentDn), KioskStaffRequirement.ReceptionStopName)).Should().BeTrue();
+        (await IsAllowed(User("if200001", StudentDn))).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Student_ShouldNotBeAllowedToRegister_WhenAcceptedAtBuffet()
+    {
+        await AssignAsync("if200001", "Buffet", Status.ACCEPTED);
+
+        (await IsAllowed(User("if200001", StudentDn), KioskStaffRequirement.ReceptionStopName)).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task StudentStopManager_ShouldNotBeAllowedToRegister_WithoutAssignmentToEmpfang()
+    {
+        DbContext.StopManagers.Add(new StopManager { EdufsUsername = "if200001" });
+        await DbContext.SaveChangesAsync();
+
+        (await IsAllowed(User("if200001", StudentDn), KioskStaffRequirement.ReceptionStopName)).Should().BeFalse();
+    }
+
+    [Fact]
     public async Task Admin_ShouldBeAllowed()
     {
         DbContext.Admins.Add(new Admin { Id = "if200001" });
         await DbContext.SaveChangesAsync();
 
         (await IsAllowed(User("if200001", StudentDn))).Should().BeTrue();
+        (await IsAllowed(User("if200001", StudentDn), KioskStaffRequirement.ReceptionStopName)).Should().BeTrue();
     }
 
     [Fact]
-    public async Task CashierUser_ShouldUseNameAndClassFromStudents_ForStudents()
+    public async Task KioskUser_ShouldUseNameAndClassFromStudents_ForStudents()
     {
         DbContext.Students.Add(new Student
         {
@@ -68,28 +96,28 @@ public class CashierAuthorizationTests(IntegrationTestWebAppFactory factory) : B
         });
         await DbContext.SaveChangesAsync();
 
-        var user = await CashierUser(User("IF200001", StudentDn));
+        var user = await KioskUser(User("IF200001", StudentDn));
 
-        user.Should().Be(new UserManagementEndpoints.CashierUserDto("Max Muster", "5AHIF"));
+        user.Should().Be(new UserManagementEndpoints.KioskUserDto("Max Muster", "5AHIF"));
     }
 
     [Fact]
-    public async Task CashierUser_ShouldUseTokenNameWithoutClass_ForTeachers()
+    public async Task KioskUser_ShouldUseTokenNameWithoutClass_ForTeachers()
     {
         var teacher = User("lehrer", TeacherDn);
         ((ClaimsIdentity)teacher.Identity!).AddClaims([
             new Claim(ClaimTypes.GivenName, "Lisa"), new Claim(ClaimTypes.Surname, "Lehrer")
         ]);
 
-        var user = await CashierUser(teacher);
+        var user = await KioskUser(teacher);
 
-        user.Should().Be(new UserManagementEndpoints.CashierUserDto("Lisa Lehrer", ""));
+        user.Should().Be(new UserManagementEndpoints.KioskUserDto("Lisa Lehrer", ""));
     }
 
-    private async Task<UserManagementEndpoints.CashierUserDto> CashierUser(ClaimsPrincipal user)
+    private async Task<UserManagementEndpoints.KioskUserDto> KioskUser(ClaimsPrincipal user)
     {
-        var result = await UserManagementEndpoints.GetCashierUser(DbContext, new DefaultHttpContext { User = user });
-        return result.Should().BeOfType<Ok<UserManagementEndpoints.CashierUserDto>>().Subject.Value!;
+        var result = await UserManagementEndpoints.GetKioskUser(DbContext, new DefaultHttpContext { User = user });
+        return result.Should().BeOfType<Ok<UserManagementEndpoints.KioskUserDto>>().Subject.Value!;
     }
 
     private async Task AssignAsync(string username, string stopName, Status status)
@@ -100,11 +128,11 @@ public class CashierAuthorizationTests(IntegrationTestWebAppFactory factory) : B
         await DbContext.SaveChangesAsync();
     }
 
-    private async Task<bool> IsAllowed(ClaimsPrincipal user)
+    private async Task<bool> IsAllowed(ClaimsPrincipal user, string stopName = KioskStaffRequirement.BuffetStopName)
     {
-        var requirement = new CashierRequirement();
+        var requirement = new KioskStaffRequirement(stopName);
         var context = new AuthorizationHandlerContext([requirement], user, null);
-        await new CashierAuthorizationHandler(DbContext).HandleAsync(context);
+        await new KioskStaffAuthorizationHandler(DbContext).HandleAsync(context);
         return context.HasSucceeded;
     }
 

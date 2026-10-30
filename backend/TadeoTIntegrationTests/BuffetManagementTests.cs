@@ -190,7 +190,7 @@ public class BuffetManagementTests(IntegrationTestWebAppFactory factory) : BaseI
             .SelectMany(l => l.Split('\n', StringSplitOptions.RemoveEmptyEntries))
             .ToList();
         lines.Should().HaveCount(2);
-        lines[1].Should().Be("OG;K7Q2-0012;20.11.2026;09:15:00;Kaffee;1,50;2;3,00;");
+        lines[1].Should().Be("OG;K7Q2-0012;20.11.2026;09:15:00;Kaffee;1,50;2;3,00;admin"); // username of FakePolicyEvaluator
     }
 
     [Fact]

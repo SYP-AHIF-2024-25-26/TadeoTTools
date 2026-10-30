@@ -20,11 +20,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { BuffetService } from '@/core/services/buffet.service';
-import { ConfirmDialogService } from '@/core/services/confirm-dialog.service';
 import { errorText, ToastService } from '@/core/services/toast.service';
 import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 import { Buffet, BuffetProduct, Sales } from '@/shared/models/types';
-import { plural } from '@/shared/utils/utils';
 import { BuffetProductsComponent } from './buffet-products/buffet-products.component';
 import { BuffetCardComponent } from './buffet-card/buffet-card.component';
 import { BuffetSalesComponent } from './buffet-sales/buffet-sales.component';
@@ -52,7 +50,6 @@ const TABS: BuffetTab[] = ['products', 'buffets', 'sales', 'statistics'];
 })
 export class BuffetComponent {
   private buffetService = inject(BuffetService);
-  private confirmDialog = inject(ConfirmDialogService);
   private toast = inject(ToastService);
   private injector = inject(Injector);
   private route = inject(ActivatedRoute);
@@ -74,12 +71,6 @@ export class BuffetComponent {
   protected sales = signal<Sales | null>(null);
   protected loading = signal(true);
   protected loadFailed = signal(false);
-  protected importing = signal(false);
-
-  // The import only fills empty tables, so it is offered only then.
-  protected canImport = computed(
-    () => this.products().length === 0 && this.buffets().length === 0
-  );
 
   protected buffetForm = new FormGroup({
     location: new FormControl('', {
@@ -159,31 +150,6 @@ export class BuffetComponent {
       );
     } finally {
       this.addingBuffet.set(false);
-    }
-  }
-
-  protected async importLegacy(): Promise<void> {
-    const confirmed = await this.confirmDialog.confirm({
-      title: 'Import from Legacy Backend',
-      message:
-        'Copies the products with their prices, the buffets and their menus from the old TadeoT admin, ' +
-        'with the same ids, so the cashier can still fall back to the old backend. ' +
-        'Old sales and cash movements are not copied.',
-      confirmLabel: 'Import',
-      tone: 'primary',
-    });
-    if (!confirmed) return;
-    this.importing.set(true);
-    try {
-      const result = await this.buffetService.importFromLegacy();
-      this.toast.success(
-        `Imported ${plural(result.products, 'product')}, ${plural(result.buffets, 'buffet')} and ${plural(result.menuEntries, 'menu item')}.`
-      );
-      await this.load();
-    } catch (error) {
-      this.toast.error(errorText(error, 'The import failed.'));
-    } finally {
-      this.importing.set(false);
     }
   }
 }

@@ -104,6 +104,67 @@ namespace Database.Migrations
                     b.ToTable("CashMovements");
                 });
 
+            modelBuilder.Entity("Database.Entities.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DistrictId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("character varying(4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DistrictId");
+
+                    b.HasIndex("ZipCode", "Name")
+                        .IsUnique();
+
+                    b.ToTable("Cities");
+                });
+
+            modelBuilder.Entity("Database.Entities.District", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("Number")
+                        .IsUnique();
+
+                    b.ToTable("Districts");
+                });
+
             modelBuilder.Entity("Database.Entities.Division", b =>
                 {
                     b.Property<int>("Id")
@@ -383,6 +444,33 @@ namespace Database.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Database.Entities.RegistrationOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Kind", "Name")
+                        .IsUnique();
+
+                    b.ToTable("RegistrationOptions");
+                });
+
             modelBuilder.Entity("Database.Entities.Stop", b =>
                 {
                     b.Property<int>("Id")
@@ -581,6 +669,83 @@ namespace Database.Migrations
                     b.ToTable("StudentAssignments");
                 });
 
+            modelBuilder.Entity("Database.Entities.Visitor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Adults")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("HasPhoto")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("InterestedInAbendschule")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("InterestedInElektronik")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("InterestedInFachschuleElektronik")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("InterestedInFachschuleInformatik")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("InterestedInInformatik")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("InterestedInKolleg")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("InterestedInMedientechnik")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("InterestedInMedizintechnik")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ReasonForVisit")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("RegisteredBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("SchoolLevel")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SchoolType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.ToTable("Visitors");
+                });
+
             modelBuilder.Entity("DivisionStop", b =>
                 {
                     b.Property<int>("DivisionsId")
@@ -662,6 +827,17 @@ namespace Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Buffet");
+                });
+
+            modelBuilder.Entity("Database.Entities.City", b =>
+                {
+                    b.HasOne("Database.Entities.District", "District")
+                        .WithMany("Cities")
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("District");
                 });
 
             modelBuilder.Entity("Database.Entities.FeedbackDependency", b =>
@@ -800,6 +976,17 @@ namespace Database.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("Database.Entities.Visitor", b =>
+                {
+                    b.HasOne("Database.Entities.City", "City")
+                        .WithMany("Visitors")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("City");
+                });
+
             modelBuilder.Entity("DivisionStop", b =>
                 {
                     b.HasOne("Database.Entities.Division", null)
@@ -822,6 +1009,16 @@ namespace Database.Migrations
                     b.Navigation("Menu");
 
                     b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Database.Entities.City", b =>
+                {
+                    b.Navigation("Visitors");
+                });
+
+            modelBuilder.Entity("Database.Entities.District", b =>
+                {
+                    b.Navigation("Cities");
                 });
 
             modelBuilder.Entity("Database.Entities.FeedbackQuestion", b =>

@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { RegistrationApiService } from './registration-api.service';
 import { ReferenceDataService } from './reference-data.service';
 import { VisitorCountService } from './visitor-count.service';
+import { AccessService } from './access.service';
 import { classify } from './failure';
 import {
   Draft,
@@ -27,7 +28,8 @@ export const FORM_STEPS = [
 export type FormStep = (typeof FORM_STEPS)[number]['id'];
 
 export interface SaveError {
-  kind: LoadFailure;
+  /** 'login': the session ended (401); 'denied': the access was taken away (403). */
+  kind: LoadFailure | 'login' | 'denied';
   status?: number;
 }
 
@@ -39,9 +41,14 @@ export class RegistrationSessionService {
   private api = inject(RegistrationApiService);
   private reference = inject(ReferenceDataService);
   private counter = inject(VisitorCountService);
+  private access = inject(AccessService);
   private thanksTimer: ReturnType<typeof setTimeout> | undefined;
 
   readonly step = signal<Step>('start');
+  /** "Anmeldung starten" is checking the school login. */
+  readonly starting = signal(false);
+  /** The login ends too soon for a registration: log in again first. */
+  readonly renewLogin = signal(false);
   readonly formIndex = signal(0);
   readonly draft = signal<Draft>(EMPTY_DRAFT);
   /** True after tapping a row in the overview, until the overview is back. */
@@ -64,7 +71,7 @@ export class RegistrationSessionService {
     return {
       place: d.cityId !== null,
       about:
-        d.isMale !== null &&
+        d.gender !== null &&
         d.schoolLevel !== null &&
         d.schoolType !== null &&
         d.adults !== null,
@@ -80,7 +87,7 @@ export class RegistrationSessionService {
     const d = this.draft();
     if (
       d.cityId === null ||
-      d.isMale === null ||
+      d.gender === null ||
       d.schoolLevel === null ||
       d.schoolType === null ||
       d.adults === null ||
@@ -94,7 +101,7 @@ export class RegistrationSessionService {
     const has = (key: InterestKey) => d.interests.includes(key);
     return {
       cityId: d.cityId,
-      isMale: d.isMale,
+      gender: d.gender,
       adults: d.adults,
       schoolLevel: d.schoolLevel,
       schoolType: d.schoolType,
@@ -107,15 +114,27 @@ export class RegistrationSessionService {
       interestedInFachschuleElektronik: has('interestedInFachschuleElektronik'),
       interestedInAbendschule: has('interestedInAbendschule'),
       interestedInKolleg: has('interestedInKolleg'),
-      usePhoto: d.usePhoto,
-      photoFileName: d.usePhoto ? d.photo : null,
+      photo: d.usePhoto ? d.photo : null,
     };
   });
 
-  start(): void {
-    if (!this.reference.ready()) return;
+  async start(): Promise<void> {
+    if (!this.reference.ready() || this.starting()) return;
+    // Logging in again replaces the page, so it has to happen before anything is entered.
+    this.starting.set(true);
+    try {
+      const session = await this.access.sessionLongEnough();
+      this.renewLogin.set(session === 'renew');
+      if (session === 'renew') return;
+    } finally {
+      this.starting.set(false);
+    }
     this.clear();
     this.step.set('form');
+    // A tablet may have waited on the start screen for hours: fetch changes made in the
+    // dashboard since then. The form starts at once with the cached lists; the choice lists
+    // come in later steps, and a failed load keeps the cache.
+    this.reference.load();
   }
 
   update(changes: Partial<Draft>): void {
@@ -162,18 +181,20 @@ export class RegistrationSessionService {
     try {
       const id = await this.api.addVisitor(visitor);
       this.savedId.set(id);
-      this.savedWithPhoto.set(visitor.usePhoto);
+      this.savedWithPhoto.set(visitor.photo !== null);
       this.step.set('done');
       this.counter.refresh();
       // The licence number has to be noted down, so that screen waits for a tap.
-      if (!visitor.usePhoto) {
+      if (visitor.photo === null) {
         this.thanksTimer = setTimeout(() => this.reset(), THANKS_SCREEN_MS);
       }
     } catch (err) {
       console.warn('Registration could not be saved', err);
+      const status = err instanceof HttpErrorResponse ? err.status : undefined;
       this.saveError.set({
-        kind: classify(err),
-        status: err instanceof HttpErrorResponse ? err.status : undefined,
+        kind:
+          status === 401 ? 'login' : status === 403 ? 'denied' : classify(err),
+        status,
       });
     } finally {
       this.saving.set(false);

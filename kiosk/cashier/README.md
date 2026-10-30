@@ -103,7 +103,7 @@ npm run format
 Unter Aspire (`backend/AppHost`) startet die App mit `npm start`; `update_base_url.js` schreibt
 dabei die URL der API dieses Repositorys in `environment.development.ts` (nicht committen). Mit
 `npx ng serve` erwartet die App die API unter `http://localhost:5001`. Lokal braucht das Backend
-Produkte und ein Buffet (Dashboard, Seite „Buffet“, oder „Import from legacy backend“ dort).
+Produkte und ein Buffet (Dashboard, Seite „Buffet“).
 
 Verwendete Endpunkte (alle mit Login, Richtlinie `IsCashier`): `GET /v1/users/is-cashier`,
 `GET /v1/buffets` (Buffets mit Produkten auf der Karte, Preise in Cent, gleiche Form wie das alte

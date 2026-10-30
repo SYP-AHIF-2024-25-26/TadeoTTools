@@ -5,9 +5,9 @@ an einem Beamer in der Halle hängt, stundenlang und ohne Bedienung. Wer vorbeig
 paar Sekunden, wie viele sich schon angemeldet haben, wann sie gekommen sind und was sie
 interessiert.
 
-Ersetzt die alte Angular-14-App (`tadeot-frontend/statistics` im Repository `htl-leo-tadeot`). Das
-**alte Backend bleibt unverändert** und wird weiter verwendet; diese App ruft nicht die API dieses
-Repositorys auf und **liest nur** (keine POST-Anfragen).
+Ersetzt die alte Angular-14-App (`tadeot-frontend/statistics` im Repository `htl-leo-tadeot`). Sie
+liest die API dieses Repositorys (`backend/`) und **liest nur** (keine POST-Anfragen). Bis 20.11.2026
+bleibt das alte Backend die Rückfallebene: dafür das alte Image dieser App pinnen.
 
 ## Folien
 
@@ -20,15 +20,15 @@ Immer in dieser Reihenfolge; eine Folie ohne Daten wird übersprungen.
    und die Tage mit Anmeldungen in der Woche davor (z. B. Freitag und Samstag), höchstens 3;
    ältere Tage (voriges Jahr) bleiben weg. Die Stunde mit den meisten Anmeldungen ist je Tag dunkler.
    Testanmeldungen in der Woche vor dem Tag der offenen Tür erscheinen als eigene Zeile, daher vorher
-   die Besucher im alten Admin löschen.
+   die Anmeldungen im Dashboard löschen (Seite „Registration“).
 3. **Das interessiert unsere Gäste:** Interesse an den Abteilungen (Mehrfachnennungen), die vier
    Abteilungen in ihren Farben (aus `DESIGN.md`, in `src/app/shared/constants.ts`).
 4. **So haben unsere Gäste von uns erfahren**
 5. **Aus diesen Schulen kommen unsere Gäste** (mit Prozent)
-6. **Aus diesen Bezirken kommen unsere Gäste:** Achtung, `districtcount` im alten Backend zählt die
-   **Gemeinden** je Bezirk, aus denen sich jemand angemeldet hat (die 10 häufigsten Bezirke), nicht
-   die Besucher. Die Folie sagt das so („17 Gemeinden“).
-7. **Angemeldet nach Geschlecht**
+6. **Aus diesen Bezirken kommen unsere Gäste:** Anmeldungen je Bezirk (das alte Backend zählte
+   stattdessen die Gemeinden mit mindestens einer Anmeldung). Wien zählt je Gemeindebezirk
+   („Wien 4.,Wieden“), so wie die Orte im Dashboard zugeordnet sind.
+7. **Angemeldet nach Geschlecht** (männlich, weiblich, keine Angabe)
 
 Mehr als 12 Kategorien werden zu „n weitere“ zusammengefasst. Kategorien mit 0 werden nicht gezeigt.
 Ohne Anmeldungen zeigt die App nur „Tag der offenen Tür – Hier erscheinen gleich die ersten
@@ -69,24 +69,19 @@ npm run lint
 npm run format
 ```
 
-**Achtung:** `environment.development.ts` zeigt auf das **echte** alte Backend mit echten
-Anmeldedaten. Die App liest nur, aber die Zahlen sind personenbezogene Auswertungen: Screenshots
-davon nicht weitergeben. Zum Testen ein Mock-Backend mit Testdaten verwenden.
+Mit `npx ng serve` erwartet die App die API unter `http://localhost:5001`. Unter Aspire
+(`backend/AppHost`) startet die App mit `npm start`; `update_base_url.js` schreibt dabei die URL der
+API in `environment.development.ts` (nicht committen). Die Zahlen sind personenbezogene
+Auswertungen: Screenshots echter Daten nicht weitergeben.
 
-Unter Aspire (`backend/AppHost`) startet die App mit `npm start`; `update_base_url.js` schreibt
-dabei `STATISTICS_API_URL` in `environment.development.ts` (nicht committen).
-
-Verwendete Endpunkte des alten Backends (alle `GET`, ohne Login): `/api/Visitors/count`,
-`/api/Visitors/bytime`, `/departmentcount`, `/reasoncount`, `/schooltypecount`, `/districtcount`,
-`/gendercount` (jeweils `[{ category, count }]`).
-
-Das alte Backend verschiebt die Stunde in `bytime` um +1 (Winterzeit). Am Tag der offenen Tür
-(November bis Jänner) stimmt die Uhrzeit; Testanmeldungen im Sommer erscheinen eine Stunde zu spät.
+Verwendeter Endpunkt (`GET`, ohne Login): `/v1/visitor-statistics`, eine Antwort für alle Folien
+(`count`, `byTime` als `[{ date, hour, count }]` in Wiener Zeit, sonst je `[{ category, count }]`).
+Daten, die noch vom alten Backend im Browser liegen, werden beim ersten Laden verworfen.
 
 ## Docker
 
-`BACKEND_URL` ist die URL des alten Backends **ohne** `/api`
-(z. B. `https://tadeot.htl-leonding.ac.at/tadeot-api`) und wird beim Containerstart in `env.js`
+`BACKEND_URL` ist die URL von `backend/` **ohne** `/v1`
+(z. B. `https://tadeot.htl-leonding.ac.at/tadeot-backend-201126`) und wird beim Containerstart in `env.js`
 geschrieben. Die `base href` ist relativ (`./`), daher läuft dasselbe Image unter `/` und hinter
 einem Pfad-Präfix (Präfix im Reverse Proxy entfernen). Der Aufruf muss mit `/` enden
 (`…/statistics/`), sonst lädt der Browser `main.js` und `env.js` vom Root. Mit Traefik, unter dem
@@ -112,5 +107,5 @@ App unter `/statistics` laufen: die alte oder diese.
 
 ```bash
 docker build -t tadeot-statistics .
-docker run -p 8080:80 -e BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-api tadeot-statistics
+docker run -p 8080:80 -e BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126 tadeot-statistics
 ```

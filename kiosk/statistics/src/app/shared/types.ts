@@ -1,19 +1,26 @@
-/** One category of a legacy statistics endpoint (`GET /api/Visitors/<path>`). */
+/** One bar of a statistics slide. */
 export interface VisitorResult {
   category: string;
   count: number;
 }
 
-/** `GET /api/Visitors/count`: registered visitors and the adults who came with them. */
+/** Registrations in one hour, Vienna time: hour 14 on "2026-11-20" is 14–15 Uhr. */
+export interface VisitorHour {
+  date: string;
+  hour: number;
+  count: number;
+}
+
+/** Registered visitors and the adults who came with them. */
 export interface VisitorCount {
   count: number;
   adultsCount: number;
 }
 
-/** Everything the slideshow shows, as last loaded from the backend. */
+/** `GET /v1/visitor-statistics`: everything the slideshow shows, as last loaded. */
 export interface Statistics {
   count: VisitorCount;
-  byTime: VisitorResult[];
+  byTime: VisitorHour[];
   departments: VisitorResult[];
   reasons: VisitorResult[];
   schoolTypes: VisitorResult[];
@@ -50,8 +57,6 @@ export type Slide =
       title: string;
       note?: string;
       bars: Bar[];
-      /** Value text after the number, e.g. "Gemeinden". */
-      unit?: { one: string; many: string };
       /** Share of this total shown after the value. */
       percentOf?: number;
     }

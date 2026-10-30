@@ -27,8 +27,8 @@ export const MAX_TIME_DAYS = 3;
 export const MAX_BARS = 12;
 
 /**
- * The division colours as documented in DESIGN.md. This kiosk only reads the
- * legacy backend, which has no colours; keep them in sync with the dashboard.
+ * The division colours as documented in DESIGN.md. The statistics endpoint
+ * sends no colours; keep them in sync with the dashboard.
  */
 export const DIVISION_COLORS: Record<string, string> = {
   Informatik: '#0059A7',
@@ -37,7 +37,7 @@ export const DIVISION_COLORS: Record<string, string> = {
   Medizintechnik: '#f1a102',
 };
 
-/** Legacy category names that read better in full on the wall. */
+/** Category names (from the legacy app) that read better in full on the wall. */
 export const DEPARTMENT_LABELS: Record<string, string> = {
   Fachschule: 'Fachschule Elektronik',
 };

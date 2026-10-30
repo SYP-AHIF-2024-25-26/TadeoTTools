@@ -16,7 +16,9 @@ using API.Endpoints.FeedbackManagement;
 using API.Endpoints.FeatureFlagManagement;
 using API.Endpoints.OverviewManagement;
 using API.Endpoints.BuffetManagement;
-using API.Endpoints.LegacyImportManagement;
+using API.Endpoints.CityManagement;
+using API.Endpoints.RegistrationManagement;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,8 +41,9 @@ builder.Services.AddScoped<StopGroupFunctions>();
 builder.Services.AddScoped<StopFunctions>();
 builder.Services.AddScoped<TadeoTDbContext>();
 
-// Reads the legacy TadeoT backend for the one-time import (LegacyApi:BaseUrl).
-builder.Services.AddHttpClient();
+// Visitor photos as files (in Docker a bind mount at /app/photos).
+builder.Services.AddSingleton(_ => new VisitorPhotoStore(
+    builder.Configuration["Photos:Path"] ?? Path.Combine(builder.Environment.ContentRootPath, "photos")));
 
 builder.Services.AddLeoAuthentication();
 builder.Services.AddBasicAuthorization();
@@ -107,6 +110,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
+// The photos are public by visitor id: the PhotoDownloader at the Roboterführerschein stops fetches them.
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(app.Services.GetRequiredService<VisitorPhotoStore>().Folder),
+    RequestPath = "/v1/visitor-photos",
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -125,7 +135,8 @@ app.MapFeedbackEndpoints();
 app.MapFeatureFlagEndpoints();
 app.MapOverviewEndpoints();
 app.MapBuffetEndpoints();
-app.MapLegacyImportEndpoints();
+app.MapCityEndpoints();
+app.MapRegistrationEndpoints();
 
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetService<TadeoTDbContext>();
@@ -199,4 +210,4 @@ static async Task SeedInitialAdminAsync(
     await context.SaveChangesAsync();
     logger.LogInformation("Admin seeded successfully");
 }*/
-public partial class Program { }
+public partial class Program { }

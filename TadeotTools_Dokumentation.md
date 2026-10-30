@@ -10,7 +10,7 @@ Das Projekt gliedert sich physisch in folgende Hauptverzeichnisse:
 - **`backend/`**: Beinhaltet die REST-API, geschrieben in C# mit .NET und Entity Framework Core.
 - **`guide/`**: Die GuideApp, die öffentliche Web-App (PWA) für Besucher und Guides, entwickelt mit Angular und TailwindCSS.
 - **`dashboard/`**: Das Admin-Dashboard zur Datenverwaltung, ebenfalls entwickelt mit Angular.
-- **`kiosk/`**: Kiosk-Apps für fest aufgestellte Geräte, je App ein Unterordner. Derzeit `kiosk/feedback/` (Feedback-App für die Tablets am Ausgang), `kiosk/registration/` (Anmelde-App für die Tablets am Eingang), `kiosk/cashier/` (Kassa für das Buffet) und `kiosk/statistics/` (Diashow mit der Besucherstatistik für den Beamer). Anmeldung und Statistik verwenden weiterhin das Backend des alten TadeoT-Systems; die Kassa verkauft über `backend/` (das alte Backend bleibt bis nach dem TdoT als Rückfall).
+- **`kiosk/`**: Kiosk-Apps für fest aufgestellte Geräte, je App ein Unterordner. Derzeit `kiosk/feedback/` (Feedback-App für die Tablets am Ausgang), `kiosk/registration/` (Anmelde-App für die Tablets am Eingang), `kiosk/cashier/` (Kassa für das Buffet) und `kiosk/statistics/` (Diashow mit der Besucherstatistik für den Beamer). Alle Kiosk-Apps verwenden `backend/`; das alte TadeoT-Backend bleibt bis nach dem TdoT als Rückfall. Dazu kommt `tools/photo-downloader/`, das Programm, mit dem die Roboterführerschein-Stationen die Fotos der Besucher:innen holen.
 - **`deployment/`** & **`docker-compose.yml`**: Beschreibt die Bereitstellung der Applikationen und der zugehörigen PostgreSQL-Datenbank als Docker-Container.
 
 ---
@@ -55,7 +55,8 @@ Das Dashboard dient zur Datenpflege, Konfiguration und Verwaltung.
 - **Stationsmanager / Stop-Manager (`/stop-manager`)**: Übersicht der Stationsverantwortlichen. (*Hinweis: Manager werden vom Admin auf der Stop-Details Seite zugewiesen - neue Manager-Accounts können im UserManagement hinzugefügt werden*).
 - **Nutzerverwaltung (`/user-management`)**: Anlegen/Löschen der Administratoren und der Stop-Manager. Zusätzlich bietet das Modul den Im- und Export (`Upload`/`CSV`) aller Datensätze, den massenhaften Reset (`Wipe`) aller Studenten-Einträge und die Parameter, um z.B. den Frontend-Countdown einzustellen.
 - **Feedback-Konfigurator (`/feedback`)**: Tool zum dynamischen Erstellen und Bearbeiten von Feedback-Fragen, Antwort-Optionen und Konditionierungen, das den Endnutzern auf der Frontend-Feedbackpage dargestellt wird.
-- **Buffet (`/buffet`, nur Admins)**: Produkte (Name, Einheit, Preis in Euro; ein negativer Preis ist ein Gutschein), je Buffet eine Karte mit Ort, Beschreibung, der Speisekarte in Reihenfolge der Kassa (ein Buffet ohne Produkte erscheint nicht in der Kassa), Ein- und Auszahlungen; dazu die Verkäufe je Buffet und Produkt, CSV-Export und „Delete all sales“. Solange weder Produkte noch Buffets angelegt sind, übernimmt „Import from Legacy Backend“ Produkte, Buffets und Speisekarten aus dem alten TadeoT-Admin (mit den alten IDs).
+- **Buffet (`/buffet`, nur Admins)**: Produkte (Name, Einheit, Preis in Euro; ein negativer Preis ist ein Gutschein), je Buffet eine Karte mit Ort, Beschreibung, der Speisekarte in Reihenfolge der Kassa (ein Buffet ohne Produkte erscheint nicht in der Kassa), Ein- und Auszahlungen; dazu die Verkäufe je Buffet und Produkt, CSV-Export und „Delete all sales“.
+- **Registration (`/registration`, nur Admins)**: Daten der Anmeldung, in Tabs. *Registrations*: Anzahl Anmeldungen und Fotos, CSV-Export, alle Fotos als ZIP, „Delete all registrations“ (samt Fotos) und „Delete all photos“. *Towns*: alle Orte mit Suche (PLZ oder Name) und Bezirksfilter, anlegen, ändern (auch den Bezirk), löschen (nicht bei Anmeldungen aus dem Ort). *Districts*: Bezirke anlegen, ändern, löschen (nicht, solange Orte dazugehören). *Choice Lists*: „Reasons for visit“ und „School types“ ordnen, ergänzen, entfernen, gemeinsam speichern; bestehende Anmeldungen behalten ihren Text. Jede leere Liste lässt sich per CSV füllen (zuerst die Bezirke), jede gefüllte als CSV exportieren.
 
 ---
 
@@ -138,6 +139,7 @@ Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logisc
 - `GET /v1/users/token-data`
 - `GET /v1/users/in-database`
 - `GET /v1/users/is-cashier` (Kassa-Kiosk: 200 für Lehrer:innen, Admins und Schüler:innen mit bestätigter Zuteilung zur Station „Buffet“, sonst 403)
+- `GET /v1/users/is-registrar` (Anmelde-Kiosk: dasselbe für die Station „Empfang“, Richtlinie `IsRegistrar`; Antwort wie `is-cashier`: `{ name, studentClass }`)
 
 **Buffet (Kassa-Kiosk, Richtlinie `IsCashier`):**
 - `GET /v1/buffets` - Buffets mit Produkten auf der Speisekarte, in Reihenfolge der Kassa, Preise in Cent (gleiche Form wie das alte `GET /api/Buffets`)
@@ -155,7 +157,26 @@ Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logisc
 - `GET /v1/api/sales` - Umsatz je Buffet und Produkt, aus den gespeicherten Verkaufspreisen
 - `GET /v1/api/sales/csv` - Alle verkauften Positionen als CSV (Uhrzeit in Wiener Zeit)
 - `DELETE /v1/api/sales` - Löscht alle Verkäufe
-- `POST /v1/api/legacy-import/buffet` - Übernimmt Produkte, Buffets und Speisekarten aus dem alten Backend (`LegacyApi:BaseUrl`) mit den alten IDs; nur in leere Tabellen (sonst 409)
+
+**Anmeldung (Anmelde-Kiosk; nur das Speichern braucht den Login):**
+- `GET /v1/cities` - Alle Orte (`id`, `name`, `zipCode`), nach Name (gleiche Form wie das alte `GET /api/Cities`)
+- `GET /v1/registration-options` - `{ reasonsForVisit, schoolTypes }` in Reihenfolge des Kiosks
+- `GET /v1/visitors/count` - `{ count, adultsCount }`
+- `POST /v1/visitors` (Richtlinie `IsRegistrar`) - Speichert eine Anmeldung samt dem `preferred_username` des Logins (`gender`: `Male`, `Female` oder `NotStated`; Foto als PNG-Data-URL in `photo`), Antwort: die neue Id. 400 für einen unbekannten Ort oder ein Foto, das kein PNG ist; 500, wenn das Foto nicht gespeichert werden kann (dann wird auch die Anmeldung nicht gespeichert)
+
+**Statistik und Fotos (ohne Login):**
+- `GET /v1/visitor-statistics` - Alles für die Diashow: Anzahl, Anmeldungen pro Stunde (Wiener Zeit), Abteilungen, Gründe, Schultypen, Anmeldungen je Bezirk, Geschlecht
+- `GET /v1/visitor-photos` - Dateinamen aller Fotos; die Datei selbst unter `GET /v1/visitor-photos/Visitor_0001.png` (für den PhotoDownloader)
+
+**Anmeldung (Verwaltung, nur Admins):**
+- `GET/POST /v1/api/districts`, `PUT/DELETE /v1/api/districts/{districtId}` - Bezirke (409 bei doppelter Nummer oder doppeltem Namen; Löschen nur ohne Orte)
+- `GET/POST /v1/api/cities`, `PUT/DELETE /v1/api/cities/{cityId}` - Orte (409 bei doppelter PLZ + Name; Löschen nur ohne Anmeldungen)
+- `GET /v1/api/registration-options`, `PUT /v1/api/registration-options/{kind}` - Auswahllisten (`kind` = `reasons-for-visit` oder `school-types`; ersetzt die ganze Liste)
+- `GET` und `POST /v1/api/districts/csv`, `/v1/api/cities/csv`, `/v1/api/registration-options/{kind}/csv` - CSV-Export und -Import mit denselben Spalten (`Number;Name`, `Id;ZipCode;Name;Number;DistrictNumber`, `Order;Name`). Der Import (Datei als Request-Body, `text/csv`) füllt nur eine leere Liste (sonst 409), ganz oder gar nicht (400 mit `{ errors: ["Line 3: …"] }`); angegebene Orts-IDs bleiben erhalten
+- `GET /v1/api/visitors/summary` - Anzahl Anmeldungen, Begleitpersonen und Fotos
+- `GET /v1/api/visitors/csv` - Alle Anmeldungen als CSV (Wiener Zeit)
+- `DELETE /v1/api/visitors` - Löscht alle Anmeldungen und alle Fotodateien
+- `GET /v1/api/visitor-photos/zip`, `DELETE /v1/api/visitor-photos` - Alle Fotos als ZIP / alle Fotos löschen (die Anmeldungen bleiben)
 
 ---
 
@@ -189,6 +210,12 @@ Das in Entity-Framework Core hinterlegte PostgreSQL Datenmodell umfasst folgende
 - **Buffets**: `Location` (eindeutig, max. 3 Zeichen), `Description`. Über **BuffetProducts** (`BuffetId`, `ProductId`, `Order`) hängt die Speisekarte.
 - **CashMovements**: Ein- (positiv) und Auszahlungen (negativ) eines Buffets in Cent, Zeit in UTC.
 - **Orders**: ein Verkauf mit eindeutiger `OrderNumber` (vom Tablet), `CreatedAt` (UTC, Zeitpunkt des Abschließens), `BuffetId` und `CashierUsername`. **OrderItems** speichern `Quantity` und `UnitPriceCents`, den Preis beim Verkauf; spätere Preisänderungen ändern den Umsatz nicht.
+
+### Anmeldung
+- **Districts**: `Number` (dreistellig, eindeutig, Statistik Austria) und `Name` (eindeutig).
+- **Cities**: `ZipCode` (vierstellig), `Name`, `Number` (Gemeindekennziffer, nicht eindeutig: in Wien teilen sich viele PLZ eine) und `DistrictId`. PLZ + Name sind eindeutig. Die IDs stammen aus dem alten System, damit ein auf das alte Backend zurückgestellter Kiosk gültige IDs sendet.
+- **RegistrationOptions**: Einträge der zwei Auswahllisten (`Kind` = Grund des Besuchs oder Schultyp) mit `Order`.
+- **Visitors**: `CreatedAt` (UTC), `Gender`, `Adults` (0–4), `SchoolLevel` (7–13), `CityId`, Grund und Schultyp als **Text** (eine spätere Änderung der Liste ändert alte Anmeldungen nicht), acht Interessen, `Comment`, `HasPhoto`, `RegisteredBy` (`preferred_username` des Logins am Kiosk; in der CSV-Spalte „Angemeldet von“). Das Foto liegt als Datei `Visitor_0001.png` im Ordner `Photos:Path`.
 
 ### System-Konfiguration
 - **FeatureFlags**: Beschreibt globale Key-Value Pairs im System wie den Boolean "ShowCountdown", welche von Frontends oder Dashboards abgefragt und mittels Admin-Status rekonfiguriert werden können.
@@ -264,7 +291,7 @@ Hier läuft die für den tatsächlichen Tag der offenen Tür relevante, stabile 
 | `ASPNETCORE_FORWARDEDHEADERS_ENABLED` | Aktiviert Proxy-Header-Weiterleitung | `true` |
 | `ConnectionStrings__DefaultConnection` | EF Core Datenbankverbindung | `Host=tadeot-postgres;Database=tadeot;Username=user;Password=...` |
 | `ASPNETCORE_URLS` | Interner Port-Binding | `http://+:4100` |
-| `LegacyApi__BaseUrl` | Altes TadeoT-Backend für den Buffet-Import (optional, Standard aus `appsettings.json`) | `https://tadeot.htl-leonding.ac.at/tadeot-api` |
+| `Photos__Path` | Ordner der Besucherfotos (optional; Standard `/app/photos`, dort einen Host-Ordner mounten, den UID 1654 schreiben darf) | `/app/photos` |
 
 **PostgreSQL** (`tadeot-postgres`):
 

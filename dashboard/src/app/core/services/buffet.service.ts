@@ -6,7 +6,6 @@ import {
   Buffet,
   BuffetProduct,
   CashMovement,
-  LegacyBuffetImport,
   Sales,
   SalesStatistics,
   SaveBuffetProductRequest,
@@ -124,15 +123,6 @@ export class BuffetService {
   deleteSales(): Promise<void> {
     return firstValueFrom(
       this.httpClient.delete<void>(`${this.baseUrl}/api/sales`)
-    );
-  }
-
-  importFromLegacy(): Promise<LegacyBuffetImport> {
-    return firstValueFrom(
-      this.httpClient.post<LegacyBuffetImport>(
-        `${this.baseUrl}/api/legacy-import/buffet`,
-        null
-      )
     );
   }
 }

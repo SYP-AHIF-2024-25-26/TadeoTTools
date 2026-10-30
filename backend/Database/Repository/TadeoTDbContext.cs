@@ -34,6 +34,11 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<CashMovement> CashMovements => Set<CashMovement>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+
+    public DbSet<District> Districts => Set<District>();
+    public DbSet<City> Cities => Set<City>();
+    public DbSet<RegistrationOption> RegistrationOptions => Set<RegistrationOption>();
+    public DbSet<Visitor> Visitors => Set<Visitor>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<FeedbackQuestion>()
@@ -96,6 +101,19 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
             .WithOne(i => i.Order)
             .HasForeignKey(i => i.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // A district with cities and a city with registrations stay; the endpoints say why.
+        modelBuilder.Entity<District>()
+            .HasMany(d => d.Cities)
+            .WithOne(c => c.District)
+            .HasForeignKey(c => c.DistrictId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<City>()
+            .HasMany(c => c.Visitors)
+            .WithOne(v => v.City)
+            .HasForeignKey(v => v.CityId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public override int SaveChanges()

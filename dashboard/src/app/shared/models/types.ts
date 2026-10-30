@@ -307,12 +307,6 @@ export type Sales = {
   buffets: BuffetSales[];
 };
 
-export type LegacyBuffetImport = {
-  products: number;
-  buffets: number;
-  menuEntries: number;
-};
-
 export type SalesHour = {
   hour: number;
   orderCount: number;
@@ -343,4 +337,53 @@ export type SalesStatistics = {
   voucherCents: number;
   days: SalesDay[];
   products: ProductRank[];
+};
+
+export type District = {
+  id: number;
+  // Three digits of Statistik Austria, e.g. 410 for Linz-Land.
+  number: number;
+  name: string;
+  cityCount: number;
+};
+
+export type SaveDistrictRequest = {
+  number: number;
+  name: string;
+};
+
+export type City = {
+  id: number;
+  zipCode: string;
+  name: string;
+  // The Gemeindekennziffer; several Viennese postcodes share one.
+  number: number;
+  districtId: number;
+  visitorCount: number;
+};
+
+export type SaveCityRequest = {
+  zipCode: string;
+  name: string;
+  number: number;
+  districtId: number;
+};
+
+// The two choice lists of the registration kiosk; also the URL segment.
+export type RegistrationOptionKind = 'reasons-for-visit' | 'school-types';
+
+export type RegistrationOptions = {
+  reasonsForVisit: string[];
+  schoolTypes: string[];
+};
+
+export type VisitorSummary = {
+  count: number;
+  adultsCount: number;
+  photoCount: number;
+};
+
+export type DeleteVisitorsResult = {
+  visitors: number;
+  photos: number;
 };

@@ -1,0 +1,75 @@
+<div class="page-shell">
+  <app-page-header
+    title="Registration"
+    subtitle="Registrations, photos, towns and choice lists of the registration kiosk"
+  ></app-page-header>
+
+  <div role="tablist" aria-label="Registration" class="page-tabs">
+    @for (t of tabs; track t.id) {
+      <a
+        role="tab"
+        class="page-tab"
+        [attr.aria-selected]="tab() === t.id"
+        [attr.aria-controls]="'registration-panel-' + t.id"
+        routerLink="."
+        [queryParams]="{ tab: t.id === 'visitors' ? null : t.id }"
+        queryParamsHandling="merge"
+        replaceUrl
+      >
+        {{ t.label }}
+        @if (t.id === 'visitors' && summary(); as s) {
+          <span class="badge badge-sm tabular-nums">{{ s.count }}</span>
+        }
+      </a>
+    }
+  </div>
+
+  <div [id]="'registration-panel-' + tab()" role="tabpanel">
+    @if (loading()) {
+      <div class="flex flex-col gap-6" aria-hidden="true">
+        <div class="skeleton h-64 rounded-lg"></div>
+        <div class="skeleton h-40 rounded-lg"></div>
+      </div>
+      <span class="sr-only" role="status">Loading the registration data…</span>
+    } @else if (loadFailed()) {
+      <div
+        class="flex flex-col items-center gap-3 rounded-lg bg-background-100 p-6 text-center shadow-lg"
+        role="alert"
+      >
+        <p>
+          The registration data could not be loaded. Check your connection and
+          try again.
+        </p>
+        <button class="btn btn-primary btn-sm" (click)="load(true)">
+          Try again
+        </button>
+      </div>
+    } @else {
+      @switch (tab()) {
+        @case ('visitors') {
+          @if (summary(); as s) {
+            <app-registration-visitors [summary]="s" (changed)="load()" />
+          }
+        }
+        @case ('towns') {
+          <app-registration-towns
+            [cities]="cities()"
+            [districts]="districts()"
+            (changed)="load()"
+          />
+        }
+        @case ('districts') {
+          <app-registration-districts
+            [districts]="districts()"
+            (changed)="load()"
+          />
+        }
+        @case ('lists') {
+          @if (options(); as o) {
+            <app-registration-options [options]="o" (changed)="load()" />
+          }
+        }
+      }
+    }
+  </div>
+</div>
