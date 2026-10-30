@@ -387,3 +387,15 @@ export type DeleteVisitorsResult = {
   visitors: number;
   photos: number;
 };
+
+// fileName is served publicly under /v1/visitor-photos/; createdAt is UTC.
+export type VisitorPhoto = {
+  id: number;
+  fileName: string;
+  createdAt: string;
+};
+
+// atStop: stop manager or accepted student of the Roboterführerschein stop.
+export type PhotoViewer = {
+  atStop: boolean;
+};

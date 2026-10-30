@@ -250,6 +250,28 @@ public class RegistrationManagementTests(IntegrationTestWebAppFactory factory) :
     }
 
     [Fact]
+    public async Task GetVisitorPhotoIndex_ShouldListOnlyPhotos_NewestFirst()
+    {
+        var city = await SeedCityAsync();
+        var createdAt = new DateTime(2026, 11, 20, 9, 0, 0, DateTimeKind.Utc);
+        for (var i = 0; i < 4; i++)
+        {
+            var visitor = StoredVisitor(city.Id, createdAt.AddMinutes(i));
+            visitor.HasPhoto = i != 2;
+            DbContext.Visitors.Add(visitor);
+        }
+        await DbContext.SaveChangesAsync();
+
+        var all = await Client.GetFromJsonAsync<List<VisitorPhotoDto>>("/v1/api/visitor-photos");
+
+        all.Should().Equal(
+            new VisitorPhotoDto(4, "Visitor_0004.png", createdAt.AddMinutes(3)),
+            new VisitorPhotoDto(2, "Visitor_0002.png", createdAt.AddMinutes(1)),
+            new VisitorPhotoDto(1, "Visitor_0001.png", createdAt));
+        all![0].CreatedAt.Kind.Should().Be(DateTimeKind.Utc);
+    }
+
+    [Fact]
     public async Task GetVisitorsCsv_ShouldWriteViennaTime_AndTheTown()
     {
         var city = await SeedCityAsync();

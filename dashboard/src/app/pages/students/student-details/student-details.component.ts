@@ -12,10 +12,11 @@ import { Status } from '@/shared/models/types';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
 import { MarkdownComponent } from '@/shared/components/markdown/markdown.component';
+import { VisitorPhotosComponent } from '@/shared/components/visitor-photos/visitor-photos.component';
 
 @Component({
   selector: 'app-student',
-  imports: [PageHeaderComponent, MarkdownComponent],
+  imports: [PageHeaderComponent, MarkdownComponent, VisitorPhotosComponent],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './student-details.component.html',
 })

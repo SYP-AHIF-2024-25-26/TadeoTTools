@@ -34,34 +34,8 @@
     </div>
   </section>
 
-  <section
-    class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
-    aria-labelledby="photos-heading"
-  >
-    <div class="flex flex-wrap items-end justify-between gap-4">
-      <div>
-        <h2 id="photos-heading" class="text-lg font-bold">
-          <span class="tabular-nums">{{ s.photoCount }}</span>
-          {{ s.photoCount === 1 ? 'photo' : 'photos' }}
-        </h2>
-        <p class="text-sm text-ink-muted">
-          Taken for the Roboterführerschein. The stops fetch them with the
-          PhotoDownloader by visitor number.
-        </p>
-      </div>
-      <button
-        type="button"
-        class="btn btn-outline btn-sm"
-        [disabled]="s.photoCount === 0 || downloading() !== null"
-        (click)="downloadPhotos()"
-      >
-        @if (downloading() === 'zip') {
-          <span class="loading loading-spinner loading-xs"></span>
-        }
-        Download All (ZIP)
-      </button>
-    </div>
-  </section>
+  <!-- The same section the Roboterführerschein stop sees on its own page. -->
+  <app-visitor-photos [total]="s.photoCount" />
 
   <section
     class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"

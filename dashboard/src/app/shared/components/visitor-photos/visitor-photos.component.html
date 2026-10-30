@@ -1,0 +1,186 @@
+@if (allowed()) {
+  <section
+    class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+    aria-labelledby="visitor-photos-heading"
+  >
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 id="visitor-photos-heading" class="text-lg font-bold">
+          @if (total(); as count) {
+            <span class="tabular-nums">{{ count }}</span>
+            {{ count === 1 ? 'photo' : 'photos' }}
+          } @else {
+            Roboterführerschein photos
+          }
+        </h2>
+        <p class="text-sm text-ink-muted">
+          Taken at the entrance tablets. Click a visitor number to see the
+          photo; new photos are added within 30 seconds.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="btn btn-outline btn-sm"
+        [disabled]="sorted().length === 0 || downloading() !== null"
+        (click)="downloadZip()"
+      >
+        @if (downloading() === 'zip') {
+          <span class="loading loading-spinner loading-xs"></span>
+        }
+        Download All (ZIP)
+      </button>
+    </div>
+
+    <div class="mb-3 mt-6 flex flex-wrap items-end justify-between gap-3">
+      <h3 class="font-semibold">
+        All photos
+        @if (sorted().length > 0) {
+          <span class="font-normal text-ink-muted"
+            >· {{ sorted().length }}, up to number {{ highest() }}</span
+          >
+        }
+      </h3>
+      <label class="flex items-center gap-2 text-sm">
+        Per page
+        <select
+          #sizeSelect
+          class="select select-bordered select-sm"
+          (change)="setPageSize(sizeSelect.value)"
+        >
+          @for (size of pageSizes; track size) {
+            <option [value]="size" [selected]="size === pageSize()">
+              {{ size }}
+            </option>
+          }
+        </select>
+      </label>
+    </div>
+
+    @if (loadFailed() && sorted().length === 0) {
+      <p class="text-sm" role="alert">
+        The photos could not be loaded.
+        <button type="button" class="link" (click)="load()">Try again</button>
+      </p>
+    } @else if (sorted().length === 0) {
+      <p class="text-sm text-ink-muted">No photos yet.</p>
+    } @else {
+      <!-- Side by side from md up, stacked on phones. -->
+      <div class="flex flex-col gap-6 md:flex-row md:items-start">
+        <div class="min-w-0 flex-1">
+          <ul
+            class="grid grid-cols-[repeat(auto-fill,minmax(5.5rem,1fr))] gap-2"
+          >
+            @for (photo of pagePhotos(); track photo.id) {
+              <li>
+                <button
+                  type="button"
+                  class="btn btn-sm h-auto w-full flex-col gap-0 py-1.5"
+                  [class.btn-primary]="selected() === photo.id"
+                  [class.btn-outline]="selected() !== photo.id"
+                  [attr.aria-pressed]="selected() === photo.id"
+                  [attr.aria-label]="
+                    'Photo of visitor ' +
+                    photo.id +
+                    ', registered ' +
+                    time(photo)
+                  "
+                  (click)="show(photo.id)"
+                >
+                  <span class="text-base font-semibold tabular-nums">{{
+                    photo.id
+                  }}</span>
+                  <span class="text-xs font-normal tabular-nums opacity-70">{{
+                    time(photo)
+                  }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+
+          @if (pageCount() > 1) {
+            <nav
+              class="mt-4 flex flex-wrap items-center justify-center gap-3"
+              aria-label="Photo pages"
+            >
+              <button
+                type="button"
+                class="btn btn-outline btn-sm"
+                [disabled]="pageIndex() === 0"
+                (click)="goToPage(pageIndex() - 1)"
+              >
+                Previous
+              </button>
+              <span class="text-sm tabular-nums" aria-live="polite">
+                Page {{ pageIndex() + 1 }} of {{ pageCount() }} ·
+                {{ pagePhotos()[0].id }}–{{ pagePhotos().at(-1)!.id }}
+              </span>
+              <button
+                type="button"
+                class="btn btn-outline btn-sm"
+                [disabled]="pageIndex() === pageCount() - 1"
+                (click)="goToPage(pageIndex() + 1)"
+              >
+                Next
+              </button>
+            </nav>
+          }
+        </div>
+
+        <!-- Fixed width from md up, also while empty, so opening a photo doesn't move the buttons. -->
+        <aside
+          class="flex-col gap-3 md:flex md:w-44 md:shrink-0 md:border-l md:border-background-300 md:pl-6 md:dark:border-background-600"
+          [class.flex]="selected() !== null"
+          [class.hidden]="selected() === null"
+          aria-live="polite"
+          aria-label="Selected photo"
+        >
+          @if (selected(); as id) {
+            @if (missing()) {
+              <p class="text-sm" role="status">
+                The photo of visitor {{ id }} could not be loaded.
+              </p>
+            } @else {
+              <figure class="flex flex-col gap-1">
+                <img
+                  class="max-h-48 w-32 rounded-lg border border-background-300 bg-background-50 object-contain md:w-full"
+                  [src]="url(id)"
+                  [alt]="'Photo of visitor ' + id"
+                  (error)="missing.set(true)"
+                />
+                <figcaption class="text-sm font-medium tabular-nums">
+                  Visitor {{ id }}
+                </figcaption>
+              </figure>
+            }
+            <div class="flex flex-wrap gap-2">
+              @if (!missing()) {
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  [disabled]="downloading() !== null"
+                  (click)="downloadPhoto(id)"
+                >
+                  @if (downloading() === id) {
+                    <span class="loading loading-spinner loading-xs"></span>
+                  }
+                  Download
+                </button>
+              }
+              <button
+                type="button"
+                class="btn btn-ghost btn-sm"
+                (click)="selected.set(null)"
+              >
+                Hide
+              </button>
+            </div>
+          } @else {
+            <p class="text-sm text-ink-muted">
+              Click a number to see the photo here.
+            </p>
+          }
+        </aside>
+      </div>
+    }
+  </section>
+}

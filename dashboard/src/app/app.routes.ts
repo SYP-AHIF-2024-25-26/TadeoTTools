@@ -4,8 +4,6 @@ import { LoginComponent } from './pages/auth/login/login.component';
 import { DivisionDetailsComponent } from './pages/divisions/division-details/division-details.component';
 import { StopgroupDetailsComponent } from './pages/stop-groups/stop-group-details/stop-group-details.component';
 import { StopDetailsComponent } from './pages/stops/stop-details/stop-details.component';
-import { StudentComponent } from './pages/students/student-details/student-details.component';
-import { StopManagerDetailsComponent } from './pages/stop-managers/stop-manager-details/stop-manager-details.component';
 import { FeedbackConfiguratorComponent } from './pages/feedback/configurator/configurator.component';
 import { DataManagementComponent } from './pages/dashboard/data-management.component';
 import { OverviewComponent } from './pages/overview/overview.component';
@@ -72,10 +70,21 @@ export const routes: Routes = [
     canActivate: [adminOrStopManagerGuard],
     canDeactivate: [unsavedChangesGuard],
   },
-  { path: 'student', component: StudentComponent, canMatch: [authGuard] },
+  {
+    // Lazy like /stop-manager, so the initial bundle stays within its budget.
+    path: 'student',
+    loadComponent: () =>
+      import('./pages/students/student-details/student-details.component').then(
+        (m) => m.StudentComponent
+      ),
+    canMatch: [authGuard],
+  },
   {
     path: 'stop-manager',
-    component: StopManagerDetailsComponent,
+    loadComponent: () =>
+      import(
+        './pages/stop-managers/stop-manager-details/stop-manager-details.component'
+      ).then((m) => m.StopManagerDetailsComponent),
     canMatch: [authGuard],
     canActivate: [adminOrStopManagerGuard],
   },

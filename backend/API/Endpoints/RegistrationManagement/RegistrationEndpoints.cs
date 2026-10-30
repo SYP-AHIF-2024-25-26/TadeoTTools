@@ -179,6 +179,22 @@ public static class RegistrationEndpoints
         return Results.Ok(ids.Select(VisitorPhotoStore.FileName).ToList());
     }
 
+    // ---- Photo section in the dashboard ----
+
+    /// <summary>All photos, newest first: the index the stop picks a photo from.</summary>
+    public static async Task<IResult> GetVisitorPhotoIndex(TadeoTDbContext context)
+    {
+        var photos = await context.Visitors
+            .Where(v => v.HasPhoto)
+            .OrderByDescending(v => v.Id)
+            .Select(v => new { v.Id, v.CreatedAt })
+            .ToListAsync();
+
+        return Results.Ok(photos
+            .Select(p => new VisitorPhotoDto(p.Id, VisitorPhotoStore.FileName(p.Id), p.CreatedAt))
+            .ToList());
+    }
+
     // ---- Registration options (admin) ----
 
     /// <summary>Replaces one whole list; the array order is the order at the kiosk.</summary>
@@ -427,4 +443,7 @@ public static class RegistrationEndpoints
     public record VisitorSummaryDto(int Count, int AdultsCount, int PhotoCount);
 
     public record DeleteVisitorsResultDto(int Visitors, int Photos);
+
+    /// <param name="CreatedAt">UTC.</param>
+    public record VisitorPhotoDto(int Id, string FileName, DateTime CreatedAt);
 }

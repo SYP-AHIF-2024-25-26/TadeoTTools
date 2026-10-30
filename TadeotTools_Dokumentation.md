@@ -53,10 +53,11 @@ Das Dashboard dient zur Datenpflege, Konfiguration und Verwaltung.
 - **Abteilungen / Divisions (`/divisions` & `/division`)**: Verwaltung (`DivisionsListComponent` / `DivisionDetailsComponent`) inkl. Farbkodierung, Bilder und zugeordneter Stationen.
 - **Schüler / Students (Tab Students & `/student`)**: In der ListView (`ListStudentsComponent`) ermöglicht dies dem Admin und System Administratoren die Übersicht aller zugewiesener Schüler sowie das Lösen von organisatorischen Konflikten. In der `StudentComponent` Ansicht (nur für den relevanten Schüler) sind die Einsatzdetails aufgelistet.
 - **Stationsmanager / Stop-Manager (`/stop-manager`)**: Übersicht der Stationsverantwortlichen. (*Hinweis: Manager werden vom Admin auf der Stop-Details Seite zugewiesen - neue Manager-Accounts können im UserManagement hinzugefügt werden*).
+- **Fotos für den Roboterführerschein (Abschnitt auf `/student`, `/stop-manager` und im Tab *Registrations*)**: `VisitorPhotosComponent`, nur sichtbar, wenn `GET /v1/users/is-photo-viewer` 200 liefert, auf `/student` und `/stop-manager` zusätzlich nur mit `atStop: true` (nicht für Admins, die diese Seiten ansehen). Zeigt kein Foto von selbst: geblättertes Raster von Buttons aller Fotos in Nummernfolge (Nummer und Uhrzeit, 20 pro Seite, wählbar 20/50/100; die Liste wird alle 30 s nachgeladen, solange der Tab sichtbar ist); ein Klick zeigt das Foto klein neben dem Raster (am Handy darunter) mit Download, alle Fotos als ZIP.
 - **Nutzerverwaltung (`/user-management`)**: Anlegen/Löschen der Administratoren und der Stop-Manager. Zusätzlich bietet das Modul den Im- und Export (`Upload`/`CSV`) aller Datensätze, den massenhaften Reset (`Wipe`) aller Studenten-Einträge und die Parameter, um z.B. den Frontend-Countdown einzustellen.
 - **Feedback-Konfigurator (`/feedback`)**: Tool zum dynamischen Erstellen und Bearbeiten von Feedback-Fragen, Antwort-Optionen und Konditionierungen, das den Endnutzern auf der Frontend-Feedbackpage dargestellt wird.
 - **Buffet (`/buffet`, nur Admins)**: Produkte (Name, Einheit, Preis in Euro; ein negativer Preis ist ein Gutschein), je Buffet eine Karte mit Ort, Beschreibung, der Speisekarte in Reihenfolge der Kassa (ein Buffet ohne Produkte erscheint nicht in der Kassa), Ein- und Auszahlungen; dazu die Verkäufe je Buffet und Produkt, CSV-Export und „Delete all sales“.
-- **Registration (`/registration`, nur Admins)**: Daten der Anmeldung, in Tabs. *Registrations*: Anzahl Anmeldungen und Fotos, CSV-Export, alle Fotos als ZIP, „Delete all registrations“ (samt Fotos) und „Delete all photos“. *Towns*: alle Orte mit Suche (PLZ oder Name) und Bezirksfilter, anlegen, ändern (auch den Bezirk), löschen (nicht bei Anmeldungen aus dem Ort). *Districts*: Bezirke anlegen, ändern, löschen (nicht, solange Orte dazugehören). *Choice Lists*: „Reasons for visit“ und „School types“ ordnen, ergänzen, entfernen, gemeinsam speichern; bestehende Anmeldungen behalten ihren Text. Jede leere Liste lässt sich per CSV füllen (zuerst die Bezirke), jede gefüllte als CSV exportieren.
+- **Registration (`/registration`, nur Admins)**: Daten der Anmeldung, in Tabs. *Registrations*: Anzahl Anmeldungen, CSV-Export, der Foto-Abschnitt (siehe oben) mit der Anzahl Fotos, „Delete all registrations“ (samt Fotos) und „Delete all photos“. *Towns*: alle Orte mit Suche (PLZ oder Name) und Bezirksfilter, anlegen, ändern (auch den Bezirk), löschen (nicht bei Anmeldungen aus dem Ort). *Districts*: Bezirke anlegen, ändern, löschen (nicht, solange Orte dazugehören). *Choice Lists*: „Reasons for visit“ und „School types“ ordnen, ergänzen, entfernen, gemeinsam speichern; bestehende Anmeldungen behalten ihren Text. Jede leere Liste lässt sich per CSV füllen (zuerst die Bezirke), jede gefüllte als CSV exportieren.
 
 ---
 
@@ -140,6 +141,7 @@ Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logisc
 - `GET /v1/users/in-database`
 - `GET /v1/users/is-cashier` (Kassa-Kiosk: 200 für Lehrer:innen, Admins und Schüler:innen mit bestätigter Zuteilung zur Station „Buffet“, sonst 403)
 - `GET /v1/users/is-registrar` (Anmelde-Kiosk: dasselbe für die Station „Empfang“, Richtlinie `IsRegistrar`; Antwort wie `is-cashier`: `{ name, studentClass }`)
+- `GET /v1/users/is-photo-viewer` (Dashboard, Foto-Abschnitt; Richtlinie `IsPhotoViewer`: Admins, Stop-Manager und Schüler:innen mit bestätigter Zuteilung der Station „Roboterführerschein“, Lehrkräfte nur als deren Stop-Manager; Antwort `{ atStop }`, `false` für Admins ohne Bezug zur Station)
 
 **Buffet (Kassa-Kiosk, Richtlinie `IsCashier`):**
 - `GET /v1/buffets` - Buffets mit Produkten auf der Speisekarte, in Reihenfolge der Kassa, Preise in Cent (gleiche Form wie das alte `GET /api/Buffets`)
@@ -176,7 +178,11 @@ Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logisc
 - `GET /v1/api/visitors/summary` - Anzahl Anmeldungen, Begleitpersonen und Fotos
 - `GET /v1/api/visitors/csv` - Alle Anmeldungen als CSV (Wiener Zeit)
 - `DELETE /v1/api/visitors` - Löscht alle Anmeldungen und alle Fotodateien; die nächste Anmeldung bekommt wieder die Id 1 (Roboterführerschein-Nummer, Foto `Visitor_0001.png`)
-- `GET /v1/api/visitor-photos/zip`, `DELETE /v1/api/visitor-photos` - Alle Fotos als ZIP / alle Fotos löschen (die Anmeldungen bleiben)
+- `DELETE /v1/api/visitor-photos` - Löscht alle Fotos (die Anmeldungen bleiben)
+
+**Fotos im Dashboard (Richtlinie `IsPhotoViewer`):**
+- `GET /v1/api/visitor-photos` - Alle Fotos, neueste zuerst: `[{ id, fileName, createdAt }]`, `createdAt` in UTC; die Datei liegt öffentlich unter `/v1/visitor-photos/{fileName}`
+- `GET /v1/api/visitor-photos/zip` - Alle Fotos als ZIP
 
 ---
 
