@@ -104,9 +104,9 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
 - `guide/`: GuideApp, Angular-22-PWA ohne Login.
 - `kiosk/feedback/` (Angular 22), `kiosk/registration/`, `kiosk/cashier/`, `kiosk/statistics/`
   (Angular 19): PWAs für feste Geräte (§11).
-- Altes Backend `htl-leo-tadeot` (eigenes Repo): wird ersetzt. Die Kassa läuft schon über
-  `backend/`, Anmeldung und Statistik ab der Umstellung am 16.11.2026. Bis nach dem TdoT bleibt
-  das alte Backend der Rückfall und wird **nicht verändert** (§3.4).
+- Altes Backend `htl-leo-tadeot` (eigenes Repo): abgelöst. Kassa, Anmeldung und Statistik laufen
+  über `backend/` (Anmeldung und Statistik seit der Umstellung am 30.10.2026). Bis nach dem TdoT
+  bleibt das alte Backend der Rückfall und wird **nicht verändert** (§3.4).
 - `tools/photo-downloader/`: Programm für die Roboterführerschein-Stationen, holt die Fotos der
   Anmeldung (§11.3).
 
@@ -121,11 +121,11 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
 - Datenbank-Migrationen werden beim Start des Backends angewendet.
 
 ## 3.4 Altes Backend
-- Das alte Backend und seine Administrationsseite werden vor dem TdoT in zwei Schritten in
-  TadeoTTools migriert, jeder mit Generalprobe und eigener Entscheidung:
+- Das alte Backend und seine Administrationsseite wurden vor dem TdoT in zwei Schritten in
+  TadeoTTools migriert:
   1. Buffet und Kassa (umgestellt): Produkte, Buffets, Speisekarten, Kassenbewegungen und
      Verkäufe liegen in `backend/` und werden im Dashboard verwaltet (§11.2).
-  2. Anmeldung, Statistik und Fotos (Umstellung 16.11.2026): Orte, Bezirke, Auswahllisten,
+  2. Anmeldung, Statistik und Fotos (umgestellt am 30.10.2026): Orte, Bezirke, Auswahllisten,
      Anmeldungen und Fotos liegen in `backend/` und werden im Dashboard verwaltet (§11.3, §11.4).
 - Daten aus dem alten Backend kommen nur als CSV-Datei ins System, über den Import im Dashboard;
   `backend/` ruft das alte Backend nie auf. Die Orte und Bezirke wurden am 29.10.2026 exportiert.
@@ -591,7 +591,8 @@ Ein Stand gilt als abnahmefähig für den TdoT, wenn mindestens funktioniert:
 - Feedback am Handy und am Kiosk.
 - Anmeldung, Kassa, Statistik.
 - Dashboard für Tourplanung und Zuteilung.
-- Nach der Migration ebenso: altes Backend und alte Administrationsseite in TadeoTTools.
+- Die Funktionen des alten Backends und seiner Administrationsseite in TadeoTTools (seit der
+  Migration, §3.4).
 
 ---
 

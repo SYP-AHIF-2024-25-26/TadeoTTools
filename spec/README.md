@@ -61,8 +61,8 @@ context: |
   (dashboard/, guide/ und kiosk/feedback/ auf Angular 22, die übrigen Kiosks noch auf 19).
   Login über Keycloak (LeoAuth); Rollen kommen aus den Tabellen
   Admins und StopManagers, nicht aus dem Token.
-  Das alte Backend htl-leo-tadeot (Anmeldung, Kassa, Statistik) wird bis zu seiner Migration
-  nicht verändert.
+  Das alte Backend htl-leo-tadeot ist abgelöst (Anmeldung, Kassa und Statistik laufen über
+  backend/); es bleibt bis nach dem TdoT (20.11.2026) unverändert als Rückfall.
   Projektregeln stehen in CLAUDE.md, das visuelle System in DESIGN.md.
 
 rules:
