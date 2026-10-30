@@ -327,10 +327,21 @@ public static class RegistrationEndpoints
     }
 
     /// <summary>Deletes every registration and every photo file, as the legacy <c>deleteAll</c> did.</summary>
+    /// <summary>
+    /// Deletes all registrations and photos; the next registration gets id 1 again, so the
+    /// licence numbers of a new open day start at 1.
+    /// </summary>
     public static async Task<IResult> DeleteVisitors(TadeoTDbContext context, VisitorPhotoStore photos)
     {
+        await using var transaction = await context.Database.BeginTransactionAsync();
+        // A kiosk saving meanwhile waits until the numbering starts again, so it can't get an id
+        // the reset hands out a second time, nor lose its photo to the deletion below.
+        await context.Database.ExecuteSqlRawAsync("""LOCK TABLE "Visitors" IN EXCLUSIVE MODE""");
         var visitorCount = await context.Visitors.ExecuteDeleteAsync();
+        await context.Database.ExecuteSqlRawAsync(
+            """SELECT setval(pg_get_serial_sequence('"Visitors"', 'Id'), 1, false)""");
         var photoCount = photos.DeleteAll();
+        await transaction.CommitAsync();
         return Results.Ok(new DeleteVisitorsResultDto(visitorCount, photoCount));
     }
 

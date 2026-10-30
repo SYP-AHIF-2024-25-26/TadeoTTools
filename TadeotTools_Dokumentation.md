@@ -175,7 +175,7 @@ Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logisc
 - `GET` und `POST /v1/api/districts/csv`, `/v1/api/cities/csv`, `/v1/api/registration-options/{kind}/csv` - CSV-Export und -Import mit denselben Spalten (`Number;Name`, `Id;ZipCode;Name;Number;DistrictNumber`, `Order;Name`). Der Import (Datei als Request-Body, `text/csv`) füllt nur eine leere Liste (sonst 409), ganz oder gar nicht (400 mit `{ errors: ["Line 3: …"] }`); angegebene Orts-IDs bleiben erhalten
 - `GET /v1/api/visitors/summary` - Anzahl Anmeldungen, Begleitpersonen und Fotos
 - `GET /v1/api/visitors/csv` - Alle Anmeldungen als CSV (Wiener Zeit)
-- `DELETE /v1/api/visitors` - Löscht alle Anmeldungen und alle Fotodateien
+- `DELETE /v1/api/visitors` - Löscht alle Anmeldungen und alle Fotodateien; die nächste Anmeldung bekommt wieder die Id 1 (Roboterführerschein-Nummer, Foto `Visitor_0001.png`)
 - `GET /v1/api/visitor-photos/zip`, `DELETE /v1/api/visitor-photos` - Alle Fotos als ZIP / alle Fotos löschen (die Anmeldungen bleiben)
 
 ---
