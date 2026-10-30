@@ -80,7 +80,7 @@ export class RegistrationVisitorsComponent {
     const photos =
       s.photoCount > 0 ? ` and ${plural(s.photoCount, 'photo')}` : '';
     return (
-      `This deletes ${plural(s.count, 'registration')}${photos}. ` +
+      `This deletes ${plural(s.count, 'registration')}${photos}, and the next registration gets number 1 again. ` +
       "This can't be undone, so export the CSV first if you want to keep the registrations."
     );
   }

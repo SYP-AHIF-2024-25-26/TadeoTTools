@@ -406,7 +406,8 @@ Eigenschaften:
   Roboterführerschein-Stationen es mit dem PhotoDownloader holen können (Entscheidung). Kann das
   Foto nicht gespeichert werden, wird auch die Anmeldung nicht gespeichert.
 - Admins exportieren die Anmeldungen als CSV, laden alle Fotos als ZIP und löschen alle
-  Anmeldungen (samt Fotos) oder nur alle Fotos im Dashboard.
+  Anmeldungen (samt Fotos) oder nur alle Fotos im Dashboard. Nach dem Löschen aller Anmeldungen beginnt die
+  Besuchernummer (und damit die Nummer für den Roboterführerschein) wieder bei 1.
 - Speichern braucht eine Verbindung (keine Warteschlange).
 
 ## 11.4 Statistik (`kiosk/statistics`, Beamer in der Aula, `/statistics`)

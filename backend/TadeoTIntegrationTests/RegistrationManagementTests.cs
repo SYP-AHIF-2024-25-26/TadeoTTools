@@ -219,6 +219,20 @@ public class RegistrationManagementTests(IntegrationTestWebAppFactory factory) :
     }
 
     [Fact]
+    public async Task DeleteVisitors_ShouldStartTheIdsAgainAt1()
+    {
+        var city = await SeedCityAsync();
+        (await Client.PostAsJsonAsync("/v1/visitors", Visitor(city.Id))).EnsureSuccessStatusCode();
+        (await Client.PostAsJsonAsync("/v1/visitors", Visitor(city.Id))).EnsureSuccessStatusCode();
+
+        (await Client.DeleteAsync("/v1/api/visitors")).EnsureSuccessStatusCode();
+        var response = await Client.PostAsJsonAsync("/v1/visitors", Visitor(city.Id, photo: PngDataUrl));
+
+        (await response.Content.ReadFromJsonAsync<int>()).Should().Be(1);
+        Factory.Photos.Files().Select(Path.GetFileName).Should().Equal("Visitor_0001.png");
+    }
+
+    [Fact]
     public async Task DeleteVisitorPhotos_ShouldKeepTheRegistrations()
     {
         var city = await SeedCityAsync();

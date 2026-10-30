@@ -40,7 +40,9 @@ CSV-Export „Angemeldet von“).
   (Zugang entzogen) ab, bleibt die Übersicht stehen; erst nach Rückfrage werden die Angaben
   verworfen und es geht zum Login bzw. zu „Kein Zugang“.
 - Orte, Auswahllisten und Zähler laden ohne Login; nur `POST /v1/visitors` verlangt ihn.
-- Die URL der App muss im Keycloak-Client `htlleonding-service` als Redirect-URI eingetragen sein.
+- Keycloak: Der Client `htlleonding-service` akzeptiert jede Redirect-URI und erlaubt CORS für jede
+  Herkunft (geprüft am 30.10.2026 für vm45, Produktion und `localhost`); es ist nichts einzutragen.
+  Wird der Client eingeschränkt, muss die URL der App (`…/registration/*`) dort stehen.
 
 ## Ablauf
 

@@ -92,7 +92,7 @@ public static class RegistrationApi
 
         group.MapDelete("api/visitors", DeleteVisitors)
             .WithName(nameof(DeleteVisitors))
-            .WithDescription("Delete all registrations and all photo files")
+            .WithDescription("Delete all registrations and all photo files; the next registration gets id 1")
             .Produces<DeleteVisitorsResultDto>()
             .RequireAuthorization(Setup.AdminPolicyName);
 
