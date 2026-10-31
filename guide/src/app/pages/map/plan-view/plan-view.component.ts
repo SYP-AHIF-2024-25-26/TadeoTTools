@@ -91,6 +91,12 @@ export class PlanViewComponent {
     return Math.hypot((a.x - b.x) * width, (a.y - b.y) * height) * this.zoom();
   }
 
+  /** How far down the screen a point of the plan sits right now. */
+  screenY(point: Point): number {
+    const rect = this.viewport().nativeElement.getBoundingClientRect();
+    return rect.top + this.offset().y + point.y * rect.height * this.zoom();
+  }
+
   protected zoomBy(factor: number) {
     const { width, height } = this.size();
     this.zoomTo(this.zoom() * factor, { x: width / 2, y: height / 2 });
@@ -181,7 +187,7 @@ export class PlanViewComponent {
     );
   }
 
-  protected reset() {
+  reset() {
     this.zoom.set(1);
     this.offset.set({ x: 0, y: 0 });
   }

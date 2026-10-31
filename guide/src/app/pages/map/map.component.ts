@@ -1,9 +1,11 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   ElementRef,
   inject,
+  Injector,
   input,
   linkedSignal,
   OnInit,
@@ -13,7 +15,6 @@ import {
 import { Router } from '@angular/router';
 import { ApiFetchService } from '@core/services/api-fetch.service';
 import { ProgressService } from '@core/services/progress.service';
-import { StopCardComponent } from '@pages/main/stop-card/stop-card.component';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { NavbarComponent } from '@shared/components/navbar/navbar.component';
 import {
@@ -26,14 +27,28 @@ import { FLOORS, floorOf, isFloorCode, placeTitle } from '@shared/room';
 import { MapMarkerComponent } from './map-marker/map-marker.component';
 import { PlanViewComponent } from './plan-view/plan-view.component';
 import { StopPreviewComponent } from './stop-preview/stop-preview.component';
+import { StopRowComponent } from './stop-row/stop-row.component';
 
 /** Below this distance on the screen a finger cannot tell two markers apart. */
 const TOUCH_DISTANCE = 30;
+/** Clear space a marker keeps above the sheet, including the sheet's own slide in. */
+const ABOVE_SHEET = 64;
 
 interface MapRoom {
   place: MapPlace;
   stops: Stop[];
 }
+
+/** A line of the directory: one stop, however many rooms of the floor it uses. */
+interface DirectoryRow {
+  stop: Stop;
+  rooms: MapRoom[];
+  /** Empty under a line that already names the same rooms. */
+  code: string;
+}
+
+const byCode = (a: MapRoom, b: MapRoom) =>
+  a.place.code.localeCompare(b.place.code, 'de', { numeric: true });
 
 @Component({
   selector: 'app-map',
@@ -44,8 +59,8 @@ interface MapRoom {
     NavbarComponent,
     PlanViewComponent,
     MapMarkerComponent,
-    StopCardComponent,
     StopPreviewComponent,
+    StopRowComponent,
   ],
   host: {
     '(swipeleft)': 'onSwipeLeft($event)',
@@ -61,31 +76,48 @@ export class MapComponent implements OnInit {
   floor = input<string>();
 
   private router = inject(Router);
+  private injector = inject(Injector);
   private api = inject(ApiFetchService);
   protected progress = inject(ProgressService);
   private plan = viewChild.required(PlanViewComponent);
   private sheet = viewChild.required<ElementRef<HTMLDialogElement>>('sheet');
+  private scroller = viewChild.required<ElementRef<HTMLElement>>('scroller');
 
   protected floors = FLOORS;
-  /** Top to bottom, like the building. */
   protected floorRail = FLOORS.map((floor, index) => ({
     ...floor,
     index,
-  })).reverse();
+  }));
 
   private places = signal<MapPlace[]>([]);
   private stops = signal<Stop[]>([]);
   private groups = signal<StopGroup[]>([]);
   private divisions = signal<Division[]>([]);
   protected loadFailed = signal(false);
+  /** The tapped room first, then what a finger could have meant beside it. */
   protected sheetRooms = signal<MapRoom[]>([]);
-  /** The one stop in the sheet, shown in short; several are listed as cards. */
-  protected previewStop = computed(() => {
+  private picked = signal<{ room: MapRoom; stop: Stop } | null>(null);
+  /** The room whose name heads the sheet. */
+  protected sheetRoom = computed(
+    () => this.picked()?.room ?? this.sheetRooms()[0]
+  );
+  private onlyStop = computed(() => {
     const rooms = this.sheetRooms();
     return rooms.length === 1 && rooms[0].stops.length === 1
       ? rooms[0].stops[0]
       : null;
   });
+  /** The stop in the sheet, shown in short; several are listed as rows. */
+  protected previewStop = computed(
+    () => this.picked()?.stop ?? this.onlyStop()
+  );
+  protected canGoBack = computed(() => !this.onlyStop());
+  /** The places the open sheet is about: ringed on the plan, so the visitor sees which. */
+  private selectedIds = signal(new Set<number>());
+  /** Scroll room while the sheet is open, so a marker low on the plan can still clear it. */
+  protected sheetSpace = computed(() =>
+    this.selectedIds().size > 0 ? '75vh' : null
+  );
 
   /** Every place with what shows there: its public stops, or its label. */
   private rooms = computed<MapRoom[]>(() => {
@@ -134,7 +166,7 @@ export class MapComponent implements OnInit {
     );
   });
   currentFloorName = computed(() => FLOORS[this.currentFloor()].name);
-  /** "Raum E24" in the band; a floor code like "EG" is no room, the panel heading names the floor. */
+  /** "Raum E24" in the band; a floor code like "EG" is no room, the band names the floor anyway. */
   roomLabel = computed(() => {
     const room = this.roomNr();
     return room && !isFloorCode(room) ? room : null;
@@ -145,27 +177,36 @@ export class MapComponent implements OnInit {
     return this.rooms().filter((room) => room.place.floor === code);
   });
   protected markers = computed(() =>
-    this.floorRooms().filter((room) => room.stops.length > 0)
+    this.floorRooms()
+      .filter((room) => room.stops.length > 0)
+      .sort(byCode)
   );
   protected labels = computed(() =>
     this.floorRooms()
       .filter((room) => room.stops.length === 0 && room.place.publicLabel)
       .map((room) => room.place)
   );
-  /** The list under the plan, for reading and for everyone who cannot use the plan. */
-  protected floorList = computed(() =>
-    [...this.markers()].sort((a, b) =>
-      a.place.code.localeCompare(b.place.code, 'de', { numeric: true })
-    )
-  );
-  /** A stop in two rooms of this floor is listed once. */
-  protected floorStops = computed(() => [
-    ...new Map(
-      this.floorList()
-        .flatMap((room) => room.stops)
-        .map((stop) => [stop.id, stop])
-    ).values(),
-  ]);
+  /** The way in by name, for reading and for everyone who cannot use the plan. */
+  protected directory = computed<DirectoryRow[]>(() => {
+    const rows = new Map<number, DirectoryRow>();
+    for (const room of this.markers()) {
+      for (const stop of room.stops) {
+        const row = rows.get(stop.id);
+        if (row) {
+          row.rooms.push(room);
+        } else {
+          rows.set(stop.id, { stop, rooms: [room], code: '' });
+        }
+      }
+    }
+    let previous = '';
+    return [...rows.values()].map((row) => {
+      const code = row.rooms.map((room) => room.place.code).join(' ');
+      const shown = code === previous ? '' : code;
+      previous = code;
+      return { ...row, code: shown };
+    });
+  });
   protected hasMarkers = computed(() =>
     this.places().some((p) => p.stopIds.length)
   );
@@ -208,7 +249,9 @@ export class MapComponent implements OnInit {
   }
 
   protected isHighlighted(place: MapPlace): boolean {
-    return this.highlightedIds().has(place.id);
+    return (
+      this.highlightedIds().has(place.id) || this.selectedIds().has(place.id)
+    );
   }
 
   protected floorHasHighlight(code: string): boolean {
@@ -224,23 +267,80 @@ export class MapComponent implements OnInit {
       room.stops.length === 1
         ? room.stops[0].name
         : `${room.stops.length} Stationen`;
-    return `${placeTitle(room.place)}: ${what}`;
+    const seen = this.isSeen(room) ? ', gesehen' : '';
+    return `${placeTitle(room.place)}: ${what}${seen}`;
   }
 
   /** The sheet decides on the map: one stop in short; a full room, or markers too close, list theirs. */
   protected onMarker(room: MapRoom) {
     const plan = this.plan();
-    const near = this.markers().filter(
-      (other) =>
-        other === room ||
-        plan.screenDistance(room.place, other.place) < TOUCH_DISTANCE
-    );
-    this.sheetRooms.set(near);
+    // A stop in both rooms is named once, under the tapped one.
+    const near = this.markers()
+      .filter(
+        (other) =>
+          other !== room &&
+          plan.screenDistance(room.place, other.place) < TOUCH_DISTANCE
+      )
+      .map((other) => ({
+        ...other,
+        stops: other.stops.filter((stop) => !room.stops.includes(stop)),
+      }))
+      .filter((other) => other.stops.length > 0);
+    this.openSheet([room, ...near], [room]);
+  }
+
+  /** The row names its stop, so the sheet opens on it; the plan comes back into view behind. */
+  protected onRow(row: DirectoryRow) {
+    this.plan().reset();
+    this.scroller().nativeElement.scrollTop = 0;
+    this.picked.set({ room: row.rooms[0], stop: row.stop });
+    this.openSheet([row.rooms[0]], row.rooms);
+  }
+
+  protected pick(room: MapRoom, stop: Stop) {
+    this.picked.set({ room, stop });
+    this.sheet().nativeElement.focus();
+  }
+
+  protected backToList() {
+    this.picked.set(null);
+    this.sheet().nativeElement.focus();
+  }
+
+  private openSheet(rooms: MapRoom[], selected: MapRoom[]) {
+    this.sheetRooms.set(rooms);
+    this.selectedIds.set(new Set(selected.map((room) => room.place.id)));
     this.sheet().nativeElement.showModal();
+    // Measured once the sheet shows its content and the page has its scroll room.
+    afterNextRender(() => this.keepAboveSheet(selected[0].place), {
+      injector: this.injector,
+    });
+  }
+
+  /** The plan cannot pan at full size, so the page moves the ringed marker clear of the sheet. */
+  private keepAboveSheet(place: MapPlace) {
+    const sheetTop = this.sheet().nativeElement.getBoundingClientRect().top;
+    const covered = this.plan().screenY(place) + ABOVE_SHEET - sheetTop;
+    if (covered > 0) {
+      const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      this.scroller().nativeElement.scrollBy({
+        top: covered,
+        behavior: calm ? 'auto' : 'smooth',
+      });
+    }
   }
 
   protected closeSheet() {
     this.sheet().nativeElement.close();
+  }
+
+  /** The event comes late: a sheet opened right after keeps its own selection. */
+  protected onSheetClosed() {
+    if (this.sheet().nativeElement.open) {
+      return;
+    }
+    this.picked.set(null);
+    this.selectedIds.set(new Set());
   }
 
   /** A tap on the scrim is a tap on the dialog itself. */
