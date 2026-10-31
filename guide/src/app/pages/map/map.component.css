@@ -23,6 +23,13 @@
   transform: translate(-50%, -50%) scale(calc(1 / var(--plan-zoom, 1)));
 }
 
+.map-label.icon-only {
+  justify-content: center;
+  height: 1.75rem;
+  width: 1.75rem;
+  padding: 0;
+}
+
 .sheet {
   width: 100%;
   max-width: 36rem;

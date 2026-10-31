@@ -37,13 +37,17 @@
             @for (label of labels(); track label.id) {
               <span
                 class="map-label"
+                role="img"
+                [class.icon-only]="label.icon"
                 [style.left.%]="label.x * 100"
                 [style.top.%]="label.y * 100"
+                [attr.aria-label]="label.publicLabel"
+                [title]="label.publicLabel"
               >
                 @switch (label.icon) {
                   @case ('buffet') {
                     <svg
-                      class="h-4 w-4"
+                      class="h-5 w-5"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -59,25 +63,28 @@
                     </svg>
                   }
                   @case ('wc') {
+                    <!-- The restroom pictogram: letters cannot be read at this size. -->
                     <svg
-                      class="h-4 w-4"
+                      class="h-5 w-5"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="2"
-                      stroke="currentColor"
+                      fill="currentColor"
                     >
+                      <circle cx="6.5" cy="4.5" r="2.25" />
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 7h3l1.5 10L9.5 9l2 8L13 7M21 8.5A3.5 3.5 0 1 0 21 15.5"
+                        d="M4.25 8h4.5a1.5 1.5 0 0 1 1.5 1.5V15H8.5v6.5h-4V15H2.75V9.5A1.5 1.5 0 0 1 4.25 8Z"
+                      />
+                      <rect x="11.5" y="2" width="1" height="20" rx="0.5" />
+                      <circle cx="17.5" cy="4.5" r="2.25" />
+                      <path
+                        d="M15.75 8h3.5a1.5 1.5 0 0 1 1.45 1.1l2.05 7.4h-2.5v5h-4v-5h-2.5l2.05-7.4A1.5 1.5 0 0 1 15.75 8Z"
                       />
                     </svg>
                   }
                   @default {
                     <svg
-                      class="h-4 w-4"
+                      class="h-5 w-5"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -93,7 +100,9 @@
                     </svg>
                   }
                 }
-                {{ label.publicLabel }}
+                @if (!label.icon) {
+                  {{ label.publicLabel }}
+                }
               </span>
             }
             @for (room of markers(); track room.place.id) {
