@@ -209,24 +209,35 @@
           </svg>
         </button>
       </div>
-      <div class="mt-3 flex flex-col gap-3">
-        @for (room of sheetRooms(); track room.place.id) {
-          @if (sheetRooms().length > 1) {
-            <h3 class="text-base font-semibold text-gray-700">
-              {{ title(room.place) }}
-            </h3>
+      @if (previewStop(); as stop) {
+        <app-stop-preview
+          class="mt-3"
+          [stop]="stop"
+          [colors]="colorsOfStop(stop)"
+          [checked]="progress.isStopSeen(stop.id)"
+          (toggled)="progress.toggleStop(stop.id)"
+          (open)="openStop(stop)"
+        />
+      } @else {
+        <div class="mt-3 flex flex-col gap-3">
+          @for (room of sheetRooms(); track room.place.id) {
+            @if (sheetRooms().length > 1) {
+              <h3 class="text-base font-semibold text-gray-700">
+                {{ title(room.place) }}
+              </h3>
+            }
+            @for (stop of room.stops; track stop.id) {
+              <app-stop-card
+                [stop]="stop"
+                [colors]="colorsOfStop(stop)"
+                [checked]="progress.isStopSeen(stop.id)"
+                (toggled)="progress.toggleStop(stop.id)"
+                (open)="openStop(stop)"
+              />
+            }
           }
-          @for (stop of room.stops; track stop.id) {
-            <app-stop-card
-              [stop]="stop"
-              [colors]="colorsOfStop(stop)"
-              [checked]="progress.isStopSeen(stop.id)"
-              (toggled)="progress.toggleStop(stop.id)"
-              (open)="openStop(stop)"
-            />
-          }
-        }
-      </div>
+        </div>
+      }
     </div>
   </dialog>
 

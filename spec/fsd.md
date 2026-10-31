@@ -261,9 +261,11 @@ Eigenschaften:
 - Gruppe: Stationen der Gruppe in Reihenfolge, Wischgesten zwischen Gruppen.
 - Station: Beschreibung (Markdown), Raum, Abteilungen, „gesehen“ markieren.
 - Karte: Stockwerkspläne U/E/1 mit einer Markierung je Ort mit öffentlichen Stationen, in den exakten
-  Abteilungsfarben, darunter die Stationen des Stockwerks als Liste. Eine Station öffnet direkt ihre
-  Seite (in ihrer ersten Gruppe der Tour), mehrere oder zu nah beieinanderliegende Orte zeigen eine
-  Auswahl. „Auf der Karte“ hebt alle Orte der Station hervor (`/map/:raum?stop=id`).
+  Abteilungsfarben, darunter die Stationen des Stockwerks als Liste. Eine Markierung zeigt auf der
+  Karte eine Kurzansicht der Station (Name, Raum, Anfang der Beschreibung, „gesehen“, „Zur Station“),
+  mehrere oder zu nah beieinanderliegende Orte eine Auswahl. Die Stationsseite führt dann zurück zur
+  Karte, aufs selbe Stockwerk, ohne Blättern in der Gruppe. „Auf der Karte“ hebt alle Orte der
+  Station hervor (`/map/:raum?stop=id`).
 - Feedback (§9), Über uns/Impressum (Link auf https://www.htl-leonding.at/impressum), Countdown.
 
 ## 6.2 Fortschritt

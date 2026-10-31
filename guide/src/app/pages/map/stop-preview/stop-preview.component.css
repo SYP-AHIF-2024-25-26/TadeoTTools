@@ -1,0 +1,14 @@
+/* The rendered description is innerHTML, so it carries no _ngcontent attribute. */
+.preview-text {
+  max-height: 5.25rem;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+.preview-text.is-long {
+  mask-image: linear-gradient(to bottom, #000 60%, transparent);
+}
+
+:host ::ng-deep .preview-text > * + * {
+  margin-top: 0.5rem;
+}

@@ -46,6 +46,10 @@ export class StopDescriptionPageComponent implements OnInit {
 
   stopGroupId = input.required<string>();
   stopId = input.required<string>();
+  /** "map" when the visitor came from the map, which then is the way back. */
+  from = input<string>();
+  /** The map's floor to return to. */
+  floor = input<string>();
   private storedStop = signal({} as Stop);
   currentStopGroup = signal({} as StopGroup);
   divisions = signal<Division[]>([]);
@@ -68,8 +72,11 @@ export class StopDescriptionPageComponent implements OnInit {
   protected nextStop = computed(() =>
     this.position() >= 0 ? this.groupStops()[this.position() + 1] : undefined
   );
+  protected fromMap = computed(() => this.from() === 'map');
+  /** Coming by place, not along the tour: back and next in the group would lead away. */
   protected showPager = computed(
-    () => this.position() >= 0 && this.groupStops().length > 1
+    () =>
+      !this.fromMap() && this.position() >= 0 && this.groupStops().length > 1
   );
 
   protected stopDivisions = computed(() =>
@@ -118,6 +125,10 @@ export class StopDescriptionPageComponent implements OnInit {
   }
 
   async goBack() {
-    await this.router.navigate(['/tour', this.stopGroupId()]);
+    await (this.fromMap()
+      ? this.router.navigate(['/map'], {
+          queryParams: { floor: this.floor() },
+        })
+      : this.router.navigate(['/tour', this.stopGroupId()]));
   }
 }
