@@ -6,6 +6,7 @@ import {
   FeatureFlag,
   FeedbackQuestion,
   FeedbackSubmission,
+  MapPlace,
   Stop,
   StopGroup,
 } from '@shared/models/types';
@@ -43,6 +44,10 @@ export class ApiFetchService {
     return (await this.getStops()).filter((stop) =>
       stop.stopGroupIds.includes(groupID)
     );
+  }
+
+  public async getMapPlaces(): Promise<MapPlace[]> {
+    return this.getWithLastKnown<MapPlace[]>('/v1/map-places');
   }
 
   public async getAllFeedbackQuestions(): Promise<FeedbackQuestion[]> {

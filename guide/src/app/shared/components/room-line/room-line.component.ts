@@ -21,6 +21,7 @@ import { mapRoomOf } from '@shared/room';
     @if (mapRoom()) {
       <a
         [routerLink]="['/map', mapRoom()]"
+        [queryParams]="stopId() ? { stop: stopId() } : {}"
         class="-mx-1 inline-flex min-h-11 items-center gap-1 rounded-lg px-1 text-base font-bold text-accent-400 transition-colors hover:text-accent-300"
       >
         <svg
@@ -52,6 +53,8 @@ import { mapRoomOf } from '@shared/room';
 })
 export class RoomLineComponent {
   roomNr = input.required<string>();
+  /** Rings all rooms of this stop on the map. */
+  stopId = input<number>();
 
   protected mapRoom = computed(() => mapRoomOf(this.roomNr()));
 }

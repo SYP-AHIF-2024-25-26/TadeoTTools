@@ -39,6 +39,8 @@ public class TadeoTDbContext(DbContextOptions<TadeoTDbContext> options) : DbCont
     public DbSet<City> Cities => Set<City>();
     public DbSet<RegistrationOption> RegistrationOptions => Set<RegistrationOption>();
     public DbSet<Visitor> Visitors => Set<Visitor>();
+
+    public DbSet<MapPlace> MapPlaces => Set<MapPlace>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<FeedbackQuestion>()

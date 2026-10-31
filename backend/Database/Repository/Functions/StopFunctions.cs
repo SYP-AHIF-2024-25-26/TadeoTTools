@@ -53,7 +53,8 @@ public record StopWithEverythingDto(
     int[] StopGroupIds,
     int[] Orders,
     StudentOfStopDto[] StudentAssignments,
-    string[] StopManagerAssignments
+    string[] StopManagerAssignments,
+    int[] MapPlaceIds
 );
 
 public record StudentOfStopDto(

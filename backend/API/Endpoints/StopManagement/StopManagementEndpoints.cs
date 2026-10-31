@@ -1,5 +1,6 @@
 using System.Text;
 using System.ComponentModel.DataAnnotations;
+using API.Endpoints.MapManagement;
 using Database.Entities;
 using Database.Repository;
 using Database.Repository.Functions;
@@ -24,6 +25,7 @@ public static class StopManagementEndpoints
             .ThenInclude(sg => sg.StopGroup)
             .Include(stop => stop.StudentAssignments)
             .Include(stop => stop.StopManagerAssignments)
+            .Include(stop => stop.MapPlaces)
             .FirstOrDefaultAsync(s => s.Id == stopId);
         if (stop == null)
         {
@@ -40,7 +42,8 @@ public static class StopManagementEndpoints
             stop.StopGroupAssignments.Select(a => a.StopGroupId).ToArray(),
             stop.StopGroupAssignments.Select(a => a.Order).ToArray(),
             stop.StudentAssignments.Select(sa => new StudentOfStopDto(sa.EdufsUsername, sa.Status)).ToArray(),
-            stop.StopManagerAssignments.Select(ta => ta.StopManagerId).ToArray()
+            stop.StopManagerAssignments.Select(ta => ta.StopManagerId).ToArray(),
+            stop.MapPlaces.Select(p => p.Id).ToArray()
         );
 
         return Results.Ok(result);
@@ -206,6 +209,12 @@ public static class StopManagementEndpoints
             return Results.NotFound("One or more StopGroupIds not found");
         }
 
+        var places = await MapEndpoints.PlacesOrNullAsync(context, createStopDto.MapPlaceIds ?? []);
+        if (places is null)
+        {
+            return Results.NotFound("One or more places not found");
+        }
+
         var stop = new Stop
         {
             Name = createStopDto.Name,
@@ -223,7 +232,8 @@ public static class StopManagementEndpoints
                 StopManagerId = t,
                 StopManager = stopManagers.GetValueOrDefault(t)
             }).ToList(),
-            Divisions = divisions
+            Divisions = divisions,
+            MapPlaces = places
         };
 
         context.Stops.Add(stop);
@@ -280,11 +290,24 @@ public static class StopManagementEndpoints
             .Include(s => s.StopGroupAssignments)
             .Include(s => s.StudentAssignments)
             .Include(s => s.StopManagerAssignments)
+            .Include(s => s.MapPlaces)
             .SingleOrDefaultAsync(s => s.Id == updateStopDto.Id);
 
         if (stop == null)
         {
             return Results.NotFound($"Stop with ID {updateStopDto.Id} not found");
+        }
+
+        if (updateStopDto.MapPlaceIds is not null)
+        {
+            var places = await MapEndpoints.PlacesOrNullAsync(context, updateStopDto.MapPlaceIds);
+            if (places is null)
+            {
+                return Results.NotFound("One or more places not found");
+            }
+
+            stop.MapPlaces.Clear();
+            stop.MapPlaces.AddRange(places);
         }
 
         var newStudentAssignments = updateStopDto.StudentAssignments.Select(s => new StudentAssignment()
@@ -343,11 +366,24 @@ public static class StopManagementEndpoints
 
         var stop = await context.Stops
             .Include(s => s.StudentAssignments)
+            .Include(s => s.MapPlaces)
             .SingleOrDefaultAsync(s => s.Id == updateStopDto.Id);
 
         if (stop == null)
         {
             return Results.NotFound($"Stop with ID {updateStopDto.Id} not found");
+        }
+
+        if (updateStopDto.MapPlaceIds is not null)
+        {
+            var places = await MapEndpoints.PlacesOrNullAsync(context, updateStopDto.MapPlaceIds);
+            if (places is null)
+            {
+                return Results.NotFound("One or more places not found");
+            }
+
+            stop.MapPlaces.Clear();
+            stop.MapPlaces.AddRange(places);
         }
 
         var newStudentAssignments = updateStopDto.StudentAssignments.Select(s => new StudentAssignment()
@@ -479,7 +515,8 @@ public static class StopManagementEndpoints
         [MaxLength(500)] string? Infrastructure,
         int[] DivisionIds,
         StudentOfStopDto[] StudentAssignments,
-        string[] StopManagerAssignments
+        string[] StopManagerAssignments,
+        int[]? MapPlaceIds = null
     );
 
     public record UpdateStopAsStopManagerRequestDto(
@@ -488,7 +525,8 @@ public static class StopManagementEndpoints
         [Required, MaxLength(500)] string Description,
         [Required, MaxLength(50)] string RoomNr,
         [MaxLength(500)] string? Infrastructure,
-        StudentOfStopDto[] StudentAssignments
+        StudentOfStopDto[] StudentAssignments,
+        int[]? MapPlaceIds = null
     );
 
     public record CreateStopRequestDto(
@@ -499,7 +537,8 @@ public static class StopManagementEndpoints
         int[] DivisionIds,
         int[] StopGroupIds,
         StudentOfStopDto[] StudentAssignments,
-        string[] StopManagerAssignments
+        string[] StopManagerAssignments,
+        int[]? MapPlaceIds = null
     );
 
     public record StopResponseDto(

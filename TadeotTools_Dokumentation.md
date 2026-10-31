@@ -31,7 +31,7 @@ Das Frontend dient Besuchern und Guides als interaktiver Leitfaden durch den Tag
 - **Feedback (`/feedback`)**: Die `FeedbackComponent` erlaubt Nutzern, am Ende ihres Besuchs das vom Admin konfigurierte Feedback abzuschließen.
 - **Tour-Übersicht (`/tour/:stopGroupId`)**: Die `StopPageComponent`. Sie zeigt eine Liste der Stationen innerhalb einer Stationsgruppe des Leitfadens an.
 - **Stations-Detailansicht (`/tour/:stopGroupId/stop/:stopId`)**: Die `StopDescriptionPageComponent`. Detaillierte Ansicht einer einzelnen Station inkl. Beschreibung, Ort/Raumnummer und der Möglichkeit, die Station als "erledigt" zu markieren.
-- **Karte (`/map` & `/map/:roomNr`)**: Die `MapComponent`. Ein Bereich für einen interaktiven Raumplan oder eine Übersichtskarte. Der Parameter `roomNr` ermöglicht das direkte Hervorheben eines bestimmten Raums.
+- **Karte (`/map` & `/map/:roomNr`)**: Die `MapComponent`. Stockwerkspläne zum Zoomen mit einer Markierung je Ort; ein Klick führt zur Station, bei mehreren Stationen in eine Auswahl. `?stop=id` hebt alle Orte einer Station hervor, `?floor=U|E|1` merkt sich das Stockwerk.
 - **Über uns (`/about`)**: Die `AboutPageComponent` für allgemeine Informationen. *Inkludiert zudem den Button, um den aktuellen Fortschritt im Leitfaden zurückzusetzen.*
 
 ---
@@ -56,6 +56,7 @@ Das Dashboard dient zur Datenpflege, Konfiguration und Verwaltung.
 - **Fotos für den Roboterführerschein (Abschnitt auf `/student`, `/stop-manager` und im Tab *Registrations*)**: `VisitorPhotosComponent`, nur sichtbar, wenn `GET /v1/users/is-photo-viewer` 200 liefert, auf `/student` und `/stop-manager` zusätzlich nur mit `atStop: true` (nicht für Admins, die diese Seiten ansehen). Zeigt kein Foto von selbst: geblättertes Raster von Buttons aller Fotos in Nummernfolge (Nummer und Uhrzeit, 20 pro Seite, wählbar 20/50/100; die Liste wird alle 30 s nachgeladen, solange der Tab sichtbar ist); ein Klick zeigt das Foto klein neben dem Raster (am Handy darunter) mit Download, alle Fotos als ZIP.
 - **Nutzerverwaltung (`/user-management`)**: Anlegen/Löschen der Administratoren und der Stop-Manager. Zusätzlich bietet das Modul den Im- und Export (`Upload`/`CSV`) aller Datensätze, den massenhaften Reset (`Wipe`) aller Studenten-Einträge und die Parameter, um z.B. den Frontend-Countdown einzustellen.
 - **Feedback-Konfigurator (`/feedback`)**: Tool zum dynamischen Erstellen und Bearbeiten von Feedback-Fragen, Antwort-Optionen und Konditionierungen, das den Endnutzern auf der Frontend-Feedbackpage dargestellt wird.
+- **Karte (`/map`, nur Admins)**: Verknüpft Stationen mit Orten auf den Plänen (einzeln oder aus dem Raumtext), verschiebt Orte, legt benannte Stellen und öffentliche Labels an. Auf der Stationsseite gibt es dieselbe Auswahl für die einzelne Station.
 - **Buffet (`/buffet`, nur Admins)**: Produkte (Name, Einheit, Preis in Euro; ein negativer Preis ist ein Gutschein), je Buffet eine Karte mit Ort, Beschreibung, der Speisekarte in Reihenfolge der Kassa (ein Buffet ohne Produkte erscheint nicht in der Kassa), Ein- und Auszahlungen; dazu die Verkäufe je Buffet und Produkt, CSV-Export und „Delete all sales“.
 - **Registration (`/registration`, nur Admins)**: Daten der Anmeldung, in Tabs. *Registrations*: Anzahl Anmeldungen, CSV-Export, der Foto-Abschnitt (siehe oben) mit der Anzahl Fotos, „Delete all registrations“ (samt Fotos) und „Delete all photos“. *Towns*: alle Orte mit Suche (PLZ oder Name) und Bezirksfilter, anlegen, ändern (auch den Bezirk), löschen (nicht bei Anmeldungen aus dem Ort). *Districts*: Bezirke anlegen, ändern, löschen (nicht, solange Orte dazugehören). *Choice Lists*: „Reasons for visit“ und „School types“ ordnen, ergänzen, entfernen, gemeinsam speichern; bestehende Anmeldungen behalten ihren Text. Jede leere Liste lässt sich per CSV füllen (zuerst die Bezirke), jede gefüllte als CSV exportieren.
 
@@ -144,6 +145,11 @@ Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logisc
 - `GET /v1/users/is-photo-viewer` (Dashboard, Foto-Abschnitt; Richtlinie `IsPhotoViewer`: Admins, Stop-Manager und Schüler:innen mit bestätigter Zuteilung der Station „Roboterführerschein“, Lehrkräfte nur als deren Stop-Manager; Antwort `{ atStop }`, `false` für Admins ohne Bezug zur Station)
 
 **Buffet (Kassa-Kiosk, Richtlinie `IsCashier`):**
+- `GET /v1/map-places` - Orte mit öffentlichen Stationen oder öffentlichem Label (ohne Login)
+- `GET /v1/api/map-places` - Alle Orte mit allen Stationen
+- `POST /v1/api/map-places`, `PUT|DELETE /v1/api/map-places/{placeId}` - Orte verwalten (Löschen entfernt nur die Verknüpfungen, nicht die Stationen)
+- `PUT /v1/api/map-places/stops/{stopId}` - Ersetzt die Orte einer Station
+- `GET /v1/api/map-places/suggestions`, `POST /v1/api/map-places/suggestions/apply` - Vorschläge aus dem Raumtext für Stationen ohne Ort
 - `GET /v1/buffets` - Buffets mit Produkten auf der Speisekarte, in Reihenfolge der Kassa, Preise in Cent (gleiche Form wie das alte `GET /api/Buffets`)
 - `POST /v1/orders` - Speichert einen Verkauf (`{ buffetId, date, orderNumber, soldUnits: [{ productId, amount }] }`). Eine bereits gespeicherte `orderNumber` wird mit 200 beantwortet, ohne sie erneut zu speichern; 404 für ein unbekanntes Buffet, 400 für Produkte, die nicht auf der Speisekarte stehen, Mengen außerhalb 1–99 oder mehr als einen Gutschein
 

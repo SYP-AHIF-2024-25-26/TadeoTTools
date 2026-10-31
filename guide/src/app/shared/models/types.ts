@@ -8,6 +8,18 @@ export type Stop = {
   orders: number[];
 };
 
+export type MapPlace = {
+  id: number;
+  floor: string;
+  code: string;
+  name: string | null;
+  x: number;
+  y: number;
+  publicLabel: string | null;
+  icon: string | null;
+  stopIds: number[];
+};
+
 export type StopGroup = {
   id: number;
   name: string;

@@ -12,7 +12,7 @@
           <app-division-icon [divisionId]="division.id" />
         }
         @if (singleRoomNr(); as roomNr) {
-          <app-room-line [roomNr]="roomNr" />
+          <app-room-line [roomNr]="roomNr" [stopId]="sortedStops()[0].id" />
         } @else if (metaLine()) {
           <span class="text-base font-semibold tabular-nums text-night-100">{{
             metaLine()

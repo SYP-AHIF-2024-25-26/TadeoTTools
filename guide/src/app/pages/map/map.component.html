@@ -9,79 +9,226 @@
 
   @if (roomNr() !== undefined) {
     <button
-      class="mx-4 mt-5 flex h-11 w-fit items-center rounded-xl bg-accent-700 px-5 text-base font-bold text-white shadow-md transition hover:bg-accent-800 active:scale-[0.98]"
+      class="mx-4 mt-5 flex h-11 w-fit shrink-0 items-center rounded-xl bg-accent-700 px-5 text-base font-bold text-white shadow-md transition hover:bg-accent-800 active:scale-[0.98]"
       (click)="onGoBack()"
     >
       Zur Station
     </button>
   }
-  <div
-    class="mx-4 mt-5 flex h-max flex-grow flex-col items-center justify-center rounded-2xl bg-white p-4 shadow-md ring-1 ring-gray-900/5"
-  >
-    <h2 class="self-start text-xl font-bold leading-7 text-gray-900">
-      {{ currentFloorName() }}
-    </h2>
-    @for (floor of floors; track floor.image) {
-      <div
-        class="relative h-full max-h-[70vh] w-full max-w-md"
-        [class.hidden]="currentFloor() !== $index"
-      >
-        <img
-          [src]="floor.image"
-          [alt]="'Plan ' + floor.name"
-          class="h-full w-full object-contain"
-        />
-      </div>
-    }
-  </div>
 
-  <!-- Changing floors is navigation, not an action: neutral like the stop pager. -->
-  <div class="mb-28 mt-4 flex justify-evenly gap-4">
-    <button
-      (click)="navigate(1)"
-      [disabled]="currentFloor() === floors.length - 1"
-      aria-label="Stockwerk höher"
-      class="flex h-11 items-center rounded-xl bg-white px-4 text-gray-900 shadow-md ring-1 ring-gray-900/5 transition active:scale-[0.98] disabled:bg-gray-100 disabled:text-gray-400 disabled:shadow-none disabled:active:scale-100"
+  <main class="flex flex-col gap-5 px-4 pb-28 pt-5">
+    <section
+      class="w-full max-w-xl self-center rounded-2xl bg-white p-4 shadow-md ring-1 ring-gray-900/5"
+      [attr.aria-label]="'Plan ' + currentFloorName()"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="h-6 w-6"
-        aria-hidden="true"
-      >
-        <polyline points="18 15 12 9 6 15"></polyline>
-      </svg>
-    </button>
-    <button
-      (click)="navigate(-1)"
-      [disabled]="currentFloor() === 0"
-      aria-label="Stockwerk tiefer"
-      class="flex h-11 items-center rounded-xl bg-white px-4 text-gray-900 shadow-md ring-1 ring-gray-900/5 transition active:scale-[0.98] disabled:bg-gray-100 disabled:text-gray-400 disabled:shadow-none disabled:active:scale-100"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="h-6 w-6"
-        aria-hidden="true"
-      >
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </button>
-  </div>
+      <h2 class="text-xl font-bold leading-7 text-gray-900">
+        {{ currentFloorName() }}
+      </h2>
+
+      <div class="relative mt-3 flex items-start gap-3">
+        <div class="min-w-0 flex-1">
+          @let floor = floors[currentFloor()];
+          <app-plan-view
+            [image]="floor.image"
+            [alt]="'Plan ' + floor.name"
+            [width]="floor.width"
+            [height]="floor.height"
+          >
+            @for (label of labels(); track label.id) {
+              <span
+                class="map-label"
+                [style.left.%]="label.x * 100"
+                [style.top.%]="label.y * 100"
+              >
+                @switch (label.icon) {
+                  @case ('buffet') {
+                    <svg
+                      class="h-4 w-4"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M7 3v7a2 2 0 0 0 2 2M5 3v7a2 2 0 0 0 2 2m0 0v9M9 3v7M17 21v-7h-2V7c0-2 1-4 3-4v18"
+                      />
+                    </svg>
+                  }
+                  @case ('wc') {
+                    <svg
+                      class="h-4 w-4"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 7h3l1.5 10L9.5 9l2 8L13 7M21 8.5A3.5 3.5 0 1 0 21 15.5"
+                      />
+                    </svg>
+                  }
+                  @default {
+                    <svg
+                      class="h-4 w-4"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="2.5"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 11v6M12 7.5v.01"
+                      />
+                    </svg>
+                  }
+                }
+                {{ label.publicLabel }}
+              </span>
+            }
+            @for (room of markers(); track room.place.id) {
+              <app-map-marker
+                [style.left.%]="room.place.x * 100"
+                [style.top.%]="room.place.y * 100"
+                [style.z-index]="isHighlighted(room.place) ? 2 : 1"
+                [colors]="colorsOf(room)"
+                [count]="room.stops.length"
+                [seen]="isSeen(room)"
+                [highlighted]="isHighlighted(room.place)"
+                [label]="markerLabel(room)"
+                (pressed)="onMarker(room)"
+              />
+            }
+          </app-plan-view>
+        </div>
+
+        <!-- Top to bottom like the building. Neutral: changing floors is navigation. -->
+        <div class="flex shrink-0 flex-col gap-2" aria-label="Stockwerk">
+          @for (item of floorRail; track item.code) {
+            <button
+              type="button"
+              class="relative flex h-11 w-11 items-center justify-center rounded-xl text-base font-bold shadow-md ring-1 ring-gray-900/5 transition active:scale-[0.98]"
+              [class]="
+                currentFloor() === item.index
+                  ? 'bg-night-900 text-white'
+                  : 'bg-white text-gray-900'
+              "
+              [attr.aria-label]="item.name"
+              [attr.aria-pressed]="currentFloor() === item.index"
+              (click)="selectFloor(item.index)"
+            >
+              {{ item.code }}
+              @if (floorHasHighlight(item.code)) {
+                <span
+                  class="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-accent-600 ring-2 ring-white"
+                  aria-hidden="true"
+                ></span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </section>
+
+    @if (loadFailed()) {
+      <p class="max-w-xl self-center text-base text-gray-700" role="alert">
+        Die Stationen konnten nicht geladen werden, der Plan ist trotzdem da.
+        <button
+          type="button"
+          class="min-h-11 font-bold text-accent-700 underline underline-offset-2"
+          (click)="load()"
+        >
+          Nochmal versuchen
+        </button>
+      </p>
+    } @else if (floorList().length > 0) {
+      <section class="flex w-full max-w-xl flex-col gap-3 self-center">
+        <h2 class="mt-1 text-xl font-bold leading-7 text-gray-900">
+          Stationen auf diesem Stockwerk
+        </h2>
+        @for (stop of floorStops(); track stop.id) {
+          <app-stop-card
+            [stop]="stop"
+            [colors]="colorsOfStop(stop)"
+            [checked]="progress.isStopSeen(stop.id)"
+            (toggled)="progress.toggleStop(stop.id)"
+            (open)="openStop(stop)"
+          />
+        }
+      </section>
+    } @else if (hasMarkers()) {
+      <p class="max-w-xl self-center text-base text-gray-700">
+        Auf diesem Stockwerk gibt es keine Stationen.
+      </p>
+    }
+  </main>
+
+  <dialog
+    #sheet
+    class="sheet"
+    aria-label="Stationen"
+    (click)="onSheetClick($event)"
+    (keydown.escape)="closeSheet()"
+    tabindex="-1"
+  >
+    <div class="sheet-body">
+      <div class="flex items-center justify-between gap-3">
+        <h2 class="text-xl font-bold leading-7 text-gray-900">
+          {{
+            sheetRooms().length === 1
+              ? title(sheetRooms()[0].place)
+              : 'In der Nähe'
+          }}
+        </h2>
+        <button
+          type="button"
+          class="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-gray-900"
+          aria-label="Schließen"
+          (click)="closeSheet()"
+        >
+          <svg
+            class="h-6 w-6"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+          >
+            <path stroke-linecap="round" d="M6 6l12 12M18 6 6 18" />
+          </svg>
+        </button>
+      </div>
+      <div class="mt-3 flex flex-col gap-3">
+        @for (room of sheetRooms(); track room.place.id) {
+          @if (sheetRooms().length > 1) {
+            <h3 class="text-base font-semibold text-gray-700">
+              {{ title(room.place) }}
+            </h3>
+          }
+          @for (stop of room.stops; track stop.id) {
+            <app-stop-card
+              [stop]="stop"
+              [colors]="colorsOfStop(stop)"
+              [checked]="progress.isStopSeen(stop.id)"
+              (toggled)="progress.toggleStop(stop.id)"
+              (open)="openStop(stop)"
+            />
+          }
+        }
+      </div>
+    </div>
+  </dialog>
 
   <div class="fixed bottom-0 left-0 right-0 z-10 mx-2">
     <app-navbar [mode]="'map'" />

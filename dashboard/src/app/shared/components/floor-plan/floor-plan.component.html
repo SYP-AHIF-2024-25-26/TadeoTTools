@@ -1,0 +1,92 @@
+<div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+  <div class="join" role="group" aria-label="Floor">
+    @for (item of floors; track item.code) {
+      <button
+        type="button"
+        class="btn join-item btn-sm"
+        [class.btn-primary]="floor() === item.code"
+        [attr.aria-pressed]="floor() === item.code"
+        (click)="floor.set(item.code)"
+      >
+        {{ item.name }}
+      </button>
+    }
+  </div>
+  <div class="join" role="group" aria-label="Zoom">
+    <button
+      type="button"
+      class="btn join-item btn-sm"
+      aria-label="Zoom out"
+      [disabled]="!canZoomOut()"
+      (click)="zoomBy(-1)"
+    >
+      −
+    </button>
+    <button
+      type="button"
+      class="btn join-item btn-sm"
+      aria-label="Zoom in"
+      [disabled]="!canZoomIn()"
+      (click)="zoomBy(1)"
+    >
+      +
+    </button>
+  </div>
+</div>
+
+<div
+  class="max-h-[75vh] overflow-auto rounded-lg border border-background-200 bg-white dark:border-background-600"
+>
+  <!-- A plain click on the plan picks a spot; the places are its buttons. -->
+  <div
+    #plan
+    class="relative mx-auto max-w-3xl"
+    [style.width.%]="zoom()"
+    [style.max-width]="zoom() === 100 ? null : 'none'"
+    (click)="onPlanClick($event)"
+    role="presentation"
+  >
+    <img
+      class="pointer-events-none block w-full"
+      alt=""
+      draggable="false"
+      [src]="image()"
+    />
+    @for (place of floorPlaces(); track place.id) {
+      <button
+        type="button"
+        class="absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 touch-none items-center justify-center rounded-full"
+        [class.cursor-move]="movable()"
+        [style.left.%]="left(place)"
+        [style.top.%]="top(place)"
+        [title]="title(place)"
+        [attr.aria-label]="title(place)"
+        [attr.aria-pressed]="isSelected(place)"
+        (pointerdown)="onDragStart($event, place)"
+        (pointermove)="onDragMove($event, plan)"
+        (pointerup)="onDragEnd(place)"
+        (click)="onPlaceClick(place)"
+      >
+        @if (isSelected(place)) {
+          <span
+            class="flex h-5 w-5 items-center justify-center rounded-full bg-primary-700 text-xs font-bold text-white shadow ring-2 ring-white"
+            >{{ place.stopIds.length || '' }}</span
+          >
+        } @else if (place.publicLabel) {
+          <span
+            class="h-4 w-4 rounded-sm bg-neutral-800 shadow ring-2 ring-white"
+          ></span>
+        } @else if (place.stopIds.length > 0) {
+          <span
+            class="flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-bold text-primary-800 shadow ring-2 ring-primary-700"
+            >{{ place.stopIds.length }}</span
+          >
+        } @else {
+          <span
+            class="h-2.5 w-2.5 rounded-full border border-neutral-500 bg-white/80"
+          ></span>
+        }
+      </button>
+    }
+  </div>
+</div>

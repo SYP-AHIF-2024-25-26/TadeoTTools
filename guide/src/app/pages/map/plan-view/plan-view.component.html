@@ -1,0 +1,63 @@
+<div
+  #viewport
+  class="relative overflow-hidden"
+  [style.aspect-ratio]="width() + ' / ' + height()"
+>
+  <div
+    class="plan-content absolute inset-0"
+    [style.transform]="transform()"
+    [style.--plan-zoom]="zoom()"
+  >
+    <img
+      class="pointer-events-none h-full w-full"
+      draggable="false"
+      [src]="image()"
+      [alt]="alt()"
+      [width]="width()"
+      [height]="height()"
+    />
+    <ng-content />
+  </div>
+</div>
+
+<!-- For one hand and for everyone who cannot pinch. Neutral: zooming is navigation. -->
+<div class="absolute bottom-0 right-0 flex flex-col gap-2">
+  <button
+    type="button"
+    class="zoom-button"
+    aria-label="Plan vergrößern"
+    [disabled]="zoom() >= maxZoom"
+    (click)="zoomBy(1.6)"
+  >
+    <svg
+      class="h-5 w-5"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2.25"
+      stroke="currentColor"
+    >
+      <path stroke-linecap="round" d="M12 5v14M5 12h14" />
+    </svg>
+  </button>
+  <button
+    type="button"
+    class="zoom-button"
+    aria-label="Plan verkleinern"
+    [disabled]="zoom() <= 1"
+    (click)="zoomBy(0.625)"
+  >
+    <svg
+      class="h-5 w-5"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2.25"
+      stroke="currentColor"
+    >
+      <path stroke-linecap="round" d="M5 12h14" />
+    </svg>
+  </button>
+</div>

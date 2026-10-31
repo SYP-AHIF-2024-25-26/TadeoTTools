@@ -96,6 +96,12 @@
           </div>
         }
 
+        <app-stop-map-places
+          [mapPlaceIds]="stop().mapPlaceIds ?? []"
+          [roomNr]="detailsDraft()?.roomNr ?? stop().roomNr"
+          (mapPlaceIdsChange)="setMapPlaces($event)"
+        />
+
         <app-stop-students [(stop)]="stop" [students]="students()" />
 
         <app-stop-managers

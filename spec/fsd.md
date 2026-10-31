@@ -59,7 +59,7 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
   - Die eigenen Stationen mit Status, Beschreibung, Raum und den anderen Schüler:innen dieser
     Station (Name, Klasse, Abteilung) sehen, auch bei offenen Anfragen.
 - `Stop-Manager`
-  - Eigene Stationen sehen und bearbeiten: Name, Beschreibung, Raum, Infrastruktur-Wünsche und
+  - Eigene Stationen sehen und bearbeiten: Name, Beschreibung, Raum, Kartenposition, Infrastruktur-Wünsche und
     die Schüler:innen der Station (hinzufügen, bestätigen, entfernen).
   - Nur eigene Stationen ändern. **(Lücke):** `PUT /v1/stop-manager/stops` prüft nicht, ob die
     Station dem Stop-Manager gehört; das Dashboard zeigt nur die eigenen.
@@ -157,10 +157,22 @@ Eigenschaften:
 - Eine Station kann mehreren Stationsgruppen angehören, mit eigener Reihenfolge je Gruppe.
 - Eine Station ohne öffentliche Gruppe ist **intern** (z. B. „Buffet“): nicht in der GuideApp,
   aber mit Schüler:innen und Stop-Managern.
-- Das Stockwerk ergibt sich aus der Raumnummer (U, E, 1).
+- Die Raumnummer bleibt der Text, den Besucher:innen lesen. Wo die Station auf der Karte liegt,
+  bestimmt die Verknüpfung mit einem oder mehreren Orten (§4.1a); passen Text und Verknüpfung nicht
+  zusammen, warnt das Dashboard.
 - **(Lücke):** Das Dashboard begrenzt die Beschreibung auf 255 Zeichen; es müssen 500 sein
   (das Backend erlaubt 500; mehr soll es nicht geben, damit der Text in der GuideApp überschaubar
   bleibt).
+
+## 4.1a Ort auf der Karte (MapPlace)
+- Jeder Raum der Stockwerkspläne (U, E, 1) und jede benannte Stelle ist genau ein Ort: Stockwerk,
+  eindeutiger Code (Raumnummer wie auf dem Plan, geteilte Räume als `E58-1`, oder Name der Stelle),
+  optional Name (z. B. „Aula OG“), Position auf dem Plan.
+- Eine Station kann an mehreren Orten liegen, ein Ort mehrere Stationen enthalten.
+- Ein Ort kann ein öffentliches Label mit Symbol haben (z. B. „Buffet“). Es erscheint auf der Karte
+  ohne Stationsseite; die interne Station selbst bleibt unsichtbar.
+- Orte legen, verschieben, ändern und löschen nur Admins (Dashboard-Seite „Map“). Verknüpfen dürfen
+  Admins und, bei ihren Stationen, Stop-Manager.
 
 ## 4.2 Stationsgruppe (StopGroup)
 - Name (eindeutig, max. 300), Beschreibung (max. 3000), öffentlich ja/nein, Position in der Tour.
@@ -248,7 +260,10 @@ Eigenschaften:
 - Start: Liste der öffentlichen Stationsgruppen in Tour-Reihenfolge.
 - Gruppe: Stationen der Gruppe in Reihenfolge, Wischgesten zwischen Gruppen.
 - Station: Beschreibung (Markdown), Raum, Abteilungen, „gesehen“ markieren.
-- Karte: Stockwerkspläne U/E/1, Raum hervorgehoben (`/map/:raum`).
+- Karte: Stockwerkspläne U/E/1 mit einer Markierung je Ort mit öffentlichen Stationen, in den exakten
+  Abteilungsfarben, darunter die Stationen des Stockwerks als Liste. Eine Station öffnet direkt ihre
+  Seite (in ihrer ersten Gruppe der Tour), mehrere oder zu nah beieinanderliegende Orte zeigen eine
+  Auswahl. „Auf der Karte“ hebt alle Orte der Station hervor (`/map/:raum?stop=id`).
 - Feedback (§9), Über uns/Impressum (Link auf https://www.htl-leonding.at/impressum), Countdown.
 
 ## 6.2 Fortschritt
@@ -514,7 +529,8 @@ sind.
 
 Akzeptanzkriterien:
 - Nur öffentliche Gruppen erscheinen, in Tour-Reihenfolge, die Stationen je Gruppe ebenfalls.
-- Jede Station zeigt Beschreibung, Raum und auf der Karte das Stockwerk mit dem Raum.
+- Jede Station zeigt Beschreibung, Raum und auf der Karte das Stockwerk mit dem hervorgehobenen Raum.
+- Auf der Karte führt ein Klick auf eine Markierung zur Station.
 - „Gesehen“ bleibt im Browser erhalten und lässt sich zurücksetzen.
 
 ## US-02 Feedback geben
