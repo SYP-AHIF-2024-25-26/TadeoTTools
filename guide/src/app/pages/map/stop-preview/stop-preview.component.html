@@ -1,0 +1,28 @@
+<!-- The same fill and white text as a stop card; the action below keeps this from reading as one. -->
+<div
+  class="rounded-2xl px-5 py-3 text-white shadow-md [text-shadow:0_1px_2px_rgb(0_0_0/0.45)]"
+  [style.background]="fill()"
+>
+  <p class="text-lg font-bold leading-snug">{{ stop().name }}</p>
+  @if (stop().roomNr) {
+    <p class="text-sm font-medium">{{ stop().roomNr }}</p>
+  }
+</div>
+
+@if (stop().description) {
+  <div
+    class="preview-text text-base leading-7 text-gray-700"
+    [class.is-long]="isLong()"
+    [innerHTML]="html()"
+  ></div>
+}
+
+<app-seen-toggle [checked]="checked()" (toggled)="toggled.emit()" />
+
+<button
+  type="button"
+  class="flex h-11 items-center justify-center rounded-xl bg-accent-700 px-5 text-base font-bold text-white shadow-md transition hover:bg-accent-800 active:scale-[0.98]"
+  (click)="open.emit()"
+>
+  Zur Station
+</button>

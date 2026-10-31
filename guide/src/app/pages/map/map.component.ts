@@ -25,6 +25,7 @@ import { Division, MapPlace, Stop, StopGroup } from '@shared/models/types';
 import { FLOORS, floorOf, isFloorCode, placeTitle } from '@shared/room';
 import { MapMarkerComponent } from './map-marker/map-marker.component';
 import { PlanViewComponent } from './plan-view/plan-view.component';
+import { StopPreviewComponent } from './stop-preview/stop-preview.component';
 
 /** Below this distance on the screen a finger cannot tell two markers apart. */
 const TOUCH_DISTANCE = 30;
@@ -44,6 +45,7 @@ interface MapRoom {
     PlanViewComponent,
     MapMarkerComponent,
     StopCardComponent,
+    StopPreviewComponent,
   ],
   host: {
     '(swipeleft)': 'onSwipeLeft($event)',
@@ -77,6 +79,13 @@ export class MapComponent implements OnInit {
   private divisions = signal<Division[]>([]);
   protected loadFailed = signal(false);
   protected sheetRooms = signal<MapRoom[]>([]);
+  /** The one stop in the sheet, shown in short; several are listed as cards. */
+  protected previewStop = computed(() => {
+    const rooms = this.sheetRooms();
+    return rooms.length === 1 && rooms[0].stops.length === 1
+      ? rooms[0].stops[0]
+      : null;
+  });
 
   /** Every place with what shows there: its public stops, or its label. */
   private rooms = computed<MapRoom[]>(() => {
@@ -218,7 +227,7 @@ export class MapComponent implements OnInit {
     return `${placeTitle(room.place)}: ${what}`;
   }
 
-  /** One stop opens directly; a full room, or markers too close to tell apart, list theirs. */
+  /** The sheet decides on the map: one stop in short; a full room, or markers too close, list theirs. */
   protected onMarker(room: MapRoom) {
     const plan = this.plan();
     const near = this.markers().filter(
@@ -226,10 +235,6 @@ export class MapComponent implements OnInit {
         other === room ||
         plan.screenDistance(room.place, other.place) < TOUCH_DISTANCE
     );
-    if (near.length === 1 && room.stops.length === 1) {
-      this.openStop(room.stops[0]);
-      return;
-    }
     this.sheetRooms.set(near);
     this.sheet().nativeElement.showModal();
   }
@@ -256,10 +261,12 @@ export class MapComponent implements OnInit {
     this.closeSheet();
     localStorage.setItem(CURRENT_STOP_PREFIX, JSON.stringify(stop));
     localStorage.setItem(CURRENT_STOP_GROUP_PREFIX, JSON.stringify(group));
-    await this.router.navigate(['/tour', group.id, 'stop', stop.id]);
+    await this.router.navigate(['/tour', group.id, 'stop', stop.id], {
+      queryParams: { from: 'map', floor: FLOORS[this.currentFloor()].code },
+    });
   }
 
-  /** Over the plan a swipe drags it; it only changes the page beside the plan. */
+  /** Over the plan a swipe drags it and over the sheet it does nothing; it changes the page beside them. */
   onSwipeLeft(event?: Event) {
     if (!this.onPlan(event)) {
       this.router.navigate(['/feedback']);
@@ -274,7 +281,7 @@ export class MapComponent implements OnInit {
 
   private onPlan(event?: Event): boolean {
     return !!(event as unknown as HammerInput | undefined)?.target?.closest(
-      'app-plan-view'
+      'app-plan-view, dialog'
     );
   }
 

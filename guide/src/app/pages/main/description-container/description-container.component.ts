@@ -4,7 +4,7 @@ import {
   computed,
   input,
 } from '@angular/core';
-import { marked } from 'marked';
+import { descriptionHtml } from '@shared/markdown';
 
 /**
  * The description as text on the page sheet, no card; room and map link live in the title band.
@@ -20,15 +20,5 @@ export class DescriptionContainerComponent {
   title = input<string>();
   description = input<string>();
 
-  /**
-   * The description as Markdown (GFM, single line breaks kept); HTML in it passes
-   * through. Angular's [innerHTML] sanitizer still strips scripts and handlers.
-   */
-  protected html = computed(() =>
-    marked.parse(this.description() ?? '', {
-      async: false,
-      gfm: true,
-      breaks: true,
-    })
-  );
+  protected html = computed(() => descriptionHtml(this.description()));
 }

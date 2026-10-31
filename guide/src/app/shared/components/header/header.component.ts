@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Params, RouterLink } from '@angular/router';
 
 /** The night frame: sticky top bar with the school logo, then the title band. */
 @Component({
@@ -16,4 +16,5 @@ export class HeaderComponent {
   size = input<'start' | 'page'>('page');
   backLabel = input<string>();
   backLink = input<string | unknown[]>('/main');
+  backQueryParams = input<Params | null>(null);
 }
