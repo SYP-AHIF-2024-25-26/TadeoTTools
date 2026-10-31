@@ -656,3 +656,22 @@ Ein Stand gilt als abnahmefähig für den TdoT, wenn mindestens funktioniert:
   der alte Kiosk keinen Login und speichert keinen Benutzernamen.
 - **Mehrtägige Veranstaltung (§1):** Das Datenmodell kennt keinen Tag; wie Tage geplant werden,
   wird mit der Erweiterung „mehrere Veranstaltungen“ entschieden.
+- **Karte (§4.1a):** Die Orte stehen auf den hochskalierten Plänen in `assets/plans`; die Originale
+  werden noch beschafft. `Aula UG` ist als `U01` angenommen, die Lage von „Gang bis 143“,
+  „Pausenbereich UG“ und „Buffet“ ist geschätzt. Einige Raumtexte der Live-Stationen weichen von den
+  alten Plänen ab (Issue #120) und sind noch zu prüfen.
+- **Dashboard-Usability (§15.1, Review 30.10.2026):** Ergebnis 27/40, Details in
+  `.impeccable/critique/2026-10-30T17-52-11Z__dashboard-src-app.md`. Zu entscheiden ist, was davon
+  vor dem 20.11.2026 umgesetzt wird:
+  - Stationsdetails haben zwei Speichern-Knöpfe („Save Details“ und die Leiste „Save Changes“);
+    vereinheitlichen.
+  - Feedback-Konfigurator (§9.1): ungespeicherte Änderungen gehen beim Verlassen ohne Warnung
+    verloren; Fragen lassen sich nur mit der Maus umsortieren (andere Listen haben Move up/down).
+  - Stationen- und Schülerliste (§8.3): nicht sortierbar, 0 Schüler:innen erscheint als leere
+    Zelle, kein Filter „braucht noch Leute“ wie in der Übersicht.
+  - Konfliktauflösung (§8.2) fragt zweimal nach, obwohl es Rückgängig gibt; der Rückgängig-Hinweis
+    verschwindet nach 8 s.
+  - Barrierefreiheit: Knöpfe in Zeilen nennen die Schüler:in nicht, Tabs ohne Pfeiltasten.
+  - Kleinigkeiten: Text der leeren Übersicht nennt einen Import der Stationsplanung, den es im
+    Dashboard nicht gibt (§10.2); Suchsymbol in der Stop-Manager-Übersicht im hellen Modus
+    unsichtbar; `text-gray-*` in der Feedback-Vorschau.

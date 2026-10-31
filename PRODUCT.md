@@ -38,7 +38,7 @@ It is built for this one school's open day, by HTL Leonding students (5AHIF SYP 
 ## Capabilities and Constraints
 
 - Visitor app pages: tour start (list of stop groups), stop group view, stop detail (description, room, mark as done), clickable floor map with stop markers and room highlighting, feedback form, About/Impressum, countdown.
-- Dashboard pages: stop groups (tour order), stops (plus stop manager assignment), divisions (color, image, stops), students (assignments and conflicts), stop managers, user management (admins, stop managers, CSV import/export, wipe, feature flags), feedback configurator (text, rating and choice questions, with conditional dependencies).
+- Dashboard pages: stop groups (tour order), stops (plus stop manager assignment), divisions (color, image, stops), students (assignments and conflicts), stop managers, user management (admins, stop managers, CSV import/export, wipe, feature flags), feedback configurator (text, rating and choice questions, with conditional dependencies), map (stops linked to rooms on the floor plans), registration (towns, choice lists, registrations, photos), buffet.
 - There is one tour for the whole system. Its order (`StopGroup.Order`, `StopGroupAssignment.Order`) decides what visitors see.
 - Feedback is anonymous.
 - Terminology (German in the visitor app, English in the dashboard): Station / Stop, Stationsgruppe / Stop Group, Leitfaden (the tour), Abteilung / Division, Stop-Manager, Guide, Tag der offenen Tür / TdoT.
@@ -47,7 +47,7 @@ It is built for this one school's open day, by HTL Leonding students (5AHIF SYP 
 
 ## Brand Commitments
 
-- **HTL Leonding identity is binding:** keep the school's name and logo (`dashboard/src/assets/htl-leonding-logo.png` in colour and `Leonding_Logo.svg` in white, `guide/src/assets/logo.png`), and respect the per-division colors and images that admins configure in the dashboard.
+- **HTL Leonding identity is binding:** keep the school's name and logo (`dashboard/src/assets/tadeottools-logo-transparent.png`, `guide/src/assets/htl-leonding-logo-white.png`), and respect the per-division colors and images that admins configure in the dashboard.
 - Product name in the visitor app: "Tadeot GuideApp". The repository and system are called TadeoTTools.
 - The Impressum links to https://www.htl-leonding.at/impressum.
 
