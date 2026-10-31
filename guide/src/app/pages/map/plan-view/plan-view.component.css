@@ -1,0 +1,30 @@
+:host {
+  position: relative;
+  display: block;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.plan-content {
+  transform-origin: 0 0;
+}
+
+.zoom-button {
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  background-color: #fff;
+  color: #111827;
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 0 0 1px rgb(17 24 39 / 0.05);
+}
+
+.zoom-button:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  box-shadow: none;
+}

@@ -37,7 +37,7 @@ It is built for this one school's open day, by HTL Leonding students (5AHIF SYP 
 
 ## Capabilities and Constraints
 
-- Visitor app pages: tour start (list of stop groups), stop group view, stop detail (description, room, mark as done), floor map with room highlighting (`stockwerk-U/E/1`), feedback form, About/Impressum, countdown.
+- Visitor app pages: tour start (list of stop groups), stop group view, stop detail (description, room, mark as done), clickable floor map with stop markers and room highlighting, feedback form, About/Impressum, countdown.
 - Dashboard pages: stop groups (tour order), stops (plus stop manager assignment), divisions (color, image, stops), students (assignments and conflicts), stop managers, user management (admins, stop managers, CSV import/export, wipe, feature flags), feedback configurator (text, rating and choice questions, with conditional dependencies).
 - There is one tour for the whole system. Its order (`StopGroup.Order`, `StopGroupAssignment.Order`) decides what visitors see.
 - Feedback is anonymous.
@@ -53,7 +53,7 @@ It is built for this one school's open day, by HTL Leonding students (5AHIF SYP 
 
 ## Evidence on Hand
 
-- Real floor plans: `guide/src/assets/stockwerk-U.png`, `stockwerk-E.png`, `stockwerk-1.png`.
+- Real floor plans: `assets/plans/ug.png`, `eg.png`, `og.png` (upscaled copies in `guide/src/assets/plans/` and `dashboard/src/assets/plans/`).
 - Team photo: `guide/src/assets/team.png` / `team.jpg`, used on the About page.
 - Real station planning data is imported from CSV at startup in Development.
 - There are no testimonials, usage statistics or feedback results in the repo. Future work must not invent visitor numbers, quotes or ratings.

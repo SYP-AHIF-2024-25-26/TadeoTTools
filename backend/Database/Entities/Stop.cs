@@ -20,4 +20,5 @@ public class Stop
     public List<StopGroupAssignment> StopGroupAssignments { get; set; } = [];
     public List<StudentAssignment> StudentAssignments { get; set; } = [];
     public List<StopManagerAssignment> StopManagerAssignments { get; set; } = [];
+    public List<MapPlace> MapPlaces { get; set; } = [];
 }

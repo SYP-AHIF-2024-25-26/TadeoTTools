@@ -38,6 +38,7 @@ import { StopStudentsComponent } from './components/stop-students/stop-students.
 import { StopManagersComponent } from './components/stop-managers/stop-managers.component';
 import { StopHeaderComponent } from './components/stop-header/stop-header.component';
 import { StopDivisionPickerComponent } from './components/stop-division-picker/stop-division-picker.component';
+import { StopMapPlacesComponent } from './components/stop-map-places/stop-map-places.component';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 
 const FIELD_ERRORS = 'Some fields need attention, see the messages above.';
@@ -53,6 +54,7 @@ const FIELD_ERRORS = 'Some fields need attention, see the messages above.';
     StopManagersComponent,
     StopHeaderComponent,
     StopDivisionPickerComponent,
+    StopMapPlacesComponent,
     DeletePopupComponent,
   ],
   templateUrl: './stop-details.component.html',
@@ -92,6 +94,7 @@ export class StopDetailsComponent implements OnInit, HasUnsavedChanges {
     orders: [],
     studentAssignments: [],
     stopManagerAssignments: [],
+    mapPlaceIds: [],
   };
 
   stop = signal<Stop>(this.emptyStop);
@@ -277,6 +280,10 @@ export class StopDetailsComponent implements OnInit, HasUnsavedChanges {
     this.savedState = JSON.stringify(payload);
     this.closeDetails();
     this.toast.success('Stop details saved.');
+  }
+
+  setMapPlaces(mapPlaceIds: number[]) {
+    this.stop.update((stop) => ({ ...stop, mapPlaceIds }));
   }
 
   setNewStopDivisions(divisionIds: number[]) {

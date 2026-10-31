@@ -352,6 +352,50 @@ namespace Database.Migrations
                     b.ToTable("FeedbackSessions");
                 });
 
+            modelBuilder.Entity("Database.Entities.MapPlace", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Floor")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("character varying(1)");
+
+                    b.Property<string>("Icon")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("PublicLabel")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<double>("X")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Y")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("MapPlaces");
+                });
+
             modelBuilder.Entity("Database.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -761,6 +805,21 @@ namespace Database.Migrations
                     b.ToTable("DivisionStop");
                 });
 
+            modelBuilder.Entity("MapPlaceStop", b =>
+                {
+                    b.Property<int>("MapPlacesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StopsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MapPlacesId", "StopsId");
+
+                    b.HasIndex("StopsId");
+
+                    b.ToTable("MapPlaceStop");
+                });
+
             modelBuilder.Entity("Database.Entities.FeedbackChoiceQuestion", b =>
                 {
                     b.HasBaseType("Database.Entities.FeedbackQuestion");
@@ -992,6 +1051,21 @@ namespace Database.Migrations
                     b.HasOne("Database.Entities.Division", null)
                         .WithMany()
                         .HasForeignKey("DivisionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Database.Entities.Stop", null)
+                        .WithMany()
+                        .HasForeignKey("StopsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MapPlaceStop", b =>
+                {
+                    b.HasOne("Database.Entities.MapPlace", null)
+                        .WithMany()
+                        .HasForeignKey("MapPlacesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -36,6 +36,7 @@ export class NavbarComponent {
       route: '/students-and-stops',
       also: ['/stop', '/stopgroup'],
     },
+    { label: 'Map', route: '/map' },
     { label: 'Feedback', route: '/feedback' },
     { label: 'Registration', route: '/registration' },
     { label: 'Buffet', route: '/buffet' },

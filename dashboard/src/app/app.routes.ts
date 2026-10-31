@@ -111,6 +111,14 @@ export const routes: Routes = [
     canActivate: [adminGuard],
   },
   {
+    path: 'map',
+    // Lazy, so the initial bundle stays within its budget.
+    loadComponent: () =>
+      import('./pages/map/map-page.component').then((m) => m.MapPageComponent),
+    canMatch: [authGuard],
+    canActivate: [adminGuard],
+  },
+  {
     path: 'buffet',
     component: BuffetComponent,
     canMatch: [authGuard],

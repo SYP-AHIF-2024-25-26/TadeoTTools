@@ -28,6 +28,27 @@ export type Stop = {
   orders: number[];
   studentAssignments: StudentAssignmentOfStop[];
   stopManagerAssignments: string[];
+  mapPlaceIds?: number[];
+};
+
+export type MapPlace = {
+  id: number;
+  floor: string;
+  code: string;
+  name: string | null;
+  x: number;
+  y: number;
+  publicLabel: string | null;
+  icon: string | null;
+  stopIds: number[];
+};
+
+export type MapSuggestion = {
+  stopId: number;
+  stopName: string;
+  roomNr: string;
+  placeIds: number[];
+  placeCodes: string[];
 };
 
 export type StopManager = {

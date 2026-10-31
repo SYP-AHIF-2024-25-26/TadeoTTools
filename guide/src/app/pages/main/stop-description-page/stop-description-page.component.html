@@ -13,7 +13,7 @@
           <app-division-icon [divisionId]="division.id" />
         }
         @if (stop().roomNr; as roomNr) {
-          <app-room-line [roomNr]="roomNr" />
+          <app-room-line [roomNr]="roomNr" [stopId]="stop().id" />
         }
       </div>
     }

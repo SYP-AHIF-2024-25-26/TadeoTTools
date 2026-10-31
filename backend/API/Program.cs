@@ -2,6 +2,7 @@ using API;
 using API.Endpoints;
 using API.Endpoints.DivisionManagement;
 using API.Endpoints.StopGroupManagement;
+using API.Endpoints.MapManagement;
 using API.Endpoints.StopManagement;
 using API.Endpoints.StudentManagement;
 using API.Endpoints.UserManagement;
@@ -137,6 +138,7 @@ app.MapOverviewEndpoints();
 app.MapBuffetEndpoints();
 app.MapCityEndpoints();
 app.MapRegistrationEndpoints();
+app.MapMapEndpoints();
 
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetService<TadeoTDbContext>();
