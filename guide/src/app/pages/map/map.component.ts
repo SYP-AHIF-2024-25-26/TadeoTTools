@@ -27,6 +27,7 @@ import {
   FLOORS,
   floorOf,
   isFloorCode,
+  mapRoomOf,
   placeText,
   placeTitle,
 } from '@shared/room';
@@ -75,7 +76,6 @@ const byCode = (a: MapRoom, b: MapRoom) =>
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent implements OnInit {
-  roomNr = input<string>();
   /** The stop whose rooms are ringed, from "Auf der Karte". */
   stop = input<string>();
   /** The floor to return to, from the URL. */
@@ -143,17 +143,20 @@ export class MapComponent implements OnInit {
     }));
   });
 
+  private askedStop = computed(() =>
+    this.stops().find((stop) => stop.id === Number(this.stop()))
+  );
+  /** The stop's own places; only a stop not placed yet falls back on its room text. */
   private highlightedIds = computed(() => {
-    const stopId = Number(this.stop());
-    const code = this.roomNr()?.toLowerCase();
-    return new Set(
-      this.places()
-        .filter(
-          (place) =>
-            place.stopIds.includes(stopId) || place.code.toLowerCase() === code
-        )
-        .map((place) => place.id)
+    const stop = this.askedStop();
+    const linked = this.places().filter(
+      (place) => stop && place.stopIds.includes(stop.id)
     );
+    const code = mapRoomOf(stop?.roomNr)?.toLowerCase();
+    const places = linked.length
+      ? linked
+      : this.places().filter((place) => place.code.toLowerCase() === code);
+    return new Set(places.map((place) => place.id));
   });
   private highlightedFloors = computed(() => {
     const ids = this.highlightedIds();
@@ -164,36 +167,30 @@ export class MapComponent implements OnInit {
     );
   });
 
-  /** The floor of the URL, else of the room it asks for; the rail changes it. */
+  /** The floor of the URL, else of the stop it asks for; the rail changes it. */
   currentFloor = linkedSignal(() => {
     const fromUrl = FLOORS.findIndex((floor) => floor.code === this.floor());
     if (fromUrl >= 0) {
       return fromUrl;
     }
-    const asked = floorOf(this.roomNr());
-    if (this.roomNr() || this.highlightedFloors().size === 0) {
-      return asked;
+    if (this.highlightedFloors().size === 0) {
+      return floorOf(mapRoomOf(this.askedStop()?.roomNr) ?? undefined);
     }
     return FLOORS.findIndex((floor) =>
       this.highlightedFloors().has(floor.code)
     );
   });
   currentFloorName = computed(() => FLOORS[this.currentFloor()].name);
-  /** The asked room in the band; a floor code like "EG" is no room, the band names the floor anyway. */
+  /** The asked stop's room in the band; a floor code like "EG" is no room, the band names the floor anyway. */
   roomLabel = computed(() => {
-    const asked = this.roomNr();
-    if (!asked || isFloorCode(asked)) {
+    const stop = this.askedStop();
+    if (!stop?.roomNr || isFloorCode(stop.roomNr)) {
       return null;
     }
     const room = this.rooms().find((candidate) =>
       this.highlightedIds().has(candidate.place.id)
     );
-    if (!room) {
-      return `Raum ${asked}`;
-    }
-    const stopId = Number(this.stop());
-    const ownStop = room.stops.filter((stop) => stop.id === stopId);
-    return placeTitle(room.place, ownStop.length ? ownStop : room.stops);
+    return room ? placeTitle(room.place, [stop]) : `Raum ${stop.roomNr}`;
   });
 
   private floorRooms = computed(() => {
@@ -273,10 +270,12 @@ export class MapComponent implements OnInit {
     return room.stops.every((stop) => this.progress.isStopSeen(stop.id));
   }
 
+  /** An open sheet takes over the ring, so the plan shows which marker it is about. */
   protected isHighlighted(place: MapPlace): boolean {
-    return (
-      this.highlightedIds().has(place.id) || this.selectedIds().has(place.id)
-    );
+    const selected = this.selectedIds();
+    return selected.size > 0
+      ? selected.has(place.id)
+      : this.highlightedIds().has(place.id);
   }
 
   protected floorHasHighlight(code: string): boolean {

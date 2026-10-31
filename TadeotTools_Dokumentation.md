@@ -31,7 +31,7 @@ Das Frontend dient Besuchern und Guides als interaktiver Leitfaden durch den Tag
 - **Feedback (`/feedback`)**: Die `FeedbackComponent` erlaubt Nutzern, am Ende ihres Besuchs das vom Admin konfigurierte Feedback abzuschließen.
 - **Tour-Übersicht (`/tour/:stopGroupId`)**: Die `StopPageComponent`. Sie zeigt eine Liste der Stationen innerhalb einer Stationsgruppe des Leitfadens an.
 - **Stations-Detailansicht (`/tour/:stopGroupId/stop/:stopId`)**: Die `StopDescriptionPageComponent`. Detaillierte Ansicht einer einzelnen Station inkl. Beschreibung, Ort/Raumnummer und der Möglichkeit, die Station als "erledigt" zu markieren.
-- **Karte (`/map` & `/map/:roomNr`)**: Die `MapComponent`. Stockwerkspläne zum Zoomen mit einer Markierung je Ort; ein Klick zeigt die Station kurz auf der Karte, bei mehreren eine Auswahl. Unter dem Plan steht ein Raumverzeichnis des Stockwerks, nach Raum sortiert. Die Stationsseite ist dieselbe wie in der Tour, „Auf der Karte“ führt von dort zurück. `?stop=id` hebt alle Orte einer Station hervor, `?floor=U|E|1` merkt sich das Stockwerk.
+- **Karte (`/map`)**: Die `MapComponent`. Stockwerkspläne zum Zoomen mit einer Markierung je Ort; ein Klick zeigt die Station kurz auf der Karte, bei mehreren eine Auswahl. Unter dem Plan steht ein Raumverzeichnis des Stockwerks, nach Raum sortiert. Die Stationsseite ist dieselbe wie in der Tour, „Auf der Karte“ führt von dort zurück. `?stop=id` hebt alle Orte einer Station hervor, `?floor=U|E|1` merkt sich das Stockwerk.
 - **Über uns (`/about`)**: Die `AboutPageComponent` für allgemeine Informationen. *Inkludiert zudem den Button, um den aktuellen Fortschritt im Leitfaden zurückzusetzen.*
 
 ---
