@@ -1,4 +1,4 @@
-import { MapPlace } from '@shared/models/types';
+import { MapPlace, Stop } from '@shared/models/types';
 
 /** The room on the floor plans that a stop's room text points to, e.g. "101 (Aula)" → "101". */
 export function mapRoomOf(roomNr: string | undefined): string | null {
@@ -59,8 +59,14 @@ export function isFloorCode(mapRoom: string | undefined): boolean {
   return /^(UG|EG|OG)$/i.test(mapRoom ?? '');
 }
 
-/** "Raum 101 · Aula OG", or the spot itself: "Gang bis 143". */
-export function placeTitle(place: MapPlace): string {
-  const title = /\s/.test(place.code) ? place.code : `Raum ${place.code}`;
-  return place.name ? `${title} · ${place.name}` : title;
+/** What visitors call a place: its name, else the room text of its stops. The code is for organizers. */
+export function placeText(place: MapPlace, stops: Stop[]): string {
+  const texts = new Set(stops.map((stop) => stop.roomNr).filter(Boolean));
+  return place.name || [...texts].join(', ') || place.code;
+}
+
+/** "Aula OG", "Raum E24", or the spot itself: "Gang bis 143". */
+export function placeTitle(place: MapPlace, stops: Stop[]): string {
+  const text = placeText(place, stops);
+  return /^[UEK]?\d/.test(text) ? `Raum ${text}` : text;
 }

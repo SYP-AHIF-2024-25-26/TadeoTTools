@@ -6,7 +6,7 @@
     <p class="mt-2 text-base font-semibold text-night-100">
       {{ currentFloorName() }}
       @if (roomLabel(); as room) {
-        · Raum {{ room }}
+        · {{ room }}
       }
     </p>
   </app-header>
@@ -173,7 +173,7 @@
           @for (row of directory(); track row.stop.id) {
             <li>
               <app-stop-row
-                [room]="row.code"
+                [room]="row.place"
                 [name]="row.stop.name"
                 [colors]="colorsOfStop(row.stop)"
                 [seen]="progress.isStopSeen(row.stop.id)"
@@ -202,9 +202,7 @@
     <div class="sheet-body">
       <div class="flex items-center justify-between gap-3">
         <h2 class="text-xl font-bold leading-7 text-gray-900">
-          @if (sheetRoom(); as room) {
-            {{ title(room.place) }}
-          }
+          {{ sheetTitle() }}
         </h2>
         <button
           type="button"
@@ -263,7 +261,7 @@
               @for (stop of room.stops; track stop.id; let first = $first) {
                 <li>
                   <app-stop-row
-                    [room]="first ? room.place.code : ''"
+                    [room]="first ? text(room) : ''"
                     [name]="stop.name"
                     [colors]="colorsOfStop(stop)"
                     [seen]="progress.isStopSeen(stop.id)"

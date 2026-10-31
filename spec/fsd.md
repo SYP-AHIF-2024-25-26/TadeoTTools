@@ -170,7 +170,9 @@ Eigenschaften:
 ## 4.1a Ort auf der Karte (MapPlace)
 - Jeder Raum der Stockwerkspläne (U, E, 1) und jede benannte Stelle ist genau ein Ort: Stockwerk,
   eindeutiger Code (Raumnummer wie auf dem Plan, geteilte Räume als `E58-1`, oder Name der Stelle),
-  optional Name (z. B. „Aula OG“), Position auf dem Plan.
+  optional Name (z. B. „Aula OG“), Position auf dem Plan. Der Code ist intern: Besucher:innen lesen
+  auf der Karte den Namen des Orts, sonst den Raumtext der Station (so sehen sie bei `E30-1` und
+  `E30-2` nur den offiziellen Raum).
 - Eine Station kann an mehreren Orten liegen, ein Ort mehrere Stationen enthalten.
 - Ein Ort kann ein öffentliches Label mit Symbol haben (z. B. „Buffet“). Es erscheint auf der Karte
   ohne Stationsseite; die interne Station selbst bleibt unsichtbar.
@@ -264,7 +266,7 @@ Eigenschaften:
 - Gruppe: Stationen der Gruppe in Reihenfolge, Wischgesten zwischen Gruppen.
 - Station: Beschreibung (Markdown), Raum, Abteilungen, „gesehen“ markieren.
 - Karte: Stockwerkspläne U/E/1 mit einer Markierung je Ort mit öffentlichen Stationen, in den exakten
-  Abteilungsfarben. Darunter ein Raumverzeichnis des Stockwerks (Raum, Abteilungsfarbe, Name, nach
+  Abteilungsfarben. Darunter ein Raumverzeichnis des Stockwerks (Ort, Abteilungsfarbe, Name, nach
   Raum sortiert, keine Karten); eine Zeile führt zurück auf die Karte. Eine Markierung zeigt auf der
   Karte eine Kurzansicht der Station (Name, Raum, Anfang der Beschreibung, „gesehen“, „Zur Station“),
   ein Raum mit mehreren Stationen eine Auswahl, zu nah beieinanderliegende Orte stehen darunter als
