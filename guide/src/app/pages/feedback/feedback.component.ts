@@ -21,6 +21,7 @@ import {
 import { divisionColorFor } from '@shared/division-colors';
 import { ApiFetchService } from '@core/services/api-fetch.service';
 import { FeedbackOutboxService } from '@core/services/feedback-outbox.service';
+import { isPreview } from '@core/preview';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { NavbarComponent } from '@shared/components/navbar/navbar.component';
 import { LoadErrorComponent } from '@shared/components/load-state/load-error.component';
@@ -282,7 +283,8 @@ export class FeedbackComponent implements OnInit, OnDestroy {
       this.outbox.add(submissions);
     }
     try {
-      localStorage.setItem(FEEDBACK_SUBMITTED, 'true');
+      // The preview does not remember it, so the form can be tested again.
+      if (!isPreview) localStorage.setItem(FEEDBACK_SUBMITTED, 'true');
       sessionStorage.removeItem(FEEDBACK_DRAFT);
     } catch {
       // Storage blocked: the page just opens on the questions next time.

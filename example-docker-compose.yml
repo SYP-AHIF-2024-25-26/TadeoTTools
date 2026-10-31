@@ -16,6 +16,8 @@ services:
       - BASE_HREF=/adm-dashboard/
       - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126/v1
       - KEYCLOAK_REDIRECT_URI=https://tadeot.htl-leonding.ac.at/adm-dashboard/
+      # Only if the guide is not at the root of this host (preview page)
+      # - GUIDE_URL=https://tadeot.htl-leonding.ac.at
     networks:
       - tadeotnet-201126
     depends_on:

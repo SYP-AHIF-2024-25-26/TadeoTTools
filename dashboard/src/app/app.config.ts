@@ -17,6 +17,7 @@ import { routes } from './app.routes';
 import { environment } from '@env/environment';
 
 export const BASE_URL = new InjectionToken<string>('BaseUrl');
+export const GUIDE_URL = new InjectionToken<string>('GuideUrl');
 
 import {
   AutoRefreshTokenService,
@@ -31,13 +32,20 @@ import {
 
 declare global {
   interface Window {
-    __env: { backendURL?: string; keycloakRedirectUri?: string };
+    __env: {
+      backendURL?: string;
+      keycloakRedirectUri?: string;
+      guideURL?: string;
+    };
   }
 }
 const baseUrl =
   environment.production && window.__env?.backendURL
     ? window.__env.backendURL
     : environment.apiBaseUrl;
+// Deployed, the guide sits at the root of the dashboard's host.
+const guideUrl =
+  window.__env?.guideURL || environment.guideUrl || window.location.origin;
 const escapedBaseUrl = baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special characters
 const urlPattern = new RegExp(`^(${escapedBaseUrl})(\\/.*)?$`, 'i');
 
@@ -90,6 +98,7 @@ export const appConfig: ApplicationConfig = {
         return baseUrl;
       },
     },
+    { provide: GUIDE_URL, useValue: guideUrl },
     provideRouter(
       routes,
       withInMemoryScrolling({

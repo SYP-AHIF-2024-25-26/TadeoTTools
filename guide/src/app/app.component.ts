@@ -2,6 +2,7 @@ import { RouterOutlet, Router, Routes } from '@angular/router';
 import { NextYearPageComponent } from '@pages/next-year/next-year-page/next-year-page.component';
 import { ApiFetchService } from '@core/services/api-fetch.service';
 import { FeedbackOutboxService } from '@core/services/feedback-outbox.service';
+import { isPreview } from '@core/preview';
 import {
   Component,
   signal,
@@ -30,7 +31,7 @@ export class AppComponent implements OnInit {
       const showCountdown = await this.apiService.getShowCountdown();
       console.log('showing');
 
-      if (showCountdown.isEnabled) {
+      if (showCountdown.isEnabled && !isPreview) {
         // Enforce ONLY countdown page by replacing routes
         const countdownRoutes: Routes = [
           { path: '', component: NextYearPageComponent },

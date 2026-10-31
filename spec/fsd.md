@@ -84,9 +84,12 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
 ## 2.4 Benutzer ohne Rolle
 - Wer weder Admin noch Stop-Manager ist, landet im Dashboard auf `/student`. Eine Lehrkraft ohne
   Rolle sieht dort nur einen Fehler.
-- **(Lücke):** Eine Vorschau-Seite zeigt allen angemeldeten Rollen (auch Schüler:innen und
-  Lehrkräften ohne Rolle) die öffentlichen Stationsgruppen mit ihren Stationen, wie in der
-  GuideApp. Dafür braucht es eine eigene Navigation für Schüler:innen (Entwurf offen, §19).
+- Die Vorschau-Seite `/preview` zeigt allen angemeldeten Rollen (auch Schüler:innen und Lehrkräften
+  ohne Rolle) die echte GuideApp in einem Rahmen, mit Tour, Karte und Feedback, auch während der
+  Countdown läuft. Der Fortschritt bleibt nur bis zum Schließen des Tabs und getrennt von dem der
+  öffentlichen GuideApp; Feedback wird nicht gesendet. Der Link „Preview“ steht in der Navigation
+  aller Rollen. Die Daten der GuideApp sind öffentlich: der Login schützt die Seite im Dashboard,
+  nicht die Daten.
 
 ## 2.5 Testendpunkte
 - `GET /v1/users/at-least-logged-in`, `/at-least-student`, `/everyone-allowed` und `/token-data`
@@ -279,6 +282,7 @@ Eigenschaften:
 ## 6.4 Countdown
 - Ist `showCountdown` eingeschaltet, zeigt die GuideApp **nur** die Countdown-Seite (auch kein
   Feedback). Der Wert des Flags ist der Beginn des nächsten TdoT; das Ende ist fest 19:00 Uhr.
+  Ausnahme ist die Vorschau im Dashboard (§2.4).
 
 ## 6.5 Direktlinks
 - Ein Direktlink auf eine Station ohne vorherigen Besuch führt zurück auf die Startseite.
@@ -631,7 +635,6 @@ Ein Stand gilt als abnahmefähig für den TdoT, wenn mindestens funktioniert:
 - Feedback-Quelle speichern (§9.2).
 - Kein `localhost` in CORS der Produktion (§13.3).
 - Infrastruktur-Seite mit „verfügbar“/„erledigt“ und Deadline (§7.1).
-- Vorschau-Seite der Tour für alle Rollen und Navigation für Schüler:innen (§2.4).
 
 ## Kann (später)
 - Mehrere Schuljahre und Veranstaltungen; abgeschlossene nur lesbar, nur aktuelle editierbar;
@@ -649,7 +652,6 @@ Ein Stand gilt als abnahmefähig für den TdoT, wenn mindestens funktioniert:
 
 - **Zuteilungs-Import (§10.3):** Wie genau überspringen (welche Fehler, Rückmeldung an den Admin)
   ist noch zu klären (Antworten 32/34).
-- **Navigation für Schüler:innen (§2.4):** Entwurf der Vorschau-Seite und der Navigation offen.
 - **Alte Endpunkte (§3.4):** Bis zum 20.11.2026 bleiben die Endpunkte des alten Backends (Buffet,
   Anmeldung, Statistik) ohne Login erreichbar (es wird nicht verändert), werden aber nur noch im
   Rückfall verwendet. Danach wird das alte Backend abgeschaltet. Im Rückfall der Anmeldung braucht

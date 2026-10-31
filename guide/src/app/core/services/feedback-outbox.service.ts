@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ApiFetchService } from '@core/services/api-fetch.service';
 import { FeedbackSubmission } from '@shared/models/types';
 import { FEEDBACK_OUTBOX } from '@shared/constants/constants';
+import { isPreview } from '@core/preview';
 
 interface PendingFeedback {
   id: string;
@@ -33,6 +34,8 @@ export class FeedbackOutboxService {
   }
 
   add(answers: FeedbackSubmission[]): void {
+    // Test answers from the dashboard's preview must not reach the real results.
+    if (isPreview) return;
     const entry: PendingFeedback = {
       // crypto.randomUUID() needs a secure context, which a LAN test setup may lack.
       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,

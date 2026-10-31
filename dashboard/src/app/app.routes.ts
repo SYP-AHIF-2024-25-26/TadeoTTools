@@ -124,5 +124,14 @@ export const routes: Routes = [
     canMatch: [authGuard],
     canActivate: [adminGuard],
   },
+  {
+    path: 'preview',
+    // No role guard: everyone who can log in may try the guide.
+    loadComponent: () =>
+      import('./pages/preview/preview.component').then(
+        (m) => m.PreviewComponent
+      ),
+    canMatch: [authGuard],
+  },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

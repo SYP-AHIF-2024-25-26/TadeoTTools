@@ -25,6 +25,9 @@ var guideapp = builder.AddJavaScriptApp("guide", "../../guide")
     .WithBuildScript("start")
     .WithRunScript("start");
 
+// The dashboard's preview page shows the guide in a frame.
+dashboard.WithEnvironment("GUIDE_URL", guideapp.GetEndpoint("http"));
+
 var feedbackKiosk = builder.AddJavaScriptApp("kiosk-feedback", "../../kiosk/feedback")
     .WithReference(webapi)
     .WithHttpEndpoint(env: "PORT")
