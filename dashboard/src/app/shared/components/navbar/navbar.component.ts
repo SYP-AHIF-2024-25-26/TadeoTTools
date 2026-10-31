@@ -43,6 +43,9 @@ export class NavbarComponent {
     { label: 'Users & Data', route: '/data-management' },
   ];
 
+  // The one link for everyone, also for users without a role.
+  protected readonly previewLink = { label: 'Preview', route: '/preview' };
+
   protected readonly path = toSignal(
     this.router.events.pipe(
       filter((e) => e instanceof NavigationEnd),
