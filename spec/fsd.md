@@ -263,9 +263,9 @@ Eigenschaften:
 - Karte: Stockwerkspläne U/E/1 mit einer Markierung je Ort mit öffentlichen Stationen, in den exakten
   Abteilungsfarben, darunter die Stationen des Stockwerks als Liste. Eine Markierung zeigt auf der
   Karte eine Kurzansicht der Station (Name, Raum, Anfang der Beschreibung, „gesehen“, „Zur Station“),
-  mehrere oder zu nah beieinanderliegende Orte eine Auswahl. Die Stationsseite führt dann zurück zur
-  Karte, aufs selbe Stockwerk, ohne Blättern in der Gruppe. „Auf der Karte“ hebt alle Orte der
-  Station hervor (`/map/:raum?stop=id`).
+  mehrere oder zu nah beieinanderliegende Orte eine Auswahl. Die Stationsseite ist dieselbe wie in der
+  Tour. „Auf der Karte“ führt von dort zurück und hebt alle Orte der Station hervor
+  (`/map/:raum?stop=id`).
 - Feedback (§9), Über uns/Impressum (Link auf https://www.htl-leonding.at/impressum), Countdown.
 
 ## 6.2 Fortschritt

@@ -3,9 +3,8 @@
 >
   <app-header
     [title]="stop().name || ''"
-    [backLabel]="fromMap() ? 'Karte' : currentStopGroup().name || 'Rundgang'"
-    [backLink]="fromMap() ? ['/map'] : ['/tour', stopGroupId()]"
-    [backQueryParams]="fromMap() ? { floor: floor() } : null"
+    [backLabel]="currentStopGroup().name || 'Rundgang'"
+    [backLink]="['/tour', stopGroupId()]"
   >
     <!-- With a description the icons sit beside its text; without one they stay up here. -->
     @if (headerDivisions().length > 0 || stop().roomNr) {

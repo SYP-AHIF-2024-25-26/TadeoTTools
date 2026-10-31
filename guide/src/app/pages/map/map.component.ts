@@ -261,9 +261,7 @@ export class MapComponent implements OnInit {
     this.closeSheet();
     localStorage.setItem(CURRENT_STOP_PREFIX, JSON.stringify(stop));
     localStorage.setItem(CURRENT_STOP_GROUP_PREFIX, JSON.stringify(group));
-    await this.router.navigate(['/tour', group.id, 'stop', stop.id], {
-      queryParams: { from: 'map', floor: FLOORS[this.currentFloor()].code },
-    });
+    await this.router.navigate(['/tour', group.id, 'stop', stop.id]);
   }
 
   /** Over the plan a swipe drags it and over the sheet it does nothing; it changes the page beside them. */
