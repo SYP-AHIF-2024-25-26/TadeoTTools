@@ -1,32 +1,61 @@
 <div
+  #scroller
   class="flex h-screen w-full touch-pan-y touch-pinch-zoom select-none flex-col justify-start overflow-y-scroll bg-canvas"
 >
   <app-header title="Karte">
-    @if (roomLabel(); as room) {
-      <p class="mt-2 text-base font-semibold text-night-100">Raum {{ room }}</p>
-    }
+    <p class="mt-2 text-base font-semibold text-night-100">
+      {{ currentFloorName() }}
+      @if (roomLabel(); as room) {
+        · Raum {{ room }}
+      }
+    </p>
   </app-header>
 
   @if (roomNr() !== undefined) {
     <button
-      class="mx-4 mt-5 flex h-11 w-fit shrink-0 items-center rounded-xl bg-accent-700 px-5 text-base font-bold text-white shadow-md transition hover:bg-accent-800 active:scale-[0.98]"
+      class="mx-4 mb-1 mt-4 flex h-11 w-fit shrink-0 items-center rounded-xl bg-accent-700 px-5 text-base font-bold text-white shadow-md transition hover:bg-accent-800 active:scale-[0.98]"
       (click)="onGoBack()"
     >
       Zur Station
     </button>
   }
 
-  <main class="flex flex-col gap-5 px-4 pb-28 pt-5">
+  <main class="flex flex-col gap-5 pb-28" [style.padding-bottom]="sheetSpace()">
     <section
-      class="w-full max-w-xl self-center rounded-2xl bg-white p-4 shadow-md ring-1 ring-gray-900/5"
+      class="relative w-full max-w-xl self-center bg-white"
       [attr.aria-label]="'Plan ' + currentFloorName()"
     >
-      <h2 class="text-xl font-bold leading-7 text-gray-900">
-        {{ currentFloorName() }}
-      </h2>
-
-      <div class="relative mt-3 flex items-start gap-3">
-        <div class="min-w-0 flex-1">
+      <!-- In the plan's one corner free on every floor, bottom floor first. Neutral: changing floors is navigation. -->
+      <div
+        class="absolute bottom-3 right-3 z-10 flex gap-2"
+        role="group"
+        aria-label="Stockwerk"
+      >
+        @for (item of floorRail; track item.code) {
+          <button
+            type="button"
+            class="relative flex h-11 w-11 items-center justify-center rounded-xl text-base font-bold shadow-md ring-1 ring-gray-900/5 transition active:scale-[0.98]"
+            [class]="
+              currentFloor() === item.index
+                ? 'bg-night-900 text-white'
+                : 'bg-white text-gray-900'
+            "
+            [attr.aria-label]="item.name"
+            [attr.aria-pressed]="currentFloor() === item.index"
+            (click)="selectFloor(item.index)"
+          >
+            {{ item.code }}
+            @if (floorHasHighlight(item.code)) {
+              <span
+                class="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-accent-600 ring-2 ring-white"
+                aria-hidden="true"
+              ></span>
+            }
+          </button>
+        }
+      </div>
+      <div>
+        <div class="min-w-0">
           @let floor = floors[currentFloor()];
           <app-plan-view
             [image]="floor.image"
@@ -120,37 +149,11 @@
             }
           </app-plan-view>
         </div>
-
-        <!-- Top to bottom like the building. Neutral: changing floors is navigation. -->
-        <div class="flex shrink-0 flex-col gap-2" aria-label="Stockwerk">
-          @for (item of floorRail; track item.code) {
-            <button
-              type="button"
-              class="relative flex h-11 w-11 items-center justify-center rounded-xl text-base font-bold shadow-md ring-1 ring-gray-900/5 transition active:scale-[0.98]"
-              [class]="
-                currentFloor() === item.index
-                  ? 'bg-night-900 text-white'
-                  : 'bg-white text-gray-900'
-              "
-              [attr.aria-label]="item.name"
-              [attr.aria-pressed]="currentFloor() === item.index"
-              (click)="selectFloor(item.index)"
-            >
-              {{ item.code }}
-              @if (floorHasHighlight(item.code)) {
-                <span
-                  class="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-accent-600 ring-2 ring-white"
-                  aria-hidden="true"
-                ></span>
-              }
-            </button>
-          }
-        </div>
       </div>
     </section>
 
     @if (loadFailed()) {
-      <p class="max-w-xl self-center text-base text-gray-700" role="alert">
+      <p class="max-w-xl self-center px-4 text-base text-gray-700" role="alert">
         Die Stationen konnten nicht geladen werden, der Plan ist trotzdem da.
         <button
           type="button"
@@ -160,23 +163,28 @@
           Nochmal versuchen
         </button>
       </p>
-    } @else if (floorList().length > 0) {
-      <section class="flex w-full max-w-xl flex-col gap-3 self-center">
-        <h2 class="mt-1 text-xl font-bold leading-7 text-gray-900">
-          Stationen auf diesem Stockwerk
+    } @else if (directory().length > 0) {
+      <!-- Sorted by room and leading back into the map: an index, not a second tour. -->
+      <section class="w-full max-w-xl self-center px-4">
+        <h2 class="text-xl font-bold leading-7 text-gray-900">
+          Räume im {{ currentFloorName() }}
         </h2>
-        @for (stop of floorStops(); track stop.id) {
-          <app-stop-card
-            [stop]="stop"
-            [colors]="colorsOfStop(stop)"
-            [checked]="progress.isStopSeen(stop.id)"
-            (toggled)="progress.toggleStop(stop.id)"
-            (open)="openStop(stop)"
-          />
-        }
+        <ul class="mt-2 divide-y divide-gray-200">
+          @for (row of directory(); track row.stop.id) {
+            <li>
+              <app-stop-row
+                [room]="row.code"
+                [name]="row.stop.name"
+                [colors]="colorsOfStop(row.stop)"
+                [seen]="progress.isStopSeen(row.stop.id)"
+                (pressed)="onRow(row)"
+              />
+            </li>
+          }
+        </ul>
       </section>
     } @else if (hasMarkers()) {
-      <p class="max-w-xl self-center text-base text-gray-700">
+      <p class="max-w-xl self-center px-4 text-base text-gray-700">
         Auf diesem Stockwerk gibt es keine Stationen.
       </p>
     }
@@ -187,17 +195,16 @@
     class="sheet"
     aria-label="Stationen"
     (click)="onSheetClick($event)"
+    (close)="onSheetClosed()"
     (keydown.escape)="closeSheet()"
     tabindex="-1"
   >
     <div class="sheet-body">
       <div class="flex items-center justify-between gap-3">
         <h2 class="text-xl font-bold leading-7 text-gray-900">
-          {{
-            sheetRooms().length === 1
-              ? title(sheetRooms()[0].place)
-              : 'In der Nähe'
-          }}
+          @if (sheetRoom(); as room) {
+            {{ title(room.place) }}
+          }
         </h2>
         <button
           type="button"
@@ -219,6 +226,15 @@
         </button>
       </div>
       @if (previewStop(); as stop) {
+        @if (canGoBack()) {
+          <button
+            type="button"
+            class="min-h-11 font-bold text-accent-700 underline underline-offset-2"
+            (click)="backToList()"
+          >
+            Zurück zur Liste
+          </button>
+        }
         <app-stop-preview
           class="mt-3"
           [stop]="stop"
@@ -228,24 +244,36 @@
           (open)="openStop(stop)"
         />
       } @else {
-        <div class="mt-3 flex flex-col gap-3">
-          @for (room of sheetRooms(); track room.place.id) {
-            @if (sheetRooms().length > 1) {
-              <h3 class="text-base font-semibold text-gray-700">
-                {{ title(room.place) }}
-              </h3>
-            }
-            @for (stop of room.stops; track stop.id) {
-              <app-stop-card
-                [stop]="stop"
+        <ul class="mt-1 divide-y divide-gray-200">
+          @for (stop of sheetRooms()[0]?.stops; track stop.id) {
+            <li>
+              <app-stop-row
+                [name]="stop.name"
                 [colors]="colorsOfStop(stop)"
-                [checked]="progress.isStopSeen(stop.id)"
-                (toggled)="progress.toggleStop(stop.id)"
-                (open)="openStop(stop)"
+                [seen]="progress.isStopSeen(stop.id)"
+                (pressed)="pick(sheetRooms()[0], stop)"
               />
-            }
+            </li>
           }
-        </div>
+        </ul>
+        @if (sheetRooms().length > 1) {
+          <h3 class="mt-4 text-base font-semibold text-gray-700">Daneben</h3>
+          <ul class="divide-y divide-gray-200">
+            @for (room of sheetRooms().slice(1); track room.place.id) {
+              @for (stop of room.stops; track stop.id; let first = $first) {
+                <li>
+                  <app-stop-row
+                    [room]="first ? room.place.code : ''"
+                    [name]="stop.name"
+                    [colors]="colorsOfStop(stop)"
+                    [seen]="progress.isStopSeen(stop.id)"
+                    (pressed)="pick(room, stop)"
+                  />
+                </li>
+              }
+            }
+          </ul>
+        }
       }
     </div>
   </dialog>

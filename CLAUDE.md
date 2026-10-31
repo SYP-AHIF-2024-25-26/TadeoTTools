@@ -128,7 +128,7 @@ All six apps run Angular 22 and are zoneless (`provideZonelessChangeDetection`),
 
 **Feedback kiosk** — finished feedback goes through a `localStorage` outbox (`OutboxService`) and is retried until the backend accepts it; 400/409 responses are dropped. Only non-empty answers are sent, since `AddValidation()` rejects empty `Answer` strings.
 
-**Guide map** — `pages/map/`: `plan-view` does zoom and drag itself (pointer events, no library); swipes between tabs are off over the plan. Markers undo the zoom with `--plan-zoom`, so they keep their size. Seen is a check on the marker, never a faded colour. A marker opens a sheet (`stop-preview` for one stop). The stop page is the same from the map and the tour; "Auf der Karte" is its way back.
+**Guide map** — `pages/map/`: `plan-view` does zoom and drag itself (pointer events, no library); swipes between tabs are off over the plan. Markers undo the zoom with `--plan-zoom`, so they keep their size. Seen is a check on the marker, never a faded colour. A marker opens a sheet (`stop-preview` for one stop, `stop-row` lines for several). Under the plan, the same `stop-row` lines form a room directory sorted by room: a row leads back into the map, so it stays an index and not a second tour. The stop page is the same from the map and the tour; "Auf der Karte" is its way back.
 
 **Guide state** — no login and no server-side visitor state. Tour progress (finished stops/groups) is kept in the browser under the keys in `shared/constants/constants.ts`. It is a PWA (`ngsw-config.json`) and uses HammerJS for swipe gestures.
 
