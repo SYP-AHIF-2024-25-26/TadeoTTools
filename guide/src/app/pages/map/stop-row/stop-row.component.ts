@@ -19,7 +19,7 @@ import { divisionFill } from '@shared/division-colors';
     >
       @if (room() !== null) {
         <span
-          class="w-[6.5rem] shrink-0 text-sm font-bold tabular-nums text-gray-900"
+          class="w-[6.5rem] shrink-0 break-words text-sm font-bold tabular-nums text-gray-900"
           >{{ room() }}</span
         >
       }

@@ -12,9 +12,10 @@ public class MapPlace
     /// <summary>The plan it is on: "U", "E" or "1".</summary>
     [MaxLength(1)]
     public required string Floor { get; set; }
-    /// <summary>The room number on the plan ("E58-1") or the name of a spot ("Pausenbereich UG").</summary>
+    /// <summary>Internal: the room number on the plan ("E58-1") or the name of a spot ("Pausenbereich UG").</summary>
     [MaxLength(50)]
     public required string Code { get; set; }
+    /// <summary>What visitors read for this place; without it they read the stop's room text.</summary>
     [MaxLength(50)]
     public string? Name { get; set; }
     /// <summary>Position as a fraction (0 to 1) of the plan image.</summary>

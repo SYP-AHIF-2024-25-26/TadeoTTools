@@ -23,7 +23,13 @@ import {
 } from '@shared/constants/constants';
 import { colorsOfStop } from '@shared/division-colors';
 import { Division, MapPlace, Stop, StopGroup } from '@shared/models/types';
-import { FLOORS, floorOf, isFloorCode, placeTitle } from '@shared/room';
+import {
+  FLOORS,
+  floorOf,
+  isFloorCode,
+  placeText,
+  placeTitle,
+} from '@shared/room';
 import { MapMarkerComponent } from './map-marker/map-marker.component';
 import { PlanViewComponent } from './plan-view/plan-view.component';
 import { StopPreviewComponent } from './stop-preview/stop-preview.component';
@@ -43,8 +49,8 @@ interface MapRoom {
 interface DirectoryRow {
   stop: Stop;
   rooms: MapRoom[];
-  /** Empty under a line that already names the same rooms. */
-  code: string;
+  /** Empty under a line that already names the same place. */
+  place: string;
 }
 
 const byCode = (a: MapRoom, b: MapRoom) =>
@@ -107,6 +113,13 @@ export class MapComponent implements OnInit {
       ? rooms[0].stops[0]
       : null;
   });
+  protected sheetTitle = computed(() => {
+    const room = this.sheetRoom();
+    const picked = this.picked();
+    return room
+      ? placeTitle(room.place, picked ? [picked.stop] : room.stops)
+      : '';
+  });
   /** The stop in the sheet, shown in short; several are listed as rows. */
   protected previewStop = computed(
     () => this.picked()?.stop ?? this.onlyStop()
@@ -166,10 +179,21 @@ export class MapComponent implements OnInit {
     );
   });
   currentFloorName = computed(() => FLOORS[this.currentFloor()].name);
-  /** "Raum E24" in the band; a floor code like "EG" is no room, the band names the floor anyway. */
+  /** The asked room in the band; a floor code like "EG" is no room, the band names the floor anyway. */
   roomLabel = computed(() => {
-    const room = this.roomNr();
-    return room && !isFloorCode(room) ? room : null;
+    const asked = this.roomNr();
+    if (!asked || isFloorCode(asked)) {
+      return null;
+    }
+    const room = this.rooms().find((candidate) =>
+      this.highlightedIds().has(candidate.place.id)
+    );
+    if (!room) {
+      return `Raum ${asked}`;
+    }
+    const stopId = Number(this.stop());
+    const ownStop = room.stops.filter((stop) => stop.id === stopId);
+    return placeTitle(room.place, ownStop.length ? ownStop : room.stops);
   });
 
   private floorRooms = computed(() => {
@@ -195,16 +219,17 @@ export class MapComponent implements OnInit {
         if (row) {
           row.rooms.push(room);
         } else {
-          rows.set(stop.id, { stop, rooms: [room], code: '' });
+          rows.set(stop.id, { stop, rooms: [room], place: '' });
         }
       }
     }
     let previous = '';
     return [...rows.values()].map((row) => {
-      const code = row.rooms.map((room) => room.place.code).join(' ');
-      const shown = code === previous ? '' : code;
-      previous = code;
-      return { ...row, code: shown };
+      const texts = row.rooms.map((room) => placeText(room.place, [row.stop]));
+      const place = [...new Set(texts)].join(', ');
+      const shown = place === previous ? '' : place;
+      previous = place;
+      return { ...row, place: shown };
     });
   });
   protected hasMarkers = computed(() =>
@@ -258,8 +283,8 @@ export class MapComponent implements OnInit {
     return this.highlightedFloors().has(code);
   }
 
-  protected title(place: MapPlace): string {
-    return placeTitle(place);
+  protected text(room: MapRoom): string {
+    return placeText(room.place, room.stops);
   }
 
   protected markerLabel(room: MapRoom): string {
@@ -268,7 +293,7 @@ export class MapComponent implements OnInit {
         ? room.stops[0].name
         : `${room.stops.length} Stationen`;
     const seen = this.isSeen(room) ? ', gesehen' : '';
-    return `${placeTitle(room.place)}: ${what}${seen}`;
+    return `${placeTitle(room.place, room.stops)}: ${what}${seen}`;
   }
 
   /** The sheet decides on the map: one stop in short; a full room, or markers too close, list theirs. */
