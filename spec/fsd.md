@@ -272,7 +272,8 @@ Eigenschaften:
   ein Raum mit mehreren Stationen eine Auswahl, zu nah beieinanderliegende Orte stehen darunter als
   „Daneben“. Die Stationsseite ist dieselbe wie in der
   Tour. „Auf der Karte“ führt von dort zurück und hebt alle Orte der Station hervor
-  (`/map/:raum?stop=id`).
+  (`/map?stop=id`); nur eine noch nicht verortete Station sucht ihren Ort über den Raumtext. Ist eine
+  Kurzansicht offen, trägt nur deren Ort den Ring.
 - Feedback (§9), Über uns/Impressum (Link auf https://www.htl-leonding.at/impressum), Countdown.
 
 ## 6.2 Fortschritt

@@ -18,7 +18,6 @@ export const routes: Routes = [
     component: StopDescriptionPageComponent,
   },
   { path: 'map', component: MapComponent },
-  { path: 'map/:roomNr', component: MapComponent },
   { path: 'about', component: AboutPageComponent },
   { path: '', redirectTo: '', pathMatch: 'full' },
 ];
