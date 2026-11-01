@@ -10,7 +10,7 @@ public class Stop
     public int Id { get; set; }
     [MaxLength(100)]
     public required string Name { get; set; }
-    [MaxLength(500)]
+    [MaxLength(2000)]
     public required string Description { get; set; }
     [MaxLength(50)]
     public required string RoomNr { get; set; }

@@ -31,7 +31,7 @@
 
 19. **Station in mehreren Gruppen:** Wie ist.
 20. **Interne Stationen:** wie ist und ja.
-21. **Beschreibung einer Station:** Markdown ist verbindlich, und derzeit kann man im Dashboard nur maximal 255 Zeichen eingeben was zu wenig ist. 500 Zeichen ist aber das absolute Maximum weil der Beschreibungstext in der Guide App gut überschaubar bleiben soll.
+21. **Beschreibung einer Station:** Markdown ist verbindlich, und derzeit kann man im Dashboard nur maximal 255 Zeichen eingeben was zu wenig ist. 500 Zeichen ist aber das absolute Maximum weil der Beschreibungstext in der Guide App gut überschaubar bleiben soll. **Geändert am 01.11.2026:** Das Maximum ist jetzt 2000 Zeichen, weil mit Markdown schon wenige Links die 500 Zeichen aufbrauchen.
 22. **„Requested Infrastructure“:** Admins brauchen dieses Feld um die Infrastruktur-Wünsche der Stationen zu analysieren und zu überprüfen, ob die Wünsche verfügbar sind oder nicht. Eine zusätzliche Page wo nur die Infrastruktur-Wünsche pro Station mit Raumnummer gezeigt werden und ein admin diese als "verfügbar" sowie als "erledigt" markieren kann. Aber einer konfigurierbaren deadline dürfen stop manager das Feld nicht mehr editieren, aber sie können sehen ob die wünsche verfügbar bzw. erledigt sind.
 
 23. **Stockwerk:** wie ist

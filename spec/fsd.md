@@ -151,7 +151,7 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
 ## 4.1 Station (Stop)
 Felder:
 - Name (eindeutig, max. 100 Zeichen)
-- Beschreibung (Markdown, max. 500 Zeichen)
+- Beschreibung (Markdown, max. 2000 Zeichen; die Adressen von Links zählen mit)
 - Raumnummer (max. 50 Zeichen)
 - Infrastruktur-Wünsche (max. 500 Zeichen)
 - Abteilungen (0..n)
@@ -163,9 +163,6 @@ Eigenschaften:
 - Die Raumnummer bleibt der Text, den Besucher:innen lesen. Wo die Station auf der Karte liegt,
   bestimmt die Verknüpfung mit einem oder mehreren Orten (§4.1a); passen Text und Verknüpfung nicht
   zusammen, warnt das Dashboard.
-- **(Lücke):** Das Dashboard begrenzt die Beschreibung auf 255 Zeichen; es müssen 500 sein
-  (das Backend erlaubt 500; mehr soll es nicht geben, damit der Text in der GuideApp überschaubar
-  bleibt).
 
 ## 4.1a Ort auf der Karte (MapPlace)
 - Jeder Raum der Stockwerkspläne (U, E, 1) und jede benannte Stelle ist genau ein Ort: Stockwerk,
@@ -632,7 +629,6 @@ Ein Stand gilt als abnahmefähig für den TdoT, wenn mindestens funktioniert:
 - Stop-Manager dürfen nur eigene Stationen ändern; Abteilungen anlegen und alle Gruppen lesen nur
   Admins (§2.2).
 - Erster Admin per `.env`-Seed (§2.3).
-- Beschreibung im Dashboard bis 500 Zeichen (§4.1).
 - `DECLINED` entfernen (§4.7).
 - Abteilung der Schüler:innen aus der Klasse ableiten (§4.5).
 - Zuteilungs-Import über Benutzernamen, fehlerhafte Zeilen überspringen (§10.3).

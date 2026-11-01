@@ -7,11 +7,11 @@ import {
 import { FormsModule } from '@angular/forms';
 import { Stop } from '@/shared/models/types';
 
-// Text limits of the stop form. The backend allows more for name and
-// description (100 / 500); these are the dashboard's own limits.
+// Text limits of the stop form. The backend allows more for the name (100);
+// the description limit matches the backend, links in it count in full.
 export const STOP_LIMITS = {
   name: 50,
-  description: 255,
+  description: 2000,
   roomNr: 50,
   infrastructure: 500,
 } as const;
