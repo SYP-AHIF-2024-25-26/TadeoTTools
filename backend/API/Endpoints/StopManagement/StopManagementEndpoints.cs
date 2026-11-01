@@ -510,7 +510,7 @@ public static class StopManagementEndpoints
     public record UpdateStopRequestDto(
         int Id,
         [Required, MaxLength(100)] string Name,
-        [Required, MaxLength(500)] string Description,
+        [Required, MaxLength(2000)] string Description,
         [Required, MaxLength(50)] string RoomNr,
         [MaxLength(500)] string? Infrastructure,
         int[] DivisionIds,
@@ -522,7 +522,7 @@ public static class StopManagementEndpoints
     public record UpdateStopAsStopManagerRequestDto(
         int Id,
         [Required, MaxLength(100)] string Name,
-        [Required, MaxLength(500)] string Description,
+        [Required, MaxLength(2000)] string Description,
         [Required, MaxLength(50)] string RoomNr,
         [MaxLength(500)] string? Infrastructure,
         StudentOfStopDto[] StudentAssignments,
@@ -531,7 +531,7 @@ public static class StopManagementEndpoints
 
     public record CreateStopRequestDto(
         [Required, MaxLength(100)] string Name,
-        [Required, MaxLength(500)] string Description,
+        [Required, MaxLength(2000)] string Description,
         [Required, MaxLength(50)] string RoomNr,
         [MaxLength(500)] string? Infrastructure,
         int[] DivisionIds,

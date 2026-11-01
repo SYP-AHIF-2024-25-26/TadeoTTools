@@ -50,6 +50,30 @@ public class StopManagementTests(IntegrationTestWebAppFactory factory) : BaseInt
         dbStop!.RoomNr.Should().Be("1.01");
     }
 
+    [Theory]
+    [InlineData(2000, HttpStatusCode.OK)]
+    [InlineData(2001, HttpStatusCode.BadRequest)]
+    public async Task CreateStop_ShouldLimitDescriptionTo2000Characters(int length, HttpStatusCode expected)
+    {
+        // Arrange
+        var stopDto = new StopManagementEndpoints.CreateStopRequestDto(
+            "Test Stop",
+            new string('a', length),
+            "1.01",
+            "",
+            [],
+            [],
+            [],
+            []
+        );
+
+        // Act
+        var response = await Client.PostAsJsonAsync(BaseUrl, stopDto);
+
+        // Assert
+        response.StatusCode.Should().Be(expected);
+    }
+
     [Fact]
     public async Task GetStopById_ShouldReturnStop_WhenStopExists()
     {
