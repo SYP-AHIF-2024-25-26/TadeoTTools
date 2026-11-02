@@ -10,9 +10,9 @@ import {
 import { MapPlace } from '@/shared/models/types';
 
 export const FLOORS = [
-  { code: '1', name: 'Floor 1', image: 'assets/plans/plan-1.png' },
-  { code: 'E', name: 'Ground Floor', image: 'assets/plans/plan-E.png' },
-  { code: 'U', name: 'Basement', image: 'assets/plans/plan-U.png' },
+  { code: '1', name: 'Floor 1', image: 'assets/plans/plan-1.svg' },
+  { code: 'E', name: 'Ground Floor', image: 'assets/plans/plan-E.svg' },
+  { code: 'U', name: 'Basement', image: 'assets/plans/plan-U.svg' },
 ];
 
 const ZOOMS = [100, 150, 200, 300];

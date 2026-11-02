@@ -660,8 +660,9 @@ Ein Stand gilt als abnahmefähig für den TdoT, wenn mindestens funktioniert:
   der alte Kiosk keinen Login und speichert keinen Benutzernamen.
 - **Mehrtägige Veranstaltung (§1):** Das Datenmodell kennt keinen Tag; wie Tage geplant werden,
   wird mit der Erweiterung „mehrere Veranstaltungen“ entschieden.
-- **Karte (§4.1a):** Die Orte stehen auf den hochskalierten Plänen in `assets/plans`; die Originale
-  werden noch beschafft. `Aula UG` ist als `U01` angenommen, die Lage von „Gang bis 143“,
+- **Karte (§4.1a):** Die Pläne sind aus den alten Scans in `assets/plans` nachgezeichnet, mit gleichen
+  Proportionen, die Orte bleiben also an ihrer Stelle. Der CAD-Plan `Grundriss_HTL_Vorlage.dwg` liegt
+  vor, ist aber noch nicht ausgewertet. `Aula UG` ist als `U01` angenommen, die Lage von „Gang bis 143“,
   „Pausenbereich UG“ und „Buffet“ ist geschätzt. Einige Raumtexte der Live-Stationen weichen von den
   alten Plänen ab (Issue #120) und sind noch zu prüfen.
 - **Dashboard-Usability (§15.1, Review 30.10.2026):** Ergebnis 27/40, Details in
