@@ -44,6 +44,11 @@ public static class UserManagementApi
             .Produces<UserManagementEndpoints.PhotoViewerDto>()
             .Produces(StatusCodes.Status403Forbidden);
 
+        // Checked by the dashboard for the Buffet page and its nav link.
+        group.MapGet("/is-buffet-manager", () =>
+            Results.Ok("You are a buffet manager")
+        ).RequireAuthorization(Setup.BuffetManagerPolicyName);
+
         group.MapGet("/token-data", static (HttpContext httpContext) =>
         {
             var userInfo = httpContext.User.GetLeoUserInformation();

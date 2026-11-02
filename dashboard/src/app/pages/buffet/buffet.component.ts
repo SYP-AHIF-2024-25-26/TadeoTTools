@@ -19,6 +19,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { LoginService } from '@/core/services/auth.service';
 import { BuffetService } from '@/core/services/buffet.service';
 import { errorText, ToastService } from '@/core/services/toast.service';
 import { PageHeaderComponent } from '@/shared/components/page-header/page-header.component';
@@ -50,6 +51,7 @@ const TABS: BuffetTab[] = ['products', 'buffets', 'sales', 'statistics'];
 })
 export class BuffetComponent {
   private buffetService = inject(BuffetService);
+  private loginService = inject(LoginService);
   private toast = inject(ToastService);
   private injector = inject(Injector);
   private route = inject(ActivatedRoute);
@@ -71,6 +73,8 @@ export class BuffetComponent {
   protected sales = signal<Sales | null>(null);
   protected loading = signal(true);
   protected loadFailed = signal(false);
+  // The stop managers of the Buffet stop work here too, but only admins delete all sales.
+  protected isAdmin = signal(false);
 
   protected buffetForm = new FormGroup({
     location: new FormControl('', {
@@ -90,6 +94,10 @@ export class BuffetComponent {
   private loaded = false;
 
   constructor() {
+    this.loginService
+      .checkUserRole('is-admin', 'admin')
+      .then((isAdmin) => this.isAdmin.set(isAdmin));
+
     // Fresh data whenever the tab changes (sales arrive all day), including the first load.
     effect(() => {
       this.tab();

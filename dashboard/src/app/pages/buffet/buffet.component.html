@@ -136,6 +136,7 @@
             <app-buffet-sales
               [sales]="s"
               [buffets]="buffets()"
+              [canDeleteSales]="isAdmin()"
               (changed)="load()"
             />
           }
