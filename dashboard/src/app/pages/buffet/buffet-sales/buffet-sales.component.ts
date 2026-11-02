@@ -27,7 +27,6 @@ export class BuffetSalesComponent {
 
   sales = input.required<Sales>();
   buffets = input.required<Buffet[]>();
-  canDeleteSales = input(false);
   changed = output<void>();
 
   protected readonly euro = euro;
