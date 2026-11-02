@@ -230,6 +230,8 @@ Die Überschriften entsprechen den geplanten Abschnitten des FSD.
 - Es gibt systemweit genau **eine** Tour; ihre Reihenfolge (Gruppen, dann Stationen je Gruppe)
   bestimmen die Admins.
 - Feedback ist anonym; Besucher:innen brauchen kein Konto.
+- Wer in keiner Rollentabelle steht (z. B. eine Lehrkraft ohne Rolle), landet nach dem Login auf
+  `/preview`, statt ausgeloggt zu werden.
 - Feedback-Kiosk und Kassa senden über eine Warteschlange am Gerät. Der Feedback-Kiosk verwirft
   400/409-Antworten, die Kassa verwirft nie etwas („nicht übertragbar“).
 - Das alte Backend wird nicht verändert.
