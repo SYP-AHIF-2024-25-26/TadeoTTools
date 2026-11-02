@@ -58,7 +58,7 @@ Das Dashboard dient zur Datenpflege, Konfiguration und Verwaltung.
 - **Feedback-Konfigurator (`/feedback`)**: Tool zum dynamischen Erstellen und Bearbeiten von Feedback-Fragen, Antwort-Optionen und Konditionierungen, das den Endnutzern auf der Frontend-Feedbackpage dargestellt wird.
 - **Vorschau (`/preview`, alle angemeldeten Rollen)**: Zeigt die echte GuideApp in einem Rahmen, auch während der Countdown läuft. Fortschritt bleibt nur bis zum Schließen des Tabs, Feedback wird nicht gesendet. Liegt die GuideApp nicht im Wurzelpfad desselben Hosts, gibt die Umgebungsvariable `GUIDE_URL` des Dashboards ihre Adresse an.
 - **Karte (`/map`, nur Admins)**: Verknüpft Stationen mit Orten auf den Plänen (einzeln oder aus dem Raumtext), verschiebt Orte, legt benannte Stellen und öffentliche Labels an. Auf der Stationsseite gibt es dieselbe Auswahl für die einzelne Station.
-- **Buffet (`/buffet`, Admins und Stop-Manager der Station „Buffet“)**: Produkte (Name, Einheit, Preis in Euro; ein negativer Preis ist ein Gutschein), je Buffet eine Karte mit Ort, Beschreibung, der Speisekarte in Reihenfolge der Kassa (ein Buffet ohne Produkte erscheint nicht in der Kassa), Ein- und Auszahlungen; dazu die Verkäufe je Buffet und Produkt, CSV-Export und „Delete all sales“ (nur Admins).
+- **Buffet (`/buffet`, nur Admins)**: Produkte (Name, Einheit, Preis in Euro; ein negativer Preis ist ein Gutschein), je Buffet eine Karte mit Ort, Beschreibung, der Speisekarte in Reihenfolge der Kassa (ein Buffet ohne Produkte erscheint nicht in der Kassa), Ein- und Auszahlungen; dazu die Verkäufe je Buffet und Produkt, CSV-Export und „Delete all sales“.
 - **Registration (`/registration`, nur Admins)**: Daten der Anmeldung, in Tabs. *Registrations*: Anzahl Anmeldungen, CSV-Export, der Foto-Abschnitt (siehe oben) mit der Anzahl Fotos, „Delete all registrations“ (samt Fotos) und „Delete all photos“. *Towns*: alle Orte mit Suche (PLZ oder Name) und Bezirksfilter, anlegen, ändern (auch den Bezirk), löschen (nicht bei Anmeldungen aus dem Ort). *Districts*: Bezirke anlegen, ändern, löschen (nicht, solange Orte dazugehören). *Choice Lists*: „Reasons for visit“ und „School types“ ordnen, ergänzen, entfernen, gemeinsam speichern; bestehende Anmeldungen behalten ihren Text. Jede leere Liste lässt sich per CSV füllen (zuerst die Bezirke), jede gefüllte als CSV exportieren.
 
 ---
@@ -143,7 +143,6 @@ Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logisc
 - `GET /v1/users/in-database`
 - `GET /v1/users/is-cashier` (Kassa-Kiosk: 200 für Lehrer:innen, Admins und Schüler:innen mit bestätigter Zuteilung zur Station „Buffet“, sonst 403)
 - `GET /v1/users/is-registrar` (Anmelde-Kiosk: dasselbe für die Station „Empfang“, Richtlinie `IsRegistrar`; Antwort wie `is-cashier`: `{ name, studentClass }`)
-- `GET /v1/users/is-buffet-manager` (Dashboard, Seite „Buffet“ und ihr Menüpunkt; Richtlinie `IsBuffetManager`: Admins und Stop-Manager der Station „Buffet“, sonst 403)
 - `GET /v1/users/is-photo-viewer` (Dashboard, Foto-Abschnitt; Richtlinie `IsPhotoViewer`: Admins, Stop-Manager und Schüler:innen mit bestätigter Zuteilung der Station „Roboterführerschein“, Lehrkräfte nur als deren Stop-Manager; Antwort `{ atStop }`, `false` für Admins ohne Bezug zur Station)
 
 **Buffet (Kassa-Kiosk, Richtlinie `IsCashier`):**
@@ -155,7 +154,7 @@ Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logisc
 - `GET /v1/buffets` - Buffets mit Produkten auf der Speisekarte, in Reihenfolge der Kassa, Preise in Cent (gleiche Form wie das alte `GET /api/Buffets`)
 - `POST /v1/orders` - Speichert einen Verkauf (`{ buffetId, date, orderNumber, soldUnits: [{ productId, amount }] }`). Eine bereits gespeicherte `orderNumber` wird mit 200 beantwortet, ohne sie erneut zu speichern; 404 für ein unbekanntes Buffet, 400 für Produkte, die nicht auf der Speisekarte stehen, Mengen außerhalb 1–99 oder mehr als einen Gutschein
 
-**Buffet (Verwaltung, Richtlinie `IsBuffetManager`: Admins und Stop-Manager der Station „Buffet“):**
+**Buffet (Verwaltung, nur Admins):**
 - `GET /v1/api/products` - Alle Produkte mit Anzahl Speisekarten und verkaufter Menge
 - `POST /v1/api/products`, `PUT /v1/api/products/{productId}` - Produkt anlegen / ändern (409 bei doppeltem Namen)
 - `DELETE /v1/api/products/{productId}` - Löscht ein Produkt (409, solange es auf einer Speisekarte steht oder Verkäufe hat)
@@ -166,7 +165,7 @@ Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logisc
 - `POST /v1/api/buffets/{buffetId}/cash-movements`, `DELETE /v1/api/cash-movements/{cashMovementId}` - Ein- und Auszahlungen
 - `GET /v1/api/sales` - Umsatz je Buffet und Produkt, aus den gespeicherten Verkaufspreisen
 - `GET /v1/api/sales/csv` - Alle verkauften Positionen als CSV (Uhrzeit in Wiener Zeit)
-- `DELETE /v1/api/sales` - Löscht alle Verkäufe (nur Admins)
+- `DELETE /v1/api/sales` - Löscht alle Verkäufe
 
 **Anmeldung (Anmelde-Kiosk; nur das Speichern braucht den Login):**
 - `GET /v1/cities` - Alle Orte (`id`, `name`, `zipCode`), nach Name (gleiche Form wie das alte `GET /api/Cities`)

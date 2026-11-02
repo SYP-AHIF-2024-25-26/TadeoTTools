@@ -29,7 +29,7 @@ public static class BuffetApi
             .WithName(nameof(GetProducts))
             .WithDescription("Get all buffet products with how many menus they are on and how many were sold")
             .Produces<List<ProductDto>>()
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPost("api/products", CreateProduct)
             .AddEndpointFilter(BuffetValidations.SaveProductValidationAsync)
@@ -37,7 +37,7 @@ public static class BuffetApi
             .Produces<ProductDto>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status409Conflict)
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPut("api/products/{productId:int}", UpdateProduct)
             .AddEndpointFilter(BuffetValidations.DoesProductExistValidationAsync)
@@ -47,7 +47,7 @@ public static class BuffetApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status409Conflict)
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapDelete("api/products/{productId:int}", DeleteProduct)
             .AddEndpointFilter(BuffetValidations.DoesProductExistValidationAsync)
@@ -57,14 +57,14 @@ public static class BuffetApi
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status409Conflict)
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         // Buffets
         group.MapGet("api/buffets", GetBuffets)
             .WithName(nameof(GetBuffets))
             .WithDescription("Get all buffets with their menu, cash movements and number of sales")
             .Produces<List<BuffetDto>>()
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPost("api/buffets", CreateBuffet)
             .AddEndpointFilter(BuffetValidations.SaveBuffetValidationAsync)
@@ -72,7 +72,7 @@ public static class BuffetApi
             .Produces<BuffetDto>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status409Conflict)
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPut("api/buffets/{buffetId:int}", UpdateBuffet)
             .AddEndpointFilter(BuffetValidations.DoesBuffetExistValidationAsync)
@@ -82,7 +82,7 @@ public static class BuffetApi
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status409Conflict)
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapDelete("api/buffets/{buffetId:int}", DeleteBuffet)
             .AddEndpointFilter(BuffetValidations.DoesBuffetExistValidationAsync)
@@ -92,7 +92,7 @@ public static class BuffetApi
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status409Conflict)
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPut("api/buffets/{buffetId:int}/menu", UpdateMenu)
             .AddEndpointFilter(BuffetValidations.DoesBuffetExistValidationAsync)
@@ -102,7 +102,7 @@ public static class BuffetApi
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapPost("api/buffets/{buffetId:int}/cash-movements", AddCashMovement)
             .AddEndpointFilter(BuffetValidations.DoesBuffetExistValidationAsync)
@@ -112,33 +112,33 @@ public static class BuffetApi
             .Produces<CashMovementDto>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapDelete("api/cash-movements/{cashMovementId:int}", DeleteCashMovement)
             .AddEndpointFilter(BuffetValidations.DoesCashMovementExistValidationAsync)
             .WithName(nameof(DeleteCashMovement))
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         // Sales
         group.MapGet("api/sales", GetSales)
             .WithName(nameof(GetSales))
             .WithDescription("Get the revenue per buffet and product, from the prices the items were sold at")
             .Produces<SalesDto>()
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapGet("api/sales/statistics", GetSalesStatistics)
             .WithName(nameof(GetSalesStatistics))
             .WithDescription("Get key figures, sales per hour in Vienna time and the products by quantity sold")
             .Produces<SalesStatisticsDto>()
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapGet("api/sales/csv", GetSalesCsv)
             .WithName(nameof(GetSalesCsv))
             .WithDescription("Get all sold items in a csv file")
             .Produces(StatusCodes.Status200OK)
-            .RequireAuthorization(Setup.BuffetManagerPolicyName);
+            .RequireAuthorization(Setup.AdminPolicyName);
 
         group.MapDelete("api/sales", DeleteSales)
             .WithName(nameof(DeleteSales))
