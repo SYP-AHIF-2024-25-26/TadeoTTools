@@ -1,0 +1,61 @@
+name: Production Deployment
+
+on:
+  # Manual only: start it under Actions > Production Deployment > Run workflow
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: syp-ahif-2024-25-26/tadeottools
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Deploy to production
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USERNAME }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ secrets.PROD_PORT || 22 }}
+          script: |
+            set -e
+
+            # Navigate to deployment directory
+            cd ~/tadeot-tools-201126
+
+            # Login to GitHub Container Registry
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # Pull latest images
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/dashboard:latest
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/feedback:latest
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/registration:latest
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/cashier:latest
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/statistics:latest
+
+            # Back up the database and the visitor photos; migrations run at API
+            # startup and can't be undone, so a failed backup stops the deployment
+            STAMP=$(date +%Y%m%d-%H%M%S)
+            mkdir -p backups
+            docker compose exec -T tadeot-postgres sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc' > "backups/tadeot-$STAMP.dump"
+            test -s "backups/tadeot-$STAMP.dump"
+            tar -czf "backups/photos-$STAMP.tar.gz" photos
+
+            # Keep the 5 newest backups of each kind
+            ls -1t backups/tadeot-*.dump | tail -n +6 | xargs -r rm --
+            ls -1t backups/photos-*.tar.gz | tail -n +6 | xargs -r rm --
+
+            # Recreate only the containers whose image changed
+            docker compose up -d
+
+            # Show status
+            docker compose ps
