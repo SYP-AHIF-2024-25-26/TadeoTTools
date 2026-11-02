@@ -53,7 +53,7 @@ It is built for this one school's open day, by HTL Leonding students (5AHIF SYP 
 
 ## Evidence on Hand
 
-- Real floor plans: `assets/plans/ug.png`, `eg.png`, `og.png` (upscaled copies in `guide/src/assets/plans/` and `dashboard/src/assets/plans/`).
+- Real floor plans: `assets/plans/ug.png`, `eg.png`, `og.png` (redrawn copies in `guide/src/assets/plans/` and `dashboard/src/assets/plans/`, vector sources `assets/plans/plan-*.svg`).
 - Team photo: `guide/src/assets/team.png` / `team.jpg`, used on the About page.
 - Real station planning data is imported from CSV at startup in Development.
 - There are no testimonials, usage statistics or feedback results in the repo. Future work must not invent visitor numbers, quotes or ratings.
