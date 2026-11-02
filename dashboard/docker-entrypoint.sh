@@ -12,6 +12,7 @@ cat <<EOF > /usr/share/nginx/html/assets/env.js
   window.__env.backendURL = "${BACKEND_URL}";
   window.__env.keycloakRedirectUri = "${KEYCLOAK_REDIRECT_URI}";
   window.__env.guideURL = "${GUIDE_URL}";
+  window.__env.version = "${APP_VERSION}";
 })(this);
 EOF
 

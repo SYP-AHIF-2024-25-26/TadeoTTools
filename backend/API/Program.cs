@@ -19,6 +19,7 @@ using API.Endpoints.OverviewManagement;
 using API.Endpoints.BuffetManagement;
 using API.Endpoints.CityManagement;
 using API.Endpoints.RegistrationManagement;
+using API.Endpoints.VersionManagement;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -139,6 +140,7 @@ app.MapBuffetEndpoints();
 app.MapCityEndpoints();
 app.MapRegistrationEndpoints();
 app.MapMapEndpoints();
+app.MapVersionEndpoints();
 
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetService<TadeoTDbContext>();

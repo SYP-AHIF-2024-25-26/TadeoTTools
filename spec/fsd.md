@@ -122,6 +122,9 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
 - Produktion `tadeot.htl-leonding.ac.at`: manuelles Deployment wie auf vm45, gleiche
   Compose-Datei, andere Domain. Dort laufen alle neuen Kiosk-Apps.
 - Datenbank-Migrationen werden beim Start des Backends angewendet.
+- Releases: eine Version für alle Images nach Semantic Versioning, als GitHub Release mit dem
+  Tag `vX.Y.Z`. Ein Release baut alle Images unter dieser Version; das Deployment auf Produktion
+  nennt die Version. Die Releases sind öffentlich wie das Repository.
 
 ## 3.4 Altes Backend
 - Das alte Backend und seine Administrationsseite wurden vor dem TdoT in zwei Schritten in
@@ -519,6 +522,9 @@ Eigenschaften:
   Abteilung (Detail), Students (Zuteilungen und Konflikte), Stop-Manager, Users & Data (Admins,
   Stop-Manager, Abteilungen, Import/Export, Löschen, Feature-Flags), Feedback-Konfigurator,
   Schülerseite.
+- Version (Admins, im Admin-Menü): installierte Version von Backend und Dashboard auf dem Server
+  und die Release-Historie von GitHub, das installierte Release markiert. Ist GitHub nicht
+  erreichbar, bleibt die installierte Version sichtbar.
 - Detailseiten über Query-Parameter (`/stop?…`, `/stopgroup?…`, `/division?…`).
 
 ## 15.2 GuideApp

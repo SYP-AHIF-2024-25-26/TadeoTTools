@@ -3,6 +3,11 @@ name: Production Deployment
 on:
   # Manual only: start it under Actions > Production Deployment > Run workflow
   workflow_dispatch:
+    inputs:
+      version:
+        description: Release to install, for example 1.2.0
+        required: true
+        type: string
 
 env:
   REGISTRY: ghcr.io
@@ -17,9 +22,18 @@ jobs:
       packages: read
 
     steps:
+      - name: Check the version number
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Not a release version: $VERSION"; exit 1; }
+
       - name: Deploy to production
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          VERSION: ${{ inputs.version }}
         with:
+          envs: VERSION
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.PROD_USERNAME }}
           key: ${{ secrets.PROD_SSH_KEY }}
@@ -33,14 +47,20 @@ jobs:
             # Login to GitHub Container Registry
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            # Pull latest images
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/dashboard:latest
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/feedback:latest
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/registration:latest
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/cashier:latest
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/statistics:latest
+            # The compose file takes the version from .env; stop here if its images don't use it
+            touch .env
+            sed -i '/^TADEOT_VERSION=/d' .env
+            echo "TADEOT_VERSION=$VERSION" >> .env
+            test "$(docker compose config --images | grep -c ":$VERSION\$")" -eq 7
+
+            # Pull the images of this release
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:$VERSION
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:$VERSION
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/dashboard:$VERSION
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/feedback:$VERSION
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/registration:$VERSION
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/cashier:$VERSION
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/statistics:$VERSION
 
             # Back up the database and the visitor photos; migrations run at API
             # startup and can't be undone, so a failed backup stops the deployment

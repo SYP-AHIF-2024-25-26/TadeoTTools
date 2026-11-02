@@ -13,5 +13,9 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
+# Set by CI; docker-entrypoint.sh hands it to the app
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]

@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    # A release (GitHub Release with this tag) builds every image as that version
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
   pull_request:
     branches:
       - main
@@ -13,7 +16,8 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # Find the services whose folder changed, so only their images are built
+  # Find the services whose folder changed, so only their images are built;
+  # a release builds all of them, so all seven exist under its version
   changes:
     runs-on: ubuntu-latest
 
@@ -22,14 +26,20 @@ jobs:
       pull-requests: read
 
     outputs:
-      services: ${{ steps.filter.outputs.changes }}
+      services: ${{ steps.release.outputs.services || steps.filter.outputs.changes }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: List all services for a release
+        id: release
+        if: startsWith(github.ref, 'refs/tags/')
+        run: echo 'services=["frontend","backend","dashboard","feedback","registration","cashier","statistics"]' >> "$GITHUB_OUTPUT"
+
       - name: Detect changed services
         id: filter
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: dorny/paths-filter@v3
         with:
           # filter name = image name; the folder is resolved in build-and-push
@@ -74,6 +84,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # git describe needs the history and the tags
+          fetch-depth: 0
+
+      # 1.2.0 on a release, 1.2.0-5-gabc1234 five commits after it on main
+      - name: Resolve version
+        id: version
+        run: echo "version=$(git describe --tags --match 'v[0-9]*' --always | sed 's/^v//')" >> "$GITHUB_OUTPUT"
 
       # image names stay as before so the VM compose files keep working
       - name: Resolve source folder
@@ -109,8 +127,10 @@ jobs:
             type=ref,event=pr
             type=sha,prefix=main-,enable={{is_default_branch}}
             type=raw,value=latest,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+          # latest follows main (staging); a release only gets its version tag
           flavor: |
-            latest=auto
+            latest=false
 
       - name: Build and push Docker image
         id: build
@@ -123,6 +143,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: APP_VERSION=${{ steps.version.outputs.version }}
           # separate cache per service, otherwise the matrix jobs overwrite each other's cache
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}

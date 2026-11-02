@@ -36,6 +36,7 @@ declare global {
       backendURL?: string;
       keycloakRedirectUri?: string;
       guideURL?: string;
+      version?: string;
     };
   }
 }

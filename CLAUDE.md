@@ -13,7 +13,7 @@ TadeoTTools manages the HTL Leonding open day ("Tag der offenen Tür"). Four dep
   - `kiosk/cashier/` — buffet counter ("Kassa", replaces the legacy `kassa` app). Sells through `backend/` (`GET /v1/buffets`, `POST /v1/orders`, both `IsCashier`) with a Keycloak login; access is checked at startup via `GET /v1/users/is-cashier`, and an interceptor sends the token with every request. Sales go through a `localStorage` outbox; `POST /v1/orders` is idempotent on `orderNumber`; 400/404 responses are **kept** as "nicht übertragbar" (real money), 401/403 keep the sale queued and send the student back to the login. Products, buffets and menus are managed on the dashboard page `/buffet`. Until 20.11.2026 the legacy backend stays the fallback (pin the old cashier image); the products were entered by hand, so let the outbox empty before falling back. Image `cashier`, served under `/kassa`; see `kiosk/cashier/README.md`.
   - `kiosk/statistics/` — unattended slideshow of visitor statistics for the hall projector (replaces the legacy `statistics` app). Reads `GET /v1/visitor-statistics` (one call for all slides, hours in Vienna time), never writes. Image `statistics`, served under `/statistics`; see `kiosk/statistics/README.md`.
 
-CI (`docker-build-push-images.yml`) maps image names to folders in its "Resolve source folder" step; a new kiosk app needs a filter entry there, a `docker pull` line in `deploy-to-vm.yml`, an AppHost resource and (if it talks to `backend/`, as all kiosks now do) an `AllowedOrigins` entry.
+CI (`docker-build-push-images.yml`) maps image names to folders in its "Resolve source folder" step; a new kiosk app needs a filter entry and an entry in the release service list there, a `docker pull` line in `deploy-to-vm.yml` and `deploy-to-production.yml` (plus the image count in its compose check), an AppHost resource and (if it talks to `backend/`, as all kiosks now do) an `AllowedOrigins` entry.
 
 `tools/photo-downloader/` is the .NET console app the Roboterführerschein stops run to fetch the visitor photos (`GET /v1/visitor-photos`, public by design); `dotnet publish -c Release` makes one self-contained `.exe`. It is not part of `backend.sln`.
 
@@ -66,7 +66,9 @@ No app has `*.spec.ts` files; guide's `test` script has nothing to run.
 
 ### CI/CD
 
-Pushing to `main` builds and pushes the Docker images (one per app folder that changed) to GHCR, then auto-deploys to the staging VM (`.github/workflows/`). CI does not run any tests. Production deployment is manual. `example-docker-compose.yml` shows the runtime shape and env vars.
+Pushing to `main` builds and pushes the Docker images (one per app folder that changed) to GHCR, then auto-deploys to the staging VM (`.github/workflows/`). CI does not run any tests. `example-docker-compose.yml` shows the runtime shape and env vars.
+
+Releases: one SemVer version for all seven images, and the git tag `vX.Y.Z` is its only source (`package.json` versions stay `0.0.0`). `gh release create vX.Y.Z --target main --generate-notes` builds every image as `X.Y.Z`; `latest` stays what `main` built (staging). Production deployment is manual: the `deploy-to-production.yml` workflow takes that version and writes `TADEOT_VERSION` to the server's `.env`. Rules for the bump: `TadeotTools_Dokumentation.md`, "Releases und Versionen". CI bakes `APP_VERSION` (`git describe`) into the backend and dashboard images; the admin page `/version` shows both, plus the history read from the GitHub API in the browser.
 
 ## Backend architecture
 

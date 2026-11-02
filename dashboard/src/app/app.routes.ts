@@ -133,5 +133,15 @@ export const routes: Routes = [
       ),
     canMatch: [authGuard],
   },
+  {
+    path: 'version',
+    // Lazy, so the initial bundle stays within its budget.
+    loadComponent: () =>
+      import('./pages/version/version.component').then(
+        (m) => m.VersionComponent
+      ),
+    canMatch: [authGuard],
+    canActivate: [adminGuard],
+  },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

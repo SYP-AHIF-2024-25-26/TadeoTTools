@@ -1,6 +1,6 @@
 services:
   tadeot-frontend-201126:
-    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/frontend:latest
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/frontend:${TADEOT_VERSION:-latest}
     container_name: tadeot-frontend-201126
     environment:
       - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126
@@ -10,7 +10,7 @@ services:
       - tadeot-backend-201126
 
   tadeot-dashboard-201126:
-    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/dashboard:latest
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/dashboard:${TADEOT_VERSION:-latest}
     container_name: tadeot-dashboard-201126
     environment:
       - BASE_HREF=/adm-dashboard/
@@ -24,7 +24,7 @@ services:
       - tadeot-backend-201126
 
   tadeot-feedback-201126:
-    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/feedback:latest
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/feedback:${TADEOT_VERSION:-latest}
     container_name: tadeot-feedback-201126
     environment:
       - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126
@@ -35,7 +35,7 @@ services:
 
   # Registers visitors (with photo) through the TadeoTTools backend, no login
   tadeot-registration-201126:
-    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/registration:latest
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/registration:${TADEOT_VERSION:-latest}
     container_name: tadeot-registration-201126
     environment:
       - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126
@@ -44,7 +44,7 @@ services:
 
   # Buffet cashier; sells through the TadeoTTools backend with the school login
   tadeot-cashier-201126:
-    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/cashier:latest
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/cashier:${TADEOT_VERSION:-latest}
     container_name: tadeot-cashier-201126
     environment:
       - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126
@@ -53,7 +53,7 @@ services:
 
   # Visitor statistics slideshow for the projector; reads the TadeoTTools backend
   tadeot-statistics-201126:
-    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/statistics:latest
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/statistics:${TADEOT_VERSION:-latest}
     container_name: tadeot-statistics-201126
     environment:
       - BACKEND_URL=https://tadeot.htl-leonding.ac.at/tadeot-backend-201126
@@ -62,7 +62,7 @@ services:
 
   tadeot-backend-201126:
     container_name: tadeot-backend-201126
-    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/backend:latest
+    image: ghcr.io/syp-ahif-2024-25-26/tadeottools/backend:${TADEOT_VERSION:-latest}
     ports:
       - "4100:4100"
     restart: always

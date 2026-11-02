@@ -420,3 +420,11 @@ export type VisitorPhoto = {
 export type PhotoViewer = {
   atStop: boolean;
 };
+
+// A GitHub release, in GitHub's own field names.
+export type Release = {
+  tag_name: string;
+  published_at: string;
+  html_url: string;
+  body: string | null;
+};

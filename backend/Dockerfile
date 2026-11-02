@@ -20,6 +20,9 @@ EXPOSE 5005
 COPY --from=build /app/publish .
 # Visitor photos; mount a host folder here that the app user (UID $APP_UID) can write
 RUN mkdir -p /app/photos && chown $APP_UID /app/photos
+# Set by CI; shown on the dashboard's Version page
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
 # Run as the non-root user that ships with the .NET images
 USER $APP_UID
 ENTRYPOINT ["dotnet", "API.dll"]

@@ -1,0 +1,62 @@
+<div class="page-shell">
+  <app-page-header title="Version" />
+
+  <section aria-labelledby="installed-heading">
+    <h2 id="installed-heading" class="mb-2 text-lg font-bold">
+      Installed on this server
+    </h2>
+    <dl class="grid w-fit grid-cols-[auto_auto] gap-x-6 gap-y-1">
+      <dt class="text-ink-muted">Backend</dt>
+      <dd class="font-medium">
+        @if (backendFailed()) {
+          <span class="text-error" role="alert">unknown</span>
+        } @else {
+          {{ backendVersion() ?? '…' }}
+        }
+      </dd>
+      <dt class="text-ink-muted">Dashboard</dt>
+      <dd class="font-medium">{{ dashboardVersion }}</dd>
+    </dl>
+  </section>
+
+  <section class="mt-8" aria-labelledby="history-heading">
+    <h2 id="history-heading" class="mb-2 text-lg font-bold">Release history</h2>
+
+    @if (releasesFailed()) {
+      <p role="alert">
+        The release history could not be loaded from GitHub. It is also
+        available on
+        <a class="link" [href]="releasesUrl" target="_blank" rel="noopener"
+          >GitHub</a
+        >.
+      </p>
+    } @else if (releases(); as releases) {
+      @for (release of releases; track release.tag_name) {
+        <article class="border-t border-base-300 py-4">
+          <header class="mb-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h3 class="font-bold">
+              <a
+                class="link-hover link"
+                [href]="release.html_url"
+                target="_blank"
+                rel="noopener"
+                >{{ release.tag_name }}</a
+              >
+            </h3>
+            <time class="text-sm text-ink-muted">{{
+              release.published_at | date: 'dd.MM.yyyy'
+            }}</time>
+            @if (isInstalled(release)) {
+              <span class="badge badge-primary badge-sm">Installed</span>
+            }
+          </header>
+          <app-markdown [text]="release.body" />
+        </article>
+      } @empty {
+        <p class="text-ink-muted">No releases yet.</p>
+      }
+    } @else {
+      <p class="text-ink-muted" role="status">Loading the releases…</p>
+    }
+  </section>
+</div>

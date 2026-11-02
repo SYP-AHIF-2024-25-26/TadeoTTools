@@ -57,6 +57,7 @@ Das Dashboard dient zur Datenpflege, Konfiguration und Verwaltung.
 - **Nutzerverwaltung (`/user-management`)**: Anlegen/Löschen der Administratoren und der Stop-Manager. Zusätzlich bietet das Modul den Im- und Export (`Upload`/`CSV`) aller Datensätze, den massenhaften Reset (`Wipe`) aller Studenten-Einträge und die Parameter, um z.B. den Frontend-Countdown einzustellen.
 - **Feedback-Konfigurator (`/feedback`)**: Tool zum dynamischen Erstellen und Bearbeiten von Feedback-Fragen, Antwort-Optionen und Konditionierungen, das den Endnutzern auf der Frontend-Feedbackpage dargestellt wird.
 - **Vorschau (`/preview`, alle angemeldeten Rollen)**: Zeigt die echte GuideApp in einem Rahmen, auch während der Countdown läuft. Fortschritt bleibt nur bis zum Schließen des Tabs, Feedback wird nicht gesendet. Liegt die GuideApp nicht im Wurzelpfad desselben Hosts, gibt die Umgebungsvariable `GUIDE_URL` des Dashboards ihre Adresse an.
+- **Version (`/version`, nur Admins, im Admin-Menü)**: Installierte Version von Backend und Dashboard und die Release-Historie von GitHub (siehe „Releases und Versionen“).
 - **Karte (`/map`, nur Admins)**: Verknüpft Stationen mit Orten auf den Plänen (einzeln oder aus dem Raumtext), verschiebt Orte, legt benannte Stellen und öffentliche Labels an. Auf der Stationsseite gibt es dieselbe Auswahl für die einzelne Station.
 - **Buffet (`/buffet`, nur Admins)**: Produkte (Name, Einheit, Preis in Euro; ein negativer Preis ist ein Gutschein), je Buffet eine Karte mit Ort, Beschreibung, der Speisekarte in Reihenfolge der Kassa (ein Buffet ohne Produkte erscheint nicht in der Kassa), Ein- und Auszahlungen; dazu die Verkäufe je Buffet und Produkt, CSV-Export und „Delete all sales“.
 - **Registration (`/registration`, nur Admins)**: Daten der Anmeldung, in Tabs. *Registrations*: Anzahl Anmeldungen, CSV-Export, der Foto-Abschnitt (siehe oben) mit der Anzahl Fotos, „Delete all registrations“ (samt Fotos) und „Delete all photos“. *Towns*: alle Orte mit Suche (PLZ oder Name) und Bezirksfilter, anlegen, ändern (auch den Bezirk), löschen (nicht bei Anmeldungen aus dem Ort). *Districts*: Bezirke anlegen, ändern, löschen (nicht, solange Orte dazugehören). *Choice Lists*: „Reasons for visit“ und „School types“ ordnen, ergänzen, entfernen, gemeinsam speichern; bestehende Anmeldungen behalten ihren Text. Jede leere Liste lässt sich per CSV füllen (zuerst die Bezirke), jede gefüllte als CSV exportieren.
@@ -67,6 +68,9 @@ Das Dashboard dient zur Datenpflege, Konfiguration und Verwaltung.
 Die API bündelt sich basierend auf der Swagger Spezifikation in folgende logische Gruppen:
 
 ### API Referenz (Endpoints)
+
+**Version:**
+- `GET /v1/api/version` - Version des laufenden Backends (nur Admins; `dev` außerhalb von Docker)
 
 **Admin Management:**
 - `GET /v1/api/admins` - Ruft alle Administratoren ab
@@ -276,7 +280,26 @@ Das Deployment auf die **Produktionsumgebung** muss manuell angestoßen werden:
 
 > **URL:** [tadeot.htl-leonding.ac.at](https://tadeot.htl-leonding.ac.at)
 
-Hier läuft die für den tatsächlichen Tag der offenen Tür relevante, stabile Version des Systems.
+Hier läuft die für den tatsächlichen Tag der offenen Tür relevante, stabile Version des Systems. Der Workflow *Production Deployment* (Actions → Run workflow) fragt nach dem Release, zum Beispiel `1.2.0`, sichert Datenbank und Fotos und installiert genau diese Version.
+
+Einmalig auf dem Server: Die `docker-compose.yml` muss die sieben Images als `:${TADEOT_VERSION:-latest}` referenzieren (siehe `example-docker-compose.yml`). Der Workflow schreibt `TADEOT_VERSION` in die `.env` daneben und bricht vor jeder Änderung ab, wenn nicht alle sieben Images diese Version verwenden.
+
+#### Releases und Versionen
+Es gibt eine Version für das gesamte System (alle sieben Images), nach [Semantic Versioning](https://semver.org/lang/de/). Die Quelle ist das Git-Tag `vX.Y.Z`; die `version`-Felder in den `package.json` bleiben `0.0.0`.
+
+- **MAJOR:** Bestehende Geräte oder Abläufe funktionieren nicht mehr ohne Anpassung, z. B. eine geänderte API, die alte Kiosk-Stände brechen würde, oder eine Migration ohne Weg zurück zur Vorversion.
+- **MINOR:** Neue Funktionen, auch additive Migrationen.
+- **PATCH:** Fehlerbehebungen ohne neue Funktion.
+
+Ein Release entsteht aus dem aktuellen `main`:
+
+```bash
+gh release create v1.2.0 --target main --generate-notes
+```
+
+Oder auf GitHub unter *Releases → Draft a new release*. Die Notizen entstehen aus den Titeln der gemergten Pull Requests und lassen sich dort nachträglich bearbeiten; direkte Pushes auf `main` kommen darin nicht vor. Das Tag baut alle sieben Images mit dem Docker-Tag `1.2.0`. `latest` bleibt der Stand von `main` (Staging), dessen Images sich als z. B. `1.2.0-5-gabc1234` melden: fünf Commits nach `v1.2.0`. Ein Rollback ist ein Deployment der älteren Version; Migrationen laufen dabei nicht zurück, dafür gibt es die Sicherung des Deployments.
+
+Das Dashboard zeigt unter **Admin → Version** (`/version`, nur Admins), welche Version von Backend und Dashboard auf dem Server läuft, und die Release-Historie. Die Historie liest der Browser direkt von der GitHub-API, sie enthält also auch Releases, die noch nicht installiert sind; das installierte ist markiert. Die übrigen fünf Images zeigt die Seite nicht, sie kommen über dieselbe Version aus dem Deployment.
 
 ### Environment-Variablen der Container
 
