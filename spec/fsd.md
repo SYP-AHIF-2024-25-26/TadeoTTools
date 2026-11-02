@@ -85,8 +85,8 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
   auskommentiert; der erste Admin kommt nur per SQL in die Datenbank.
 
 ## 2.4 Benutzer ohne Rolle
-- Wer nur Schüler:in ist, landet im Dashboard auf `/student`. Wer in keiner der Tabellen `Admins`,
-  `StopManagers` und `Students` steht (z. B. eine Lehrkraft ohne Rolle), landet auf `/preview`.
+- Wer weder Admin noch Stop-Manager ist, landet im Dashboard auf `/student`. Eine Lehrkraft ohne
+  Rolle sieht dort nur einen Fehler.
 - Die Vorschau-Seite `/preview` zeigt allen angemeldeten Rollen (auch Schüler:innen und Lehrkräften
   ohne Rolle) die echte GuideApp in einem Rahmen, mit Tour, Karte und Feedback, auch während der
   Countdown läuft. Der Fortschritt bleibt nur bis zum Schließen des Tabs und getrennt von dem der
@@ -219,8 +219,7 @@ Eigenschaften:
 1. Login über Keycloak (`login-required`).
 2. Das Dashboard fragt das Backend: `GET /v1/users/is-admin`, dann `GET /v1/users/in-database`
    (Stop-Manager).
-3. Admins landen auf der Übersicht, Stop-Manager auf `/stop-manager`, Schüler:innen auf `/student`,
-   alle anderen auf `/preview`.
+3. Admins landen auf der Übersicht, Stop-Manager auf `/stop-manager`, alle anderen auf `/student`.
 
 ## 5.2 GuideApp, Feedback-Kiosk, Statistik
 - Kein Login.

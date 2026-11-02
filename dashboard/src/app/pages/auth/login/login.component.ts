@@ -7,7 +7,6 @@ import {
 import { LoginService } from '@/core/services/auth.service';
 import Keycloak from 'keycloak-js';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 import { LoaderComponent } from '@/shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
@@ -67,11 +66,6 @@ export class LoginComponent implements OnInit {
       }
       await this.determineUserRoleAndNavigate();
     } catch (error) {
-      // No role, e.g. a teacher: the guide preview is the page open to everyone.
-      if (error instanceof HttpErrorResponse && error.status === 404) {
-        this.router.navigate(['/preview']);
-        return;
-      }
       console.error('Error handling authenticated user:', error);
       await this.logout();
     }

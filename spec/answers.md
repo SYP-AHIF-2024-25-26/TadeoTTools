@@ -123,8 +123,6 @@
 - CSV-Exporte: `;` getrennt, UTF-8 mit BOM (für Excel).
 - Die Stop-Manager der Station „Buffet“ (Name fest eingebaut) verwalten die Dashboard-Seite „Buffet“
   wie Admins; nur „Delete all sales“ bleibt bei den Admins.
-- Wer in keiner Rollentabelle steht (z. B. eine Lehrkraft ohne Rolle), landet nach dem Login auf
-  `/preview`, statt ausgeloggt zu werden.
 
 ## Befunde ohne Entscheidungsbedarf (werden eigene Issues, nicht Teil des FSD)
 
