@@ -63,6 +63,9 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
     die Schüler:innen der Station (hinzufügen, bestätigen, entfernen).
   - Nur eigene Stationen ändern. **(Lücke):** `PUT /v1/stop-manager/stops` prüft nicht, ob die
     Station dem Stop-Manager gehört; das Dashboard zeigt nur die eigenen.
+  - Bei der Station, die genau „Buffet“ heißt (fest eingebaut, Groß-/Kleinschreibung egal), zusätzlich
+    die Dashboard-Seite „Buffet“: Produkte und Preise, Buffets, Speisekarten, Kassenbewegungen, Verkäufe
+    mit Statistik und CSV-Export (§11.2). „Delete all sales“ bleibt Admins vorbehalten.
   - Abteilungen, Stationsgruppen und Stop-Manager nicht anlegen, ändern oder löschen.
     **(Lücke):** `POST /v1/api/divisions` ist auch für Stop-Manager offen;
     `GET /v1/api/groups` (auch nicht öffentliche Gruppen) ebenfalls.
@@ -82,8 +85,8 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
   auskommentiert; der erste Admin kommt nur per SQL in die Datenbank.
 
 ## 2.4 Benutzer ohne Rolle
-- Wer weder Admin noch Stop-Manager ist, landet im Dashboard auf `/student`. Eine Lehrkraft ohne
-  Rolle sieht dort nur einen Fehler.
+- Wer nur Schüler:in ist, landet im Dashboard auf `/student`. Wer in keiner der Tabellen `Admins`,
+  `StopManagers` und `Students` steht (z. B. eine Lehrkraft ohne Rolle), landet auf `/preview`.
 - Die Vorschau-Seite `/preview` zeigt allen angemeldeten Rollen (auch Schüler:innen und Lehrkräften
   ohne Rolle) die echte GuideApp in einem Rahmen, mit Tour, Karte und Feedback, auch während der
   Countdown läuft. Der Fortschritt bleibt nur bis zum Schließen des Tabs und getrennt von dem der
@@ -216,7 +219,8 @@ Eigenschaften:
 1. Login über Keycloak (`login-required`).
 2. Das Dashboard fragt das Backend: `GET /v1/users/is-admin`, dann `GET /v1/users/in-database`
    (Stop-Manager).
-3. Admins landen auf der Übersicht, Stop-Manager auf `/stop-manager`, alle anderen auf `/student`.
+3. Admins landen auf der Übersicht, Stop-Manager auf `/stop-manager`, Schüler:innen auf `/student`,
+   alle anderen auf `/preview`.
 
 ## 5.2 GuideApp, Feedback-Kiosk, Statistik
 - Kein Login.
@@ -401,7 +405,8 @@ Eigenschaften:
 ## 11.2 Kassa (`kiosk/cashier`, Buffet, `/kassa`)
 - Zugang: alle Lehrkräfte (LeoAuth), alle Admins und Schüler:innen mit bestätigter Zuteilung zur
   Station, die genau „Buffet“ heißt.
-- Produkte, Buffets und Speisekarten verwalten Admins im Dashboard (Seite „Buffet“). Die Kassa
+- Produkte, Buffets und Speisekarten verwalten Admins und die Stop-Manager der Station „Buffet“
+  im Dashboard (Seite „Buffet“, Richtlinie `IsBuffetManager`). Die Kassa
   liest sie über `GET /v1/buffets`; Preise in ganzen Cent; ein negativer Preis ist ein Gutschein
   (max. einer pro Verkauf, auch vom Backend geprüft). Ein Produkt hat an allen Buffets denselben
   Preis.

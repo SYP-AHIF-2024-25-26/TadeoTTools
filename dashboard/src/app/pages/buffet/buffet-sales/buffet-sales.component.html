@@ -67,26 +67,28 @@
     </p>
   }
 
-  <section
-    class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
-    aria-labelledby="sales-delete-heading"
-  >
-    <h2 id="sales-delete-heading" class="mb-2 text-lg font-bold">
-      Delete all sales
-    </h2>
-    <p class="mb-4 text-sm text-ink-muted">
-      Clears the sales at every buffet, e.g. after test sales or before the next
-      open day. Products, menus and cash movements stay.
-    </p>
-    <button
-      type="button"
-      class="btn btn-outline btn-error btn-sm"
-      [disabled]="s.orderCount === 0"
-      (click)="confirmingDelete.set(true)"
+  @if (canDeleteSales()) {
+    <section
+      class="rounded-lg bg-background-100 p-6 shadow-lg dark:border dark:border-background-600"
+      aria-labelledby="sales-delete-heading"
     >
-      Delete All Sales
-    </button>
-  </section>
+      <h2 id="sales-delete-heading" class="mb-2 text-lg font-bold">
+        Delete all sales
+      </h2>
+      <p class="mb-4 text-sm text-ink-muted">
+        Clears the sales at every buffet, e.g. after test sales or before the
+        next open day. Products, menus and cash movements stay.
+      </p>
+      <button
+        type="button"
+        class="btn btn-outline btn-error btn-sm"
+        [disabled]="s.orderCount === 0"
+        (click)="confirmingDelete.set(true)"
+      >
+        Delete All Sales
+      </button>
+    </section>
+  }
 </div>
 
 @if (confirmingDelete()) {

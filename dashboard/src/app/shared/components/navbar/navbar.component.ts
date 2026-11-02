@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   inject,
   signal,
   ChangeDetectionStrategy,
@@ -22,6 +23,7 @@ export class NavbarComponent {
   private readonly keycloak = inject(Keycloak);
   private readonly service = inject(LoginService);
   protected isAdmin = signal(false);
+  private readonly isBuffetManager = signal(false);
   // index.html already applied the theme before the first paint.
   isWhiteMode = signal(!document.documentElement.classList.contains('dark'));
   mobileMenuOpen = signal(false);
@@ -42,6 +44,14 @@ export class NavbarComponent {
     { label: 'Buffet', route: '/buffet' },
     { label: 'Users & Data', route: '/data-management' },
   ];
+
+  // Admins get all links; the stop managers of the Buffet stop only theirs.
+  protected readonly visibleLinks = computed(() => {
+    if (this.isAdmin()) return this.navLinks;
+    return this.isBuffetManager()
+      ? this.navLinks.filter((link) => link.route === '/buffet')
+      : [];
+  });
 
   // The one link for everyone, also for users without a role.
   protected readonly previewLink = { label: 'Preview', route: '/preview' };
@@ -65,8 +75,13 @@ export class NavbarComponent {
   }
 
   async ngOnInit() {
-    const response = await this.service.checkUserRole('is-admin', 'admin');
-    this.isAdmin.set(response);
+    const isAdmin = await this.service.checkUserRole('is-admin', 'admin');
+    this.isAdmin.set(isAdmin);
+    if (!isAdmin) {
+      this.isBuffetManager.set(
+        await this.service.checkUserRole('is-buffet-manager', 'buffet')
+      );
+    }
   }
 
   changeDarkMode() {
