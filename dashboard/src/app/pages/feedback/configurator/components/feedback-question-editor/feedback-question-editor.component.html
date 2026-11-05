@@ -238,8 +238,8 @@
 
       @if (availableParentQuestions().length === 0) {
         <p class="text-xs text-ink">
-          No choice questions available. Add a Single/Multiple Choice question
-          first to create follow-up conditions.
+          No saved choice or rating question available. Add one and save the
+          changes first to create follow-up conditions.
         </p>
       } @else if (dependenciesArray.length === 0) {
         <p class="text-xs text-ink">
@@ -262,6 +262,7 @@
                 <select
                   formControlName="dependsOnQuestionId"
                   [id]="'dep-question-' + i"
+                  (change)="clearConditionValues(i)"
                   class="select select-bordered select-sm w-full"
                 >
                   <option [value]="0">-- Select Question --</option>
@@ -270,40 +271,39 @@
                   }
                 </select>
               </div>
-              <div class="flex-1">
-                <label [attr.for]="'dep-answer-' + i" class="mb-1 block text-xs"
-                  >Has answer:</label
-                >
-                @if (
+              <fieldset class="flex-1">
+                <legend class="mb-1 block text-xs">
+                  Has one of the answers:
+                </legend>
+                @let values =
                   getParentQuestionOptions(
-                    dep.get('dependsOnQuestionId')?.value
-                  ).length > 0
-                ) {
-                  <select
-                    formControlName="conditionValue"
-                    [id]="'dep-answer-' + i"
-                    class="select select-bordered select-sm w-full"
-                  >
-                    <option value="">-- Select Answer --</option>
-                    @for (
-                      opt of getParentQuestionOptions(
-                        dep.get('dependsOnQuestionId')?.value
-                      );
-                      track opt
-                    ) {
-                      <option [value]="opt">{{ opt }}</option>
-                    }
-                  </select>
+                    dep.controls.dependsOnQuestionId.value
+                  );
+                @if (values.length === 0) {
+                  <p class="text-xs text-ink">Select a question first.</p>
                 } @else {
-                  <input
-                    formControlName="conditionValue"
-                    type="text"
-                    placeholder="Enter condition value"
-                    [id]="'dep-answer-' + i"
-                    class="input input-sm input-bordered w-full"
-                  />
+                  <div class="flex flex-col gap-1">
+                    @for (value of values; track value) {
+                      <label class="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          class="checkbox-primary checkbox checkbox-sm"
+                          [checked]="
+                            dep.controls.conditionValues.value.includes(value)
+                          "
+                          (change)="toggleConditionValue(i, value)"
+                        />
+                        {{
+                          valueLabel(
+                            dep.controls.dependsOnQuestionId.value,
+                            value
+                          )
+                        }}
+                      </label>
+                    }
+                  </div>
                 }
-              </div>
+              </fieldset>
               <button
                 type="button"
                 (click)="removeDependency(i)"

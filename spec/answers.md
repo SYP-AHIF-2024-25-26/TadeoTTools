@@ -73,7 +73,10 @@
 45. **Einmal pro Handy:** wie ist.
 46. **Fragen ändern löscht Antworten:** OK.
 47. **Kommas:** wie ist
-48. **Bedingungen:** ja
+48. **Bedingungen:** ja. Ergänzt am 05.11.2026: Bewertungsfragen können ebenfalls Bedingung sein,
+    und eine Bedingung darf mehrere Werte derselben Frage annehmen (ODER, z. B. Bewertung 1 oder 2).
+    Bedingungen auf verschiedene Fragen bleiben UND; `<`/`>` und freie UND/ODER-Kombinationen
+    werden nicht gebaut.
 49. **Aufbewahrung:** manuelle löschung wie bisher.
 
 ## 9) Kiosks

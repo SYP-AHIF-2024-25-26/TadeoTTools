@@ -341,8 +341,12 @@ Eigenschaften:
 - Fragetypen: Text (Platzhalter), Bewertung (Min 1–9, Max 2–10, Beschriftungen kommagetrennt),
   Einfach- und Mehrfachauswahl (Optionen).
 - Reihenfolge, Pflichtfrage ja/nein.
-- Bedingungen: Eine Frage kann von Antworten anderer Fragen abhängen. Sie wird nur gezeigt, wenn
-  **alle** Bedingungen erfüllt sind (UND, Vergleich auf Gleichheit mit einem Wert).
+- Bedingungen: Eine Frage kann von Antworten anderer Fragen abhängen (Auswahl- oder
+  Bewertungsfragen, auch selbst bedingte). Je Frage nennt eine Bedingung einen oder mehrere
+  zulässige Werte (ODER, z. B. Bewertung „1“ oder „2“; bei Mehrfachauswahl genügt eine der
+  gewählten Optionen). Die Frage wird nur gezeigt, wenn die Bedingungen **aller** genannten Fragen
+  erfüllt sind (UND) und diese Fragen selbst gezeigt werden. Gespeichert wird jeder Wert als eigene
+  Bedingung; Kleiner/Größer-Vergleiche gibt es nicht.
 - Wird eine Frage entfernt oder ihr Typ geändert, werden ihre Antworten mitgelöscht; das
   Dashboard warnt vorher.
 - Mehrfachauswahl wird als „A, B“ gespeichert; Optionen und Beschriftungen mit Komma zerfallen
@@ -546,7 +550,7 @@ Akzeptanzkriterien:
 Als Besucher:in möchte ich am Handy oder am Kiosk anonym Feedback geben.
 
 Akzeptanzkriterien:
-- Bedingte Fragen erscheinen nur, wenn alle Bedingungen erfüllt sind.
+- Bedingte Fragen erscheinen nur, wenn für jede Bedingungsfrage einer der zulässigen Werte gewählt wurde.
 - Pflichtfragen müssen beantwortet sein.
 - Am Kiosk geht Feedback ohne Verbindung nicht verloren.
 

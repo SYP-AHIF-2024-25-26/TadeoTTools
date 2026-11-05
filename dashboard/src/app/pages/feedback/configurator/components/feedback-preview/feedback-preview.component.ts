@@ -22,39 +22,45 @@ export class FeedbackPreviewComponent {
   readonly previewQuestionIndex = signal(0);
   readonly previewAnswers = signal<Record<number, string>>({});
 
-  // Computed: which questions are visible based on dependencies
+  // Computed: which questions are visible based on dependencies. Conditions on the
+  // same parent question are joined with OR, conditions on different parents with AND;
+  // a parent that is itself hidden never satisfies a condition.
   readonly visibleQuestions = computed(() => {
     const allQuestions = this.questions();
     const answers = this.previewAnswers();
+    const visible = new Set<FeedbackQuestion>();
 
-    return allQuestions.filter((q, index) => {
-      if (!q.dependencies || q.dependencies.length === 0) {
-        return true; // No dependencies, always visible
+    allQuestions.forEach((q) => {
+      const valuesByParent = new Map<number, string[]>();
+      for (const dep of q.dependencies ?? []) {
+        const values = valuesByParent.get(dep.dependsOnQuestionId) ?? [];
+        values.push(dep.conditionValue);
+        valuesByParent.set(dep.dependsOnQuestionId, values);
       }
 
-      // Check if all dependencies are satisfied
-      return q.dependencies.every((dep) => {
-        const parentQuestion = allQuestions.find(
-          (pq) => pq.id === dep.dependsOnQuestionId
-        );
-        if (!parentQuestion) return false;
+      const shown = [...valuesByParent].every(([parentId, values]) => {
+        const parentQuestion = allQuestions.find((pq) => pq.id === parentId);
+        if (!parentQuestion || !visible.has(parentQuestion)) return false;
 
         const parentIndex = allQuestions.indexOf(parentQuestion);
         const parentAnswer = answers[parentIndex] || '';
 
-        // For MultipleChoice, check if the condition value is in the comma-separated answer
+        // For MultipleChoice, the answer is the chosen options joined with ", "
         if (parentQuestion.type === 'MultipleChoice') {
           const selectedOptions = parentAnswer
             .split(',')
             .map((s) => s.trim())
             .filter((s) => s);
-          return selectedOptions.includes(dep.conditionValue);
+          return values.some((v) => selectedOptions.includes(v));
         }
 
-        // For SingleChoice, direct comparison
-        return parentAnswer === dep.conditionValue;
+        // SingleChoice and Rating: direct comparison
+        return values.includes(parentAnswer);
       });
+      if (shown) visible.add(q);
     });
+
+    return allQuestions.filter((q) => visible.has(q));
   });
 
   readonly currentPreviewQuestion = computed(() => {

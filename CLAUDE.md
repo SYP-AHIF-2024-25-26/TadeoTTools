@@ -91,7 +91,7 @@ Shared query helpers and DTOs used by several endpoints sit in `Database/Reposit
 **Data model notes**
 
 - `TadeoTDbContext.SaveChanges*` trims every string property on added/modified entities.
-- `FeedbackQuestion` is an abstract TPH hierarchy (`FeedbackTextQuestion`, `FeedbackRatingQuestion`, `FeedbackChoiceQuestion`); `FeedbackDependency` makes a question conditional on another question's answer.
+- `FeedbackQuestion` is an abstract TPH hierarchy (`FeedbackTextQuestion`, `FeedbackRatingQuestion`, `FeedbackChoiceQuestion`); `FeedbackDependency` makes a question conditional on another question's answer (choice or rating). Rows on the same parent are OR (any of the values), rows on different parents AND; the dashboard preview, the feedback kiosk (`shared/models/answers.ts`) and the guide (`shared/feedback-answers.ts`) each implement this, keep them in step.
 - `StopGroup.Order` and `StopGroupAssignment.Order` define the tour order shown in the GuideApp. There is a single system-wide tour.
 - `FeatureFlag` rows are runtime toggles read by the GuideApp (e.g. `showCountdown`).
 - CSV exports use `;` separators and UTF-8 with BOM (`Endpoints/Utils.cs`).

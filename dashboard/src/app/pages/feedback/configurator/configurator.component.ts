@@ -53,9 +53,10 @@ export interface QuestionFormGroup {
   dependencies: FormArray<FormGroup<DependencyFormGroup>>;
 }
 
+/** One condition row: the parent question and the answers that show the question (any of them). */
 export interface DependencyFormGroup {
   dependsOnQuestionId: FormControl<number>;
-  conditionValue: FormControl<string>;
+  conditionValues: FormControl<string[]>;
 }
 
 @Component({
@@ -266,22 +267,29 @@ export class FeedbackConfiguratorComponent implements OnInit {
       );
     }
 
-    // Add dependencies
-    if (question.dependencies?.length) {
-      question.dependencies.forEach((dep) => {
-        this.dependenciesArray.push(this.createDependencyFormGroup(dep));
-      });
+    // One row per parent question; several stored conditions on the same parent are its OR values.
+    const valuesByParent = new Map<number, string[]>();
+    for (const dep of question.dependencies ?? []) {
+      const values = valuesByParent.get(dep.dependsOnQuestionId) ?? [];
+      values.push(dep.conditionValue);
+      valuesByParent.set(dep.dependsOnQuestionId, values);
     }
+    valuesByParent.forEach((values, parentId) =>
+      this.dependenciesArray.push(
+        this.createDependencyFormGroup(parentId, values)
+      )
+    );
 
     this.showQuestionEditor.set(true);
   }
 
   createDependencyFormGroup(
-    dep?: FeedbackDependency
+    dependsOnQuestionId = 0,
+    conditionValues: string[] = []
   ): FormGroup<DependencyFormGroup> {
     return this.fb.group({
-      dependsOnQuestionId: [dep?.dependsOnQuestionId ?? 0],
-      conditionValue: [dep?.conditionValue ?? ''],
+      dependsOnQuestionId: this.fb.control(dependsOnQuestionId),
+      conditionValues: this.fb.control(conditionValues),
     });
   }
 
@@ -323,16 +331,26 @@ export class FeedbackConfiguratorComponent implements OnInit {
       question.ratingLabels = formValue.ratingLabels;
     }
 
-    // Add dependencies
+    // Each accepted value is stored as its own condition; the apps join conditions on the
+    // same parent with OR. Rows for the same parent are merged, duplicates dropped.
     if (formValue.dependencies.length > 0) {
-      question.dependencies = formValue.dependencies
-        .filter(
-          (d) => d.dependsOnQuestionId > 0 && d.conditionValue.trim() !== ''
-        )
-        .map((d) => ({
-          dependsOnQuestionId: Number(d.dependsOnQuestionId),
-          conditionValue: d.conditionValue,
-        }));
+      const seen = new Set<string>();
+      const dependencies: FeedbackDependency[] = [];
+      for (const d of formValue.dependencies) {
+        const parentId = Number(d.dependsOnQuestionId);
+        if (parentId <= 0) continue;
+        for (const value of d.conditionValues) {
+          const key = `${parentId}
+${value}`;
+          if (value.trim() === '' || seen.has(key)) continue;
+          seen.add(key);
+          dependencies.push({
+            dependsOnQuestionId: parentId,
+            conditionValue: value,
+          });
+        }
+      }
+      question.dependencies = dependencies;
     }
 
     this.questions.update((questions) => {
