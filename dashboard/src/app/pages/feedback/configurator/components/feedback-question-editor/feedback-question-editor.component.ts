@@ -37,14 +37,16 @@ export class FeedbackQuestionEditorComponent {
   readonly save = output<void>();
   readonly cancel = output<void>();
 
-  // Computed: available parent questions for dependencies (choice questions only, excluding current)
+  // Questions a condition can refer to: saved choice and rating questions, except the one being edited.
   readonly availableParentQuestions = computed(() => {
     const questions = this.allQuestions();
     const currentIndex = this.editingIndex();
     return questions.filter(
       (q, i) =>
         i !== currentIndex &&
-        (q.type === 'SingleChoice' || q.type === 'MultipleChoice') &&
+        (q.type === 'SingleChoice' ||
+          q.type === 'MultipleChoice' ||
+          q.type === 'Rating') &&
         q.id !== undefined
     );
   });
@@ -91,23 +93,66 @@ export class FeedbackQuestionEditorComponent {
   }
 
   addDependency(): void {
-    const group = this.fb.group<DependencyFormGroup>({
-      dependsOnQuestionId: this.fb.control(0),
-      conditionValue: this.fb.control(''),
-    });
-    this.dependenciesArray.push(group);
+    this.dependenciesArray.push(
+      this.fb.group<DependencyFormGroup>({
+        dependsOnQuestionId: this.fb.control(0),
+        conditionValues: this.fb.control<string[]>([]),
+      })
+    );
   }
 
   removeDependency(index: number): void {
     this.dependenciesArray.removeAt(index);
   }
 
+  /** The chosen values belong to the previous question, so a new question starts with none. */
+  clearConditionValues(index: number): void {
+    this.dependenciesArray.at(index).controls.conditionValues.setValue([]);
+  }
+
+  /** Checks or unchecks one accepted answer; the result keeps the order of the answers. */
+  toggleConditionValue(index: number, value: string): void {
+    const group = this.dependenciesArray.at(index);
+    const chosen = new Set(group.controls.conditionValues.value);
+    if (chosen.has(value)) {
+      chosen.delete(value);
+    } else {
+      chosen.add(value);
+    }
+    const order = this.getParentQuestionOptions(
+      group.controls.dependsOnQuestionId.value
+    );
+    group.controls.conditionValues.setValue(order.filter((v) => chosen.has(v)));
+  }
+
+  /** The answers a condition can accept: the options, or the values of a rating. */
   getParentQuestionOptions(questionId: number | string | undefined): string[] {
-    if (!questionId) return [];
-    const numericId = Number(questionId);
-    if (isNaN(numericId)) return [];
-    const question = this.allQuestions().find((q) => q.id === numericId);
+    const question = this.parentQuestion(questionId);
+    if (question?.type === 'Rating') {
+      // A rating answer is stored as its number, e.g. "1".
+      const min = question.minRating ?? 1;
+      const max = question.maxRating ?? 5;
+      return Array.from({ length: max - min + 1 }, (_, i) => `${min + i}`);
+    }
     return question?.options || [];
+  }
+
+  /** A rating value with its label, if the question has one ("1 – schlecht"). */
+  valueLabel(questionId: number | string | undefined, value: string): string {
+    const question = this.parentQuestion(questionId);
+    if (question?.type !== 'Rating' || !question.ratingLabels) return value;
+    const labels = question.ratingLabels.split(',').map((l) => l.trim());
+    const label = labels[Number(value) - (question.minRating ?? 1)];
+    return label ? `${value} – ${label}` : value;
+  }
+
+  private parentQuestion(
+    questionId: number | string | undefined
+  ): FeedbackQuestion | undefined {
+    if (!questionId) return undefined;
+    const numericId = Number(questionId);
+    if (isNaN(numericId)) return undefined;
+    return this.allQuestions().find((q) => q.id === numericId);
   }
 
   isChoiceType(): boolean {

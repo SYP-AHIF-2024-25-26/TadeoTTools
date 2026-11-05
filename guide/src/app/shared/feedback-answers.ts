@@ -51,14 +51,15 @@ export function isAnswered(answer: string | undefined): boolean {
 /**
  * Questions shown for the given answers, in questionnaire order. A question with
  * dependencies is shown only if every parent question is shown and was answered
- * with the condition value, so answers to hidden questions never count.
+ * with one of the values its conditions accept for that parent, so answers to
+ * hidden questions never count.
  */
 export function visibleQuestions(
   questions: FeedbackQuestion[],
   answers: AnswerMap
 ): FeedbackQuestion[] {
-  return filterByDependencies(questions, (parent, dep) =>
-    meetsCondition(parent, answers[parent.id!], dep)
+  return filterByDependencies(questions, (parent, conditionValue) =>
+    meetsCondition(parent, answers[parent.id!], conditionValue)
   );
 }
 
@@ -73,9 +74,9 @@ export function possibleQuestions(
 ): FeedbackQuestion[] {
   return filterByDependencies(
     questions,
-    (parent, dep) =>
+    (parent, conditionValue) =>
       !isAnswered(answers[parent.id!]) ||
-      meetsCondition(parent, answers[parent.id!], dep)
+      meetsCondition(parent, answers[parent.id!], conditionValue)
   );
 }
 
@@ -92,6 +93,11 @@ export function ratingScale(
   }));
 }
 
+/**
+ * Keeps a question if, for every parent question it depends on, the parent is kept
+ * and at least one of the condition values for that parent passes: conditions on
+ * the same parent are joined with OR, conditions on different parents with AND.
+ */
 function filterByDependencies(
   questions: FeedbackQuestion[],
   passes: (parent: FeedbackQuestion, conditionValue: string) => boolean
@@ -101,15 +107,26 @@ function filterByDependencies(
 
   for (const question of questions) {
     if (question.id === undefined) continue;
-    const kept = (question.dependencies ?? []).every((dep) => {
-      const parent = byId.get(dep.dependsOnQuestionId);
+    const kept = [...valuesByParent(question)].every(([parentId, values]) => {
+      const parent = byId.get(parentId);
       if (!parent || !keptIds.has(parent.id!)) return false;
-      return passes(parent, dep.conditionValue);
+      return values.some((value) => passes(parent, value));
     });
     if (kept) keptIds.add(question.id);
   }
 
   return questions.filter((q) => q.id !== undefined && keptIds.has(q.id));
+}
+
+/** The accepted condition values of a question, by the parent question they refer to. */
+function valuesByParent(question: FeedbackQuestion): Map<number, string[]> {
+  const byParent = new Map<number, string[]>();
+  for (const dep of question.dependencies ?? []) {
+    const values = byParent.get(dep.dependsOnQuestionId) ?? [];
+    values.push(dep.conditionValue);
+    byParent.set(dep.dependsOnQuestionId, values);
+  }
+  return byParent;
 }
 
 function meetsCondition(

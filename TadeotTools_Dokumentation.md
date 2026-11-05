@@ -215,7 +215,7 @@ Das in Entity-Framework Core hinterlegte PostgreSQL Datenmodell umfasst folgende
 ### Feedback-Engine
 - **FeedbackQuestions**: Die Fragestellung (`Id`, `Question`, `Order`, `Required`). Die Spalte `Discriminator` steuert über Eigenschaften wie `MinRating`, `MaxRating`, `RatingLabels`, `AllowMultiple` oder `Placeholder` ab, wie das Frontend diese darstellt (z.B. Checkboxen oder Sternerating).
 - **FeedbackOptions**: Entitäten für das MultiSelect / RadioButton-Menü, die genau einer Frage zugeteilt sind (`Value`).
-- **FeedbackDependencies**: Logische Konditionen (Frage 2 wird nur unter der Voraussetzung gezeigt, dass bei Frage 1 der Wert in `ConditionValue` gewählt wurde).
+- **FeedbackDependencies**: Logische Konditionen (Frage 2 wird nur unter der Voraussetzung gezeigt, dass bei Frage 1 der Wert in `ConditionValue` gewählt wurde). Mehrere Zeilen auf dieselbe Frage sind ODER (einer der Werte genügt), Zeilen auf verschiedene Fragen UND.
 - **FeedbackQuestionAnswers**: Konkrete Speicherung des eingereichten Wertes (`Answer`) referenzierend auf die jeweilige Frage und den Einreicher.
 
 ### Buffet
