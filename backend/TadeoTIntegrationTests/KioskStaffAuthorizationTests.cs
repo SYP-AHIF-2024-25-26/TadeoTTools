@@ -185,6 +185,50 @@ public class KioskStaffAuthorizationTests(IntegrationTestWebAppFactory factory) 
         await DbContext.SaveChangesAsync();
     }
 
+    [Fact]
+    public async Task StopManager_ShouldManageTheBuffet_OnlyAtTheBuffetStop()
+    {
+        await ManageAsync("if200001", "Buffet");
+        await ManageAsync("if200002", "Robotics");
+
+        (await IsBuffetManager(User("IF200001", StudentDn))).Should().BeTrue();
+        (await IsBuffetManager(User("if200002", StudentDn))).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Admin_ShouldManageTheBuffet()
+    {
+        DbContext.Admins.Add(new Admin { Id = "if200001" });
+        await DbContext.SaveChangesAsync();
+
+        (await IsBuffetManager(User("if200001", StudentDn))).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Teacher_ShouldNotManageTheBuffet_WithoutTheStop()
+    {
+        (await IsBuffetManager(User("lehrer", TeacherDn))).Should().BeFalse();
+
+        await ManageAsync("lehrer", "Buffet");
+        (await IsBuffetManager(User("lehrer", TeacherDn))).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task AcceptedStudent_ShouldNotManageTheBuffet()
+    {
+        await AssignAsync("if200001", "Buffet", Status.ACCEPTED);
+
+        (await IsBuffetManager(User("if200001", StudentDn))).Should().BeFalse();
+    }
+
+    private async Task<bool> IsBuffetManager(ClaimsPrincipal user)
+    {
+        var requirement = new StopManagerRequirement(KioskStaffRequirement.BuffetStopName);
+        var context = new AuthorizationHandlerContext([requirement], user, null);
+        await new StopManagerAuthorizationHandler(DbContext).HandleAsync(context);
+        return context.HasSucceeded;
+    }
+
     private Task<bool> IsPhotoViewer(ClaimsPrincipal user) => IsAllowed(KioskStaffRequirement.PhotoViewer, user);
 
     private async Task<UserManagementEndpoints.PhotoViewerDto> PhotoViewer(ClaimsPrincipal user)

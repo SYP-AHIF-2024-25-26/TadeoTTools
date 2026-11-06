@@ -12,6 +12,7 @@ import { StudentsAndStopsComponent } from './pages/students-and-stops/students-a
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { adminOrStopManagerGuard } from './core/guards/admin-or-stop-manager.guard';
+import { buffetManagerGuard } from './core/guards/buffet-manager.guard';
 import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 
 export const routes: Routes = [
@@ -122,7 +123,7 @@ export const routes: Routes = [
     path: 'buffet',
     component: BuffetComponent,
     canMatch: [authGuard],
-    canActivate: [adminGuard],
+    canActivate: [buffetManagerGuard],
   },
   {
     path: 'preview',
