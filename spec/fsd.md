@@ -261,9 +261,19 @@ Eigenschaften:
 
 ## 6.1 Seiten
 - Start: Liste der öffentlichen Stationsgruppen in Tour-Reihenfolge.
-- Gruppe: Stationen der Gruppe in Reihenfolge, Wischgesten zwischen Gruppen.
+- Wischgesten blättern nur seitwärts auf derselben Ebene, nie nach oben: Station ↔ Station,
+  Gruppe ↔ Gruppe, Stockwerk ↔ Stockwerk. Die Seiten der unteren Leiste (Rundgang, Karte,
+  Feedback, Über uns) wechseln nur per Tippen, wie bei Tab-Leisten von iOS und Android; auf ihnen
+  bewirkt eine Wischgeste nichts. Jede Wischgeste hat eine sichtbare Schaltfläche (Zurück/Weiter
+  mit „Station 3 von 7“ bzw. „Gruppe 3 von 9“, die Stockwerkstasten). Nach links kommt, was rechts liegt. Am ersten bzw. letzten Element
+  federt die Seite zurück. Eine Wischgeste ersetzt den Verlaufseintrag, „Zurück“ des Handys
+  verlässt also den Ort, statt die Wischgesten zu wiederholen. Sie beginnt nicht in Textfeldern
+  und nicht am Bildschirmrand (Zurück-Geste des Handys). Seitwärts zählt eine Bewegung nur, wenn sie
+  mindestens doppelt so weit zur Seite wie nach oben oder unten geht; sonst scrollt die Seite.
+- Gruppe: Stationen der Gruppe in Reihenfolge, Wischgesten und Zurück/Weiter zwischen Gruppen in
+  Tour-Reihenfolge.
 - Station: Beschreibung (Markdown), Raum, Abteilungen, „gesehen“ markieren. Wischgesten wie
-  „Zurück“/„Weiter“; auf der ersten Station zurück zur Gruppe, auf der letzten wie „Fertig“.
+  „Zurück“/„Weiter“; „Fertig“ auf der letzten Station bleibt eine Schaltfläche.
 - Karte: Stockwerkspläne U/E/1 mit einer Markierung je Ort mit öffentlichen Stationen, in den exakten
   Abteilungsfarben. Darunter ein Raumverzeichnis des Stockwerks (Ort, Abteilungsfarbe, Name, nach
   Raum sortiert, keine Karten); eine Zeile führt zurück auf die Karte. Eine Markierung zeigt auf der
@@ -272,7 +282,10 @@ Eigenschaften:
   „Daneben“. Die Stationsseite ist dieselbe wie in der
   Tour. „Auf der Karte“ führt von dort zurück und hebt alle Orte der Station hervor
   (`/map?stop=id`); nur eine noch nicht verortete Station sucht ihren Ort über den Raumtext. Ist eine
-  Kurzansicht offen, trägt nur deren Ort den Ring.
+  Kurzansicht offen, trägt nur deren Ort den Ring. Eine Wischgeste auf der Karte wechselt das Stockwerk,
+  egal wo sie beginnt (nach links eins höher, nach rechts eins tiefer; am obersten bzw. untersten
+  Stockwerk federt der Plan nur zurück). Über dem vergrößerten Plan verschiebt sie den Plan, über der
+  Kurzansicht bewirkt sie nichts.
 - Feedback (§9), Über uns/Impressum (Link auf https://www.htl-leonding.at/impressum), Countdown.
 
 ## 6.2 Fortschritt

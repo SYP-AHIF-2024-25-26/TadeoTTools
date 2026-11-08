@@ -74,6 +74,69 @@
         Zu dieser Gruppe gibt es keine eigenen Stationen.
       </p>
     }
+    @if (loadState() === 'ready' && showPager()) {
+      <!-- The same pager as on a stop, one level up: what a swipe does, as buttons.
+           Sideways steps replace the history entry, so Back leaves the group. -->
+      <nav class="mt-5 flex flex-col gap-2" aria-label="Gruppen des Rundgangs">
+        <p class="text-center text-sm font-semibold tabular-nums text-gray-600">
+          {{ positionLine() }}
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+          @if (previousGroup(); as previous) {
+            <a
+              class="flex h-14 items-center gap-1 rounded-2xl bg-white pl-3 pr-4 text-base font-bold text-gray-900 shadow-md ring-1 ring-gray-900/5 transition-colors active:bg-gray-50"
+              [routerLink]="['/tour', previous.id]"
+              [replaceUrl]="true"
+              [attr.aria-label]="'Vorherige Gruppe: ' + previous.name"
+              (click)="openGroup(previous)"
+            >
+              <svg
+                class="h-5 w-5 shrink-0"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.25"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 19.5 8.25 12l7.5-7.5"
+                />
+              </svg>
+              Zurück
+            </a>
+          }
+          @if (nextGroup(); as next) {
+            <a
+              class="col-start-2 flex h-14 items-center justify-end gap-1 rounded-2xl bg-white pl-4 pr-3 text-base font-bold text-gray-900 shadow-md ring-1 ring-gray-900/5 transition-colors active:bg-gray-50"
+              [routerLink]="['/tour', next.id]"
+              [replaceUrl]="true"
+              [attr.aria-label]="'Nächste Gruppe: ' + next.name"
+              (click)="openGroup(next)"
+            >
+              Weiter
+              <svg
+                class="h-5 w-5 shrink-0"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.25"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </a>
+          }
+        </div>
+      </nav>
+    }
   </main>
 
   <div class="fixed bottom-0 left-0 right-0 z-20 mx-2">

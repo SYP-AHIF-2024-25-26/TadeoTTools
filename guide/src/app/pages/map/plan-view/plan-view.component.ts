@@ -16,6 +16,10 @@ const MAX_ZOOM = 4;
 const DOUBLE_ZOOM = 2.5;
 const DRAG_THRESHOLD = 6;
 const DOUBLE_TAP_MS = 300;
+/** How far a new floor comes in from the side, as a share of the plan's width. */
+const ENTER_SHARE = 0.25;
+/** The nudge at the first or last floor: there is no floor further on. */
+const BOUNCE_PX = 16;
 
 interface Point {
   x: number;
@@ -48,8 +52,11 @@ export class PlanViewComponent {
 
   private host = inject<ElementRef<HTMLElement>>(ElementRef);
   private viewport = viewChild.required<ElementRef<HTMLElement>>('viewport');
+  private content = viewChild.required<ElementRef<HTMLElement>>('content');
 
   protected zoom = signal(1);
+  /** Zoomed in, a drag moves the plan; a swipe is only a swipe on the whole plan. */
+  zoomed = computed(() => this.zoom() > 1);
   private offset = signal<Point>({ x: 0, y: 0 });
   protected maxZoom = MAX_ZOOM;
   protected transform = computed(() => {
@@ -95,6 +102,40 @@ export class PlanViewComponent {
   screenY(point: Point): number {
     const rect = this.viewport().nativeElement.getBoundingClientRect();
     return rect.top + this.offset().y + point.y * rect.height * this.zoom();
+  }
+
+  /**
+   * The new floor comes in from the side the finger came from: from the right after a swipe
+   * to the left. The motion is on the content, so the frame clips it and the zoom buttons stay.
+   */
+  enterFrom(side: 'left' | 'right') {
+    if (this.calm()) {
+      return;
+    }
+    const from = this.size().width * ENTER_SHARE * (side === 'right' ? 1 : -1);
+    this.content().nativeElement.animate(
+      [
+        { transform: `translateX(${from}px)`, opacity: 0 },
+        { transform: 'translateX(0)', opacity: 1 },
+      ],
+      { duration: 220, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
+    );
+  }
+
+  /** A short nudge in the swipe's direction and back. */
+  bounce(towards: 'left' | 'right') {
+    if (this.calm()) {
+      return;
+    }
+    const by = BOUNCE_PX * (towards === 'right' ? 1 : -1);
+    this.content().nativeElement.animate(
+      [
+        { transform: 'translateX(0)' },
+        { transform: `translateX(${by}px)`, offset: 0.35 },
+        { transform: 'translateX(0)' },
+      ],
+      { duration: 280, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
+    );
   }
 
   protected zoomBy(factor: number) {
@@ -221,6 +262,10 @@ export class PlanViewComponent {
   private local(event: PointerEvent | WheelEvent): Point {
     const rect = this.viewport().nativeElement.getBoundingClientRect();
     return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  }
+
+  private calm(): boolean {
+    return matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
   private size() {

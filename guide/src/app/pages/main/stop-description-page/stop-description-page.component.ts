@@ -3,6 +3,7 @@ import {
   OnInit,
   Component,
   computed,
+  ElementRef,
   inject,
   input,
   signal,
@@ -22,6 +23,10 @@ import {
   CURRENT_STOP_PREFIX,
 } from '@shared/constants/constants';
 import { stopsInGroupOrder } from '@shared/tour';
+import {
+  SwipeDirection,
+  SwipeNavigatorService,
+} from '@core/services/swipe-navigator.service';
 
 @Component({
   selector: 'app-stop-description-page',
@@ -42,6 +47,8 @@ import { stopsInGroupOrder } from '@shared/tour';
 export class StopDescriptionPageComponent implements OnInit {
   private router = inject(Router);
   private apiFetchService = inject(ApiFetchService);
+  private swipe = inject(SwipeNavigatorService);
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected progress = inject(ProgressService);
 
   stopGroupId = input.required<string>();
@@ -70,6 +77,9 @@ export class StopDescriptionPageComponent implements OnInit {
   );
   protected showPager = computed(
     () => this.position() >= 0 && this.groupStops().length > 1
+  );
+  protected positionLine = computed(
+    () => `Station ${this.position() + 1} von ${this.groupStops().length}`
   );
 
   protected stopDivisions = computed(() =>
@@ -117,35 +127,25 @@ export class StopDescriptionPageComponent implements OnInit {
     window.scrollTo({ top: 0 });
   }
 
-  /** Like „Zurück“; on the first stop, or without the pager, back to the group. */
-  protected async swipeBack() {
-    const previous = this.showPager() ? this.previousStop() : undefined;
-    if (previous) {
-      await this.goToStop(previous);
-    } else {
-      await this.goBack();
-    }
+  /** Like „Zurück“; on the first stop, or without the pager, the page springs back. */
+  protected swipeBack() {
+    this.swipeTo(this.previousStop(), 'right');
   }
 
-  /** Like „Weiter“; on the last stop like „Fertig“. Without the pager there is no button, so nothing. */
-  protected async swipeNext() {
-    if (!this.showPager()) {
+  /** Like „Weiter“; on the last stop the page springs back, „Fertig“ stays a button. */
+  protected swipeNext() {
+    this.swipeTo(this.nextStop(), 'left');
+  }
+
+  private swipeTo(stop: Stop | undefined, direction: SwipeDirection) {
+    if (!this.showPager() || !stop) {
+      this.swipe.bounce(this.host.nativeElement, direction);
       return;
     }
-    const next = this.nextStop();
-    if (next) {
-      await this.goToStop(next);
-    } else {
-      await this.goBack();
-    }
-  }
-
-  private async goToStop(stop: Stop) {
-    this.openStop(stop);
-    await this.router.navigate(['/tour', this.stopGroupId(), 'stop', stop.id]);
-  }
-
-  async goBack() {
-    await this.router.navigate(['/tour', this.stopGroupId()]);
+    localStorage.setItem(CURRENT_STOP_PREFIX, JSON.stringify(stop));
+    void this.swipe.go(
+      ['/tour', this.stopGroupId(), 'stop', stop.id],
+      direction
+    );
   }
 }

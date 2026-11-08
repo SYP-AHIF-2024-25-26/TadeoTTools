@@ -388,23 +388,35 @@ export class MapComponent implements OnInit {
     await this.router.navigate(['/tour', group.id, 'stop', stop.id]);
   }
 
-  /** Over the plan a swipe drags it and over the sheet it does nothing; it changes the page beside them. */
+  /**
+   * On the map a swipe only ever changes the floor, wherever it starts: to the left goes up,
+   * the higher floor comes in from the right. The tabs change by tap only. Over a zoomed plan the
+   * finger drags the plan instead; over the sheet a swipe does nothing.
+   */
   onSwipeLeft(event?: Event) {
-    if (!this.onPlan(event)) {
-      this.router.navigate(['/feedback']);
-    }
+    this.onSwipe(event, 1);
   }
 
   onSwipeRight(event?: Event) {
-    if (!this.onPlan(event)) {
-      this.router.navigate(['/main']);
-    }
+    this.onSwipe(event, -1);
   }
 
-  private onPlan(event?: Event): boolean {
-    return !!(event as unknown as HammerInput | undefined)?.target?.closest(
-      'app-plan-view, dialog'
-    );
+  private onSwipe(event: Event | undefined, step: 1 | -1) {
+    const target = (event as unknown as HammerInput | undefined)?.target;
+    if (target?.closest('dialog')) {
+      return;
+    }
+    const plan = this.plan();
+    if (plan.zoomed() && target?.closest('app-plan-view')) {
+      return;
+    }
+    const next = this.currentFloor() + step;
+    if (next < 0 || next >= FLOORS.length) {
+      plan.bounce(step === 1 ? 'left' : 'right');
+      return;
+    }
+    this.selectFloor(next);
+    plan.enterFrom(step === 1 ? 'right' : 'left');
   }
 
   /** Kept in the URL, so coming back from a stop returns to this floor. */

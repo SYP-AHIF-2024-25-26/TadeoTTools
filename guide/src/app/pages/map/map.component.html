@@ -3,7 +3,8 @@
   class="flex h-screen w-full touch-pan-y touch-pinch-zoom select-none flex-col justify-start overflow-y-scroll bg-canvas"
 >
   <app-header title="Karte">
-    <p class="mt-2 text-base font-semibold text-night-100">
+    <!-- Announced, so a floor changed by swipe is heard, not only seen. -->
+    <p class="mt-2 text-base font-semibold text-night-100" aria-live="polite">
       {{ currentFloorName() }}
       @if (roomLabel(); as room) {
         · {{ room }}

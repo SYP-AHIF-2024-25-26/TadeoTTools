@@ -12,7 +12,6 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import {
   Division,
   FeedbackQuestion,
@@ -64,13 +63,8 @@ const AUTO_ADVANCE_MS = 500;
   templateUrl: './feedback.component.html',
   styleUrl: './feedback.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '(swipeleft)': 'router.navigate(["/about"])',
-    '(swiperight)': 'router.navigate(["/map"])',
-  },
 })
 export class FeedbackComponent implements OnInit, OnDestroy {
-  protected router = inject(Router);
   private api = inject(ApiFetchService);
   private outbox = inject(FeedbackOutboxService);
   private injector = inject(Injector);

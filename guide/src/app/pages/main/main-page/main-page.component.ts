@@ -33,7 +33,6 @@ import { stopsInGroupOrder } from '@shared/tour';
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(swipeleft)': 'onSwipeLeft()' },
 })
 export class MainPageComponent implements OnInit {
   private apiFetchService = inject(ApiFetchService);
@@ -63,10 +62,6 @@ export class MainPageComponent implements OnInit {
     }
     return segments;
   });
-
-  onSwipeLeft() {
-    this.router.navigate(['/map']);
-  }
 
   async ngOnInit() {
     void this.loadDateLine();
