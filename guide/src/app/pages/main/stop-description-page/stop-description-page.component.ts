@@ -37,7 +37,7 @@ import { stopsInGroupOrder } from '@shared/tour';
   templateUrl: './stop-description-page.component.html',
   styleUrl: './stop-description-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(swiperight)': 'goBack()' },
+  host: { '(swiperight)': 'swipeBack()', '(swipeleft)': 'swipeNext()' },
 })
 export class StopDescriptionPageComponent implements OnInit {
   private router = inject(Router);
@@ -115,6 +115,34 @@ export class StopDescriptionPageComponent implements OnInit {
   protected openStop(stop: Stop) {
     localStorage.setItem(CURRENT_STOP_PREFIX, JSON.stringify(stop));
     window.scrollTo({ top: 0 });
+  }
+
+  /** Like „Zurück“; on the first stop, or without the pager, back to the group. */
+  protected async swipeBack() {
+    const previous = this.showPager() ? this.previousStop() : undefined;
+    if (previous) {
+      await this.goToStop(previous);
+    } else {
+      await this.goBack();
+    }
+  }
+
+  /** Like „Weiter“; on the last stop like „Fertig“. Without the pager there is no button, so nothing. */
+  protected async swipeNext() {
+    if (!this.showPager()) {
+      return;
+    }
+    const next = this.nextStop();
+    if (next) {
+      await this.goToStop(next);
+    } else {
+      await this.goBack();
+    }
+  }
+
+  private async goToStop(stop: Stop) {
+    this.openStop(stop);
+    await this.router.navigate(['/tour', this.stopGroupId(), 'stop', stop.id]);
   }
 
   async goBack() {

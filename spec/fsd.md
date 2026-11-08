@@ -262,7 +262,8 @@ Eigenschaften:
 ## 6.1 Seiten
 - Start: Liste der öffentlichen Stationsgruppen in Tour-Reihenfolge.
 - Gruppe: Stationen der Gruppe in Reihenfolge, Wischgesten zwischen Gruppen.
-- Station: Beschreibung (Markdown), Raum, Abteilungen, „gesehen“ markieren.
+- Station: Beschreibung (Markdown), Raum, Abteilungen, „gesehen“ markieren. Wischgesten wie
+  „Zurück“/„Weiter“; auf der ersten Station zurück zur Gruppe, auf der letzten wie „Fertig“.
 - Karte: Stockwerkspläne U/E/1 mit einer Markierung je Ort mit öffentlichen Stationen, in den exakten
   Abteilungsfarben. Darunter ein Raumverzeichnis des Stockwerks (Ort, Abteilungsfarbe, Name, nach
   Raum sortiert, keine Karten); eine Zeile führt zurück auf die Karte. Eine Markierung zeigt auf der
