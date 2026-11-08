@@ -55,7 +55,7 @@ class SwipeDebug {
     const where = `${target.tagName.toLowerCase()}${target.className && typeof target.className === 'string' ? '.' + target.className.split(' ')[0] : ''}`;
     if (event.type === 'pointerdown') {
       this.log(
-        `down ${event.pointerType} x=${Math.round(event.clientX)} ${where} ta=${getComputedStyle(target).touchAction}`
+        `down ${event.pointerType} x=${Math.round(event.clientX)} ${where} ta=${effectiveTouchAction(target)}`
       );
     } else {
       this.log(`${event.type.slice(7)} x=${Math.round(event.clientX)}`);
@@ -74,6 +74,18 @@ class SwipeDebug {
     }
     this.panel.textContent = this.lines.join('\n');
   }
+}
+
+/** touch-action is not inherited: the browser combines the values up the chain, so list them all. */
+function effectiveTouchAction(target: Element): string {
+  const values: string[] = [];
+  for (let el: Element | null = target; el; el = el.parentElement) {
+    const value = getComputedStyle(el).touchAction;
+    if (value !== 'auto') {
+      values.push(`${el.tagName.toLowerCase()}:${value}`);
+    }
+  }
+  return values.join(' > ') || 'auto';
 }
 
 export const swipeDebug = new SwipeDebug();

@@ -3,16 +3,21 @@ import { EventManagerPlugin } from '@angular/platform-browser';
 import { swipeDebug } from './swipe-debug';
 
 /** A flick, not a scroll that drifts sideways: Hammer's defaults (10 px, 0.3 px/ms) fired on thumb arcs. */
-const SWIPE_VELOCITY = 0.5;
+const SWIPE_VELOCITY = 0.4;
 const SWIPE_THRESHOLD = 32;
 /** The screen edges belong to the phone's own back gesture. */
 const EDGE_ZONE = 20;
-/** Text fields keep their own horizontal drags (moving the caret, selecting). */
-const OWN_DRAG = 'textarea, input, select, [contenteditable="true"]';
+/** Text fields and wide Markdown blocks keep their own horizontal drags (caret, selection, scrolling). */
+const OWN_DRAG =
+  'textarea, input, select, [contenteditable="true"], pre, table';
+
+/** Movement before the direction of a touch is decided; small, because iOS takes over within ~80 ms. */
+const DECIDE_PX = 3;
 
 interface Entry {
   manager: HammerManager;
   listeners: number;
+  release: () => void;
 }
 
 // Angular 22 removed HammerModule. This plugin keeps the pages' (swipeleft) / (swiperight)
@@ -51,6 +56,7 @@ export class HammerSwipePlugin extends EventManagerPlugin {
       entry.listeners--;
       if (entry.listeners === 0) {
         entry.manager.destroy();
+        entry.release();
         this.entries.delete(element);
       }
     };
@@ -79,10 +85,67 @@ export class HammerSwipePlugin extends EventManagerPlugin {
         }
       });
     }
-    const entry = { manager, listeners: 0 };
+    const entry = {
+      manager,
+      listeners: 0,
+      release: keepHorizontalTouches(element),
+    };
     this.entries.set(element, entry);
     return entry;
   }
+}
+
+/**
+ * iOS Safari takes a sideways touch for itself despite the pages' `touch-action: pan-y` and
+ * cancels the pointer about 80 ms in, so Hammer never sees the finger lift (checked with
+ * ?swipedebug on an iPhone). Cancelling the touchmove of a sideways touch keeps it for the page;
+ * vertical scrolling, pinch zoom, text fields and the screen edges stay with the browser.
+ */
+function keepHorizontalTouches(element: HTMLElement): () => void {
+  let start: { x: number; y: number } | null = null;
+  let horizontal: boolean | null = null;
+
+  const onStart = (event: TouchEvent) => {
+    const touch = event.touches[0];
+    const ownDrag = (event.target as Element | null)?.closest(OWN_DRAG);
+    const atEdge =
+      touch.clientX < EDGE_ZONE ||
+      touch.clientX > window.innerWidth - EDGE_ZONE;
+    start =
+      event.touches.length === 1 && !ownDrag && !atEdge
+        ? { x: touch.clientX, y: touch.clientY }
+        : null;
+    horizontal = null;
+  };
+  const onMove = (event: TouchEvent) => {
+    if (!start || event.touches.length !== 1) {
+      start = null;
+      return;
+    }
+    if (horizontal === null) {
+      const dx = Math.abs(event.touches[0].clientX - start.x);
+      const dy = Math.abs(event.touches[0].clientY - start.y);
+      if (Math.max(dx, dy) < DECIDE_PX) {
+        return;
+      }
+      horizontal = dx > dy;
+      swipeDebug.log(
+        horizontal
+          ? 'touch sideways: kept for the page'
+          : 'touch vertical: browser scrolls'
+      );
+    }
+    if (horizontal && event.cancelable) {
+      event.preventDefault();
+    }
+  };
+
+  element.addEventListener('touchstart', onStart, { passive: true });
+  element.addEventListener('touchmove', onMove, { passive: false });
+  return () => {
+    element.removeEventListener('touchstart', onStart);
+    element.removeEventListener('touchmove', onMove);
+  };
 }
 
 function ignoreReason(event: HammerInput): string | null {
