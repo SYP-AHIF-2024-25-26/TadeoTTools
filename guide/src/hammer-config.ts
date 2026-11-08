@@ -1,6 +1,5 @@
 import { DOCUMENT, inject, Injectable } from '@angular/core';
 import { EventManagerPlugin } from '@angular/platform-browser';
-import { swipeDebug } from './swipe-debug';
 
 /** A flick, not a scroll that drifts sideways: Hammer's defaults (10 px, 0.3 px/ms) fired on thumb arcs. */
 const SWIPE_VELOCITY = 0.4;
@@ -46,11 +45,7 @@ export class HammerSwipePlugin extends EventManagerPlugin {
   ): () => void {
     const entry = this.entryFor(element);
     const listener = (event: HammerInput) => {
-      const ignored = ignoreReason(event);
-      swipeDebug.log(
-        ignored ? `${eventName} ignored: ${ignored}` : `${eventName} fired`
-      );
-      if (!ignored) {
+      if (!ignoreReason(event)) {
         handler(event);
       }
     };
@@ -80,16 +75,6 @@ export class HammerSwipePlugin extends EventManagerPlugin {
       velocity: SWIPE_VELOCITY,
       threshold: SWIPE_THRESHOLD,
     });
-    if (swipeDebug.enabled) {
-      manager.on('hammer.input', (input: HammerInput) => {
-        if (input.isFinal) {
-          swipeDebug.log(
-            `end dx=${Math.round(input.deltaX)} dy=${Math.round(input.deltaY)} ` +
-              `v=${input.overallVelocityX.toFixed(2)} ${input.eventType === Hammer.INPUT_CANCEL ? 'CANCEL' : 'up'}`
-          );
-        }
-      });
-    }
     const entry = {
       manager,
       listeners: 0,
@@ -102,8 +87,8 @@ export class HammerSwipePlugin extends EventManagerPlugin {
 
 /**
  * iOS Safari takes a sideways touch for itself despite the pages' `touch-action: pan-y` and
- * cancels the pointer about 80 ms in, so Hammer never sees the finger lift (checked with
- * ?swipedebug on an iPhone). Cancelling the touchmove of a sideways touch keeps it for the page;
+ * cancels the pointer about 80 ms in, so Hammer never sees the finger lift (seen on an
+ * iPhone). Cancelling the touchmove of a sideways touch keeps it for the page;
  * vertical scrolling, pinch zoom, text fields and the screen edges stay with the browser.
  */
 function keepHorizontalTouches(element: HTMLElement): () => void {
@@ -134,11 +119,6 @@ function keepHorizontalTouches(element: HTMLElement): () => void {
         return;
       }
       horizontal = dx > SIDEWAYS_RATIO * dy;
-      swipeDebug.log(
-        horizontal
-          ? 'touch sideways: kept for the page'
-          : 'touch vertical: browser scrolls'
-      );
     }
     if (horizontal && event.cancelable) {
       event.preventDefault();
