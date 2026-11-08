@@ -3,7 +3,6 @@ import {
   OnInit,
   Component,
   computed,
-  ElementRef,
   inject,
   signal,
 } from '@angular/core';
@@ -21,7 +20,6 @@ import { CURRENT_STOP_GROUP_PREFIX } from '@shared/constants/constants';
 import { openDayLine, upcomingOpenDay } from '@shared/open-day';
 import { colorsOfStop } from '@shared/division-colors';
 import { stopsInGroupOrder } from '@shared/tour';
-import { SwipeNavigatorService } from '@core/services/swipe-navigator.service';
 
 @Component({
   selector: 'app-main-page',
@@ -35,13 +33,10 @@ import { SwipeNavigatorService } from '@core/services/swipe-navigator.service';
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(swipeleft)': 'onSwipeLeft()', '(swiperight)': 'onSwipeRight()' },
 })
 export class MainPageComponent implements OnInit {
   private apiFetchService = inject(ApiFetchService);
   private router = inject(Router);
-  private swipe = inject(SwipeNavigatorService);
-  private host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected progress = inject(ProgressService);
 
   protected loadState = signal<'loading' | 'ready' | 'error'>('loading');
@@ -67,15 +62,6 @@ export class MainPageComponent implements OnInit {
     }
     return segments;
   });
-
-  /** The tabs in the tab bar's order: Rundgang is the first, so to the right there is nothing. */
-  onSwipeLeft() {
-    void this.swipe.go(['/map'], 'left');
-  }
-
-  onSwipeRight() {
-    this.swipe.bounce(this.host.nativeElement, 'right');
-  }
 
   async ngOnInit() {
     void this.loadDateLine();

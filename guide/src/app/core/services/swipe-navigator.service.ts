@@ -10,7 +10,7 @@ const BOUNCE_PX = 16;
 const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';
 
 /**
- * One model for every swipe: sideways at the same level (stop ↔ stop, group ↔ group, tab ↔ tab,
+ * One model for every swipe: sideways at the same level (stop ↔ stop, group ↔ group,
  * floor ↔ floor), never up. A swipe replaces the history entry, so the phone's Back leaves the
  * place instead of replaying the swipes. At the first or last item the page springs back.
  */

@@ -15,7 +15,7 @@ import { DivisionIconComponent } from '@shared/components/division-icon/division
 import { ApiFetchService } from '@core/services/api-fetch.service';
 import { Division, Stop, StopGroup } from '@shared/models/types';
 import { StopCardComponent } from '@pages/main/stop-card/stop-card.component';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DescriptionContainerComponent } from '@pages/main/description-container/description-container.component';
 import { SeenToggleComponent } from '@pages/main/seen-toggle/seen-toggle.component';
 import { CardSkeletonComponent } from '@shared/components/load-state/card-skeleton.component';
@@ -47,6 +47,7 @@ import { SwipeNavigatorService } from '@core/services/swipe-navigator.service';
     CardSkeletonComponent,
     LoadErrorComponent,
     TourBandComponent,
+    RouterLink,
   ],
   templateUrl: './stop-page.component.html',
   styleUrl: './stop-page.component.css',
@@ -66,6 +67,23 @@ export class StopPageComponent {
   divisions = signal<Division[]>([]);
   /** Every group in tour order, for swiping to the group beside this one. */
   private groups = signal<StopGroup[]>([]);
+
+  private groupIndex = computed(() =>
+    this.groups().findIndex((group) => group.id === Number(this.stopGroupId()))
+  );
+  /** The groups beside this one, for the pager at the bottom: what a swipe does, as buttons. */
+  protected previousGroup = computed(() =>
+    this.groupIndex() > 0 ? this.groups()[this.groupIndex() - 1] : undefined
+  );
+  protected nextGroup = computed(() =>
+    this.groupIndex() >= 0 ? this.groups()[this.groupIndex() + 1] : undefined
+  );
+  protected showPager = computed(
+    () => this.groupIndex() >= 0 && this.groups().length > 1
+  );
+  protected positionLine = computed(
+    () => `Gruppe ${this.groupIndex() + 1} von ${this.groups().length}`
+  );
 
   protected sortedStops = computed(() => {
     const groupId = this.parentStopGroup().id;
@@ -180,12 +198,14 @@ export class StopPageComponent {
     this.swipeTo(-1, 'right');
   }
 
+  /** Before the pager opens a group: remember it (as opening from a card does) and go to the top. */
+  protected openGroup(group: StopGroup) {
+    localStorage.setItem(CURRENT_STOP_GROUP_PREFIX, JSON.stringify(group));
+    window.scrollTo({ top: 0 });
+  }
+
   private swipeTo(step: 1 | -1, direction: 'left' | 'right') {
-    const groups = this.groups();
-    const index = groups.findIndex(
-      (group) => group.id === Number(this.stopGroupId())
-    );
-    const target = index >= 0 ? groups[index + step] : undefined;
+    const target = step === 1 ? this.nextGroup() : this.previousGroup();
     if (!target) {
       this.swipe.bounce(this.host.nativeElement, direction);
       return;

@@ -13,6 +13,11 @@ const OWN_DRAG =
 
 /** Movement before the direction of a touch is decided; small, because iOS takes over within ~80 ms. */
 const DECIDE_PX = 3;
+/**
+ * A touch is kept for the page only if it runs at least twice as far sideways as up or down
+ * (under ~27°). A thumb arc that drifts sideways while scrolling stays with the browser.
+ */
+const SIDEWAYS_RATIO = 2;
 
 interface Entry {
   manager: HammerManager;
@@ -128,7 +133,7 @@ function keepHorizontalTouches(element: HTMLElement): () => void {
       if (Math.max(dx, dy) < DECIDE_PX) {
         return;
       }
-      horizontal = dx > dy;
+      horizontal = dx > SIDEWAYS_RATIO * dy;
       swipeDebug.log(
         horizontal
           ? 'touch sideways: kept for the page'

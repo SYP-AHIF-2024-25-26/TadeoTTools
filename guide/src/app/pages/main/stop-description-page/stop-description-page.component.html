@@ -42,68 +42,74 @@
     @if (showPager()) {
       <!-- Back and on within the group, in its order. Neutral: orange is for actions.
            Only the direction, no stop names, so both buttons keep one fixed size.
-           Sideways steps replace the history entry, so Back leaves the stop; „Fertig“ does not. -->
-      <nav class="grid grid-cols-2 gap-3" aria-label="Stationen dieser Gruppe">
-        @if (previousStop(); as previous) {
-          <a
-            class="flex h-14 items-center gap-1 rounded-2xl bg-white pl-3 pr-4 text-base font-bold text-gray-900 shadow-md ring-1 ring-gray-900/5 transition-colors active:bg-gray-50"
-            [routerLink]="['/tour', stopGroupId(), 'stop', previous.id]"
-            [replaceUrl]="true"
-            [attr.aria-label]="'Zurück: ' + previous.name"
-            (click)="openStop(previous)"
-          >
-            <svg
-              class="h-5 w-5 shrink-0"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2.25"
-              stroke="currentColor"
+           Sideways steps replace the history entry, so Back leaves the stop; „Fertig“ does not.
+           The position line says where in the group this is, and that there is more to page through. -->
+      <nav class="flex flex-col gap-2" aria-label="Stationen dieser Gruppe">
+        <p class="text-center text-sm font-semibold tabular-nums text-gray-600">
+          {{ positionLine() }}
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+          @if (previousStop(); as previous) {
+            <a
+              class="flex h-14 items-center gap-1 rounded-2xl bg-white pl-3 pr-4 text-base font-bold text-gray-900 shadow-md ring-1 ring-gray-900/5 transition-colors active:bg-gray-50"
+              [routerLink]="['/tour', stopGroupId(), 'stop', previous.id]"
+              [replaceUrl]="true"
+              [attr.aria-label]="'Zurück: ' + previous.name"
+              (click)="openStop(previous)"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M15.75 19.5 8.25 12l7.5-7.5"
-              />
-            </svg>
-            Zurück
-          </a>
-        }
-        <a
-          class="col-start-2 flex h-14 items-center justify-end gap-1 rounded-2xl bg-white pl-4 pr-3 text-base font-bold text-gray-900 shadow-md ring-1 ring-gray-900/5 transition-colors active:bg-gray-50"
-          [routerLink]="
-            nextStop()
-              ? ['/tour', stopGroupId(), 'stop', nextStop()!.id]
-              : ['/tour', stopGroupId()]
-          "
-          [replaceUrl]="!!nextStop()"
-          [attr.aria-label]="
-            nextStop()
-              ? 'Weiter: ' + nextStop()!.name
-              : 'Fertig mit ' + currentStopGroup().name
-          "
-          (click)="nextStop() ? openStop(nextStop()!) : null"
-        >
-          {{ nextStop() ? 'Weiter' : 'Fertig' }}
-          @if (nextStop()) {
-            <svg
-              class="h-5 w-5 shrink-0"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2.25"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="m8.25 4.5 7.5 7.5-7.5 7.5"
-              />
-            </svg>
+              <svg
+                class="h-5 w-5 shrink-0"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.25"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 19.5 8.25 12l7.5-7.5"
+                />
+              </svg>
+              Zurück
+            </a>
           }
-        </a>
+          <a
+            class="col-start-2 flex h-14 items-center justify-end gap-1 rounded-2xl bg-white pl-4 pr-3 text-base font-bold text-gray-900 shadow-md ring-1 ring-gray-900/5 transition-colors active:bg-gray-50"
+            [routerLink]="
+              nextStop()
+                ? ['/tour', stopGroupId(), 'stop', nextStop()!.id]
+                : ['/tour', stopGroupId()]
+            "
+            [replaceUrl]="!!nextStop()"
+            [attr.aria-label]="
+              nextStop()
+                ? 'Weiter: ' + nextStop()!.name
+                : 'Fertig mit ' + currentStopGroup().name
+            "
+            (click)="nextStop() ? openStop(nextStop()!) : null"
+          >
+            {{ nextStop() ? 'Weiter' : 'Fertig' }}
+            @if (nextStop()) {
+              <svg
+                class="h-5 w-5 shrink-0"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.25"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            }
+          </a>
+        </div>
       </nav>
     }
   </main>

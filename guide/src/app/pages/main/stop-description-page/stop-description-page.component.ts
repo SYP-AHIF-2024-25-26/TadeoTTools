@@ -78,6 +78,9 @@ export class StopDescriptionPageComponent implements OnInit {
   protected showPager = computed(
     () => this.position() >= 0 && this.groupStops().length > 1
   );
+  protected positionLine = computed(
+    () => `Station ${this.position() + 1} von ${this.groupStops().length}`
+  );
 
   protected stopDivisions = computed(() =>
     (this.stop().divisionIds ?? [])
