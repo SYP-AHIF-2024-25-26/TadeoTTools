@@ -12,7 +12,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { SwipeNavigatorService } from '@core/services/swipe-navigator.service';
 import {
   Division,
   FeedbackQuestion,
@@ -65,12 +65,12 @@ const AUTO_ADVANCE_MS = 500;
   styleUrl: './feedback.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '(swipeleft)': 'router.navigate(["/about"])',
-    '(swiperight)': 'router.navigate(["/map"])',
+    '(swipeleft)': 'swipe.go(["/about"], "left")',
+    '(swiperight)': 'swipe.go(["/map"], "right")',
   },
 })
 export class FeedbackComponent implements OnInit, OnDestroy {
-  protected router = inject(Router);
+  protected swipe = inject(SwipeNavigatorService);
   private api = inject(ApiFetchService);
   private outbox = inject(FeedbackOutboxService);
   private injector = inject(Injector);

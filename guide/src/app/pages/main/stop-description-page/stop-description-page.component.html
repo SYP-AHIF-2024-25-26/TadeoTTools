@@ -41,12 +41,14 @@
     }
     @if (showPager()) {
       <!-- Back and on within the group, in its order. Neutral: orange is for actions.
-           Only the direction, no stop names, so both buttons keep one fixed size. -->
+           Only the direction, no stop names, so both buttons keep one fixed size.
+           Sideways steps replace the history entry, so Back leaves the stop; „Fertig“ does not. -->
       <nav class="grid grid-cols-2 gap-3" aria-label="Stationen dieser Gruppe">
         @if (previousStop(); as previous) {
           <a
             class="flex h-14 items-center gap-1 rounded-2xl bg-white pl-3 pr-4 text-base font-bold text-gray-900 shadow-md ring-1 ring-gray-900/5 transition-colors active:bg-gray-50"
             [routerLink]="['/tour', stopGroupId(), 'stop', previous.id]"
+            [replaceUrl]="true"
             [attr.aria-label]="'Zurück: ' + previous.name"
             (click)="openStop(previous)"
           >
@@ -75,6 +77,7 @@
               ? ['/tour', stopGroupId(), 'stop', nextStop()!.id]
               : ['/tour', stopGroupId()]
           "
+          [replaceUrl]="!!nextStop()"
           [attr.aria-label]="
             nextStop()
               ? 'Weiter: ' + nextStop()!.name

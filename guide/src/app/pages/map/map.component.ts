@@ -35,6 +35,7 @@ import { MapMarkerComponent } from './map-marker/map-marker.component';
 import { PlanViewComponent } from './plan-view/plan-view.component';
 import { StopPreviewComponent } from './stop-preview/stop-preview.component';
 import { StopRowComponent } from './stop-row/stop-row.component';
+import { SwipeNavigatorService } from '@core/services/swipe-navigator.service';
 
 /** Below this distance on the screen a finger cannot tell two markers apart. */
 const TOUCH_DISTANCE = 30;
@@ -82,6 +83,7 @@ export class MapComponent implements OnInit {
   floor = input<string>();
 
   private router = inject(Router);
+  private swipe = inject(SwipeNavigatorService);
   private injector = inject(Injector);
   private api = inject(ApiFetchService);
   protected progress = inject(ProgressService);
@@ -388,23 +390,39 @@ export class MapComponent implements OnInit {
     await this.router.navigate(['/tour', group.id, 'stop', stop.id]);
   }
 
-  /** Over the plan a swipe drags it and over the sheet it does nothing; it changes the page beside them. */
+  /**
+   * Over the whole plan a swipe changes the floor, like the page swipes: to the left goes up,
+   * the higher floor comes in from the right. Zoomed in, the finger drags the plan instead.
+   * Over the sheet a swipe does nothing; beside the plan it changes the page.
+   */
   onSwipeLeft(event?: Event) {
-    if (!this.onPlan(event)) {
-      this.router.navigate(['/feedback']);
-    }
+    this.onSwipe(event, 1, () => this.swipe.go(['/feedback'], 'left'));
   }
 
   onSwipeRight(event?: Event) {
-    if (!this.onPlan(event)) {
-      this.router.navigate(['/main']);
-    }
+    this.onSwipe(event, -1, () => this.swipe.go(['/main'], 'right'));
   }
 
-  private onPlan(event?: Event): boolean {
-    return !!(event as unknown as HammerInput | undefined)?.target?.closest(
-      'app-plan-view, dialog'
-    );
+  private onSwipe(event: Event | undefined, step: 1 | -1, toPage: () => void) {
+    const target = (event as unknown as HammerInput | undefined)?.target;
+    if (target?.closest('dialog')) {
+      return;
+    }
+    if (!target?.closest('app-plan-view')) {
+      toPage();
+      return;
+    }
+    const plan = this.plan();
+    if (plan.zoomed()) {
+      return;
+    }
+    const next = this.currentFloor() + step;
+    if (next < 0 || next >= FLOORS.length) {
+      plan.bounce(step === 1 ? 'left' : 'right');
+      return;
+    }
+    this.selectFloor(next);
+    plan.enterFrom(step === 1 ? 'right' : 'left');
   }
 
   /** Kept in the URL, so coming back from a stop returns to this floor. */

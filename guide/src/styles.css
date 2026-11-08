@@ -33,3 +33,56 @@ html {
     transition: none !important;
   }
 }
+
+/* A swipe slides the page the finger's way (app.config.ts sets data-swipe-anim only for swipes).
+   The tab bar has its own name, so it stays put while the page moves. */
+:root[data-swipe-anim]::view-transition-old(root),
+:root[data-swipe-anim]::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+}
+
+:root[data-swipe-anim='left']::view-transition-old(root) {
+  animation-name: swipe-out-left;
+}
+
+:root[data-swipe-anim='left']::view-transition-new(root) {
+  animation-name: swipe-in-from-right;
+}
+
+:root[data-swipe-anim='right']::view-transition-old(root) {
+  animation-name: swipe-out-right;
+}
+
+:root[data-swipe-anim='right']::view-transition-new(root) {
+  animation-name: swipe-in-from-left;
+}
+
+@keyframes swipe-out-left {
+  to {
+    opacity: 0;
+    transform: translateX(-25%);
+  }
+}
+
+@keyframes swipe-in-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(25%);
+  }
+}
+
+@keyframes swipe-out-right {
+  to {
+    opacity: 0;
+    transform: translateX(25%);
+  }
+}
+
+@keyframes swipe-in-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-25%);
+  }
+}

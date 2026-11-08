@@ -1,11 +1,13 @@
 import {
   ChangeDetectionStrategy,
-  OnInit,
   Component,
   computed,
+  effect,
+  ElementRef,
   inject,
   input,
   signal,
+  untracked,
 } from '@angular/core';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { NavbarComponent } from '@shared/components/navbar/navbar.component';
@@ -30,6 +32,7 @@ import {
   TourBandComponent,
   TourSegment,
 } from '@shared/components/tour-band/tour-band.component';
+import { SwipeNavigatorService } from '@core/services/swipe-navigator.service';
 
 @Component({
   selector: 'app-stop-page',
@@ -48,17 +51,21 @@ import {
   templateUrl: './stop-page.component.html',
   styleUrl: './stop-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(swiperight)': 'goBack()' },
+  host: { '(swipeleft)': 'swipeNext()', '(swiperight)': 'swipePrevious()' },
 })
-export class StopPageComponent implements OnInit {
+export class StopPageComponent {
   protected apiFetchService = inject(ApiFetchService);
   protected router = inject(Router);
+  private swipe = inject(SwipeNavigatorService);
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected progress = inject(ProgressService);
   stopGroupId = input.required<string>();
   parentStopGroup = signal<StopGroup>({} as StopGroup);
   protected loadState = signal<'loading' | 'ready' | 'error'>('loading');
   stops = signal<Stop[]>([]);
   divisions = signal<Division[]>([]);
+  /** Every group in tour order, for swiping to the group beside this one. */
+  private groups = signal<StopGroup[]>([]);
 
   protected sortedStops = computed(() => {
     const groupId = this.parentStopGroup().id;
@@ -100,12 +107,18 @@ export class StopPageComponent implements OnInit {
     }))
   );
 
-  async ngOnInit() {
-    if (this.stopGroupId() === undefined) {
-      await this.router.navigate(['/']);
-    } else {
-      await this.onLoad();
-    }
+  constructor() {
+    // A swipe to the next group reuses this page, so it loads again whenever the URL's group changes.
+    effect(() => {
+      const id = this.stopGroupId();
+      untracked(() => {
+        if (id === undefined) {
+          void this.router.navigate(['/']);
+        } else {
+          void this.onLoad();
+        }
+      });
+    });
   }
 
   async onLoad() {
@@ -138,6 +151,7 @@ export class StopPageComponent implements OnInit {
       this.parentStopGroup.set(group);
       localStorage.setItem(CURRENT_STOP_GROUP_PREFIX, JSON.stringify(group));
     }
+    this.groups.set([...groups].sort((a, b) => a.order - b.order));
     this.divisions.set(divisions);
     this.stops.set(stops);
     this.loadState.set('ready');
@@ -157,7 +171,26 @@ export class StopPageComponent implements OnInit {
     ]);
   }
 
-  async goBack() {
-    await this.router.navigate(['/main']);
+  /** Like the cards on the start page, in tour order; at the last group the page springs back. */
+  protected swipeNext() {
+    this.swipeTo(1, 'left');
+  }
+
+  protected swipePrevious() {
+    this.swipeTo(-1, 'right');
+  }
+
+  private swipeTo(step: 1 | -1, direction: 'left' | 'right') {
+    const groups = this.groups();
+    const index = groups.findIndex(
+      (group) => group.id === Number(this.stopGroupId())
+    );
+    const target = index >= 0 ? groups[index + step] : undefined;
+    if (!target) {
+      this.swipe.bounce(this.host.nativeElement, direction);
+      return;
+    }
+    localStorage.setItem(CURRENT_STOP_GROUP_PREFIX, JSON.stringify(target));
+    void this.swipe.go(['/tour', target.id], direction);
   }
 }
