@@ -63,6 +63,9 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
     die Schüler:innen der Station (hinzufügen, bestätigen, entfernen).
   - Nur eigene Stationen ändern. **(Lücke):** `PUT /v1/stop-manager/stops` prüft nicht, ob die
     Station dem Stop-Manager gehört; das Dashboard zeigt nur die eigenen.
+  - Bei der Station, die genau „Buffet“ heißt (fest eingebaut, Groß-/Kleinschreibung egal), zusätzlich
+    die Dashboard-Seite „Buffet“: Produkte und Preise, Buffets, Speisekarten, Kassenbewegungen, Verkäufe
+    mit Statistik und CSV-Export (§11.2). „Delete all sales“ bleibt Admins vorbehalten.
   - Abteilungen, Stationsgruppen und Stop-Manager nicht anlegen, ändern oder löschen.
     **(Lücke):** `POST /v1/api/divisions` ist auch für Stop-Manager offen;
     `GET /v1/api/groups` (auch nicht öffentliche Gruppen) ebenfalls.
@@ -420,7 +423,8 @@ Eigenschaften:
 ## 11.2 Kassa (`kiosk/cashier`, Buffet, `/kassa`)
 - Zugang: alle Lehrkräfte (LeoAuth), alle Admins und Schüler:innen mit bestätigter Zuteilung zur
   Station, die genau „Buffet“ heißt.
-- Produkte, Buffets und Speisekarten verwalten Admins im Dashboard (Seite „Buffet“). Die Kassa
+- Produkte, Buffets und Speisekarten verwalten Admins und die Stop-Manager der Station „Buffet“
+  im Dashboard (Seite „Buffet“, Richtlinie `IsBuffetManager`). Die Kassa
   liest sie über `GET /v1/buffets`; Preise in ganzen Cent; ein negativer Preis ist ein Gutschein
   (max. einer pro Verkauf, auch vom Backend geprüft). Ein Produkt hat an allen Buffets denselben
   Preis.

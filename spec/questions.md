@@ -236,6 +236,8 @@ Die Überschriften entsprechen den geplanten Abschnitten des FSD.
   400/409-Antworten, die Kassa verwirft nie etwas („nicht übertragbar“).
 - Das alte Backend wird nicht verändert.
 - CSV-Exporte: `;` getrennt, UTF-8 mit BOM (für Excel).
+- Die Stop-Manager der Station „Buffet“ (Name fest eingebaut) verwalten die Dashboard-Seite „Buffet“
+  wie Admins; nur „Delete all sales“ bleibt bei den Admins.
 
 ## Befunde ohne Entscheidungsbedarf (werden eigene Issues, nicht Teil des FSD)
 

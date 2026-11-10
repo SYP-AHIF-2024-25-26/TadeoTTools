@@ -12,8 +12,7 @@
 
     <!-- Nav Links (desktop) -->
     <div class="hidden space-x-4 md:flex md:items-center md:justify-start">
-      @if (isAdmin()) {
-      @for (link of navLinks; track link.route) {
+      @for (link of visibleLinks(); track link.route) {
       <!-- Active: a white pill with night text (Nachtband); otherwise night white -->
       <a class="rounded-lg px-3 py-2 transition-colors" [class]="
               isActive(link)
@@ -22,7 +21,6 @@
             " [routerLink]="[link.route]" [attr.aria-current]="isActive(link) ? 'page' : null">
         {{ link.label }}
       </a>
-      }
       }
       <a class="rounded-lg px-3 py-2 transition-colors" [class]="
               isActive(previewLink)
@@ -70,8 +68,7 @@
       <div
         class="nav-menu absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-background-100 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-background-800">
         <div class="py-1">
-          @if (isAdmin()) {
-          @for (link of navLinks; track link.route) {
+          @for (link of visibleLinks(); track link.route) {
           <a class="block px-4 py-2 text-sm text-ink" (click)="mobileMenuOpen.set(false)" [class]="
                     isActive(link)
                       ? 'bg-primary font-medium text-primary-content'
@@ -79,7 +76,6 @@
                   " [routerLink]="[link.route]" [attr.aria-current]="isActive(link) ? 'page' : null">
             {{ link.label }}
           </a>
-          }
           }
           <a class="block px-4 py-2 text-sm text-ink" (click)="mobileMenuOpen.set(false)" [class]="
                     isActive(previewLink)
