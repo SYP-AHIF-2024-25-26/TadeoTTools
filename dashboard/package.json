@@ -20,6 +20,8 @@
     "@angular/platform-browser-dynamic": "^22.2.3",
     "@angular/router": "^22.2.3",
     "@ngrx/signals": "^22.0.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.9",
     "jwt-decode": "^4.0.0",
     "keycloak-angular": "^22.0.0",
     "keycloak-js": "^26.1.0",

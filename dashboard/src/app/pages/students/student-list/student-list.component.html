@@ -14,6 +14,13 @@
     >
       Add Student
     </button>
+    <button
+      class="btn btn-outline whitespace-nowrap"
+      [disabled]="exportingPdf() || students().length === 0"
+      (click)="exportStopsPdf()"
+    >
+      Students by Stop (PDF)
+    </button>
     <!-- Student files (import, export, delete all) live in Users & Data > Students. -->
     <a
       class="btn btn-outline whitespace-nowrap"
