@@ -55,7 +55,17 @@
                 "input": "public"
               },
               "src/assets",
-              "src/assets/env.js"
+              "src/assets/env.js",
+              {
+                "glob": "NotoSans_400Regular.ttf",
+                "input": "node_modules/@expo-google-fonts/noto-sans/400Regular",
+                "output": "assets/fonts"
+              },
+              {
+                "glob": "NotoSans_700Bold.ttf",
+                "input": "node_modules/@expo-google-fonts/noto-sans/700Bold",
+                "output": "assets/fonts"
+              }
             ],
             "styles": ["src/styles.css"],
             "scripts": []
