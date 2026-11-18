@@ -347,7 +347,7 @@ Eigenschaften:
   gesammelt („Delete All Students“, samt Zuteilungen). Ein Löschen einzelner Personen gibt es
   nicht.
 - Auf der Seite „Students“ lädt „Students by Stop (PDF)“ eine Liste aller Schüler:innen mit
-  Zuteilung (Approved und Pending, unabhängig von den Filtern) als PDF: je Station eine eigene
+  bestätigter Zuteilung (nur Approved, unabhängig von den Filtern) als PDF: je Station eine eigene
   Seite mit Raum und Stop-Managern über einer umrandeten Tabelle (Name, Klasse), zum
   Ausdrucken. Stationen ohne Schüler:innen fehlen.
 - Schüler:innen erfahren ihre Zuteilung nur durch Einloggen. **E-Mail-Benachrichtigung** bei

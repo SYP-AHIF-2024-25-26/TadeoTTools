@@ -1,8 +1,8 @@
 import { Status, Stop, StopManager, Student } from '@/shared/models/types';
 import { sortStudents } from '@/shared/utils/utils';
 
-// One page per stop with its stop managers and students (approved and pending,
-// no old rejected requests), for printing. jsPDF is loaded only when the export
+// One page per stop with its stop managers and approved students (pending
+// requests are not listed), for printing. jsPDF is loaded only when the export
 // runs, so it stays out of the initial bundle. Stops without students are left
 // out.
 export async function stopStudentsPdf(
@@ -25,7 +25,7 @@ export async function stopStudentsPdf(
   const byStop = new Map<number, Student[]>();
   for (const student of students) {
     for (const a of student.studentAssignments) {
-      if (a.status === Status.Declined) continue;
+      if (a.status !== Status.Accepted) continue;
       const list = byStop.get(a.stopId) ?? [];
       list.push(student);
       byStop.set(a.stopId, list);
