@@ -15,12 +15,16 @@ export async function stopStudentsPdf(
     import('jspdf-autotable'),
   ]);
 
-  const managerNames = new Map(
-    stopManagers.map((m) => [
-      m.edufsUsername.toLowerCase(),
-      `${m.firstName} ${m.lastName}`,
-    ])
-  );
+  // The stop list (`GET /api/stops`) has no stop managers; the managers list
+  // their stops instead.
+  const managersByStop = new Map<number, string[]>();
+  for (const m of stopManagers) {
+    for (const stopId of m.assignedStops) {
+      const list = managersByStop.get(stopId) ?? [];
+      list.push(`${m.firstName} ${m.lastName}`);
+      managersByStop.set(stopId, list);
+    }
+  }
 
   const byStop = new Map<number, Student[]>();
   for (const student of students) {
@@ -49,9 +53,7 @@ export async function stopStudentsPdf(
     if (index > 0) doc.addPage();
 
     const sorted = sortStudents([...byStop.get(stop.id)!]);
-    const managers = (stop.stopManagerAssignments ?? []).map(
-      (u) => managerNames.get(u.toLowerCase()) ?? u
-    );
+    const managers = managersByStop.get(stop.id) ?? [];
     const width = doc.internal.pageSize.getWidth() - 2 * margin;
 
     doc.setFont('helvetica', 'bold');
