@@ -18,6 +18,7 @@ import {
 import { sortStudents, downloadFile, plural } from '@/shared/utils/utils';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { StopService } from '@/core/services/stop.service';
+import { StopManagerService } from '@/core/services/stop-manager.service';
 import {
   Overlay,
   OverlayPositionBuilder,
@@ -29,6 +30,7 @@ import { StudentService } from '@/core/services/student.service';
 import { StudentFiltersComponent } from './components/student-filters/student-filters.component';
 import { AddStudentDialogComponent } from './components/add-student-dialog/add-student-dialog.component';
 import { ConflictDetailsModalComponent } from './components/conflict-details-modal/conflict-details-modal.component';
+import { stopStudentsPdf } from '@/shared/utils/stop-students-pdf';
 import { ScrollPersistenceService } from '@/core/services/scroll-persistence.service';
 import { errorText, ToastService } from '@/core/services/toast.service';
 import {
@@ -70,6 +72,7 @@ export interface StudentWithUI extends Student {
 export class ListStudentsComponent implements OnInit {
   private stopService = inject(StopService);
   private studentService = inject(StudentService);
+  private stopManagerService = inject(StopManagerService);
   private overlay = inject(Overlay);
   private viewContainerRef = inject(ViewContainerRef);
   private positionBuilder = inject(OverlayPositionBuilder);
@@ -311,6 +314,28 @@ export class ListStudentsComponent implements OnInit {
         this.approving.set(false);
         this.showApproveAllConfirm.set(false);
       }
+    }
+  }
+
+  exportingPdf = signal<boolean>(false);
+
+  // All students (ignores the filters), one stop per page for printing.
+  async exportStopsPdf(): Promise<void> {
+    this.exportingPdf.set(true);
+    try {
+      const stopManagers = await this.stopManagerService.getStopManagers();
+      const blob = await stopStudentsPdf(
+        this.stops(),
+        this.students(),
+        stopManagers
+      );
+      const date = new Date().toISOString().slice(0, 10);
+      downloadFile(blob, `students-by-stop-${date}.pdf`);
+    } catch (error) {
+      console.error('Failed to export PDF', error);
+      this.toast.error('The PDF could not be created. Please try again.');
+    } finally {
+      this.exportingPdf.set(false);
     }
   }
 

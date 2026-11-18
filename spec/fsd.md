@@ -346,6 +346,10 @@ Eigenschaften:
 - Admins importieren Schüler:innen per CSV (vorhandene werden übersprungen) und löschen sie
   gesammelt („Delete All Students“, samt Zuteilungen). Ein Löschen einzelner Personen gibt es
   nicht.
+- Auf der Seite „Students“ lädt „Students by Stop (PDF)“ eine Liste aller Schüler:innen mit
+  bestätigter Zuteilung (nur Approved, unabhängig von den Filtern) als PDF: je Station eine eigene
+  Seite mit Raum und Stop-Managern über einer umrandeten Tabelle (Name, Klasse), zum
+  Ausdrucken. Stationen ohne Schüler:innen fehlen.
 - Schüler:innen erfahren ihre Zuteilung nur durch Einloggen. **E-Mail-Benachrichtigung** bei
   Änderungen ist eine spätere Erweiterung (§18 „Kann“).
 
