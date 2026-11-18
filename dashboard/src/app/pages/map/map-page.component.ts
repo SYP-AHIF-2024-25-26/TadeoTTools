@@ -59,7 +59,7 @@ export class MapPageComponent implements OnInit {
   /** The next click on the plan sets a new place. */
   protected adding = signal(false);
   protected saving = signal(false);
-  protected icons = ['buffet', 'wc', 'info'];
+  protected icons = ['buffet', 'wc', 'wc-f', 'wc-m', 'info'];
 
   protected form = new FormGroup({
     code: new FormControl('', {
