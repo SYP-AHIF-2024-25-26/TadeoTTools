@@ -15,7 +15,7 @@ import {
   Student,
   StudentAssignment,
 } from '@/shared/models/types';
-import { sortStudents, downloadFile, plural } from '@/shared/utils/utils';
+import { sortStudents, saveFileAs, plural } from '@/shared/utils/utils';
 import { DeletePopupComponent } from '@/shared/modals/confirmation-modal/confirmation-modal.component';
 import { StopService } from '@/core/services/stop.service';
 import { StopManagerService } from '@/core/services/stop-manager.service';
@@ -323,14 +323,17 @@ export class ListStudentsComponent implements OnInit {
   async exportStopsPdf(): Promise<void> {
     this.exportingPdf.set(true);
     try {
-      const stopManagers = await this.stopManagerService.getStopManagers();
-      const blob = await stopStudentsPdf(
-        this.stops(),
-        this.students(),
-        stopManagers
-      );
       const date = new Date().toISOString().slice(0, 10);
-      downloadFile(blob, `students-by-stop-${date}.pdf`);
+      await saveFileAs(
+        `students-by-stop-${date}.pdf`,
+        { description: 'PDF', mime: 'application/pdf', extension: '.pdf' },
+        async () =>
+          stopStudentsPdf(
+            this.stops(),
+            this.students(),
+            await this.stopManagerService.getStopManagers()
+          )
+      );
     } catch (error) {
       console.error('Failed to export PDF', error);
       this.toast.error('The PDF could not be created. Please try again.');
