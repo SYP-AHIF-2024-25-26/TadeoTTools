@@ -24,6 +24,15 @@
       </a>
       }
       }
+      @if (homeLink(); as link) {
+      <a class="rounded-lg px-3 py-2 transition-colors" [class]="
+              isActive(link)
+                ? 'bg-white font-bold text-night-950'
+                : 'hover:bg-white/10 hover:text-white'
+            " [routerLink]="[link.route]" [attr.aria-current]="isActive(link) ? 'page' : null">
+        {{ link.label }}
+      </a>
+      }
       <a class="rounded-lg px-3 py-2 transition-colors" [class]="
               isActive(previewLink)
                 ? 'bg-white font-bold text-night-950'
@@ -80,6 +89,15 @@
             {{ link.label }}
           </a>
           }
+          }
+          @if (homeLink(); as link) {
+          <a class="block px-4 py-2 text-sm text-ink" (click)="mobileMenuOpen.set(false)" [class]="
+                    isActive(link)
+                      ? 'bg-primary font-medium text-primary-content'
+                      : ''
+                  " [routerLink]="[link.route]" [attr.aria-current]="isActive(link) ? 'page' : null">
+            {{ link.label }}
+          </a>
           }
           <a class="block px-4 py-2 text-sm text-ink" (click)="mobileMenuOpen.set(false)" [class]="
                     isActive(previewLink)

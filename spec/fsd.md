@@ -88,7 +88,9 @@ Rollen werden nicht aus dem Token gelesen: Das Backend sucht den `preferred_user
   ohne Rolle) die echte GuideApp in einem Rahmen, mit Tour, Karte und Feedback, auch während der
   Countdown läuft. Der Fortschritt bleibt nur bis zum Schließen des Tabs und getrennt von dem der
   öffentlichen GuideApp; Feedback wird nicht gesendet. Der Link „Preview“ steht in der Navigation
-  aller Rollen. Die Daten der GuideApp sind öffentlich: der Login schützt die Seite im Dashboard,
+  aller Rollen. Davor führt ein Link zur eigenen Seite: „Your Stops“ (`/stop-manager`) für
+  Stationsleiter:innen, „Your Stop“ (`/student`) für Schüler:innen; Admins erreichen ihre Übersicht
+  über das Logo, Benutzer ohne Rolle haben keinen solchen Link. Die Daten der GuideApp sind öffentlich: der Login schützt die Seite im Dashboard,
   nicht die Daten.
 
 ## 2.5 Testendpunkte

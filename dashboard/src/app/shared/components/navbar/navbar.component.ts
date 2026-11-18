@@ -46,6 +46,12 @@ export class NavbarComponent {
   // The one link for everyone, also for users without a role.
   protected readonly previewLink = { label: 'Preview', route: '/preview' };
 
+  // Stop managers and students: a link to their own page, next to Preview.
+  // Admins have the Overview (logo); users without a role get none.
+  protected readonly homeLink = signal<{ label: string; route: string } | null>(
+    null
+  );
+
   protected readonly path = toSignal(
     this.router.events.pipe(
       filter((e) => e instanceof NavigationEnd),
@@ -67,6 +73,17 @@ export class NavbarComponent {
   async ngOnInit() {
     const response = await this.service.checkUserRole('is-admin', 'admin');
     this.isAdmin.set(response);
+    if (response) {
+      return;
+    }
+    // Same order as the login page, so the link leads where the login does.
+    if (await this.service.checkUserRole('in-database', 'stopmanager')) {
+      this.homeLink.set({ label: 'Your Stops', route: '/stop-manager' });
+    } else if (
+      await this.service.checkUserRole('at-least-student', 'student')
+    ) {
+      this.homeLink.set({ label: 'Your Stop', route: '/student' });
+    }
   }
 
   changeDarkMode() {
