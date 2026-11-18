@@ -6,7 +6,7 @@ namespace Database.Repository.Functions;
 public static partial class MapFunctions
 {
     public static readonly string[] Floors = ["U", "E", "1"];
-    public static readonly string[] Icons = ["buffet", "wc", "info"];
+    public static readonly string[] Icons = ["buffet", "wc", "wc-f", "wc-m", "info"];
 
     /// <summary>A room number with its optional part: "E58-1", "E58/1", "U04a", "101".</summary>
     [GeneratedRegex(@"(?<![A-Za-z0-9])([UEK]\d{2}|1\d{2})(?:[-/](\d)(?!\d))?(?!\d)", RegexOptions.IgnoreCase)]
